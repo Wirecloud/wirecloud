@@ -39,43 +39,43 @@
         describe("adaptColumnOffset(value)", () => {
 
             it("should floor cells", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(layout, "getWidth").and.returnValue(100);
 
-                let value = layout.adaptColumnOffset("60.3%");
+                const value = layout.adaptColumnOffset("60.3%");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(600000);
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(layout, "getWidth").and.returnValue(100);
 
-                let value = layout.adaptColumnOffset("60.7%");
+                const value = layout.adaptColumnOffset("60.7%");
 
                 expect(value.inPixels).toBe(61);
                 expect(value.inLU).toBe(610000);
             });
 
             it("should support pixel units", () => {
-                let layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     leftMargin: 2,
                     topMargin: 2
                 });
                 spyOn(layout, "getWidth").and.returnValue(100);
 
-                let value = layout.adaptColumnOffset("58px");
+                const value = layout.adaptColumnOffset("58px");
 
                 expect(value.inPixels).toBe(56);
                 expect(value.inLU).toBe(560000);
             });
 
             it("should support cell units", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(layout, "getWidth").and.returnValue(100);
 
-                let value = layout.adaptColumnOffset(560000);
+                const value = layout.adaptColumnOffset(560000);
 
                 expect(value.inPixels).toBe(56);
                 expect(value.inLU).toBe(560000);
@@ -86,40 +86,40 @@
         describe("adaptHeight(value)", () => {
 
             it("should floor cells", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptHeight("60.3%");
+                const value = layout.adaptHeight("60.3%");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(600000);
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptHeight("60.7%");
+                const value = layout.adaptHeight("60.7%");
 
                 expect(value.inPixels).toBe(61);
                 expect(value.inLU).toBe(610000);
             });
 
             it("should support pixel units", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptHeight("56px");
+                const value = layout.adaptHeight("56px");
 
                 expect(value.inPixels).toBe(56);
                 expect(value.inLU).toBe(560000);
             });
 
             it("should support cell units", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptHeight(56);
+                const value = layout.adaptHeight(56);
 
                 expect(value.inPixels).toBe(56);
                 expect(value.inLU).toBe(560000);
@@ -130,52 +130,52 @@
         describe("adaptRowOffset(value)", () => {
 
             it("should floor cells", () => {
-                let layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     leftMargin: 2,
                     topMargin: 2
                 });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset("62.3%");
+                const value = layout.adaptRowOffset("62.3%");
 
                 expect(value.inPixels).toBe(60);
                 expect(value.inLU).toBe(600000);
             });
 
             it("should ceil cells", () => {
-                let layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     leftMargin: 2,
                     topMargin: 2
                 });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset("62.7%");
+                const value = layout.adaptRowOffset("62.7%");
 
                 expect(value.inPixels).toBe(61);
                 expect(value.inLU).toBe(610000);
             });
 
             it("should support pixel units", () => {
-                let layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     leftMargin: 2,
                     topMargin: 2
                 });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset("58px");
+                const value = layout.adaptRowOffset("58px");
 
                 expect(value.inPixels).toBe(56);
                 expect(value.inLU).toBe(560000);
             });
 
             it("should support cell units", () => {
-                let layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     leftMargin: 2,
                     topMargin: 2
                 });
                 spyOn(layout, "getHeight").and.returnValue(100);
 
-                let value = layout.adaptRowOffset(58);
+                const value = layout.adaptRowOffset(58);
 
                 expect(value.inPixels).toBe(56);
                 expect(value.inLU).toBe(560000);
@@ -186,17 +186,17 @@
         describe("initialize()", () => {
 
             it("should work on empty layouts", () => {
-                let layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
 
                 expect(layout.initialize()).toBe(false);
             });
 
             it("should work on non-empty layouts", () => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
-                let layout = new ns.FreeLayout(dragboard);
-                var widget = {
+                const layout = new ns.FreeLayout(dragboard);
+                const widget = {
                     id: "1",
                     addEventListener: jasmine.createSpy("addEventListener"),
                     repaint: jasmine.createSpy("repaint")
@@ -214,7 +214,7 @@
         describe("fromPixelsToVCells(pixels)", () => {
 
             it("should return a value", () => {
-                let layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getHeight: () => {return 1000;}
                 });
                 expect(layout.fromPixelsToVCells(306)).toBe(306000);
@@ -225,10 +225,10 @@
         describe("getCellAt(x, y)", () => {
 
             it("should return a DragboardPosition", () => {
-                var dragboard = {
+                const dragboard = {
                     getWidth: jasmine.createSpy("getWidth").and.returnValue(100)
                 };
-                let layout = new ns.FreeLayout(dragboard);
+                const layout = new ns.FreeLayout(dragboard);
 
                 expect(layout.getCellAt(0, 0)).toEqual(jasmine.any(Wirecloud.DragboardPosition));
             });
@@ -237,7 +237,7 @@
 
         describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist)", () => {
 
-            var dragboard, layout;
+            let dragboard, layout;
 
             const createWidgetMock = function createWidgetMock(data) {
                 return {
@@ -265,7 +265,7 @@
             });
 
             it("should work on empty layouts (width change - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
 
@@ -275,7 +275,7 @@
             });
 
             it("should work on empty layouts (width change - left, top-center)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     anchor: "top-center", x: 0, y: 0, width: 1, height: 4
                 });
 
@@ -285,7 +285,7 @@
             });
 
             it("should work on empty layouts (no size change - left, top-center)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     anchor: "top-center", x: 0, y: 0, width: 1, height: 4
                 });
 
@@ -295,13 +295,13 @@
             });
 
             it("should work on layouts with widgets (width change - right)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 1
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 1, y: 1, width: 3, height: 1
                 });
 
@@ -313,7 +313,7 @@
             });
 
             it("should work on empty layouts (height change - right, bottom)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
 
@@ -322,7 +322,7 @@
             });
 
             it("should work on empty layouts (height change - right, top)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 4, width: 1, height: 1
                 });
 
@@ -331,13 +331,13 @@
             });
 
             it("should work on layouts with widgets (height change - right)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 2, y: 0, width: 1, height: 2
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 2, width: 4, height: 1
                 });
 
@@ -348,7 +348,7 @@
             });
 
             it("should work on empty layouts (width change - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -358,7 +358,7 @@
             });
 
             it("should work on layouts with widgets (width change - left)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 2, y: 0, width: 2, height: 4
                 });
                 createWidgetMock({
@@ -371,7 +371,7 @@
             });
 
             it("should work on empty layouts (height change - left, bottom)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -380,7 +380,7 @@
             });
 
             it("should work on empty layouts (width change - rigth, top)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -389,13 +389,13 @@
             });
 
             it("should work on layouts with widgets (height change - left)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 2
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 4, width: 4, height: 1
                 });
 
@@ -407,7 +407,7 @@
             });
 
             it("should persist changes if required", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
 
@@ -421,7 +421,7 @@
         describe("getColumnOffset(position)", () => {
 
             it("should work with relative positions (from left)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     leftMargin: 4,
                     topMargin: 7
@@ -430,7 +430,7 @@
             });
 
             it("should work with relative positions (from left, css)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     leftMargin: 4,
                     rightMargin: 7
@@ -439,7 +439,7 @@
             });
 
             it("should work with relative positions (from right)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     rightMargin: 3,
                     topMargin: 7
@@ -448,7 +448,7 @@
             });
 
             it("should work with relative positions (from right, css)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     rightMargin: 3,
                     leftMargin: 7
@@ -457,7 +457,7 @@
             });
 
             it("should work with absolute positions (from left)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     leftMargin: 4,
                     topMargin: 7
@@ -466,7 +466,7 @@
             });
 
             it("should work with absolute positions (from right)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     leftMargin: 4,
                     rightMargin: 3,
@@ -476,7 +476,7 @@
             });
 
             it("should work with absolute positions (from right, css)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getWidth: function () {return 800;},
                     leftMargin: 4,
                     rightMargin: 3,
@@ -490,7 +490,7 @@
         describe("getHeightInPixels(cells)", () => {
 
             it("should work", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getHeight: function () {return 800;},
                     leftMargin: 4,
                     topMargin: 7
@@ -503,7 +503,7 @@
         describe("getRowOffset(column[, css])", () => {
 
             it("should work with relative positions (from top)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getHeight: function () {return 800;},
                     topMargin: 7
                 });
@@ -511,7 +511,7 @@
             });
 
             it("should work with relative positions (from bottom)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getHeight: function () {return 800;},
                     bottomMargin: 5
                 });
@@ -519,21 +519,21 @@
             });
 
             it("should work with absolute positions (from top)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     topMargin: 7
                 });
                 expect(layout.getRowOffset({y: 400, rely: false, anchor: "top-left"})).toBe(407);
             });
 
             it("should work with absolute positions (from bottom)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     bottomMargin: 5
                 });
                 expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottom-left"})).toBe(405);
             });
 
             it("should work with relative positions (from top, css)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getHeight: function () {return 800;},
                     topMargin: 10,
                     bottomMargin: 10
@@ -542,7 +542,7 @@
             });
 
             it("should work with relative positions (from bottom, css)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     getHeight: function () {return 800;},
                     topMargin: 10,
                     bottomMargin: 5
@@ -551,14 +551,14 @@
             });
 
             it("should work with absolute positions (from top, css)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     topMargin: 7
                 });
                 expect(layout.getRowOffset({y: 400, rely: false, anchor: "top-left"}, true)).toBe("407px");
             });
 
             it("should work with absolute positions (from bottom, css)", () => {
-                var layout = new ns.FreeLayout({
+                const layout = new ns.FreeLayout({
                     bottomMargin: 5
                 });
                 expect(layout.getRowOffset({y: 400, rely: false, anchor: "bottom-left"}, true)).toBe("405px");
@@ -569,7 +569,7 @@
         describe("_notifyWindowResizeEvent(widthChanged, heightChanged)", () => {
 
             it("should call parent on width change", () => {
-                var layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
 
                 layout._notifyWindowResizeEvent(true, false);
@@ -578,7 +578,7 @@
             });
 
             it("should ignore changes not affecting view width", () => {
-                var layout = new ns.FreeLayout({});
+                const layout = new ns.FreeLayout({});
                 spyOn(Wirecloud.ui.DragboardLayout.prototype, "_notifyWindowResizeEvent");
 
                 layout._notifyWindowResizeEvent(false, false);
@@ -629,7 +629,7 @@
                     dom.appendChild(this.tab.wrapperElement);
                 });
 
-                var dragboard = {
+                const dragboard = {
                     _notifyWindowResizeEvent: jasmine.createSpy("_notifyWindowResizeEvent"),
                     getWidth: jasmine.createSpy("getWidth").and.returnValue(800),
                     getHeight: jasmine.createSpy("getHeight").and.returnValue(800),
@@ -668,7 +668,7 @@
             });
 
             it("should cancel current move operation", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 spyOn(layout, "cancelMove");
@@ -678,14 +678,14 @@
             });
 
             it("should work on empty layouts (no real move)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.acceptMove();
             });
 
             it("should work on empty layouts (basic move)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 3, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 3, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
@@ -697,7 +697,7 @@
             });
 
             it("should work on empty layouts (basic move - bottom)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "bottom-left", x: 0, y: 0, width: 3, height: 1});
+                const widget = createWidgetMock({id: "1", anchor: "bottom-left", x: 0, y: 0, width: 3, height: 1});
                 widget.wrapperElement.style.width = "3px";
                 widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
@@ -711,7 +711,7 @@
             });
 
             it("should work on empty layouts (basic move - bottom, right)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "bottom-right", x: 0, y: 0, width: 3, height: 1});
+                const widget = createWidgetMock({id: "1", anchor: "bottom-right", x: 0, y: 0, width: 3, height: 1});
                 widget.wrapperElement.style.width = "3px";
                 widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
@@ -725,7 +725,7 @@
             });
 
             it("should work on empty layouts (basic move - rely, bottom, center)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "bottom-center", rely: true, x: 0, y: 0, width: 3, height: 1});
+                const widget = createWidgetMock({id: "1", anchor: "bottom-center", rely: true, x: 0, y: 0, width: 3, height: 1});
                 widget.wrapperElement.style.width = "3px";
                 widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
@@ -739,7 +739,7 @@
             });
 
             it("should work on empty layouts (basic move - relwidth, top, center)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "top-center", relwidth: true, x: 0, y: 0, width: 250000, height: 1});
+                const widget = createWidgetMock({id: "1", anchor: "top-center", relwidth: true, x: 0, y: 0, width: 250000, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
@@ -751,7 +751,7 @@
             });
 
             it("should work on empty layouts (basic move - relx, bottom, right)", () => {
-                let widget = createWidgetMock({id: "1", anchor: "bottom-right", relx: true, x: 0, y: 0, width: 3, height: 1});
+                const widget = createWidgetMock({id: "1", anchor: "bottom-right", relx: true, x: 0, y: 0, width: 3, height: 1});
                 widget.wrapperElement.style.width = "3px";
                 widget.wrapperElement.style.height = "1px";
                 layout.addWidget(widget);
@@ -765,8 +765,8 @@
             });
 
             it("should work on empty layouts (move outside layout - right side)", () => {
-                let width = 700 * layout.MAX_HLU / 800;
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: width, height: 1});
+                const width = 700 * layout.MAX_HLU / 800;
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: width, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(2 * width / 7, 0);
@@ -777,8 +777,8 @@
             });
 
             it("should work on empty layouts (move outside layout - top left side)", () => {
-                let width = 700 * layout.MAX_HLU / 800;
-                let widget = createWidgetMock({id: "1", x: 400, y: 600, width: width, height: 1});
+                const width = 700 * layout.MAX_HLU / 800;
+                const widget = createWidgetMock({id: "1", x: 400, y: 600, width: width, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(-100, -100);
@@ -789,7 +789,7 @@
             });
 
             it("should work on empty layouts (move between tabs)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.disableCursor();
@@ -798,7 +798,7 @@
             });
 
             it("should work on empty layouts (cancel move)", () => {
-                let widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
+                const widget = createWidgetMock({id: "1", x: 0, y: 0, width: 1, height: 1});
                 layout.addWidget(widget);
                 layout.initializeMove(widget, draggable);
                 layout.moveTemporally(1, 0);
@@ -809,7 +809,7 @@
 
         describe("searchBestPosition(width, height, refiframe, options)", () => {
 
-            var dragboard, layout;
+            let dragboard, layout;
 
             beforeEach(() => {
                 dragboard = {
@@ -826,7 +826,7 @@
             });
 
             it("should use first placement (bottom-right) when possible", () => {
-                var options = {
+                const options = {
                     width: 10,
                     height: 10,
                     refposition: {left: 10, bottom: 10}
@@ -841,7 +841,7 @@
             });
 
             it("should use second placement when possible", () => {
-                var options = {
+                const options = {
                     width: 750000,
                     height: 20,
                     refposition: {left: 70, right: 90, bottom: 10}
@@ -856,7 +856,7 @@
             });
 
             it("should use last placement when possible", () => {
-                var options = {
+                const options = {
                     width: 800000,
                     height: 20,
                     refposition: {left: 80, right: 90, top: 90, bottom: 99}
@@ -871,7 +871,7 @@
             });
 
             it("should reduce widget height if there is not enough space", () => {
-                var options = {
+                const options = {
                     width: 800000,
                     height: 100,
                     refposition: {left: 80, right: 90, top: 90, bottom: 99}
@@ -886,7 +886,7 @@
             });
 
             it("should reduce widget width (rigth side) if there is not enough space", () => {
-                var options = {
+                const options = {
                     width: 950000,
                     height: 100,
                     refposition: {left: 10, right: 90, top: 0, bottom: 10}
@@ -901,7 +901,7 @@
             });
 
             it("should reduce widget width (left side) if there is not enough space", () => {
-                var options = {
+                const options = {
                     width: 950000,
                     height: 100,
                     refposition: {left: 70, right: 90, top: 0, bottom: 10}
@@ -916,7 +916,7 @@
             });
 
             it("should allow to use elements inside widget iframes as reference", () => {
-                var options = {
+                const options = {
                     width: 8000,
                     height: 20,
                     refiframe: document.createElement('iframe'),

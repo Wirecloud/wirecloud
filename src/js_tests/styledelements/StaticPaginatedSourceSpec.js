@@ -31,13 +31,13 @@
         describe("new StaticPaginatedSource([options])", function () {
 
             it("can be created without passing any option", function () {
-                var element = new se.StaticPaginatedSource();
+                const element = new se.StaticPaginatedSource();
 
                 expect(element.length).toBe(0);
             });
 
             it("should support the initialElements option", function () {
-                var element = new se.StaticPaginatedSource({
+                const element = new se.StaticPaginatedSource({
                     initialElements: [
                         {id: 1, name: 'a'},
                         {id: 3, name: 'b'}
@@ -48,12 +48,12 @@
             });
 
             it("should support the no paginated mode", function () {
-                var entries = [];
-                for (var i; i < 40; i++) {
+                const entries = [];
+                for (let i; i < 40; i++) {
                     entries.push({id: i});
                 }
 
-                var element = new se.StaticPaginatedSource({
+                const element = new se.StaticPaginatedSource({
                     initialElements: entries,
                     pageSize: 0
                 });
@@ -68,7 +68,7 @@
         describe("addElement(newElement)", function () {
 
             it("should add the new element", function () {
-                var element = new se.StaticPaginatedSource();
+                const element = new se.StaticPaginatedSource();
 
                 expect(element.addElement({})).toBe(element);
                 expect(element.length).toBe(1);
@@ -78,21 +78,21 @@
             });
 
             it("should work when using the keywords option for filtered elements", function () {
-                var element = new se.StaticPaginatedSource({keywords: 'keyword'});
+                const element = new se.StaticPaginatedSource({keywords: 'keyword'});
 
                 expect(element.addElement({id: 1, description: 'some text with a keyword inside'})).toBe(element);
                 expect(element.length).toBe(1);
             });
 
             it("should work when using the keywords option for non-filtered elements", function () {
-                var element = new se.StaticPaginatedSource({keywords: 'keyword'});
+                const element = new se.StaticPaginatedSource({keywords: 'keyword'});
 
                 expect(element.addElement({id: 1, description: 'some text'})).toBe(element);
                 expect(element.length).toBe(1);
             });
 
             it("should update existing elements", function () {
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
 
                 expect(element.addElement({id: "2"})).toBe(element);
                 expect(element.length).toBe(1);
@@ -103,19 +103,19 @@
             });
 
             it("should throw an error if the element does not have ID", function () {
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
                 expect(function () {element.addElement({});}).toThrow(new Error("The element must have a valid ID"));
             });
 
             it("should throw an error if ID is null", function () {
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
                 expect(function () {element.addElement({id: null});}).toThrow(new Error("The element must have a valid ID"));
             });
         });
 
         describe("removeElement(element)", function () {
             it("should remove the element", function () {
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
 
                 expect(element.addElement({id: "1", doesntMatter: "true"})).toBe(element);
                 expect(element.length).toBe(1);
@@ -129,27 +129,27 @@
             });
 
             it("should throw an error if the element does not exist", function () {
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
 
                 expect(function () {element.removeElement({id: "1"});}).toThrow(new Error("Element does not exist"));
             });
 
             it("should throw an error if options.idAttr is not set", function () {
-                var element = new se.StaticPaginatedSource();
+                const element = new se.StaticPaginatedSource();
                 expect(function () {element.removeElement({id: "1"});}).toThrow(new Error("options.idAttr is not set"));
             });
 
             it("should throw an error if the element does not have ID", function () {
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
                 expect(function () {element.removeElement({});}).toThrow(new Error("The element must have a valid ID"));
             });
         });
 
         describe("changeElement(newElements)", function () {
 
-            var basicChangeElementTest = function basicChangeElementTest(element) {
-                var entries = [];
-                for (var i; i < 40; i++) {
+            const basicChangeElementTest = function basicChangeElementTest(element) {
+                const entries = [];
+                for (let i; i < 40; i++) {
                     entries.push({id: i});
                 }
 
@@ -160,24 +160,24 @@
             };
 
             it("should work when idAttr is set", function () {
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
                 basicChangeElementTest(element);
             });
 
             it("should work when idAttr is not set", function () {
-                var element = new se.StaticPaginatedSource();
+                const element = new se.StaticPaginatedSource();
                 basicChangeElementTest(element);
             });
 
             it("should discard previous elements", function () {
-                var entries = [];
-                for (var i; i < 40; i++) {
+                const entries = [];
+                for (let i; i < 40; i++) {
                     entries.push({id: i});
                 }
 
-                var element = new se.StaticPaginatedSource({initialElements: entries});
+                const element = new se.StaticPaginatedSource({initialElements: entries});
 
-                var new_entries = [{id: 41}];
+                const new_entries = [{id: 41}];
                 expect(element.changeElements(new_entries)).toBe(element);
                 expect(element.getCurrentPage()).toEqual(new_entries);
                 expect(element.getElements()).toEqual(new_entries);
@@ -185,22 +185,22 @@
             });
 
             it("should maintain previous options", function () {
-                var entries = [];
-                for (var i; i < 40; i++) {
+                const entries = [];
+                for (let i; i < 40; i++) {
                     entries.push({id: i});
                 }
 
-                var element = new se.StaticPaginatedSource({
+                const element = new se.StaticPaginatedSource({
                     initialElements: entries,
                     keywords: 'keyword',
                     order: ['-id']
                 });
 
-                var entry1 = {id: 41, description: 'keyword'};
-                var entry2 = {id: 40, description: 'keyword'};
-                var entry3 = {id: 42, description: 'keyword'};
-                var entry4 = {id: 39, description: ''};
-                var new_entries = [entry1, entry2, entry3, entry4];
+                const entry1 = {id: 41, description: 'keyword'};
+                const entry2 = {id: 40, description: 'keyword'};
+                const entry3 = {id: 42, description: 'keyword'};
+                const entry4 = {id: 39, description: ''};
+                const new_entries = [entry1, entry2, entry3, entry4];
                 expect(element.changeElements(new_entries)).toBe(element);
                 expect(element.getCurrentPage()).toEqual([entry3, entry1, entry2]);
                 expect(element.getElements()).toEqual(new_entries);
@@ -209,14 +209,14 @@
             });
 
             it("should not allow repeated elements", function () {
-                var entries = [];
-                for (var i; i < 10; i++) {
+                const entries = [];
+                for (let i; i < 10; i++) {
                     entries.push({id: i});
                 }
 
-                var element = new se.StaticPaginatedSource({initialElements: entries, idAttr: "id"});
+                const element = new se.StaticPaginatedSource({initialElements: entries, idAttr: "id"});
 
-                var new_entries = [{id: 1}, {id: 1}];
+                const new_entries = [{id: 1}, {id: 1}];
                 expect(function () {element.changeElements(new_entries);}).toThrow(new Error("All elements must have an unique ID"));
                 expect(element.getCurrentPage()).toEqual(entries);
                 expect(element.getElements()).toEqual(entries);
@@ -224,8 +224,8 @@
             });
 
             it("should throw an error if any element does not have an ID", function () {
-                var entries = [{id: "valido"}, {}];
-                var element = new se.StaticPaginatedSource({idAttr: "id"});
+                const entries = [{id: "valido"}, {}];
+                const element = new se.StaticPaginatedSource({idAttr: "id"});
                 expect(function () {element.changeElements(entries);}).toThrow(new Error("All elements must have a valid ID"));
             });
 
@@ -234,7 +234,7 @@
         describe("changeOptions(options)", function () {
 
             it("should allow to change the keywords option", function () {
-                var element = new se.StaticPaginatedSource({
+                const element = new se.StaticPaginatedSource({
                     initialElements: [
                         {id: 1, description: 'some text with a keyword inside', enabled: true},
                         {id: 2, description: 'some text', enabled: false},
@@ -250,7 +250,7 @@
             });
 
             it("should allow to change the order option", function () {
-                var entry1 = {
+                const entry1 = {
                     id: {
                         vendor: 'B',
                         name: 'entry1',
@@ -258,7 +258,7 @@
                     },
                     description: 'some text with a keyword inside'
                 };
-                var entry2 = {
+                const entry2 = {
                     id: {
                         vendor: 'C',
                         name: 'entry2',
@@ -266,7 +266,7 @@
                     },
                     description: 'some text with a keyword inside'
                 };
-                var entry3 = {
+                const entry3 = {
                     id: {
                         vendor: 'A',
                         name: 'entry3',
@@ -275,7 +275,7 @@
                     description: 'some text with a keyword inside'
                 };
 
-                var element = new se.StaticPaginatedSource({
+                const element = new se.StaticPaginatedSource({
                     initialElements: [
                         entry1,
                         entry2,
@@ -294,14 +294,14 @@
         describe("getElements()", function () {
 
             it("should allow to change the keywords option", function () {
-                var element = new se.StaticPaginatedSource();
+                const element = new se.StaticPaginatedSource();
                 expect(element.getElements()).toEqual([]);
             });
 
             it("should allow to change the keywords option", function () {
-                var entry1 = {id: 1, name: 'a'};
-                var entry2 = {id: 3, name: 'b'};
-                var element = new se.StaticPaginatedSource({
+                const entry1 = {id: 1, name: 'a'};
+                const entry2 = {id: 3, name: 'b'};
+                const element = new se.StaticPaginatedSource({
                     initialElements: [entry1, entry2]
                 });
                 expect(element.getElements()).toEqual([entry1, entry2]);

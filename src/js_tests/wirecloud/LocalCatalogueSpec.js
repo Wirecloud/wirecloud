@@ -27,6 +27,100 @@
 
     "use strict";
 
+    const setup = function setup(done) {
+        const operatordata = {
+            "type": "operator",
+            "vendor": "Wirecloud",
+            "name": "TestOperator",
+            "version": "1.0"
+        };
+        const widget1data = {
+            "type": "widget",
+            "vendor": "Wirecloud",
+            "name": "Test",
+            "version": "1.0"
+        };
+        const widget2data = {
+            "type": "widget",
+            "vendor": "Wirecloud",
+            "name": "Test",
+            "version": "2.0"
+        };
+        const widget3data = {
+            "type": "widget",
+            "vendor": "Wirecloud",
+            "name": "OtherWidget",
+            "version": "1.0"
+        };
+        const mashupdata = {
+            "type": "mashup",
+            "vendor": "Wirecloud",
+            "name": "TestMashup",
+            "version": "1.0"
+        };
+
+        mock_meta(Wirecloud, "MashableApplicationComponent");
+        mock_meta(Wirecloud, "WidgetMeta");
+        mock_meta(Wirecloud.wiring, "OperatorMeta");
+        Wirecloud.contextManager = {
+            "get": jasmine.createSpy("get").and.callFake((name) => {
+                switch (name) {
+                case "isanonymous":
+                    return false;
+                };
+            })
+        };
+        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+            expect(url).toBe(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION);
+            return new Wirecloud.Task("request", (resolve) => {
+                resolve({
+                    responseText: JSON.stringify({
+                        "Wirecloud/OtherWidget/1.0": widget3data,
+                        "Wirecloud/Test/1.0": widget1data,
+                        "Wirecloud/Test/2.0": widget2data,
+                        "Wirecloud/TestMashup/1.0": mashupdata,
+                        "Wirecloud/TestOperator/1.0": operatordata
+                    })
+                });
+            });
+        });
+
+        Wirecloud.workspaceInstances = {
+            "1": {
+                widgets: [],
+                wiring: {
+                    operators: []
+                }
+            }
+        };
+        spyOn(Wirecloud, "Workspace").and.callFake(function () {
+            this.widgets = [];
+            this.wiring = {
+                operators: []
+            };
+            this.resources = {
+                remove: jasmine.createSpy("remove"),
+                restore: jasmine.createSpy("restore")
+            };
+        });
+        Wirecloud.LocalCatalogue.reload().then(done);
+    };
+
+    const mock_meta = function mock_meta(object, name) {
+        spyOn(object, name).and.callFake(function (data) {
+            this.type = data.type;
+            this.vendor = data.vendor;
+            this.name = data.name;
+            this.version = new Wirecloud.Version(data.version);
+            this.group_id = data.vendor + '/' + data.name;
+            this.uri = this.group_id + '/' + data.version;
+            this.is = function (other) {
+                return this === other;
+            };
+            Object.freeze(this);
+        });
+    };
+
     describe("LocalCatalogue", () => {
 
         afterEach(() => {
@@ -160,8 +254,8 @@
                         });
                     });
                     spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
-                    let uri = "Wirecloud/Test/1.1";
-                    let widget1 = {
+                    const uri = "Wirecloud/Test/1.1";
+                    const widget1 = {
                         meta: {
                             uri: uri,
                         },
@@ -169,7 +263,7 @@
                         upgrade: jasmine.createSpy('upgrade')
                     };
                     workspace.widgets.push(widget1);
-                    let widget2 = {meta: {uri: "a"}, missing: false};
+                    const widget2 = {meta: {uri: "a"}, missing: false};
                     workspace.widgets.push(widget2);
 
                     Wirecloud.LocalCatalogue.addComponent().then(
@@ -195,8 +289,8 @@
                         });
                     });
                     spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
-                    let uri = "Wirecloud/TestOperator/1.1";
-                    let operator1 = {
+                    const uri = "Wirecloud/TestOperator/1.1";
+                    const operator1 = {
                         meta: {
                             uri: uri,
                         },
@@ -204,7 +298,7 @@
                         upgrade: jasmine.createSpy('upgrade')
                     };
                     workspace.wiring.operators.push(operator1);
-                    let operator2 = {meta: {uri: "a"}, missing: false};
+                    const operator2 = {meta: {uri: "a"}, missing: false};
                     workspace.wiring.operators.push(operator2);
 
                     Wirecloud.LocalCatalogue.addComponent().then(
@@ -235,7 +329,7 @@
             });
 
             it("uninstall widgets", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
 
                 spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -253,7 +347,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                const t = Wirecloud.LocalCatalogue.deleteResource(component);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -282,7 +376,7 @@
             });
 
             it("uninstall last widget version", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
 
                 spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -300,7 +394,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                const t = Wirecloud.LocalCatalogue.deleteResource(component);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -328,7 +422,7 @@
             });
 
             it("uninstall all widget versions", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
 
                 spyOn(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY, "evaluate");
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -345,7 +439,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component, {allversions: true});
+                const t = Wirecloud.LocalCatalogue.deleteResource(component, {allversions: true});
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -374,7 +468,7 @@
             });
 
             it("uninstall operators", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestOperator/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestOperator/1.0"];
 
                 spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -392,7 +486,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                const t = Wirecloud.LocalCatalogue.deleteResource(component);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -420,7 +514,7 @@
             });
 
             it("uninstall mashups", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestMashup/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestMashup/1.0"];
 
                 spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -438,7 +532,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                const t = Wirecloud.LocalCatalogue.deleteResource(component);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -467,9 +561,9 @@
 
             describe("calls reject on unexepected responses", () => {
 
-                var test = (status) => {
+                const test = (status) => {
                     return (done) => {
-                        var component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
+                        const component = Wirecloud.LocalCatalogue.resources["Wirecloud/OtherWidget/1.0"];
 
                         spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
                         Wirecloud.io.makeRequest.and.callFake(function () {
@@ -486,7 +580,7 @@
                             });
                         });
 
-                        var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                        const t = Wirecloud.LocalCatalogue.deleteResource(component);
 
                         expect(t).toEqual(jasmine.any(Wirecloud.Task));
                         t.catch((error) => {
@@ -502,7 +596,7 @@
             });
 
             it("delete widgets", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
 
                 spyOn(Wirecloud.URLs.LOCAL_RESOURCE_ENTRY, "evaluate");
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -520,7 +614,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component, {allusers: true});
+                const t = Wirecloud.LocalCatalogue.deleteResource(component, {allusers: true});
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -549,7 +643,7 @@
             });
 
             it("delete all widgets", (done) => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/Test/1.0"];
 
                 spyOn(Wirecloud.URLs.LOCAL_UNVERSIONED_RESOURCE_ENTRY, "evaluate");
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -566,7 +660,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component, {allusers: true, allversions: true});
+                const t = Wirecloud.LocalCatalogue.deleteResource(component, {allusers: true, allversions: true});
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -595,20 +689,20 @@
             });
 
             it("purges operators", (done) => {
-                let uri = "Wirecloud/TestOperator/1.0";
-                var component = Wirecloud.LocalCatalogue.resources[uri];
+                const uri = "Wirecloud/TestOperator/1.0";
+                const component = Wirecloud.LocalCatalogue.resources[uri];
 
-                let workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
-                let new_meta = {uri: uri};
+                const workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
+                const new_meta = {uri: uri};
                 workspace.resources.remove.and.returnValue(new_meta);
-                let operator1 = {
+                const operator1 = {
                     meta: {
                         uri: uri,
                     },
                     upgrade: jasmine.createSpy('upgrade')
                 };
                 workspace.wiring.operators.push(operator1);
-                let operator2 = {meta: {uri: "a"}};
+                const operator2 = {meta: {uri: "a"}};
                 workspace.wiring.operators.push(operator2);
 
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -621,7 +715,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                const t = Wirecloud.LocalCatalogue.deleteResource(component);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -636,20 +730,20 @@
             });
 
             it("purges widgets", (done) => {
-                let uri = "Wirecloud/Test/1.0";
-                var component = Wirecloud.LocalCatalogue.resources[uri];
+                const uri = "Wirecloud/Test/1.0";
+                const component = Wirecloud.LocalCatalogue.resources[uri];
 
-                let workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
-                let new_meta = {uri: uri};
+                const workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
+                const new_meta = {uri: uri};
                 workspace.resources.remove.and.returnValue(new_meta);
-                let widget1 = {
+                const widget1 = {
                     meta: {
                         uri: uri,
                     },
                     upgrade: jasmine.createSpy('upgrade')
                 };
                 workspace.widgets.push(widget1);
-                let widget2 = {meta: {uri: "a"}};
+                const widget2 = {meta: {uri: "a"}};
                 workspace.widgets.push(widget2);
 
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -662,7 +756,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                const t = Wirecloud.LocalCatalogue.deleteResource(component);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -677,10 +771,10 @@
             });
 
             it("handles purging of untracked components", (done) => {
-                let uri = "Wirecloud/Test/1.0";
-                var component = Wirecloud.LocalCatalogue.resources[uri];
+                const uri = "Wirecloud/Test/1.0";
+                const component = Wirecloud.LocalCatalogue.resources[uri];
 
-                let workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
+                const workspace = Wirecloud.workspaceInstances[1] = new Wirecloud.Workspace();
                 workspace.resources.remove.and.returnValue(null);
 
                 Wirecloud.io.makeRequest.and.callFake(function () {
@@ -693,7 +787,7 @@
                 });
                 spyOn(Wirecloud.LocalCatalogue, 'dispatchEvent');
 
-                var t = Wirecloud.LocalCatalogue.deleteResource(component);
+                const t = Wirecloud.LocalCatalogue.deleteResource(component);
                 expect(t).toEqual(jasmine.any(Wirecloud.Task));
                 t.then(
                     () => {
@@ -715,7 +809,7 @@
             });
 
             it("is a shortcut", () => {
-                var id = "Wirecloud/Test/1.0";
+                const id = "Wirecloud/Test/1.0";
                 expect(Wirecloud.LocalCatalogue.getResourceId(id))
                     .toBe(Wirecloud.LocalCatalogue.resources[id]);
             });
@@ -729,7 +823,7 @@
             });
 
             it("is a shortcut", () => {
-                var id = "Wirecloud/Test/1.0";
+                const id = "Wirecloud/Test/1.0";
                 expect(Wirecloud.LocalCatalogue.getResource("Wirecloud", "Test", "1.0"))
                     .toBe(Wirecloud.LocalCatalogue.resources[id]);
             });
@@ -743,7 +837,7 @@
             });
 
             it("returns false for unavaliable components", () => {
-                var component = {
+                const component = {
                     vendor: "MyVendor",
                     name: "MyName",
                     group_id: "MyVendor/MyName",
@@ -754,13 +848,13 @@
             });
 
             it("returns false when searching an alternative version for the only available version", () => {
-                var component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestOperator/1.0"];
+                const component = Wirecloud.LocalCatalogue.resources["Wirecloud/TestOperator/1.0"];
                 expect(Wirecloud.LocalCatalogue.hasAlternativeVersion(component))
                     .toBe(false);
             });
 
             it("returns true if there is an available version of a missing component", () => {
-                var component = {
+                const component = {
                     vendor: "Wirecloud",
                     name: "TestOperator",
                     group_id: "Wirecloud/TestOperator",
@@ -772,7 +866,7 @@
             });
 
             it("returns true if there are alternative versions for an existing component", () => {
-                var component = {
+                const component = {
                     vendor: "Wirecloud",
                     name: "Test",
                     group_id: "Wirecloud/Test",
@@ -787,7 +881,7 @@
         describe("reload()", () => {
 
             it("load initial components for logged users", (done) => {
-                var widgetdata = {
+                const widgetdata = {
                     "type": "widget",
                     "vendor": "Wirecloud",
                     "name": "Test",
@@ -814,7 +908,7 @@
                     });
                 });
 
-                var p = Wirecloud.LocalCatalogue.reload();
+                const p = Wirecloud.LocalCatalogue.reload();
                 p.then(
                     () => {
                         expect(Wirecloud.LocalCatalogue.resources).toEqual({
@@ -832,13 +926,13 @@
             });
 
             it("ignores invalid components", (done) => {
-                var operatordata = {
+                const operatordata = {
                     "type": "operator",
                     "vendor": "Wirecloud",
                     "name": "TestOperator",
                     "version": "1.0"
                 };
-                var invalidcomponent = {
+                const invalidcomponent = {
                     "type": "invalid"
                 };
 
@@ -863,7 +957,7 @@
                     });
                 });
 
-                var p = Wirecloud.LocalCatalogue.reload();
+                const p = Wirecloud.LocalCatalogue.reload();
                 p.then(
                     () => {
                         expect(Wirecloud.LocalCatalogue.resources).toEqual({
@@ -881,7 +975,7 @@
             });
 
             it("loads also public resources when running as anonymous users", (done) => {
-                var widgetdata = {
+                const widgetdata = {
                     "type": "widget",
                     "vendor": "Wirecloud",
                     "name": "Test",
@@ -908,7 +1002,7 @@
                     });
                 });
 
-                var p = Wirecloud.LocalCatalogue.reload();
+                const p = Wirecloud.LocalCatalogue.reload();
                 p.then(
                     () => {
                         expect(Wirecloud.LocalCatalogue.resources).toEqual({
@@ -970,99 +1064,5 @@
         });
 
     });
-
-    var setup = function setup(done) {
-        var operatordata = {
-            "type": "operator",
-            "vendor": "Wirecloud",
-            "name": "TestOperator",
-            "version": "1.0"
-        };
-        var widget1data = {
-            "type": "widget",
-            "vendor": "Wirecloud",
-            "name": "Test",
-            "version": "1.0"
-        };
-        var widget2data = {
-            "type": "widget",
-            "vendor": "Wirecloud",
-            "name": "Test",
-            "version": "2.0"
-        };
-        var widget3data = {
-            "type": "widget",
-            "vendor": "Wirecloud",
-            "name": "OtherWidget",
-            "version": "1.0"
-        };
-        var mashupdata = {
-            "type": "mashup",
-            "vendor": "Wirecloud",
-            "name": "TestMashup",
-            "version": "1.0"
-        };
-
-        mock_meta(Wirecloud, "MashableApplicationComponent");
-        mock_meta(Wirecloud, "WidgetMeta");
-        mock_meta(Wirecloud.wiring, "OperatorMeta");
-        Wirecloud.contextManager = {
-            "get": jasmine.createSpy("get").and.callFake((name) => {
-                switch (name) {
-                case "isanonymous":
-                    return false;
-                };
-            })
-        };
-        spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
-            expect(url).toBe(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION);
-            return new Wirecloud.Task("request", (resolve) => {
-                resolve({
-                    responseText: JSON.stringify({
-                        "Wirecloud/OtherWidget/1.0": widget3data,
-                        "Wirecloud/Test/1.0": widget1data,
-                        "Wirecloud/Test/2.0": widget2data,
-                        "Wirecloud/TestMashup/1.0": mashupdata,
-                        "Wirecloud/TestOperator/1.0": operatordata
-                    })
-                });
-            });
-        });
-
-        Wirecloud.workspaceInstances = {
-            "1": {
-                widgets: [],
-                wiring: {
-                    operators: []
-                }
-            }
-        };
-        spyOn(Wirecloud, "Workspace").and.callFake(function () {
-            this.widgets = [];
-            this.wiring = {
-                operators: []
-            };
-            this.resources = {
-                remove: jasmine.createSpy("remove"),
-                restore: jasmine.createSpy("restore")
-            };
-        });
-        Wirecloud.LocalCatalogue.reload().then(done);
-    };
-
-    var mock_meta = function mock_meta(object, name) {
-        spyOn(object, name).and.callFake(function (data) {
-            this.type = data.type;
-            this.vendor = data.vendor;
-            this.name = data.name;
-            this.version = new Wirecloud.Version(data.version);
-            this.group_id = data.vendor + '/' + data.name;
-            this.uri = this.group_id + '/' + data.version;
-            this.is = function (other) {
-                return this === other;
-            };
-            Object.freeze(this);
-        });
-    };
 
 })();

@@ -27,6 +27,55 @@
 
     "use strict";
 
+    const events = ['click', 'connectionadded', 'connectionremoved', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
+
+    const endpoint_onmousedown = function endpoint_onmousedown(event) {
+        if (this.enabled && event.button === 0) {
+            event.stopPropagation();
+            event.preventDefault();  // Required for disabling text selection
+            this.dispatchEvent('mousedown', event);
+        }
+    };
+
+    const endpoint_onmouseenter = function endpoint_onmouseenter(event) {
+        if (this.enabled) {
+            event.stopPropagation();
+            this.dispatchEvent('mouseenter', event);
+        }
+    };
+
+    const endpoint_onmouseleave = function endpoint_onmouseleave(event) {
+        if (this.enabled) {
+            event.stopPropagation();
+            this.dispatchEvent('mouseleave', event);
+        }
+    };
+
+    const endpoint_onmouseup = function endpoint_onmouseup(event) {
+        if (this.enabled && event.button === 0) {
+            event.stopPropagation();
+            event.preventDefault();  // Required for disabling text selection
+            this.dispatchEvent('mouseup', event);
+        }
+    };
+
+    const getAnchorPosition = function getAnchorPosition() {
+        const layout    = this.component.parent(),
+            layoutBCR = layout.getBoundingClientRect(),
+            anchorBCR = this.anchorElement.getBoundingClientRect();
+
+        const anchorPosition = {
+            x: Math.round(anchorBCR.left - (layoutBCR.left + 1) + layout.scrollLeft),
+            y: Math.round(anchorBCR.top + (this.anchorElement.offsetHeight / 2) - (layoutBCR.top + 1) + layout.scrollTop)
+        };
+
+        if (this.rightAnchorPoint) {
+            anchorPosition.x = Math.round(anchorPosition.x + anchorBCR.width);
+        }
+
+        return anchorPosition;
+    };
+
     // =========================================================================
     // CLASS DEFINITION
     // =========================================================================
@@ -251,7 +300,7 @@
          */
         forEachConnection(callback) {
 
-            for (var i = this.connections.length - 1; i >= 0; i--) {
+            for (let i = this.connections.length - 1; i >= 0; i--) {
                 callback(this.connections[i], i);
             }
 
@@ -268,7 +317,7 @@
          *      Found connection
          */
         getConnectionTo(endpoint) {
-            var connection = this.connections.find((connection) => {
+            const connection = this.connections.find((connection) => {
                 return connection.hasEndpoint(endpoint);
             });
 
@@ -338,7 +387,7 @@
          *      The instance on which the member is called.
          */
         removeConnection(connection) {
-            var index = this.connections.indexOf(connection);
+            const index = this.connections.indexOf(connection);
 
             if (index !== -1) {
                 this.connections.splice(index, 1);
@@ -361,58 +410,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var events = ['click', 'connectionadded', 'connectionremoved', 'mousedown', 'mouseenter', 'mouseleave', 'mouseup'];
-
-    var endpoint_onmousedown = function endpoint_onmousedown(event) {
-        if (this.enabled && event.button === 0) {
-            event.stopPropagation();
-            event.preventDefault();  // Required for disabling text selection
-            this.dispatchEvent('mousedown', event);
-        }
-    };
-
-    var endpoint_onmouseenter = function endpoint_onmouseenter(event) {
-        if (this.enabled) {
-            event.stopPropagation();
-            this.dispatchEvent('mouseenter', event);
-        }
-    };
-
-    var endpoint_onmouseleave = function endpoint_onmouseleave(event) {
-        if (this.enabled) {
-            event.stopPropagation();
-            this.dispatchEvent('mouseleave', event);
-        }
-    };
-
-    var endpoint_onmouseup = function endpoint_onmouseup(event) {
-        if (this.enabled && event.button === 0) {
-            event.stopPropagation();
-            event.preventDefault();  // Required for disabling text selection
-            this.dispatchEvent('mouseup', event);
-        }
-    };
-
-    var getAnchorPosition = function getAnchorPosition() {
-        var layout    = this.component.parent(),
-            layoutBCR = layout.getBoundingClientRect(),
-            anchorBCR = this.anchorElement.getBoundingClientRect();
-
-        var anchorPosition = {
-            x: Math.round(anchorBCR.left - (layoutBCR.left + 1) + layout.scrollLeft),
-            y: Math.round(anchorBCR.top + (this.anchorElement.offsetHeight / 2) - (layoutBCR.top + 1) + layout.scrollTop)
-        };
-
-        if (this.rightAnchorPoint) {
-            anchorPosition.x = Math.round(anchorPosition.x + anchorBCR.width);
-        }
-
-        return anchorPosition;
-    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

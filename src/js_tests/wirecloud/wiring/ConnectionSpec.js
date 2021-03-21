@@ -27,7 +27,7 @@
     "use strict";
 
     describe("Connection", function () {
-        var operatorModel, widgetModel, endpointDesc1, endpointDesc2, sourceEndpoint, targetEndpoint, wiringEngine;
+        let operatorModel, widgetModel, endpointDesc1, endpointDesc2, sourceEndpoint, targetEndpoint, wiringEngine;
 
         beforeAll(() => {
             spyOn(console, "log");
@@ -78,7 +78,7 @@
         describe("new Connection(wiringEngine, sourceEndpoint, targetEndpoint, [options])", function () {
 
             it("should create a new instance with no options", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
                 expect(connection instanceof ns.Connection).toBe(true);
                 expect(connection.source).toBe(sourceEndpoint);
@@ -89,7 +89,7 @@
             });
 
             it("should create a new instance with options.readonly = true", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint, {
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint, {
                     readonly: true
                 });
 
@@ -100,7 +100,7 @@
         describe("toJSON()", function () {
 
             it("should parse to JSON", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
                 expect(connection.toJSON()).toEqual({
                     readonly: false,
@@ -113,29 +113,29 @@
         describe("equals(value)", function () {
 
             it("should be equals to the same connection", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
                 expect(connection.equals(connection)).toBe(true);
             });
 
             it("should be equals to another connection with same endpoints", function () {
-                var connection1 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
-                var connection2 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection1 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection2 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
                 expect(connection1.equals(connection2)).toBe(true);
             });
 
             it("should not be equals to another connection with different endpoints", function () {
-                var endpointDesc3 = {
+                const endpointDesc3 = {
                     name: "target-test",
                     description: "description",
                     label: "title",
                     friendcode: "a"
                 };
-                var targetEndpoint2 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc3);
+                const targetEndpoint2 = new ns.OperatorTargetEndpoint(operatorModel, endpointDesc3);
 
-                var connection1 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
-                var connection2 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint2);
+                const connection1 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection2 = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint2);
 
                 expect(connection1.equals(connection2)).toBe(false);
             });
@@ -144,9 +144,9 @@
         describe("establish()", function () {
 
             it("should connect two endpoints properly", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("establish", callback);
 
@@ -156,9 +156,9 @@
             });
 
             it("should do nothing if the connection is already established", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("establish", callback);
                 connection.establish();
@@ -169,10 +169,10 @@
             });
 
             it("should do nothing if the source is a ghost endpoint", function () {
-                var missingSourceEndpoint = new ns.GhostSourceEndpoint(widgetModel, "missing");
-                var connection = new ns.Connection(wiringEngine, missingSourceEndpoint, targetEndpoint);
+                const missingSourceEndpoint = new ns.GhostSourceEndpoint(widgetModel, "missing");
+                const connection = new ns.Connection(wiringEngine, missingSourceEndpoint, targetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("establish", callback);
 
@@ -182,10 +182,10 @@
             });
 
             it("should do nothing if the target is a ghost endpoint", function () {
-                var missingTargetEndpoint = new ns.GhostTargetEndpoint(operatorModel, "missing");
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, missingTargetEndpoint);
+                const missingTargetEndpoint = new ns.GhostTargetEndpoint(operatorModel, "missing");
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, missingTargetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("establish", callback);
 
@@ -198,9 +198,9 @@
         describe("detach()", function () {
 
             it("should disconnect two endpoints properly", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("detach", callback);
                 connection.establish();
@@ -211,9 +211,9 @@
             });
 
             it("should do nothing if the connection is not established", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("detach", callback);
 
@@ -226,10 +226,10 @@
         describe("remove()", function () {
 
             it("should remove if the connection is established", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
-                var callback1 = jasmine.createSpy("callback1");
-                var callback2 = jasmine.createSpy("callback2");
+                const callback1 = jasmine.createSpy("callback1");
+                const callback2 = jasmine.createSpy("callback2");
 
                 connection.addEventListener("detach", callback1);
                 connection.addEventListener("remove", callback2);
@@ -242,10 +242,10 @@
             });
 
             it("should do nothing if the connection is not established", function () {
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
 
-                var callback1 = jasmine.createSpy("callback1");
-                var callback2 = jasmine.createSpy("callback2");
+                const callback1 = jasmine.createSpy("callback1");
+                const callback2 = jasmine.createSpy("callback2");
 
                 connection.addEventListener("detach", callback1);
                 connection.addEventListener("remove", callback2);
@@ -260,10 +260,10 @@
         describe("updateEndpoint(endpoint)", function () {
 
             it("should change the missing source-endpoint", function () {
-                var missingSourceEndpoint = new ns.GhostSourceEndpoint(widgetModel, "missing");
-                var connection = new ns.Connection(wiringEngine, missingSourceEndpoint, targetEndpoint);
+                const missingSourceEndpoint = new ns.GhostSourceEndpoint(widgetModel, "missing");
+                const connection = new ns.Connection(wiringEngine, missingSourceEndpoint, targetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("establish", callback);
 
@@ -274,10 +274,10 @@
             });
 
             it("should change the missing target-endpoint", function () {
-                var missingTargetEndpoint = new ns.GhostTargetEndpoint(operatorModel, "missing");
-                var connection = new ns.Connection(wiringEngine, sourceEndpoint, missingTargetEndpoint);
+                const missingTargetEndpoint = new ns.GhostTargetEndpoint(operatorModel, "missing");
+                const connection = new ns.Connection(wiringEngine, sourceEndpoint, missingTargetEndpoint);
 
-                var callback = jasmine.createSpy("callback");
+                const callback = jasmine.createSpy("callback");
 
                 connection.addEventListener("establish", callback);
 
@@ -289,9 +289,9 @@
 
             describe("throws a TypeError if endpoint is not valid", function () {
 
-                var base_test = function base_test(value) {
-                    var connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
-                    var callback = jasmine.createSpy("callback");
+                const base_test = function base_test(value) {
+                    const connection = new ns.Connection(wiringEngine, sourceEndpoint, targetEndpoint);
+                    const callback = jasmine.createSpy("callback");
 
                     connection.addEventListener("establish", callback);
 

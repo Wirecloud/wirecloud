@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,6 +27,229 @@
 
     "use strict";
 
+    const events = ['change', 'dragstart', 'drag', 'dragend', 'endpointadded', 'endpointremoved', 'optremove', 'optremovecascade', 'optshare', 'remove', 'orderstart', 'orderend'];
+
+    const updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
+        return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
+    };
+
+    const appendEndpoints = function appendEndpoints(type, endpoints) {
+
+        endpoints.forEach(function (endpoint) {
+            this.appendEndpoint(type, endpoint);
+
+            if (this._missingEndpoints != null && endpoint.name in this._missingEndpoints[type]) {
+                this._missingEndpoints[type][endpoint.name].forEachConnection(function (connection) {
+                    this.endpoints[type].endpoints[endpoint.name].appendConnection(connection, true);
+                }.bind(this));
+                delete this._missingEndpoints[type][endpoint.name];
+            }
+        }, this);
+
+        return this;
+    };
+
+    const btnremove_onclick = function btnremove_onclick() {
+
+        if (this.background) {
+            this.dispatchEvent('optshare');
+        } else {
+            this.dispatchEvent('optremove');
+        }
+    };
+
+    const collapseEndpoints = function collapseEndpoints(expandedWidth) {
+        this.body
+            .removeChild(this.endpoints.target)
+            .removeChild(this.endpoints.source);
+
+        this.heading
+            .appendChild(this.endpoints.target)
+            .appendChild(this.endpoints.source);
+
+        const offsetWidth = expandedWidth - this.get().offsetWidth;
+
+        if (offsetWidth > 0) {
+            this.style('left', Math.round(this.get().offsetLeft + (offsetWidth / 2)) + 'px');
+        }
+
+        return this;
+    };
+
+    const endpoint_onconnectionadded = function endpoint_onconnectionadded(endpoint, connection) {
+
+        if (connection.readonly) {
+            this.btnRemove.disable();
+            this.readonly = true;
+        }
+
+    };
+
+    const endpoint_onconnectionremoved = function endpoint_onconnectionremoved(endpoint, connection) {
+        if (endpoint.missing && !endpoint.hasConnections()) {
+            this.endpoints[endpoint.type].removeChild(endpoint);
+            this.dispatchEvent('endpointremoved', endpoint);
+            this.refresh();
+        }
+    };
+
+    const expandEndpoints = function expandEndpoints(collapsedWidth) {
+        this.heading
+            .removeChild(this.endpoints.target)
+            .removeChild(this.endpoints.source);
+
+        this.body
+            .appendChild(this.endpoints.target)
+            .appendChild(this.endpoints.source);
+
+        const offsetWidth = this.get().offsetWidth - collapsedWidth;
+
+        if (offsetWidth > 0) {
+            this.style('left', Math.round(this.get().offsetLeft - (offsetWidth / 2)) + 'px');
+        }
+
+        return this;
+    };
+
+    const isClick = function isClick(position1, position2) {
+        return (position1.x === position2.x) && (position1.y === position2.y);
+    };
+
+    const makeDraggable = function makeDraggable() {
+        this.draggable = new Wirecloud.ui.Draggable(this.get(), {component: this},
+            function dragstart(draggable, context, event) {
+                context.active = context.component.active;
+                context.component.btnPrefs.getPopupMenu().hide();
+                context.position = context.component.addClassName('dragging').position();
+                context.component.active = true;
+                context.component.dispatchEvent('dragstart', event);
+            },
+            function drag(event, draggable, context, x, y) {
+                context.component
+                    .position({
+                        x: context.position.x + x,
+                        y: context.position.y + y
+                    })
+                    .dispatchEvent('drag', x, y, event);
+            },
+            function dragend(draggable, context, event) {
+                const position = context.component.removeClassName('dragging').position();
+
+                // Work around problems raised by removing and readding the element into the DOM (especially in chrome)
+                setTimeout(context.component.toFirst.bind(context.component), 0);
+
+                // Check this drag & drop action can be considered a click action instead
+                if (isClick(context.position, position)) {
+                    context.component.active = !context.active;
+                } else {
+
+                    context.component.active = context.active;
+                    context.component
+                        .dispatchEvent('change', {
+                            position: position
+                        })
+                        .dispatchEvent('dragend', event);
+                }
+            },
+            function canDrag() {
+                return true;
+            }
+        );
+
+        return this;
+    };
+
+    const noticetitle_onclick = function noticetitle_onclick(event) {
+        event.preventDefault();
+        this.showLogs();
+        event.stopPropagation();
+    };
+
+    const notifyErrors = function notifyErrors() {
+        const count = this._component.logManager.errorCount;
+        this.toggleClassName('missing', this.missing);
+
+        if (this.heading.has(this.heading.notice)) {
+            this.heading.removeChild(this.heading.notice);
+        }
+
+        if (count || this.missing) {
+            let title;
+            if (this.missing) {
+                title = utils.gettext("Missing");
+            } else {
+                const label = utils.ngettext("%(count)s error", "%(count)s errors", count);
+                title = utils.interpolate(label, {
+                    count: count
+                });
+            }
+
+            this.heading.noticeTitle.textContent = title;
+            this.heading.appendChild(this.heading.notice);
+        }
+    };
+
+    const cleanEndpoints = function cleanEndpoints() {
+        let id;
+
+        for (id in this.targets) {
+            cleanEndpoint.call(this, this.targets[id]);
+        }
+
+        for (id in this.sources) {
+            cleanEndpoint.call(this, this.sources[id]);
+        }
+    };
+
+    const cleanEndpoint = function cleanEndpoint(endpoint) {
+        if (endpoint.hasConnections()) {
+            this._missingEndpoints[endpoint.type][endpoint.name] = endpoint;
+        }
+
+        endpoint.removeEventListener('connectionadded', this._endpoint_onconnectionadded_bound);
+        endpoint.removeEventListener('connectionremoved', this._endpoint_onconnectionremoved_bound);
+
+        this.endpoints[endpoint.type].removeChild(endpoint);
+        this.dispatchEvent('endpointremoved', endpoint);
+    };
+
+    const on_change_model = function on_change_model(model, changes) {
+        if (changes.indexOf('title') !== -1) {
+            this.setTitle(model.title).refresh();
+        }
+
+        if (changes.indexOf('meta') !== -1) {
+            this.setTitle(model.title);
+
+            this._missingEndpoints = {source: {}, target: {}};
+            cleanEndpoints.call(this);
+
+            appendEndpoints.call(this, 'source', model.meta.outputList.map(function (data) {return model.outputs[data.name];}));
+            appendEndpoints.call(this, 'target', model.meta.inputList.map(function (data) {return model.inputs[data.name];}));
+
+            appendMissingEndpoints.call(this, model, 'source', 'outputs');
+            appendMissingEndpoints.call(this, model, 'target', 'inputs');
+
+            delete this._missingEndpoints;
+            this.refresh();
+        }
+    };
+
+    const appendMissingConnection = function appendMissingConnection(type, name, connection) {
+        this.endpoints[type].endpoints[name].appendConnection(connection, true);
+    };
+
+    const appendMissingEndpoints = function appendMissingEndpoints(componentUpdated, type, namespace) {
+        let name;
+
+        for (name in componentUpdated[namespace]) {
+            if (name in this._missingEndpoints[type]) {
+                this.appendEndpoint(type, componentUpdated[namespace][name]);
+                this._missingEndpoints[type][name].forEachConnection(appendMissingConnection.bind(this, type, name));
+            }
+        }
+    };
+
     ns.ComponentDraggable = class ComponentDraggable extends se.Panel {
 
         /**
@@ -45,13 +268,13 @@
             const btnPrefs = new se.PopupButton({
                 title: utils.gettext("Preferences"),
                 class: "we-prefs-btn",
-                iconClass: "fa fa-reorder"
+                iconClass: "fas fa-bars"
             });
 
             const btnRemove = new se.Button({
                 title: utils.gettext("Remove"),
                 class: "btn-remove",
-                iconClass: "fa fa-times-circle"
+                iconClass: "fas fa-times-circle"
             });
 
             super({
@@ -76,7 +299,7 @@
                 .appendChild(this.endpoints.target)
                 .appendChild(this.endpoints.source);
 
-            var removeAllowed = true;
+            let removeAllowed = true;
 
             Object.defineProperties(this, {
 
@@ -154,7 +377,7 @@
             appendEndpoints.call(this, 'source', wiringComponent.meta.outputList.map(function (data) {return wiringComponent.outputs[data.name];}));
             appendEndpoints.call(this, 'target', wiringComponent.meta.inputList.map(function (data) {return wiringComponent.inputs[data.name];}));
 
-            var name, endpoint;
+            let name, endpoint;
 
             for (name in wiringComponent.outputs) {
                 endpoint = wiringComponent.outputs[name];
@@ -224,11 +447,11 @@
                 return this;
             }
 
-            return se.Panel.prototype._onclick.call(this, event);
+            return super._onclick(event);
         }
 
         _oncollapsed(collapsed) {
-            var offsetWidth = this.get().offsetWidth;
+            const offsetWidth = this.get().offsetWidth;
 
             if (this.collapsed === collapsed) {
                 return this;
@@ -284,7 +507,7 @@
         }
 
         appendEndpoint(type, wiringEndpoint) {
-            var endpoint = this.endpoints[type].appendEndpoint(wiringEndpoint);
+            const endpoint = this.endpoints[type].appendEndpoint(wiringEndpoint);
 
             endpoint.addEventListener('connectionadded', endpoint_onconnectionadded.bind(this));
             endpoint.addEventListener('connectionremoved', endpoint_onconnectionremoved.bind(this));
@@ -328,7 +551,7 @@
         }
 
         hasConnections() {
-            var found = false;
+            let found = false;
 
             found = this.targetList.some(function (endpoint) {
                 return endpoint.hasConnections();
@@ -365,14 +588,12 @@
          * @override
          */
         setTitle(title) {
-            var span;
-
-            span = document.createElement('span');
+            const span = document.createElement('span');
             span.textContent = title;
             this.titletooltip.options.content = title;
             this.titletooltip.bind(span);
 
-            return se.Panel.prototype.setTitle.call(this, span);
+            return super.setTitle(span);
         }
 
         showLogs() {
@@ -492,7 +713,7 @@
                 this.dispatchEvent('remove');
             }
 
-            return se.Panel.prototype.remove.call(this, childElement);
+            return super.remove(childElement);
         }
 
         setUp() {
@@ -539,239 +760,5 @@
     };
     ns.ComponentDraggable.MINOFFSET_X = 20;
     ns.ComponentDraggable.MINOFFSET_Y = 10;
-
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var events = ['change', 'dragstart', 'drag', 'dragend', 'endpointadded', 'endpointremoved', 'optremove', 'optremovecascade', 'optshare', 'remove', 'orderstart', 'orderend'];
-
-    var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
-        return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
-    };
-
-    var appendEndpoints = function appendEndpoints(type, endpoints) {
-
-        endpoints.forEach(function (endpoint) {
-            this.appendEndpoint(type, endpoint);
-
-            if (this._missingEndpoints != null && endpoint.name in this._missingEndpoints[type]) {
-                this._missingEndpoints[type][endpoint.name].forEachConnection(function (connection) {
-                    this.endpoints[type].endpoints[endpoint.name].appendConnection(connection, true);
-                }.bind(this));
-                delete this._missingEndpoints[type][endpoint.name];
-            }
-        }, this);
-
-        return this;
-    };
-
-    var btnremove_onclick = function btnremove_onclick() {
-
-        if (this.background) {
-            this.dispatchEvent('optshare');
-        } else {
-            this.dispatchEvent('optremove');
-        }
-    };
-
-    var collapseEndpoints = function collapseEndpoints(expandedWidth) {
-        var offsetWidth;
-
-        this.body
-            .removeChild(this.endpoints.target)
-            .removeChild(this.endpoints.source);
-
-        this.heading
-            .appendChild(this.endpoints.target)
-            .appendChild(this.endpoints.source);
-
-        offsetWidth = expandedWidth - this.get().offsetWidth;
-
-        if (offsetWidth > 0) {
-            this.style('left', Math.round(this.get().offsetLeft + (offsetWidth / 2)) + 'px');
-        }
-
-        return this;
-    };
-
-    var endpoint_onconnectionadded = function endpoint_onconnectionadded(endpoint, connection) {
-
-        if (connection.readonly) {
-            this.btnRemove.disable();
-            this.readonly = true;
-        }
-
-    };
-
-    var endpoint_onconnectionremoved = function endpoint_onconnectionremoved(endpoint, connection) {
-        if (endpoint.missing && !endpoint.hasConnections()) {
-            this.endpoints[endpoint.type].removeChild(endpoint);
-            this.dispatchEvent('endpointremoved', endpoint);
-            this.refresh();
-        }
-    };
-
-    var expandEndpoints = function expandEndpoints(collapsedWidth) {
-        var offsetWidth;
-
-        this.heading
-            .removeChild(this.endpoints.target)
-            .removeChild(this.endpoints.source);
-
-        this.body
-            .appendChild(this.endpoints.target)
-            .appendChild(this.endpoints.source);
-
-        offsetWidth = this.get().offsetWidth - collapsedWidth;
-
-        if (offsetWidth > 0) {
-            this.style('left', Math.round(this.get().offsetLeft - (offsetWidth / 2)) + 'px');
-        }
-
-        return this;
-    };
-
-    var isClick = function isClick(position1, position2) {
-        return (position1.x === position2.x) && (position1.y === position2.y);
-    };
-
-    var makeDraggable = function makeDraggable() {
-        this.draggable = new Wirecloud.ui.Draggable(this.get(), {component: this},
-            function dragstart(draggable, context, event) {
-                context.active = context.component.active;
-                context.component.btnPrefs.getPopupMenu().hide();
-                context.position = context.component.addClassName('dragging').position();
-                context.component.active = true;
-                context.component.dispatchEvent('dragstart', event);
-            },
-            function drag(event, draggable, context, x, y) {
-                context.component
-                    .position({
-                        x: context.position.x + x,
-                        y: context.position.y + y
-                    })
-                    .dispatchEvent('drag', x, y, event);
-            },
-            function dragend(draggable, context, event) {
-                var position = context.component.removeClassName('dragging').position();
-
-                // Work around problems raised by removing and readding the element into the DOM (especially in chrome)
-                setTimeout(context.component.toFirst.bind(context.component), 0);
-
-                // Check this drag & drop action can be considered a click action instead
-                if (isClick(context.position, position)) {
-                    context.component.active = !context.active;
-                } else {
-
-                    context.component.active = context.active;
-                    context.component
-                        .dispatchEvent('change', {
-                            position: position
-                        })
-                        .dispatchEvent('dragend', event);
-                }
-            },
-            function canDrag() {
-                return true;
-            }
-        );
-
-        return this;
-    };
-
-    var noticetitle_onclick = function noticetitle_onclick(event) {
-        event.preventDefault();
-        this.showLogs();
-        event.stopPropagation();
-    };
-
-    var notifyErrors = function notifyErrors() {
-        var title, label, count;
-
-        count = this._component.logManager.errorCount;
-        this.toggleClassName('missing', this.missing);
-
-        if (this.heading.has(this.heading.notice)) {
-            this.heading.removeChild(this.heading.notice);
-        }
-
-        if (count || this.missing) {
-
-            if (this.missing) {
-                title = utils.gettext("Missing");
-            } else {
-                label = utils.ngettext("%(count)s error", "%(count)s errors", count);
-                title = utils.interpolate(label, {
-                    count: count
-                });
-            }
-
-            this.heading.noticeTitle.textContent = title;
-            this.heading.appendChild(this.heading.notice);
-        }
-    };
-
-    var cleanEndpoints = function cleanEndpoints() {
-        var id;
-
-        for (id in this.targets) {
-            cleanEndpoint.call(this, this.targets[id]);
-        }
-
-        for (id in this.sources) {
-            cleanEndpoint.call(this, this.sources[id]);
-        }
-    };
-
-    var cleanEndpoint = function cleanEndpoint(endpoint) {
-        if (endpoint.hasConnections()) {
-            this._missingEndpoints[endpoint.type][endpoint.name] = endpoint;
-        }
-
-        endpoint.removeEventListener('connectionadded', this._endpoint_onconnectionadded_bound);
-        endpoint.removeEventListener('connectionremoved', this._endpoint_onconnectionremoved_bound);
-
-        this.endpoints[endpoint.type].removeChild(endpoint);
-        this.dispatchEvent('endpointremoved', endpoint);
-    };
-
-    var on_change_model = function on_change_model(model, changes) {
-        if (changes.indexOf('title') !== -1) {
-            this.setTitle(model.title).refresh();
-        }
-
-        if (changes.indexOf('meta') !== -1) {
-            this.setTitle(model.title);
-
-            this._missingEndpoints = {source: {}, target: {}};
-            cleanEndpoints.call(this);
-
-            appendEndpoints.call(this, 'source', model.meta.outputList.map(function (data) {return model.outputs[data.name];}));
-            appendEndpoints.call(this, 'target', model.meta.inputList.map(function (data) {return model.inputs[data.name];}));
-
-            appendMissingEndpoints.call(this, model, 'source', 'outputs');
-            appendMissingEndpoints.call(this, model, 'target', 'inputs');
-
-            delete this._missingEndpoints;
-            this.refresh();
-        }
-    };
-
-    var appendMissingConnection = function appendMissingConnection(type, name, connection) {
-        this.endpoints[type].endpoints[name].appendConnection(connection, true);
-    };
-
-    var appendMissingEndpoints = function appendMissingEndpoints(componentUpdated, type, namespace) {
-        var name;
-
-        for (name in componentUpdated[namespace]) {
-            if (name in this._missingEndpoints[type]) {
-                this.appendEndpoint(type, componentUpdated[namespace][name]);
-                this._missingEndpoints[type][name].forEachConnection(appendMissingConnection.bind(this, type, name));
-            }
-        }
-    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

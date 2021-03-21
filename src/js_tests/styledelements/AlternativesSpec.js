@@ -28,7 +28,7 @@
     "use strict";
 
     describe("Alternatives", function () {
-        var endTransition, dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -42,20 +42,20 @@
             }
         });
 
-        endTransition = function endTransition(element) {
+        const endTransition = function endTransition(element) {
             element.dispatchEvent(new TransitionEvent("transitionend"));
         };
 
         describe("new Alternatives([options])", function () {
 
             it("should support the full option", function () {
-                var element = new StyledElements.Alternatives({full: false});
+                const element = new StyledElements.Alternatives({full: false});
                 expect(element.hasClassName('full')).toBe(false);
                 expect(element.alternatives).toEqual({});
             });
 
             it("should support the id option", function () {
-                var element = new StyledElements.Alternatives({id: 'myid'});
+                const element = new StyledElements.Alternatives({id: 'myid'});
                 expect(element.wrapperElement.id).toBe('myid');
                 expect(element.alternatives).toEqual({});
             });
@@ -63,7 +63,7 @@
         });
 
         describe("clear()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Alternatives();
@@ -81,7 +81,7 @@
 
         describe("createAlternative([options])", function () {
 
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Alternatives();
@@ -89,12 +89,10 @@
             });
 
             it("should support create new alternatives without passing options", function () {
-                var alt1, alt2;
-
                 expect(element.visibleAlt).toBe(null);
-                alt1 = element.createAlternative();
+                const alt1 = element.createAlternative();
                 expect(element.visibleAlt).toBe(alt1);
-                alt2 = element.createAlternative();
+                const alt2 = element.createAlternative();
                 expect(element.visibleAlt).toBe(alt1);
 
                 const expected = {};
@@ -105,15 +103,13 @@
             });
 
             it("should support create new alternatives using the initiallyVisible option", function () {
-                var alt1, alt2;
-
                 spyOn(element, "showAlternative");
 
                 expect(element.visibleAlt).toBe(null);
-                alt1 = element.createAlternative({initiallyVisible: true});
+                const alt1 = element.createAlternative({initiallyVisible: true});
                 expect(element.visibleAlt).toBe(alt1);
                 // Once we have a visibleAlt, the alternative is switched the using showAlternative method
-                alt2 = element.createAlternative({initiallyVisible: true});
+                const alt2 = element.createAlternative({initiallyVisible: true});
 
                 expect(element.showAlternative).toHaveBeenCalledWith(alt2);
                 expect(element.alternativeList).toEqual([alt1, alt2]);
@@ -128,7 +124,7 @@
         describe("getCurrentAlternative()", function () {
 
             it("should return the same value as the visibleAlt attribute", function () {
-                var element = new StyledElements.Alternatives();
+                const element = new StyledElements.Alternatives();
                 expect(element.getCurrentAlternative()).toBe(element.visibleAlt);
                 element.createAlternative();
                 expect(element.getCurrentAlternative()).toBe(element.visibleAlt);
@@ -137,7 +133,7 @@
         });
 
         describe("removeAlternative(alternative)", function () {
-            var element, alt1, alt2, alt3;
+            let element, alt1, alt2, alt3;
 
             beforeEach(function () {
                 element = new StyledElements.Alternatives();
@@ -148,12 +144,12 @@
             });
 
             it("does nothing if alternative is null", function (done) {
-                var listener = jasmine.createSpy("listener", function listener() {
+                const listener = jasmine.createSpy("listener", function listener() {
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
                     expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
                 });
-                var p = element.removeAlternative(null, {onComplete: listener});
+                const p = element.removeAlternative(null, {onComplete: listener});
 
                 expect(p).toEqual(jasmine.any(Promise));
                 p.then(() => {
@@ -165,14 +161,14 @@
             });
 
             it("does nothing if alternative is not found", function (done) {
-                var listener = jasmine.createSpy("listener").and.callFake(function () {
+                const listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.alternativeList).toEqual([alt1, alt2, alt3]);
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
                     expect(element.wrapperElement.children[2]).toBe(alt3.wrapperElement);
                 });
 
-                var p = element.removeAlternative("myalt4", {onComplete: listener});
+                const p = element.removeAlternative("myalt4", {onComplete: listener});
 
                 expect(p).toEqual(jasmine.any(Promise));
                 p.then(() => {
@@ -184,12 +180,12 @@
             });
 
             it("should allow to remove alternatives by id", function (done) {
-                var listener = jasmine.createSpy("listener").and.callFake(function () {
+                const listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
                 });
 
-                var p = element.removeAlternative(alt2.altId, {onComplete: listener});
+                const p = element.removeAlternative(alt2.altId, {onComplete: listener});
 
                 expect(element.alternativeList).toEqual([alt1, alt3]);
                 expect(p).toEqual(jasmine.any(Promise));
@@ -201,11 +197,11 @@
             });
 
             it("should allow to remove alternatives using Alternative instances", function (done) {
-                var listener = jasmine.createSpy("listener").and.callFake(function () {
+                const listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
                 });
-                var p = element.removeAlternative(alt2, {onComplete: listener});
+                const p = element.removeAlternative(alt2, {onComplete: listener});
 
                 expect(element.alternativeList).toEqual([alt1, alt3]);
                 p.then(() => {
@@ -216,8 +212,8 @@
             });
 
             it("should raise an exception if the passed alternative is not owned by the alternatives element", function () {
-                var other_alternatives = new StyledElements.Alternatives();
-                var other_alt = other_alternatives.createAlternative();
+                const other_alternatives = new StyledElements.Alternatives();
+                const other_alt = other_alternatives.createAlternative();
                 expect(() => {
                     element.removeAlternative(other_alt);
                 }).toThrow(jasmine.any(TypeError));
@@ -229,7 +225,7 @@
             });
 
             it("should allow to remove the active alternative", function (done) {
-                var listener = jasmine.createSpy("listener").and.callFake(function () {
+                const listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(element.wrapperElement.children[0]).toBe(alt2.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt3.wrapperElement);
@@ -237,7 +233,7 @@
 
                 expect(element.visibleAlt).toBe(alt1);
 
-                var p = element.removeAlternative(alt1, {onComplete: listener});
+                const p = element.removeAlternative(alt1, {onComplete: listener});
 
                 expect(element.alternativeList).toEqual([alt2, alt3]);
 
@@ -250,7 +246,7 @@
 
             it("should allow removing the active alternative when the active alternative is the right most alternative", function (done) {
 
-                var listener = jasmine.createSpy("listener").and.callFake(function () {
+                const listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(element.wrapperElement.children[0]).toBe(alt1.wrapperElement);
                     expect(element.wrapperElement.children[1]).toBe(alt2.wrapperElement);
@@ -259,7 +255,7 @@
                 element.showAlternative(alt3).then(() => {
                     expect(element.visibleAlt).toBe(alt3);
 
-                    var p = element.removeAlternative(alt3, {onComplete: listener});
+                    const p = element.removeAlternative(alt3, {onComplete: listener});
                     expect(element.alternativeList).toEqual([alt1, alt2]);
                     p.then(() => {
                         // Old behaviour, now deprecated in favour of promises
@@ -270,7 +266,7 @@
             });
 
             it("should allow to remove all the alternatives", function (done) {
-                var listener = function listener() {
+                const listener = function listener() {
                     expect(element.visibleAlt).toEqual(null);
                     expect(element.wrapperElement.children.length).toBe(0);
                     done();
@@ -286,7 +282,7 @@
         });
 
         describe("repaint(temporal)", function () {
-            var element, alt1, alt2, alt3;
+            let element, alt1, alt2, alt3;
 
             beforeEach(function () {
                 element = new StyledElements.Alternatives();
@@ -322,7 +318,7 @@
         });
 
         describe("showAlternative(alternative[, options])", function () {
-            var element, alt1, alt2, alt3;
+            let element, alt1, alt2, alt3;
 
             beforeEach(function () {
                 element = new StyledElements.Alternatives();
@@ -341,13 +337,13 @@
             });
 
             it("should raise an exception if the passed alternative is not owned by the alternatives element", function () {
-                var other_alternatives = new StyledElements.Alternatives();
-                var other_alt = other_alternatives.createAlternative();
+                const other_alternatives = new StyledElements.Alternatives();
+                const other_alt = other_alternatives.createAlternative();
                 expect(function () {element.showAlternative(other_alt);}).toThrow(jasmine.any(TypeError));
             });
 
             it("does nothing if the passed alternative is the visible alternative", function (done) {
-                var p = element.showAlternative(alt1);
+                const p = element.showAlternative(alt1);
 
                 expect(p).toEqual(jasmine.any(Promise));
                 p.then((result) => {
@@ -361,9 +357,9 @@
             });
 
             it("should call the onComplete listener", function (done) {
-                var listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
 
-                var p = element.showAlternative(alt3, {
+                const p = element.showAlternative(alt3, {
                     onComplete: listener
                 });
 
@@ -379,11 +375,11 @@
             });
 
             it("should allow to use alternative ids", function (done) {
-                var listener = jasmine.createSpy("listener").and.callFake(function () {
+                const listener = jasmine.createSpy("listener").and.callFake(function () {
                     expect(element.visibleAlt).toBe(alt2);
                 });
 
-                var p = element.showAlternative(alt2.altId, {
+                const p = element.showAlternative(alt2.altId, {
                     onComplete: listener
                 });
 
@@ -399,7 +395,7 @@
             });
 
             it("should allow to use the effect option (horizontal slide)", function (done) {
-                var listener = function listener(_element, _alt1, _alt2) {
+                const listener = function listener(_element, _alt1, _alt2) {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
@@ -425,7 +421,7 @@
             });
 
             it("should allow to use the effect option (horizontal slide, left-to-right)", function (done) {
-                var listener = function listener(_element, _alt2, _alt1) {
+                const listener = function listener(_element, _alt2, _alt1) {
                     expect(element.visibleAlt).toBe(alt1);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
@@ -453,7 +449,7 @@
             });
 
             it("should allow to use the effect option (cross dissolve)", function (done) {
-                var listener = function listener(_element, _alt1, _alt2) {
+                const listener = function listener(_element, _alt1, _alt2) {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
@@ -479,7 +475,7 @@
             });
 
             it("should allow to use the effect option (none)", function (done) {
-                var listener = function listener(_element, _alt1, _alt2) {
+                const listener = function listener(_element, _alt1, _alt2) {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);
@@ -492,7 +488,7 @@
             });
 
             it("should allow to use the effect option (invalid value, should be equivalent to none)", function (done) {
-                var listener = function listener(_element, _alt1, _alt2) {
+                const listener = function listener(_element, _alt1, _alt2) {
                     expect(element.visibleAlt).toBe(alt2);
                     expect(_element).toBe(element);
                     expect(_alt1).toBe(alt1);

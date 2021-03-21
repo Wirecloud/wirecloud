@@ -54,7 +54,7 @@
             });
 
             it("should work by providing only the preferencesDef parameter", () => {
-                let preferencesDef = {
+                const preferencesDef = {
                     "preferences": {
                         "onepref": {
                             "name": "onepref",
@@ -63,7 +63,7 @@
                     }
                 };
 
-                let preferences = new Wirecloud.Preferences(preferencesDef);
+                const preferences = new Wirecloud.Preferences(preferencesDef);
 
                 expect(preferences.meta).toBe(preferencesDef);
                 expect(preferences.preferences).toEqual({
@@ -72,7 +72,7 @@
             });
 
             it("should work also when providing initial values", () => {
-                let preferencesDef = {
+                const preferencesDef = {
                     "preferences": {
                         "onepref": {
                             "name": "onepref",
@@ -84,7 +84,7 @@
                         }
                     }
                 };
-                let initial_values = {
+                const initial_values = {
                     "onepref": {
                         "inherit": false,
                         "value": 5
@@ -95,7 +95,7 @@
                     }
                 };
 
-                let preferences = new Wirecloud.Preferences(preferencesDef, initial_values);
+                const preferences = new Wirecloud.Preferences(preferencesDef, initial_values);
 
                 expect(preferences.meta).toBe(preferencesDef);
                 expect(preferences.preferences).toEqual({
@@ -108,10 +108,10 @@
 
         describe("get(name)", () => {
 
-            var preferences;
+            let preferences;
 
             beforeEach(() => {
-                let preferencesDef = {
+                const preferencesDef = {
                     "preferences": {
                         "onepref": {
                             "name": "onepref",
@@ -123,7 +123,7 @@
                         }
                     }
                 };
-                let initial_values = {
+                const initial_values = {
                     "onepref": {
                         "inherit": false,
                         "value": 5
@@ -146,10 +146,10 @@
 
         describe("set(changes)", () => {
 
-            var preferences;
+            let preferences;
 
             beforeEach(() => {
-                let preferencesDef = {
+                const preferencesDef = {
                     "preferences": {
                         "onepref": {
                             "name": "onepref",
@@ -165,7 +165,7 @@
                         }
                     }
                 };
-                let initial_values = {
+                const initial_values = {
                     "onepref": {
                         "inherit": false,
                         "value": 5
@@ -181,13 +181,13 @@
             });
 
             it("should do nothing if there are no changes", (done) => {
-                let listener1 = jasmine.createSpy("listener1");
+                const listener1 = jasmine.createSpy("listener1");
                 preferences.addEventListener("pre-commit", listener1);
-                let listener2 = jasmine.createSpy("listener2");
+                const listener2 = jasmine.createSpy("listener2");
                 preferences.addEventListener("post-commit", listener2);
                 preferences.preferences.onepref.value = 5;
 
-                let t = preferences.set({
+                const t = preferences.set({
                     "onepref": {
                         "value": 5
                     }
@@ -206,9 +206,9 @@
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
                     return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: 204});});
                 });
-                let listener1 = jasmine.createSpy("listener1");
+                const listener1 = jasmine.createSpy("listener1");
                 preferences.addEventListener("pre-commit", listener1);
-                let listener2 = jasmine.createSpy("listener2");
+                const listener2 = jasmine.createSpy("listener2");
                 preferences.addEventListener("post-commit", listener2);
                 preferences.preferences.onepref.value = 5;
                 preferences.preferences.onepref.getEffectiveValue.and.returnValues(5, 20);
@@ -218,7 +218,7 @@
                 preferences.preferences.mypref.value = "text";
                 preferences.preferences.mypref.getEffectiveValue.and.returnValue("inheritedtext");
 
-                let t = preferences.set({
+                const t = preferences.set({
                     "onepref": {
                         "value": 20
                     },
@@ -246,15 +246,15 @@
                         spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
                             return new Wirecloud.Task("Sending request", (resolve) => {resolve({status: statuscode});});
                         });
-                        let listener1 = jasmine.createSpy("listener1");
+                        const listener1 = jasmine.createSpy("listener1");
                         preferences.addEventListener("pre-commit", listener1);
-                        let listener2 = jasmine.createSpy("listener2");
+                        const listener2 = jasmine.createSpy("listener2");
                         preferences.addEventListener("post-commit", listener2);
                         preferences.preferences.onepref.value = 5;
                         preferences.preferences.onepref.getEffectiveValue.and.returnValues(5, 20);
                         Wirecloud.ui.InputInterfaceFactory.stringify.and.returnValue("20");
 
-                        let t = preferences.set({
+                        const t = preferences.set({
                             "onepref": {
                                 "value": 20
                             }
@@ -286,10 +286,10 @@
 
         describe("_handleParentChanges(parentPreferences, modifiedValues)", () => {
 
-            var preferences;
+            let preferences;
 
             beforeEach(() => {
-                let preferencesDef = {
+                const preferencesDef = {
                     "preferences": {
                         "onepref": {
                             "name": "onepref",
@@ -305,7 +305,7 @@
                         }
                     }
                 };
-                let initial_values = {
+                const initial_values = {
                     "onepref": {
                         "inherit": false,
                         "value": 5
@@ -321,9 +321,9 @@
             });
 
             it("does nothing if the updated preferences are unrelated", () => {
-                let listener1 = jasmine.createSpy("listener1");
+                const listener1 = jasmine.createSpy("listener1");
                 preferences.addEventListener("pre-commit", listener1);
-                let listener2 = jasmine.createSpy("listener2");
+                const listener2 = jasmine.createSpy("listener2");
                 preferences.addEventListener("post-commit", listener2);
 
                 preferences._handleParentChanges("notused", {"onepref2": 25});
@@ -333,9 +333,9 @@
             });
 
             it("does nothing when changing related preferences but that are currently not inherited", () => {
-                let listener1 = jasmine.createSpy("listener1");
+                const listener1 = jasmine.createSpy("listener1");
                 preferences.addEventListener("pre-commit", listener1);
-                let listener2 = jasmine.createSpy("listener2");
+                const listener2 = jasmine.createSpy("listener2");
                 preferences.addEventListener("post-commit", listener2);
 
                 preferences._handleParentChanges("notused", {"onepref": 25});
@@ -345,9 +345,9 @@
             });
 
             it("propagates changes into the inherited preferences", () => {
-                let listener1 = jasmine.createSpy("listener1");
+                const listener1 = jasmine.createSpy("listener1");
                 preferences.addEventListener("pre-commit", listener1);
-                let listener2 = jasmine.createSpy("listener2");
+                const listener2 = jasmine.createSpy("listener2");
                 preferences.addEventListener("post-commit", listener2);
                 preferences.preferences.mypref.inherit = true;
 

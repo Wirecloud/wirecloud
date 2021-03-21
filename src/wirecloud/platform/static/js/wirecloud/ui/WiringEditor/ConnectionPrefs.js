@@ -70,10 +70,8 @@
          *      [TODO: description]
          */
         _createMenuItem(title, iconClass, onclick, isEnabled) {
-            var item;
-
-            item = new se.MenuItem(title, onclick);
-            item.addIconClass('fa fa-' + iconClass);
+            const item = new se.MenuItem(title, onclick);
+            item.addIconClass(iconClass);
 
             if (isEnabled != null) {
                 item.enabled = isEnabled.call(this.connection);
@@ -87,10 +85,10 @@
          */
         build() {
             return [
-                this._createMenuItem(getCustomizeTitle.call(this.connection), "magic", function () {
+                this._createMenuItem(getCustomizeTitle.call(this.connection), "fas fa-magic", function () {
                     this.editable = !this.editable;
                 }.bind(this.connection), canCustomize),
-                this._createMenuItem(utils.gettext("Restore defaults"), "undo", function () {
+                this._createMenuItem(utils.gettext("Restore defaults"), "fas fa-undo", function () {
                     this.restoreDefaults();
                 }.bind(this.connection), canRestore)
             ];

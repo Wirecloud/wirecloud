@@ -45,7 +45,7 @@
     se.TextArea = class TextArea extends se.InputElement {
 
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'initialValue': '',
                 'class': ''
             };

@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var titles = ['', utils.gettext('Error'), utils.gettext('Warning'), utils.gettext('Info')];
+    const titles = ['', utils.gettext('Error'), utils.gettext('Warning'), utils.gettext('Info')];
 
     /**
      * Specific class representing alert dialogs.

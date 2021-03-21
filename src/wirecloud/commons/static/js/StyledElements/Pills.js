@@ -47,7 +47,7 @@
         }
 
         add(id, label) {
-            var pill = document.createElement('li');
+            const pill = document.createElement('li');
             pill.className = 'se-pill';
             pill.textContent = label;
             pill.addEventListener('click', clickCallback.bind(this, id), true);

@@ -29,6 +29,83 @@
 
     const privates = new WeakMap();
 
+    const events = ['blur', 'click', 'focus', 'mouseenter', 'mouseleave'];
+
+    const element_onclick = function element_onclick(event) {
+        event.stopPropagation();
+        this.click();
+    };
+
+    const element_onmouseenter = function element_onmouseenter(event) {
+        if (this.enabled) {
+            this.dispatchEvent('mouseenter');
+        }
+    };
+
+    const element_onmouseleave = function element_onmouseleave(event) {
+        if (this.enabled) {
+            this.dispatchEvent('mouseleave');
+        }
+    };
+
+    const element_onblur = function element_onblur(event) {
+        if (this.enabled) {
+            this.dispatchEvent('blur');
+        }
+    };
+
+    const element_onfocus = function element_onfocus(event) {
+        if (this.enabled) {
+            this.dispatchEvent('focus');
+        }
+    };
+
+    const element_onkeydown = function element_onkeydown(event) {
+        const key = utils.normalizeKey(event);
+        switch (key) {
+        case ' ':
+        case 'Enter':
+            event.preventDefault();
+            this.click();
+            break;
+        case 'Escape':
+        case 'ArrowLeft':
+            event.stopPropagation();
+            event.preventDefault();
+            this.parentElement.hide();
+            if (this.parentElement instanceof StyledElements.SubMenuItem) {
+                this.parentElement.menuitem.focus();
+            }
+            break;
+        case 'ArrowUp':
+            event.preventDefault();
+            this.parentElement.moveFocusUp();
+            break;
+        case 'Tab':
+            event.preventDefault();
+            const item = 'submenu' in this && this.submenu.isVisible() ? this.submenu : this.parentElement;
+            if (event.shiftKey) {
+                item.moveFocusUp();
+            } else {
+                item.moveFocusDown();
+            }
+            break;
+        case 'ArrowDown':
+            event.preventDefault();
+            this.parentElement.moveFocusDown();
+            break;
+        case 'ArrowRight':
+            event.preventDefault();
+            if ('submenu' in this) {
+                this.submenu.show(this.getBoundingClientRect());
+                if (this.submenu.hasEnabledItem()) {
+                    this.submenu.moveFocusDown();
+                }
+            }
+            break;
+        }
+    };
+
     // =========================================================================
     // CLASS DEFINITION
     // =========================================================================
@@ -77,7 +154,7 @@
                 };
             }
 
-            let priv = {
+            const priv = {
                 bodyelement: document.createElement('div'),
                 thumbnailelement: document.createElement('div'),
                 titleelement: document.createElement('div'),
@@ -314,92 +391,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var events = ['blur', 'click', 'focus', 'mouseenter', 'mouseleave'];
-
-    var element_onclick = function element_onclick(event) {
-        event.stopPropagation();
-        this.click();
-    };
-
-    var element_onmouseenter = function element_onmouseenter(event) {
-        if (this.enabled) {
-            this.dispatchEvent('mouseenter');
-        }
-    };
-
-    var element_onmouseleave = function element_onmouseleave(event) {
-        if (this.enabled) {
-            this.dispatchEvent('mouseleave');
-        }
-    };
-
-    var element_onblur = function element_onblur(event) {
-        if (this.enabled) {
-            this.dispatchEvent('blur');
-        }
-    };
-
-    var element_onfocus = function element_onfocus(event) {
-        if (this.enabled) {
-            this.dispatchEvent('focus');
-        }
-    };
-
-    var element_onkeydown = function element_onkeydown(event) {
-        var item, key;
-
-        key = utils.normalizeKey(event);
-        switch (key) {
-        case ' ':
-        case 'Enter':
-            event.preventDefault();
-            this.click();
-            break;
-        case 'Escape':
-        case 'ArrowLeft':
-            event.stopPropagation();
-            event.preventDefault();
-            this.parentElement.hide();
-            if (this.parentElement instanceof StyledElements.SubMenuItem) {
-                this.parentElement.menuitem.focus();
-            }
-            break;
-        case 'ArrowUp':
-            event.preventDefault();
-            this.parentElement.moveFocusUp();
-            break;
-        case 'Tab':
-            event.preventDefault();
-            if ('submenu' in this && this.submenu.isVisible()) {
-                item = this.submenu;
-            } else {
-                item = this.parentElement;
-            }
-            if (event.shiftKey) {
-                item.moveFocusUp();
-            } else {
-                item.moveFocusDown();
-            }
-            break;
-        case 'ArrowDown':
-            event.preventDefault();
-            this.parentElement.moveFocusDown();
-            break;
-        case 'ArrowRight':
-            event.preventDefault();
-            if ('submenu' in this) {
-                this.submenu.show(this.getBoundingClientRect());
-                if (this.submenu.hasEnabledItem()) {
-                    this.submenu.moveFocusDown();
-                }
-            }
-            break;
-        }
-    };
 
 })(StyledElements, StyledElements.Utils);

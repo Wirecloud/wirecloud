@@ -27,7 +27,7 @@
 
     "use strict";
 
-    var WORKSPACE_TAB = {
+    const WORKSPACE_TAB = {
         workspace: {
             contextManager: {
                 addCallback: jasmine.createSpy('addCallback'),
@@ -44,7 +44,7 @@
     };
     Object.freeze(WORKSPACE_TAB);
 
-    var WORKSPACEVIEW_TAB = {
+    const WORKSPACEVIEW_TAB = {
         workspace: {
             contextManager: {
                 addCallback: jasmine.createSpy('addCallback'),
@@ -59,7 +59,7 @@
     };
     Object.freeze(WORKSPACEVIEW_TAB);
 
-    var LOCKED_WORKSPACE_TAB = {
+    const LOCKED_WORKSPACE_TAB = {
         workspace: {
             isAllowed: jasmine.createSpy('isAllowed').and.callFake(() => {
                 return false;
@@ -71,7 +71,7 @@
     };
     Object.freeze(WORKSPACE_TAB);
 
-    var EMPTY_WIDGET_META = {
+    const EMPTY_WIDGET_META = {
         title: "My Widget",
         hasEndpoints: jasmine.createSpy("hasEndpoints").and.returnValue(false),
         hasPreferences: jasmine.createSpy("hasPreferences").and.returnValue(false),
@@ -85,7 +85,7 @@
     };
     Object.freeze(EMPTY_WIDGET_META);
 
-    var MISSING_WIDGET_META = {
+    const MISSING_WIDGET_META = {
         title: "My Widget",
         hasEndpoints: jasmine.createSpy("hasEndpoints").and.returnValue(false),
         hasPreferences: jasmine.createSpy("hasPreferences").and.returnValue(false),
@@ -99,7 +99,7 @@
     };
     Object.freeze(EMPTY_WIDGET_META);
 
-    var FULLSCREEN_WIDGET_META = {
+    const FULLSCREEN_WIDGET_META = {
         title: "My Widget",
         hasEndpoints: jasmine.createSpy("hasEndpoints").and.returnValue(false),
         hasPreferences: jasmine.createSpy("hasPreferences").and.returnValue(false),
@@ -113,9 +113,9 @@
     };
     Object.freeze(FULLSCREEN_WIDGET_META);
 
-    var PREF = new Wirecloud.UserPrefDef({name: "pref", type: "text", default: "other"});
-    var PROP = new Wirecloud.PersistentVariableDef({name: "prop", type: "text"});
-    var WIDGET_META = {
+    const PREF = new Wirecloud.UserPrefDef({name: "pref", type: "text", default: "other"});
+    const PROP = new Wirecloud.PersistentVariableDef({name: "prop", type: "text"});
+    const WIDGET_META = {
         uri: "Vendor/Widget/1.0",
         title: "My Widget",
         inputList: [
@@ -207,7 +207,7 @@
             });
 
             it("allows to instantiate widgets using minimal data", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
@@ -220,7 +220,7 @@
             });
 
             it("allow to instantiate widgets from partial persistence", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "2",
                     title: "title",
                     preferences: {},
@@ -243,7 +243,7 @@
             });
 
             it("allow to instantiate widgets from persistence", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "2",
                     title: "title",
                     preferences: {
@@ -278,7 +278,7 @@
             });
 
             it("allow to instantiate volatile widgets", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     volatile: true
                 });
@@ -292,7 +292,7 @@
             });
 
             it("allow to instantiate fullscreen capable widgets", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, FULLSCREEN_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, FULLSCREEN_WIDGET_META, {
                     id: "1"
                 });
 
@@ -301,10 +301,10 @@
 
             it("handles tab remove events", () => {
                 WORKSPACE_TAB.addEventListener.calls.reset();
-                let widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 widget.addEventListener("remove", listener);
 
                 WORKSPACE_TAB.addEventListener.calls.argsFor(0)[1](WORKSPACE_TAB);
@@ -313,7 +313,7 @@
             });
 
             it("allow to instantiate widgets on workspaceviews", () => {
-                let widget = new Wirecloud.Widget(WORKSPACEVIEW_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACEVIEW_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 expect(widget.codeurl).toBe("https://wirecloud.example.com/widgets/MyWidget/index.html#id=1&workspaceview=id232");
@@ -325,12 +325,12 @@
 
             it("do nothing when moving to the same tab", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest");
 
-                var p = widget.changeTab(widget.tab);
+                const p = widget.changeTab(widget.tab);
                 p.then(() => {
                     expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
                     done();
@@ -340,7 +340,7 @@
 
             it("save tab change into the server", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -352,7 +352,7 @@
                     });
                 });
 
-                var p = widget.changeTab({
+                const p = widget.changeTab({
                     id: 5
                 });
                 p.then(() => {
@@ -363,7 +363,7 @@
 
             it("handle error saving tab change into the server", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -375,7 +375,7 @@
                     });
                 });
 
-                var p = widget.changeTab({
+                const p = widget.changeTab({
                     id: 5
                 });
                 p.then(
@@ -396,10 +396,10 @@
 
             it("loads unloaded widgets", () => {
 
-                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
 
                 widget.wrapperElement = {
                     contentDocument: {
@@ -436,10 +436,10 @@
             });
 
             it("loads missing widgets", () => {
-                let widget = new Wirecloud.Widget(WORKSPACE_TAB, MISSING_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, MISSING_WIDGET_META, {
                     id: "1"
                 });
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
 
                 widget.wrapperElement = {
                     contentDocument: {
@@ -467,10 +467,10 @@
             });
 
             it("sends pending events", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
                 widget.wrapperElement = {
                     contentDocument: {
                         defaultView: {
@@ -498,7 +498,7 @@
 
             it("does nothing for widgets in loading state", () => {
 
-                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
                 widget.wrapperElement = {
@@ -521,10 +521,10 @@
 
             it("does nothing for loaded widgets", () => {
 
-                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
                 widget.wrapperElement = {
                     contentDocument: {
                         defaultView: {
@@ -553,14 +553,14 @@
 
             it("handles unload events", () => {
 
-                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
-                let listener = jasmine.createSpy();
+                const listener = jasmine.createSpy();
                 widget.registerContextAPICallback("iwidget", listener);
                 widget.registerContextAPICallback("mashup", listener);
                 widget.registerContextAPICallback("platform", listener);
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
 
                 widget.wrapperElement = {
                     contentDocument: {
@@ -595,10 +595,10 @@
 
             it("ignores unload events when unloaded", () => {
 
-                let widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
 
                 widget.wrapperElement = {
                     contentDocument: {
@@ -636,7 +636,7 @@
 
             it("is a shortcut for calling fullDisconnect on every endpoint", () => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
 
@@ -655,7 +655,7 @@
         describe("hasEndpoints()", () => {
 
             it("is a shortcut", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
                 expect(widget.hasEndpoints()).toBe(false);
                 expect(widget.meta.hasEndpoints).toHaveBeenCalled();
             });
@@ -665,7 +665,7 @@
         describe("hasPreferences()", () => {
 
             it("is a shortcut", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
                 expect(widget.hasPreferences()).toBe(false);
                 expect(widget.meta.hasPreferences).toHaveBeenCalled();
             });
@@ -675,7 +675,7 @@
         describe("is(component)", () => {
 
             it("return true for the same component", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
@@ -683,11 +683,11 @@
             });
 
             it("return false for the different widgets", () => {
-                var widget1 = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget1 = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
 
-                var widget2 = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget2 = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "2"
                 });
 
@@ -701,7 +701,7 @@
             describe("close", () => {
 
                 it("normal widget on unlocked workspace", () => {
-                    var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
                             editor: {
@@ -713,7 +713,7 @@
                 });
 
                 it("normal widget on locked workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
                             editor: {
@@ -725,7 +725,7 @@
                 });
 
                 it("normal widget on shared workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
                             // This should contain a false value as this user is
@@ -740,7 +740,7 @@
                 });
 
                 it("volatile widget on shared workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
                         volatile: true,
                         permissions: {
@@ -753,7 +753,7 @@
                 });
 
                 it("readonly widget", () => {
-                    var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
                             editor: {
@@ -770,12 +770,12 @@
             describe("move", () => {
 
                 it("normal widget on locked workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
                     expect(widget.isAllowed("move", "editor")).toBe(false);
                 });
 
                 it("volatile widget on shared workspace (editor)", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
                         volatile: true,
                         permissions: {
@@ -788,7 +788,7 @@
                 });
 
                 it("volatile widget on shared workspace (viewer)", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
                         volatile: true,
                         permissions: {
@@ -805,7 +805,7 @@
             describe("rename", () => {
 
                 it("normal widget on unlocked workspace", () => {
-                    var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
                             editor: {
@@ -817,7 +817,7 @@
                 });
 
                 it("normal widget on locked workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
                             editor: {
@@ -829,7 +829,7 @@
                 });
 
                 it("normal widget on shared workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1",
                         permissions: {
                             viewer: {
@@ -844,7 +844,7 @@
                 });
 
                 it("volatile widget on shared workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
                         volatile: true,
                         permissions: {
@@ -861,14 +861,14 @@
             describe("invalid permission name", () => {
 
                 it("normal widget on shared workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {id: "1"});
                     expect(() => {
                         widget.isAllowed("invalid");
                     }).toThrowError(TypeError);
                 });
 
                 it("volatile widget on shared workspace", () => {
-                    var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                         id: "1/1",
                         volatile: true
                     });
@@ -882,7 +882,7 @@
         });
 
         describe("registerContextAPICallback(scope, callback)", () => {
-            var widget;
+            let widget;
 
             beforeEach(() => {
                 widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
@@ -892,19 +892,19 @@
             });
 
             it("throws a TypeError exception when passing an invalid scope", () => {
-                let listener = jasmine.createSpy();
+                const listener = jasmine.createSpy();
                 expect(() => {
                     widget.registerContextAPICallback("invalid", listener);
                 }).toThrowError(TypeError);
             });
 
             it("support registering widget context callbacks", () => {
-                let listener = jasmine.createSpy();
+                const listener = jasmine.createSpy();
                 widget.registerContextAPICallback("iwidget", listener);
             });
 
             it("support registering mashup context callbacks", () => {
-                let listener = jasmine.createSpy();
+                const listener = jasmine.createSpy();
                 WORKSPACE_TAB.workspace.contextManager.addCallback.calls.reset();
 
                 widget.registerContextAPICallback("mashup", listener);
@@ -913,7 +913,7 @@
             });
 
             it("support registering platform context callbacks", () => {
-                let listener = jasmine.createSpy();
+                const listener = jasmine.createSpy();
                 widget.registerContextAPICallback("platform", listener);
             });
 
@@ -922,8 +922,8 @@
         describe("registerPrefCallback(callback)", () => {
 
             it("should register preference callbacks", () => {
-                var listener = jasmine.createSpy("listener");
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const listener = jasmine.createSpy("listener");
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
                     title: "old title"
                 });
@@ -935,12 +935,12 @@
         describe("reload()", () => {
 
             it("should reload widget view", (done) => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
                     title: "old title"
                 });
-                let listener = jasmine.createSpy("listener");
-                let element = widget.wrapperElement;
+                const listener = jasmine.createSpy("listener");
+                const element = widget.wrapperElement;
                 widget.wrapperElement = {
                     contentDocument: {
                         defaultView: {
@@ -981,15 +981,15 @@
         describe("remove()", () => {
 
             it("supports removing volatile widgets", (done) => {
-                var listener = jasmine.createSpy("listener");
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const listener = jasmine.createSpy("listener");
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
 
                 widget.addEventListener("remove", listener);
-                var p = widget.remove();
+                const p = widget.remove();
                 p.then((value) => {
                     expect(value).toBe(value);
                     expect(listener).toHaveBeenCalled();
@@ -998,13 +998,13 @@
             });
 
             it("supports removing loaded widgets", (done) => {
-                let listener = jasmine.createSpy("listener");
-                let widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const listener = jasmine.createSpy("listener");
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
                 widget.wrapperElement = {
                     contentDocument: {
                         defaultView: {
@@ -1023,7 +1023,7 @@
                 element.dispatchEvent(new Event("load"));
 
                 widget.addEventListener("remove", listener);
-                var p = widget.remove();
+                const p = widget.remove();
                 p.then((value) => {
                     expect(value).toBe(value);
                     expect(listener).toHaveBeenCalled();
@@ -1033,7 +1033,7 @@
 
             it("removes widget from persistence", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -1045,7 +1045,7 @@
                     });
                 });
 
-                var p = widget.remove();
+                const p = widget.remove();
                 p.then((value) => {
                     expect(value).toBe(value);
                     expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -1056,7 +1056,7 @@
 
             it("handle unexpected responses when removing the widget from persistence", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -1069,7 +1069,7 @@
                     });
                 });
 
-                var p = widget.remove();
+                const p = widget.remove();
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1087,8 +1087,8 @@
         describe("rename(name)", () => {
 
             it("throws an exception when passing an invalid name", () => {
-                var listener = jasmine.createSpy("listener");
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const listener = jasmine.createSpy("listener");
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
@@ -1103,13 +1103,13 @@
             });
 
             it("support renaming volatile widgets", (done) => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
 
-                var p = widget.rename("new name");
+                const p = widget.rename("new name");
                 p.then((value) => {
                     expect(value).toBe(value);
                     expect(widget.title).toBe("new name");
@@ -1119,7 +1119,7 @@
 
             it("renames widget on the server", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -1131,7 +1131,7 @@
                     });
                 });
 
-                var p = widget.rename("new name");
+                const p = widget.rename("new name");
                 p.then(
                     (value) => {
                         expect(value).toBe(value);
@@ -1147,7 +1147,7 @@
 
             it("handle unexpected responses when removing the widget from persistence", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -1160,7 +1160,7 @@
                     });
                 });
 
-                var p = widget.rename("new name");
+                const p = widget.rename("new name");
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1177,7 +1177,7 @@
 
         describe("setPosition(position)", () => {
 
-            var widget;
+            let widget;
 
             beforeEach(() => {
                 widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
@@ -1187,7 +1187,7 @@
             });
 
             it("should do nothing when passing an empty position", () => {
-                let initial_position = widget.position;
+                const initial_position = widget.position;
 
                 expect(widget.setPosition({})).toBe(widget);
 
@@ -1234,7 +1234,7 @@
 
         describe("setShape(shape)", () => {
 
-            var widget;
+            let widget;
 
             beforeEach(() => {
                 widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
@@ -1244,7 +1244,7 @@
             });
 
             it("should do nothing when passing an empty shape", () => {
-                let initial_shape = widget.shape;
+                const initial_shape = widget.shape;
 
                 expect(widget.setShape({})).toBe(widget);
 
@@ -1286,7 +1286,7 @@
         describe("setPermissions(permissions)", () => {
 
             it("applies changes immediatelly for volatile widgets", () => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true,
@@ -1297,13 +1297,13 @@
                     }
                 });
 
-                let t = widget.setPermissions({move: true});
+                const t = widget.setPermissions({move: true});
                 expect(t).toEqual(jasmine.any(Promise));
                 expect(widget.permissions.viewer.move).toBe(true);
             });
 
             it("updates permissions on the server", (done) => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
                     permissions: {
                         viewer: {
@@ -1320,7 +1320,7 @@
                     });
                 });
 
-                let p = widget.setPermissions({move: true});
+                const p = widget.setPermissions({move: true});
                 p.then(
                     (value) => {
                         expect(widget.permissions.viewer.move).toBe(true);
@@ -1334,7 +1334,7 @@
             });
 
             it("handles unexpected responses", (done) => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -1346,7 +1346,7 @@
                     });
                 });
 
-                let p = widget.setPermissions({move: true});
+                const p = widget.setPermissions({move: true});
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1363,14 +1363,14 @@
         describe("setTitleVisibility(visibility[, persistence])", () => {
 
             it("returns immediatelly for volatile widgets", (done) => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1/1",
                     title: "old title",
                     volatile: true
                 });
                 spyOn(Wirecloud.io, "makeRequest");
 
-                let p = widget.setTitleVisibility(true, false);
+                const p = widget.setTitleVisibility(true, false);
                 expect(widget.titlevisible).toBe(true);
                 expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
                 p.then(
@@ -1384,14 +1384,14 @@
             });
 
             it("updates titlevisible property", (done) => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
                     titlevisible: false
                 });
                 spyOn(Wirecloud.io, "makeRequest");
                 expect(widget.titlevisible).toBe(false);
 
-                let p = widget.setTitleVisibility(true, false);
+                const p = widget.setTitleVisibility(true, false);
                 expect(widget.titlevisible).toBe(true);
                 expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
                 p.then(
@@ -1405,7 +1405,7 @@
             });
 
             it("updates titlevisible property on the server", (done) => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
                     titlevisible: false
                 });
@@ -1419,7 +1419,7 @@
                 });
                 expect(widget.titlevisible).toBe(false);
 
-                let p = widget.setTitleVisibility(true, true);
+                const p = widget.setTitleVisibility(true, true);
                 p.then(
                     (value) => {
                         expect(widget.titlevisible).toBe(true);
@@ -1433,7 +1433,7 @@
             });
 
             it("handles unexpected responses", (done) => {
-                var widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
@@ -1445,7 +1445,7 @@
                     });
                 });
 
-                let p = widget.setTitleVisibility(true, true);
+                const p = widget.setTitleVisibility(true, true);
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1462,7 +1462,7 @@
         describe("showLogs()", () => {
 
             it("shows a log window menu", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
@@ -1474,7 +1474,7 @@
         describe("showSettings()", () => {
 
             it("shows a window menu for changing widget preferences", () => {
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 expect(widget.showSettings()).toBe(widget);
@@ -1483,8 +1483,8 @@
         });
 
         describe("upgrade(meta)", () => {
-            var failOnPreferences = false;
-            var failOnProperties = false;
+            let failOnPreferences = false;
+            let failOnProperties = false;
 
             beforeEach(() => {
                 failOnPreferences = false;
@@ -1550,7 +1550,7 @@
                         this.preferences = {};
                         this.missing = true;
                     } else {
-                        var PREF = new Wirecloud.UserPrefDef({
+                        const PREF = new Wirecloud.UserPrefDef({
                             name: "npref",
                             type: "text",
                             default: "other"
@@ -1569,7 +1569,7 @@
 
             it("throws an exception when passing an invalid meta", () => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 expect(() => {
@@ -1580,13 +1580,13 @@
 
             it("save widget meta changes into the server (upgrade)", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(1);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -1605,13 +1605,13 @@
 
             it("save widget meta changes into the server (downgrade)", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(-1);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -1630,13 +1630,13 @@
 
             it("save widget meta changes into the server (replace)", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -1655,7 +1655,7 @@
 
             it("allows switching to missing state", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGET_META, {
                     id: "1"
                 });
 
@@ -1663,8 +1663,8 @@
                 failOnPreferences = true;
                 failOnProperties = true;
 
-                var MISSING_WIDGET_META = new Wirecloud.WidgetMeta(true);
-                var p = widget.upgrade(MISSING_WIDGET_META);
+                const MISSING_WIDGET_META = new Wirecloud.WidgetMeta(true);
+                const p = widget.upgrade(MISSING_WIDGET_META);
                 p.then(
                     (value) => {
                         expect(widget.meta).toBe(MISSING_WIDGET_META);
@@ -1679,10 +1679,10 @@
 
             it("handle status transition from loaded widget", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
-                let element = widget.wrapperElement;
+                const element = widget.wrapperElement;
                 widget.wrapperElement = {
                     contentDocument: {
                         defaultView: {
@@ -1700,9 +1700,9 @@
                 widget.load();
                 element.dispatchEvent(new Event("load"));
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(1);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
@@ -1721,7 +1721,7 @@
 
             it("handle error saving meta change into the server", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
                 Wirecloud.io.makeRequest.and.callFake(function (url, options) {
@@ -1737,7 +1737,7 @@
                     this.uri = "";
                 });
 
-                var p = widget.upgrade(new Wirecloud.WidgetMeta());
+                const p = widget.upgrade(new Wirecloud.WidgetMeta());
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1752,15 +1752,15 @@
 
             it("handle unexpected responses while requesting new preferences", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
                 failOnPreferences = true;
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1775,15 +1775,15 @@
 
             it("handle unexpected responses bodies while requesting new preferences", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
                 failOnPreferences = "invalid";
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1798,15 +1798,15 @@
 
             it("handle unexpected responses while requesting new properties", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
                 failOnProperties = true;
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         fail("success callback called");
@@ -1821,15 +1821,15 @@
 
             it("handle unexpected responses bodies while requesting new properties", (done) => {
 
-                var widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1"
                 });
 
                 failOnProperties = "invalid";
 
-                var new_meta = new Wirecloud.WidgetMeta();
+                const new_meta = new Wirecloud.WidgetMeta();
                 new_meta.version.compareTo.and.returnValue(0);
-                var p = widget.upgrade(new_meta);
+                const p = widget.upgrade(new_meta);
                 p.then(
                     (value) => {
                         fail("success callback called");

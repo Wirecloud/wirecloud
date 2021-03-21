@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,6 +27,51 @@
 
     "use strict";
 
+    const update_component_label = function update_component_label() {
+        if (this._component.volatile) {
+            this.label.textContent = utils.gettext("volatile");
+            this.label.className = "label label-info";
+        } else if (this._component.missing) {
+            this.label.textContent = utils.gettext("missing");
+            this.label.className = "label label-danger";
+        } else if (this.used) {
+            this.label.textContent = utils.gettext("in use");
+            this.label.className = "label label-success";
+        } else if (!this._component.hasEndpoints()) {
+            this.label.textContent = utils.gettext("no endpoints");
+            this.label.className = "label label-warning";
+        } else {
+            if (this.label.parentElement) {
+                this.heading.removeChild(this.label);
+            }
+            return this;
+        }
+        this.heading.appendChild(this.label);
+
+        return this;
+    };
+
+    const update_enable_status = function update_enable_status() {
+        this.enabled = !(this.used || this._component.volatile || this._component.missing || !this._component.hasEndpoints());
+    };
+
+    const on_change_model = function on_change_model(model, changes) {
+
+        if (changes.indexOf('title') !== -1) {
+            this.setTitle(model.title);
+            this.titletooltip.options.content = model.title;
+        }
+
+        if (changes.indexOf('meta') !== -1) {
+            this.setTitle(model.title);
+            this.titletooltip.options.content = model.title;
+            this.setSubtitle("v" + model.meta.version);
+
+            update_enable_status.call(this);
+            update_component_label.call(this);
+        }
+    };
+
     ns.Component = class Component extends se.Panel {
 
         /**
@@ -37,12 +83,12 @@
          *      [TODO: description]
          */
         constructor(wiringComponent) {
-            var used = false;
+            let used = false;
 
             const btnPrefs = new se.PopupButton({
                 class: "we-prefs-btn",
                 title: utils.gettext("Preferences"),
-                iconClass: "fa fa-reorder"
+                iconClass: "fas fa-bars"
             });
 
             super({
@@ -102,14 +148,12 @@
          * @override
          */
         setTitle(title) {
-            var span;
-
-            span = document.createElement('span');
+            const span = document.createElement('span');
             span.textContent = title;
             this.titletooltip.options.content = title;
             this.titletooltip.bind(span);
 
-            return se.Panel.prototype.setTitle.call(this, span);
+            return super.setTitle(span);
         }
 
         showLogs() {
@@ -127,54 +171,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var update_component_label = function update_component_label() {
-        if (this._component.volatile) {
-            this.label.textContent = utils.gettext("volatile");
-            this.label.className = "label label-info";
-        } else if (this._component.missing) {
-            this.label.textContent = utils.gettext("missing");
-            this.label.className = "label label-danger";
-        } else if (this.used) {
-            this.label.textContent = utils.gettext("in use");
-            this.label.className = "label label-success";
-        } else if (!this._component.hasEndpoints()) {
-            this.label.textContent = utils.gettext("no endpoints");
-            this.label.className = "label label-warning";
-        } else {
-            if (this.label.parentElement) {
-                this.heading.removeChild(this.label);
-            }
-            return this;
-        }
-        this.heading.appendChild(this.label);
-
-        return this;
-    };
-
-    var update_enable_status = function update_enable_status() {
-        this.enabled = !(this.used || this._component.volatile || this._component.missing || !this._component.hasEndpoints());
-    };
-
-    var on_change_model = function on_change_model(model, changes) {
-
-        if (changes.indexOf('title') !== -1) {
-            this.setTitle(model.title);
-            this.titletooltip.options.content = model.title;
-        }
-
-        if (changes.indexOf('meta') !== -1) {
-            this.setTitle(model.title);
-            this.titletooltip.options.content = model.title;
-            this.setSubtitle("v" + model.meta.version);
-
-            update_enable_status.call(this);
-            update_component_label.call(this);
-        }
-    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

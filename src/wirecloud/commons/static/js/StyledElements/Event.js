@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,96 +27,83 @@
 
     "use strict";
 
-    // =========================================================================
-    // CLASS DEFINITION
-    // =========================================================================
+    const privates = new WeakMap();
 
     /**
      * This class manages the callbacks of the <code>StyledElement</code>s' events.
      */
-    var Event = function Event(context) {
-        Object.defineProperties(this, {
-            context: {value: context},
-            handlers: {value: []}
-        });
+    se.Event = class Event {
 
-        map.set(this, {
-            dispatching: false
-        });
-    };
+        constructor(context) {
+            Object.defineProperties(this, {
+                context: {value: context},
+                handlers: {value: []}
+            });
 
-    // =========================================================================
-    // PUBLIC MEMBERS
-    // =========================================================================
-
-    Event.prototype.addEventListener = function addEventListener(handler) {
-        if (typeof handler !== 'function') {
-            throw new TypeError('Handlers must be functions');
-        }
-        this.handlers.push(handler);
-    };
-
-    Event.prototype.removeEventListener = function removeEventListener(handler) {
-        var i;
-
-        if (typeof handler !== 'function') {
-            throw new TypeError('Handlers must be functions');
+            privates.set(this, {
+                dispatching: false
+            });
         }
 
-        for (i = this.handlers.length - 1; i >= 0; i--) {
-            if (this.handlers[i] === handler) {
-                if (map.get(this).dispatching) {
-                    this.handlers[i] = null;
-                } else {
+        addEventListener(handler) {
+            if (typeof handler !== 'function') {
+                throw new TypeError('Handlers must be functions');
+            }
+            this.handlers.push(handler);
+        }
+
+        removeEventListener(handler) {
+            if (typeof handler !== 'function') {
+                throw new TypeError('Handlers must be functions');
+            }
+
+            for (let i = this.handlers.length - 1; i >= 0; i--) {
+                if (this.handlers[i] === handler) {
+                    if (privates.get(this).dispatching) {
+                        this.handlers[i] = null;
+                    } else {
+                        this.handlers.splice(i, 1);
+                    }
+                }
+            }
+        }
+
+        clearEventListeners() {
+            if (privates.get(this).dispatching) {
+                this.handlers.forEach(function (callback, index, array) {
+                    array[index] = null;
+                });
+            } else {
+                this.handlers.length = 0;
+            }
+        }
+
+        dispatch() {
+            const priv = privates.get(this);
+            priv.dispatching = true;
+
+            for (let i = 0; i < this.handlers.length; i++) {
+                if (this.handlers[i] == null) {
+                    continue;
+                }
+                try {
+                    this.handlers[i].apply(this.context, arguments);
+                } catch (e) {
+                    if (window.console != null && typeof window.console.error === 'function') {
+                        window.console.error(e);
+                    }
+                }
+            }
+
+            for (let i = this.handlers.length - 1; i >= 0; i--) {
+                if (this.handlers[i] == null) {
                     this.handlers.splice(i, 1);
                 }
             }
-        }
-    };
 
-    Event.prototype.clearEventListeners = function clearEventListeners() {
-        if (map.get(this).dispatching) {
-            this.handlers.forEach(function (callback, index, array) {
-                array[index] = null;
-            });
-        } else {
-            this.handlers.length = 0;
-        }
-    };
-
-    Event.prototype.dispatch = function dispatch() {
-        var i;
-
-        map.get(this).dispatching = true;
-
-        for (i = 0; i < this.handlers.length; i++) {
-            if (this.handlers[i] == null) {
-                continue;
-            }
-            try {
-                this.handlers[i].apply(this.context, arguments);
-            } catch (e) {
-                if (window.console != null && typeof window.console.error === 'function') {
-                    window.console.error(e);
-                }
-            }
+            priv.dispatching = false;
         }
 
-        for (i = this.handlers.length - 1; i >= 0; i--) {
-            if (this.handlers[i] == null) {
-                this.handlers.splice(i, 1);
-            }
-        }
-
-        map.get(this).dispatching = false;
-    };
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var map = new WeakMap();
-
-    StyledElements.Event = Event;
+    }
 
 })(StyledElements, StyledElements.Utils);

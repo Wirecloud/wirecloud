@@ -27,6 +27,97 @@
 
     "use strict";
 
+    const privates = new WeakMap();
+
+    const update_buttons = function update_buttons() {
+        const editing = this.tab.workspace.editing;
+        const role = editing ? "editor" : "viewer";
+        if (this.grip) {
+            const editable = editing && !this.model.volatile && this.layout instanceof Wirecloud.ui.FreeLayout && (this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'editor'));
+            const moveable = this.draggable != null && this.draggable.canDrag(null, {widget: this}, 'viewer');
+            this.grip.enabled = editable;
+            this.grip.hidden = !editable && !(moveable && this.layout instanceof Wirecloud.ui.FreeLayout);
+            this.grip.icon.classList.toggle("fa-anchor", !moveable);
+            this.grip.icon.classList.toggle("fa-grip-vertical", moveable);
+            this.grip.setTitle(moveable ? utils.gettext("Disallow to move this widget") : utils.gettext("Allow to move this widget"));
+        }
+
+        if (this.titlevisibilitybutton) {
+            this.titlevisibilitybutton.hidden = !editing;
+            this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
+            this.titlevisibilitybutton.setTitle(this.model.titlevisible ? utils.gettext("Hide title") : utils.gettext("Show title"));
+            if (this.model.titlevisible) {
+                this.titlevisibilitybutton.replaceIconClassName("fa-eye-slash", "fa-eye");
+            } else {
+                this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
+            }
+        }
+        this.closebutton.hidden = !(this.model.volatile || editing) || !this.model.isAllowed('close', role);
+        this.menubutton.hidden = !editing;
+
+        this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
+        this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
+        this.rightresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
+    };
+
+    const update_className = function update_className() {
+        this.wrapperElement.classList.toggle('wc-missing-widget', this.model.missing);
+        this.wrapperElement.classList.toggle('wc-floating-widget', this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout);
+        this.wrapperElement.classList.toggle('wc-moveable-widget', this.draggable != null && this.draggable.canDrag(null, {widget: this}));
+        this.wrapperElement.classList.toggle('wc-titled-widget', this.model.titlevisible);
+    };
+
+    const update = function update() {
+        update_className.call(this);
+        update_buttons.call(this);
+    };
+
+    const update_position = function update_position() {
+        this.layout.updatePosition(this, this.wrapperElement);
+        this.wrapperElement.style.zIndex = this.position.z + 1;
+    };
+
+    const update_shape = function update_shape() {
+        this.layout.updateShape(this, this.wrapperElement);
+    };
+
+    const notify_position = function notify_position() {
+        this.model.contextManager.modify({
+            'xPosition': this.position.x,
+            'yPosition': this.position.y,
+            'zPosition': this.position.z
+        });
+    };
+
+    const notify_shape = function notify_shape() {
+        this.model.contextManager.modify({
+            'height': this.shape.height,
+            'width': this.shape.width,
+            'heightInPixels': this.model.wrapperElement.offsetHeight,
+            'widthInPixels': this.model.wrapperElement.offsetWidth
+        });
+    };
+
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
+
+    const on_add_log = function on_add_log() {
+        const errorCount = this.model.logManager.errorCount;
+        this.errorbutton.hidden = errorCount === 0;
+
+        const label = utils.interpolate(
+            utils.ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount),
+            {errorCount: errorCount},
+            true
+        );
+        this.errorbutton.setTitle(label);
+    };
+
+    const on_remove = function on_remove() {
+        this.dispatchEvent('remove');
+    };
+
     ns.WidgetView = class WidgetView extends se.StyledElement {
 
         /**
@@ -109,7 +200,7 @@
 
             this.wrapperElement = (new se.GUIBuilder()).parse(options.template, {
                 'closebutton': function (options, tcomponents, view) {
-                    var button = new se.Button({
+                    const button = new se.Button({
                         plain: true,
                         class: 'wc-remove',
                         iconClass: 'fas fa-times',
@@ -123,14 +214,14 @@
                     return button;
                 },
                 'errorbutton': function (options, tcomponents, view) {
-                    var button = new StyledElements.Button({
+                    const button = new StyledElements.Button({
                         plain: true,
                         class: 'errorbutton',
                         iconClass: 'fas fa-exclamation-triangle'
                     });
 
                     button.hide().addEventListener('click', function (button) {
-                        var dialog = new Wirecloud.ui.LogWindowMenu(view.model.logManager);
+                        const dialog = new Wirecloud.ui.LogWindowMenu(view.model.logManager);
                         dialog.show();
                     });
                     view.errorbutton = button;
@@ -151,7 +242,7 @@
                     return view.grip;
                 },
                 'menubutton': function (options, tcomponents, view) {
-                    var button = new StyledElements.PopupButton({
+                    const button = new StyledElements.PopupButton({
                         class: 'wc-menu-button',
                         iconClass: 'fas fa-cogs',
                         plain: true,
@@ -163,7 +254,7 @@
                     return button;
                 },
                 'minimizebutton': function (options, tcomponents, view) {
-                    var button = new StyledElements.Button({
+                    const button = new StyledElements.Button({
                         iconClass: 'fas fa-minus',
                         plain: true,
                         title: utils.gettext("Minimize")
@@ -177,7 +268,7 @@
                     return button;
                 },
                 'title': function (options, tcomponents, view) {
-                    var element = new StyledElements.EditableElement({initialContent: view.model.title});
+                    const element = new StyledElements.EditableElement({initialContent: view.model.title});
 
                     element.addEventListener('change', function (element, new_title) {
                         view.model.rename(new_title);
@@ -186,7 +277,7 @@
                     return element;
                 },
                 'titlevisibilitybutton': (options, tcomponents, view) => {
-                    var button = new StyledElements.Button({
+                    const button = new StyledElements.Button({
                         plain: true,
                         class: 'wc-titlevisibility-button',
                         iconClass: 'fa-fw fas fa-eye-slash'
@@ -199,21 +290,21 @@
                     return button;
                 },
                 'bottomresizehandle': function (options, tcomponents, view) {
-                    var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
+                    const handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true, fixWidth: true});
 
                     handle.addClassName("wc-bottom-resize-handle");
                     view.bottomresizehandle = handle;
                     return handle;
                 },
                 'leftresizehandle': function (options, tcomponents, view) {
-                    var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true});
+                    const handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: true});
 
                     handle.addClassName("wc-bottom-left-resize-handle");
                     view.leftresizehandle = handle;
                     return handle;
                 },
                 'rightresizehandle': function (options, tcomponents, view) {
-                    var handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: false});
+                    const handle = new Wirecloud.ui.WidgetViewResizeHandle(view, {resizeLeftSide: false});
 
                     handle.addClassName("wc-bottom-right-resize-handle");
                     view.rightresizehandle = handle;
@@ -256,7 +347,7 @@
 
 
             // TODO: review
-            var layout;
+            let layout;
             if (model.fulldragboard) {
                 layout = tab.dragboard.fulldragboardLayout;
                 this.previousLayout = tab.dragboard.layouts[model.layout];
@@ -317,7 +408,7 @@
                 return this;
             }
 
-            let oldHeight = this.shape.height;
+            const oldHeight = this.shape.height;
             priv.minimized = newStatus;
 
             if (this.minimized) {
@@ -348,7 +439,7 @@
             // Notify resize event
             reserveSpace = reserveSpace != null ? reserveSpace : true;
             if (reserveSpace) {
-                var persist = persistence != null ? persistence : true;
+                const persist = persistence != null ? persistence : true;
                 this.layout._notifyResizeEvent(this, this.shape.width, oldHeight, this.shape.width,  this.shape.height, false, false, persist, reserveSpace);
             }
 
@@ -363,7 +454,7 @@
          */
         toggleTitleVisibility(persistence) {
             this.titlevisibilitybutton.disable().addClassName('busy');
-            let t = this.model.setTitleVisibility(!this.titlevisible, persistence);
+            const t = this.model.setTitleVisibility(!this.titlevisible, persistence);
             t.finally(() => {this.titlevisibilitybutton.enable().removeClassName('busy');});
             return t;
         }
@@ -377,7 +468,7 @@
          * @return {Wirecloud.Task} task instance controlling the progress
          */
         togglePermission(permission, persistence) {
-            let changes = {
+            const changes = {
                 [permission]: !this.model.permissions.viewer[permission]
             };
             return this.model.setPermissions(changes, persistence);
@@ -393,8 +484,8 @@
         }
 
         setShape(shape, resizeLeftSide, resizeTopSide, persist) {
-            var oldWidth = this.shape.width;
-            var oldHeight = this.shape.height;
+            const oldWidth = this.shape.width;
+            const oldHeight = this.shape.height;
 
             utils.update(privates.get(this).shape, shape);
 
@@ -477,29 +568,25 @@
         }
 
         moveToLayout(newLayout) {
-            var affectedWidgetsRemoving, affectedWidgetsAdding,
-                minimizeOnFinish, previousWidth, previousHeight,
-                dragboardChange, oldLayout, oldPositionPixels;
-
             if (this.layout === newLayout) {
                 return Promise.resolve();
             }
 
             const priv = privates.get(this);
-            minimizeOnFinish = false;
+            let minimizeOnFinish = false;
             if (this.minimized) {
                 minimizeOnFinish = true;
                 this.toggleMinimizeStatus();
             }
 
-            previousWidth = this.wrapperElement.offsetWidth;
-            previousHeight = this.wrapperElement.offsetHeight;
+            const previousWidth = this.wrapperElement.offsetWidth;
+            const previousHeight = this.wrapperElement.offsetHeight;
 
             const tabChange = priv.tab !== newLayout.dragboard.tab;
-            dragboardChange = this.layout.dragboard !== newLayout.dragboard || tabChange;
-            oldLayout = this.layout;
+            const dragboardChange = this.layout.dragboard !== newLayout.dragboard || tabChange;
+            const oldLayout = this.layout;
 
-            affectedWidgetsRemoving = oldLayout.removeWidget(this, dragboardChange);
+            const affectedWidgetsRemoving = oldLayout.removeWidget(this, dragboardChange);
 
             if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setShape(this.previousShape);
@@ -520,7 +607,7 @@
             }
 
             if (dragboardChange && !(newLayout instanceof Wirecloud.ui.FreeLayout)) {
-                let newposition = newLayout._searchFreeSpace(this.shape.width, this.shape.height);
+                const newposition = newLayout._searchFreeSpace(this.shape.width, this.shape.height);
                 newposition.relx = true;
                 newposition.rely = true;
                 newposition.anchor = "top-left";
@@ -528,7 +615,7 @@
             } else if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setPosition(this.previousPosition);
             } else {
-                oldPositionPixels = {
+                const oldPositionPixels = {
                     x: oldLayout.getColumnOffset(this.position),
                     y: oldLayout.getRowOffset(this.position)
                 };
@@ -551,7 +638,7 @@
                 }
             }
 
-            affectedWidgetsAdding = newLayout.addWidget(this, dragboardChange);
+            const affectedWidgetsAdding = newLayout.addWidget(this, dragboardChange);
             priv.tab = newLayout.dragboard.tab;
 
             if (minimizeOnFinish) {
@@ -598,9 +685,9 @@
         }
 
         toJSON() {
-            let fulldragboard = this.layout === this.tab.dragboard.fulldragboardLayout;
-            let shape = fulldragboard ? this.previousShape : this.shape;
-            let position = fulldragboard ? this.previousPosition : this.position;
+            const fulldragboard = this.layout === this.tab.dragboard.fulldragboardLayout;
+            const shape = fulldragboard ? this.previousShape : this.shape;
+            const position = fulldragboard ? this.previousPosition : this.position;
             return {
                 id: this.id,
                 tab: this.tab.id,
@@ -638,97 +725,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
-    var update_buttons = function update_buttons() {
-        let editing = this.tab.workspace.editing;
-        let role = editing ? "editor" : "viewer";
-        if (this.grip) {
-            let editable = editing && !this.model.volatile && this.layout instanceof Wirecloud.ui.FreeLayout && (this.draggable == null || this.draggable.canDrag(null, {widget: this}, 'editor'));
-            let moveable = this.draggable != null && this.draggable.canDrag(null, {widget: this}, 'viewer');
-            this.grip.enabled = editable;
-            this.grip.hidden = !editable && !(moveable && this.layout instanceof Wirecloud.ui.FreeLayout);
-            this.grip.icon.classList.toggle("fa-anchor", !moveable);
-            this.grip.icon.classList.toggle("fa-grip-vertical", moveable);
-            this.grip.setTitle(moveable ? utils.gettext("Disallow to move this widget") : utils.gettext("Allow to move this widget"));
-        }
-
-        if (this.titlevisibilitybutton) {
-            this.titlevisibilitybutton.hidden = !editing;
-            this.titlevisibilitybutton.enabled = (!this.model.volatile && !this.minimized && editing);
-            this.titlevisibilitybutton.setTitle(this.model.titlevisible ? utils.gettext("Hide title") : utils.gettext("Show title"));
-            if (this.model.titlevisible) {
-                this.titlevisibilitybutton.replaceIconClassName("fa-eye-slash", "fa-eye");
-            } else {
-                this.titlevisibilitybutton.replaceIconClassName("fa-eye", "fa-eye-slash");
-            }
-        }
-        this.closebutton.hidden = !(this.model.volatile || editing) || !this.model.isAllowed('close', role);
-        this.menubutton.hidden = !editing;
-
-        this.bottomresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
-        this.leftresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
-        this.rightresizehandle.enabled = (this.model.volatile || editing) && this.model.isAllowed('resize', role);
-    };
-
-    var update_className = function update_className() {
-        this.wrapperElement.classList.toggle('wc-missing-widget', this.model.missing);
-        this.wrapperElement.classList.toggle('wc-floating-widget', this.layout != null && this.layout instanceof Wirecloud.ui.FreeLayout);
-        this.wrapperElement.classList.toggle('wc-moveable-widget', this.draggable != null && this.draggable.canDrag(null, {widget: this}));
-        this.wrapperElement.classList.toggle('wc-titled-widget', this.model.titlevisible);
-    };
-
-    var update = function update() {
-        update_className.call(this);
-        update_buttons.call(this);
-    };
-
-    var update_position = function update_position() {
-        this.layout.updatePosition(this, this.wrapperElement);
-        this.wrapperElement.style.zIndex = this.position.z + 1;
-    };
-
-    var update_shape = function update_shape() {
-        this.layout.updateShape(this, this.wrapperElement);
-    };
-
-    var notify_position = function notify_position() {
-        this.model.contextManager.modify({
-            'xPosition': this.position.x,
-            'yPosition': this.position.y,
-            'zPosition': this.position.z
-        });
-    };
-
-    var notify_shape = function notify_shape() {
-        this.model.contextManager.modify({
-            'height': this.shape.height,
-            'width': this.shape.width,
-            'heightInPixels': this.model.wrapperElement.offsetHeight,
-            'widthInPixels': this.model.wrapperElement.offsetWidth
-        });
-    };
-
-    // =========================================================================
-    // EVENT HANDLERS
-    // =========================================================================
-
-    var on_add_log = function on_add_log() {
-        var label, errorCount = this.model.logManager.errorCount;
-        this.errorbutton.hidden = errorCount === 0;
-
-        label = utils.ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
-        label = utils.interpolate(label, {errorCount: errorCount}, true);
-        this.errorbutton.setTitle(label);
-    };
-
-    var on_remove = function on_remove() {
-        this.dispatchEvent('remove');
-    };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

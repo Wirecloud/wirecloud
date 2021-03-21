@@ -27,6 +27,171 @@
 
     "use strict";
 
+    const privates = new WeakMap();
+
+    const on_tabs_get = function on_tabs_get() {
+        return privates.get(this).tabs.slice(0);
+    };
+
+    const on_tabs_by_id_get = function on_tabs_by_id_get() {
+        const tabs = {};
+
+        privates.get(this).tabs.forEach(function (tab) {
+            tabs[tab.id] = tab;
+        });
+
+        return tabs;
+    };
+
+    const _create_tab = function _create_tab(data) {
+        const tab = new Wirecloud.WorkspaceTab(this, data);
+        const priv = privates.get(this);
+
+        tab.addEventListener('change', priv.on_changetab);
+        tab.addEventListener('addwidget', priv.on_addwidget);
+        tab.addEventListener('remove', priv.on_removetab);
+        tab.addEventListener('removewidget', priv.on_removewidget);
+
+        priv.tabs.push(tab);
+
+        this.dispatchEvent('createtab', tab);
+
+        data.iwidgets.forEach(function (data) {
+            const resource = this.resources.findResource('widget', data.widget, true);
+            tab.createWidget(resource, utils.merge(data, {
+                commit: false
+            }));
+        }, this);
+
+        return tab;
+    };
+
+    const create_tabtitle = function create_tabtitle() {
+        const priv = privates.get(this);
+        const titles = priv.tabs.map((tab) => {
+            return tab.title;
+        });
+
+        const base = utils.interpolate(utils.gettext("Tab %(index)s"), {
+            index: priv.tabs.length + 1
+        });
+        let copy = 1;
+        let title = base;
+        while (titles.indexOf(title) !== -1) {
+            copy += 1;
+            title = utils.interpolate(utils.gettext("%(base)s (%(copy)s)"), {
+                base: base,
+                copy: copy
+            });
+        }
+
+        return title;
+    };
+
+    const on_initial_tab_get = function on_initial_tab_get() {
+        const priv = privates.get(this);
+
+        for (let i = 0; i < priv.tabs.length; i++) {
+            if (priv.tabs[i].initial) {
+                return priv.tabs[i];
+            }
+        }
+
+        return null;
+    };
+
+    const on_operators_get = function on_operators_get() {
+        return this.wiring.operators;
+    };
+
+    const on_operators_by_id_get = function on_operators_by_id_get() {
+        return this.wiring.operatorsById;
+    };
+
+    const on_url_get = function on_url_get() {
+        return new URL(
+            Wirecloud.URLs.WORKSPACE_VIEW.evaluate({
+                name: encodeURIComponent(this.name),
+                owner: encodeURIComponent(this.owner)
+            }),
+            Wirecloud.location.base
+        );
+    };
+
+    const on_widgets_get = function on_widgets_get() {
+        return Array.prototype.concat.apply([], privates.get(this).tabs.map(function (tab) {
+            return tab.widgets;
+        }));
+    };
+
+    const on_widgets_by_id_get = function on_widgets_by_id_get() {
+        const args = privates.get(this).tabs.map(function (tab) {
+            return tab.widgetsById;
+        })
+
+        // Create an empty object where store the widgets
+        args.unshift({});
+        return utils.merge.apply(utils, args);
+    };
+
+    const is_allowed = function is_allowed(permission) {
+        return Wirecloud.PolicyManager.evaluate('workspace', permission);
+    };
+
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
+
+    const on_changetab = function on_changetab(tab, changes) {
+        this.dispatchEvent('changetab', tab, changes);
+    };
+
+    const on_createoperator = function on_createoperator(wiring, operator) {
+        this.resources.addComponent(operator.meta);
+        this.dispatchEvent('createoperator', operator);
+    };
+
+    const on_addwidget = function on_addwidget(tab, widget, view) {
+        // Check if we are managing a create widget event
+        if (view == null) {
+            this.resources.addComponent(widget.meta);
+            this.dispatchEvent('createwidget', widget);
+        }
+    };
+
+    const on_livemessage = function on_livemessage(live, data) {
+        if (data.workspace === this.id) {
+            if ('name' in data) {
+                const old_name = this.contextManager.get('name');
+                this.contextManager.modify({
+                    name: data.name
+                });
+                this.dispatchEvent('change', ['name'], {name: old_name});
+            }
+        }
+    };
+
+    const on_removetab = function on_removetab(tab) {
+        const priv = privates.get(this);
+
+        priv.tabs.splice(priv.tabs.indexOf(tab), 1);
+
+        tab.removeEventListener('change', priv.on_changetab);
+        tab.removeEventListener('addwidget', priv.on_addwidget);
+        tab.removeEventListener('remove', priv.on_removetab);
+        tab.removeEventListener('removewidget', priv.on_removewidget);
+
+        this.dispatchEvent('removetab', tab);
+    };
+
+    const on_removeoperator = function on_removeoperator(wiring, operator) {
+        this.dispatchEvent('removeoperator', operator);
+    };
+
+    const on_removewidget = function on_removewidget(tab, widget) {
+        this.dispatchEvent('removewidget', widget);
+    };
+
     /**
      * @name Wirecloud.Workspace
      *
@@ -39,8 +204,6 @@
     ns.Workspace = class Workspace extends se.ObjectWithEvents {
 
         constructor(data, resources) {
-            var priv;
-
             super([
                 'createoperator',
                 'createtab',
@@ -54,7 +217,7 @@
                 'unload'
             ]);
 
-            priv = {
+            const priv = {
                 tabs: [],
                 on_livemessage: on_livemessage.bind(this),
                 on_changetab: on_changetab.bind(this),
@@ -278,7 +441,7 @@
                 options = {};
             }
 
-            var url = Wirecloud.URLs.TAB_COLLECTION.evaluate({
+            const url = Wirecloud.URLs.TAB_COLLECTION.evaluate({
                 workspace_id: this.id
             });
 
@@ -290,7 +453,7 @@
                 options.name = URLify(options.title);
             }
 
-            var content = {
+            const content = {
                 name: options.name,
                 title: options.title
             };
@@ -307,7 +470,7 @@
                     return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
 
-                var tab = _create_tab.call(this, JSON.parse(response.responseText));
+                const tab = _create_tab.call(this, JSON.parse(response.responseText));
                 return Promise.resolve(tab);
             });
         }
@@ -359,7 +522,7 @@
             // Force string ids
             id = String(id);
 
-            for (var i = 0; i < this.widgets.length; i++) {
+            for (let i = 0; i < this.widgets.length; i++) {
                 if (this.widgets[i].id === id) {
                     return this.widgets[i];
                 }
@@ -419,11 +582,11 @@
                 throw new TypeError("missing options parameter");
             }
 
-            var url = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({
+            const url = Wirecloud.URLs.WORKSPACE_PUBLISH.evaluate({
                 workspace_id: this.id
             });
 
-            var content = new FormData();
+            const content = new FormData();
 
             if (options.image) {
                 content.append('image', options.image);
@@ -477,11 +640,11 @@
                 name = URLify(title);
             }
 
-            var url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
+            const url = Wirecloud.URLs.WORKSPACE_ENTRY.evaluate({
                 workspace_id: this.id
             });
 
-            var content = {
+            const content = {
                 title: title,
                 name: name
             };
@@ -498,8 +661,8 @@
                     return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
                 }
 
-                var old_name = this.contextManager.get('name');
-                var old_title = this.contextManager.get('title');
+                const old_name = this.contextManager.get('name');
+                const old_title = this.contextManager.get('title');
                 this.contextManager.modify({
                     name: name,
                     title: title
@@ -510,7 +673,7 @@
         }
 
         unload() {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             if (Wirecloud.live) {
                 Wirecloud.live.removeEventListener('workspace', priv.on_livemessage);
             }
@@ -528,173 +691,5 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var privates = new WeakMap();
-
-    var on_tabs_get = function on_tabs_get() {
-        return privates.get(this).tabs.slice(0);
-    };
-
-    var on_tabs_by_id_get = function on_tabs_by_id_get() {
-        var tabs = {};
-
-        privates.get(this).tabs.forEach(function (tab) {
-            tabs[tab.id] = tab;
-        });
-
-        return tabs;
-    };
-
-    var _create_tab = function _create_tab(data) {
-        var tab = new Wirecloud.WorkspaceTab(this, data);
-        var priv = privates.get(this);
-
-        tab.addEventListener('change', priv.on_changetab);
-        tab.addEventListener('addwidget', priv.on_addwidget);
-        tab.addEventListener('remove', priv.on_removetab);
-        tab.addEventListener('removewidget', priv.on_removewidget);
-
-        priv.tabs.push(tab);
-
-        this.dispatchEvent('createtab', tab);
-
-        data.iwidgets.forEach(function (data) {
-            var resource = this.resources.findResource('widget', data.widget, true);
-            tab.createWidget(resource, utils.merge(data, {
-                commit: false
-            }));
-        }, this);
-
-        return tab;
-    };
-
-    var create_tabtitle = function create_tabtitle() {
-        var copy, base, title, titles, priv;
-
-        priv = privates.get(this);
-        titles = priv.tabs.map(function (tab) {
-            return tab.title;
-        });
-
-        copy = 1;
-        base = title = utils.interpolate(utils.gettext("Tab %(index)s"), {
-            index: priv.tabs.length + 1
-        });
-
-        while (titles.indexOf(title) !== -1) {
-            copy += 1;
-            title = utils.interpolate(utils.gettext("%(base)s (%(copy)s)"), {
-                base: base,
-                copy: copy
-            });
-        }
-
-        return title;
-    };
-
-    var on_initial_tab_get = function on_initial_tab_get() {
-        var i, priv;
-
-        priv = privates.get(this);
-
-        for (i = 0; i < priv.tabs.length; i++) {
-            if (priv.tabs[i].initial) {
-                return priv.tabs[i];
-            }
-        }
-
-        return null;
-    };
-
-    var on_operators_get = function on_operators_get() {
-        return this.wiring.operators;
-    };
-
-    var on_operators_by_id_get = function on_operators_by_id_get() {
-        return this.wiring.operatorsById;
-    };
-
-    var on_url_get = function on_url_get() {
-        return new URL(
-            Wirecloud.URLs.WORKSPACE_VIEW.evaluate({
-                name: encodeURIComponent(this.name),
-                owner: encodeURIComponent(this.owner)
-            }),
-            Wirecloud.location.base
-        );
-    };
-
-    var on_widgets_get = function on_widgets_get() {
-        return Array.prototype.concat.apply([], privates.get(this).tabs.map(function (tab) {
-            return tab.widgets;
-        }));
-    };
-
-    var on_widgets_by_id_get = function on_widgets_by_id_get() {
-        var args = privates.get(this).tabs.map(function (tab) {
-            return tab.widgetsById;
-        })
-
-        // Create an empty object where store the widgets
-        args.unshift({});
-        return utils.merge.apply(utils, args);
-    };
-
-    var is_allowed = function is_allowed(permission) {
-        return Wirecloud.PolicyManager.evaluate('workspace', permission);
-    };
-
-    // =========================================================================
-    // EVENT HANDLERS
-    // =========================================================================
-
-    var on_changetab = function on_changetab(tab, changes) {
-        this.dispatchEvent('changetab', tab, changes);
-    };
-
-    var on_createoperator = function on_createoperator(wiring, operator) {
-        this.resources.addComponent(operator.meta);
-        this.dispatchEvent('createoperator', operator);
-    };
-
-    var on_addwidget = function on_addwidget(tab, widget, view) {
-        // Check if we are managing a create widget event
-        if (view == null) {
-            this.resources.addComponent(widget.meta);
-            this.dispatchEvent('createwidget', widget);
-        }
-    };
-
-    var on_livemessage = function on_livemessage(live, data) {
-        if (data.workspace === this.id) {
-            if ('name' in data) {
-                var old_name = this.contextManager.get('name');
-                this.contextManager.modify({
-                    name: data.name
-                });
-                this.dispatchEvent('change', ['name'], {name: old_name});
-            }
-        }
-    };
-
-    var on_removetab = function on_removetab(tab) {
-        var priv = privates.get(this);
-
-        priv.tabs.splice(priv.tabs.indexOf(tab), 1);
-
-        tab.removeEventListener('change', priv.on_changetab);
-        tab.removeEventListener('addwidget', priv.on_addwidget);
-        tab.removeEventListener('remove', priv.on_removetab);
-        tab.removeEventListener('removewidget', priv.on_removewidget);
-
-        this.dispatchEvent('removetab', tab);
-    };
-
-    var on_removeoperator = function on_removeoperator(wiring, operator) {
-        this.dispatchEvent('removeoperator', operator);
-    };
-
-    var on_removewidget = function on_removewidget(tab, widget) {
-        this.dispatchEvent('removewidget', widget);
-    };
 
 })(Wirecloud, StyledElements, StyledElements.Utils);

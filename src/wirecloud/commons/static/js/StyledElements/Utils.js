@@ -265,11 +265,11 @@ if (window.StyledElements == null) {
         }
 
         if (deep) {
-            for (let key in object) {
+            for (const key in object) {
                 result[key] = Utils.clone(object[key], true);
             }
         } else {
-            for (let key in object) {
+            for (const key in object) {
                 result[key] = object[key];
             }
         }
@@ -288,7 +288,7 @@ if (window.StyledElements == null) {
             throw new TypeError("[error description]");
         }
 
-        for (let name in source) {
+        for (const name in source) {
             target[name] = cloneProp.call(Utils, source[name]);
         }
 
@@ -339,7 +339,7 @@ if (window.StyledElements == null) {
         target = Utils.cloneObject(target);
         source = Utils.cloneObject(source);
 
-        for (let name in source) {
+        for (const name in source) {
             target[name] = updateProp.call(Utils, target[name], source[name]);
         }
 
@@ -359,16 +359,14 @@ if (window.StyledElements == null) {
         return true;
     };
 
-    let isSubClass = function isSubClass(superClass, childClass) {
-        let c1, c2, found = false;
-
+    const isSubClass = function isSubClass(superClass, childClass) {
         if (typeof superClass !== 'function' || typeof childClass !== 'function') {
             return found;
         }
 
-        c1 = superClass.prototype;
-        c2 = childClass.prototype;
-
+        const c1 = superClass.prototype;
+        let c2 = childClass.prototype;
+        let found = false;
         while (!(found = (c1 === c2))) {
             c2 = Object.getPrototypeOf(c2);
 
@@ -380,11 +378,11 @@ if (window.StyledElements == null) {
         return found;
     };
 
-    let equalsClass = function equalsClass(target, source) {
+    const equalsClass = function equalsClass(target, source) {
         return target.constructor === source.constructor;
     };
 
-    let updateProp = function updateProp(targetValue, sourceValue) {
+    const updateProp = function updateProp(targetValue, sourceValue) {
         if (sourceValue == null) {
             if (targetValue == null) {
                 targetValue = null;
@@ -922,7 +920,7 @@ if (window.StyledElements == null) {
     Utils.values = function values(object) {
         const values = [];
 
-        for (let key in object) {
+        for (const key in object) {
             values.push(object[key]);
         }
 
@@ -935,7 +933,7 @@ if (window.StyledElements == null) {
      * @since 0.11.0
      */
     Utils.setupdate = function setupdate(setA, setB) {
-        for (let elem of setB) {
+        for (const elem of setB) {
             setA.add(elem);
         }
         return setA;
@@ -958,8 +956,8 @@ if (window.StyledElements == null) {
      */
     Utils.timeoutPromise = function timeoutPromise(promise, ms, fallback) {
         // Create a promise that resolves/rejects in <ms> milliseconds
-        let timeout = new Promise((resolve, reject) => {
-            let id = setTimeout(() => {
+        const timeout = new Promise((resolve, reject) => {
+            const id = setTimeout(() => {
                 clearTimeout(id);
                 if (fallback != null) {
                     resolve(fallback);
@@ -982,10 +980,10 @@ if (window.StyledElements == null) {
                 fulfill();
             }
 
-            let w = element.ownerDocument.defaultView;
-            let display = w.getComputedStyle(element, null).getPropertyValue("display");
+            const w = element.ownerDocument.defaultView;
+            const display = w.getComputedStyle(element, null).getPropertyValue("display");
             if (display !== "none") {
-                let listener = function listener(event) {
+                const listener = function listener(event) {
                     element.removeEventListener('transitionend', listener);
                     fulfill();
                 };
@@ -1003,7 +1001,7 @@ if (window.StyledElements == null) {
      * @since 0.11.0
      */
     Utils.removeFromArray = function removeFromArray(arr, element) {
-        let index = arr.indexOf(element);
+        const index = arr.indexOf(element);
         if (index !== -1) {
             arr.splice(index, 1);
         }

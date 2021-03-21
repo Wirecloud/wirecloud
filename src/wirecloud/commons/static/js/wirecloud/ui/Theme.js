@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var Theme = function Theme(desc) {
+    const Theme = function Theme(desc) {
         Object.defineProperties(this, {
             name: {value: desc.name},
             label: {value: desc.label},

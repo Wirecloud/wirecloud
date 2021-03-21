@@ -26,12 +26,12 @@
 
     "use strict";
 
-    var loaded = false;
-    var WIDGET_VIEW = {
+    let loaded = false;
+    const WIDGET_VIEW = {
         load: jasmine.createSpy('load')
     };
     Object.freeze(WIDGET_VIEW);
-    var WIDGET = {
+    const WIDGET = {
         id: "1",
         tab: {
             workspace: {
@@ -76,13 +76,13 @@
         describe("new WidgetTargetEndpoint(widgetModel, [endpointDesc])", function () {
 
             it("should create a new instance", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     description: "description",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -93,12 +93,12 @@
             });
 
             it("should create a new instance with no endpointDesc.description", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -110,7 +110,7 @@
 
             it("should create a new instance with no endpointDesc", function () {
                 /* The Dashboard Management API doesn't provide a endpointDesc */
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -121,12 +121,12 @@
             });
 
             it("should handle empty friendcodes", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: ""
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.TargetEndpoint).toBe(true);
@@ -141,13 +141,13 @@
         describe("getReachableEndpoints()", function () {
 
             it("should return the info for targeting this endpoint in a list", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     actionlabel: "Send tweet",
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var expected_result = [
+                const expected_result = [
                     {
                         actionlabel: "Send tweet",
                         endpoint: "source",
@@ -156,18 +156,18 @@
                         type: "widget"
                     }
                 ];
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.getReachableEndpoints()).toEqual(expected_result);
             });
 
             it("should provide a default action label if the endpoint does not provide it", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var expected_result = [
+                const expected_result = [
                     {
                         actionlabel: "Use in title",
                         endpoint: "source",
@@ -176,7 +176,7 @@
                         type: "widget"
                     }
                 ];
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.getReachableEndpoints()).toEqual(expected_result);
             });
@@ -186,12 +186,12 @@
         describe("propagate(event, [options])", function () {
 
             it("should add the event to the pending_events list if the widget is currently unloaded", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 endpoint.propagate("test");
                 expect(WIDGET.pending_events.push.calls.count()).toBe(1);
                 expect(WIDGET_VIEW.load.calls.count()).toBe(1);
@@ -200,12 +200,12 @@
             });
 
             it("should call endpoint listener", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -217,12 +217,12 @@
             });
 
             it("should propagate EndpointValueError errors", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 spyOn(endpoint, "callback").and.throwError(new ns.EndpointValueError("test"));
                 loaded = true;
 
@@ -234,12 +234,12 @@
             });
 
             it("should propagate EndpointTypeError errors", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 spyOn(endpoint, "callback").and.throwError(new ns.EndpointTypeError("test"));
                 loaded = true;
 
@@ -251,12 +251,12 @@
             });
 
             it("should log an error if the widget has not provided a listener", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 loaded = true;
 
                 endpoint.propagate("test");
@@ -265,12 +265,12 @@
             });
 
             it("should catch any other error calling the endpoint listener", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 spyOn(endpoint, "callback").and.throwError(new TypeError("test"));
                 loaded = true;
 
@@ -281,12 +281,12 @@
             });
 
             it("should call the callback if the event targets this endpoint", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -296,12 +296,12 @@
             });
 
             it("should ignore any event not targeting this endpoint", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -311,12 +311,12 @@
             });
 
             it("should ignore third-party options", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "endpoint2",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
                 spyOn(endpoint, "callback");
                 loaded = true;
 
@@ -330,12 +330,12 @@
         describe("toString()", function () {
 
             it("should convert the endpoint into a string", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.toString()).toEqual(["widget", WIDGET.id, endpointDesc.name].join("/"));
             });
@@ -345,17 +345,17 @@
         describe("toJSON()", function () {
 
             it("should convert the endpoint into a JSON object", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var expected_result = {
+                const expected_result = {
                     id: WIDGET.id,
                     type: "widget",
                     endpoint: endpointDesc.name
                 };
-                var endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetTargetEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.toJSON()).toEqual(expected_result);
             });

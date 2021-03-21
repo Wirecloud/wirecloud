@@ -40,12 +40,12 @@
 
             it("exposes variable details", () => {
 
-                var meta = new Wirecloud.PersistentVariableDef({
+                const meta = new Wirecloud.PersistentVariableDef({
                     name: "variable",
                     type: "text"
                 });
-                var commiter = {add: jasmine.createSpy("add")};
-                var variable = new Wirecloud.PersistentVariable(
+                const commiter = {add: jasmine.createSpy("add")};
+                const variable = new Wirecloud.PersistentVariable(
                     meta,
                     commiter,
                     false,
@@ -63,7 +63,7 @@
         describe("get()", () => {
 
             it("returns initial value if not changed", () => {
-                var variable = new Wirecloud.PersistentVariable(
+                const variable = new Wirecloud.PersistentVariable(
                     new Wirecloud.PersistentVariableDef({
                         name: "variable",
                         type: "text"
@@ -76,7 +76,7 @@
             });
 
             it("returns current value", () => {
-                var variable = new Wirecloud.PersistentVariable(
+                const variable = new Wirecloud.PersistentVariable(
                     new Wirecloud.PersistentVariableDef({
                         name: "variable",
                         type: "text"
@@ -94,7 +94,7 @@
         describe("set(new_value)", () => {
 
             it("throws an error if the variable is readonly", () => {
-                var variable = new Wirecloud.PersistentVariable(
+                const variable = new Wirecloud.PersistentVariable(
                     new Wirecloud.PersistentVariableDef({
                         name: "variable",
                         type: "text"
@@ -111,7 +111,7 @@
             });
 
             it("updates current value", () => {
-                var variable = new Wirecloud.PersistentVariable(
+                const variable = new Wirecloud.PersistentVariable(
                     new Wirecloud.PersistentVariableDef({
                         name: "variable",
                         type: "text"

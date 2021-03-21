@@ -95,9 +95,9 @@
             this.layout.getCenterContainer().appendChild(this.name_preview);
 
             /* Pseudo button */
-            var button = document.createElement('div');
+            const button = document.createElement('div');
             button.className = 'se-btn';
-            var button_span = document.createElement('span');
+            const button_span = document.createElement('span');
             button_span.textContent = utils.gettext('Select');
             button.appendChild(button_span);
             this.layout.getEastContainer().appendChild(button);

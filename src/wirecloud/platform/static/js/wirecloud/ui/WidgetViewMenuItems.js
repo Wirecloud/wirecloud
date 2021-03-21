@@ -62,7 +62,7 @@
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("Upgrade/Downgrade"), () => {
-                var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.widget.model);
+                const dialog = new Wirecloud.ui.UpgradeWindowMenu(this.widget.model);
                 dialog.show();
             });
             item.addIconClass("fas fa-retweet");
@@ -83,7 +83,7 @@
             items.push(item);
 
             item = new se.MenuItem(utils.gettext("User's Manual"), () => {
-                var myresources_view = Wirecloud.UserInterfaceManager.views.myresources;
+                const myresources_view = Wirecloud.UserInterfaceManager.views.myresources;
                 myresources_view.createUserCommand('showDetails', this.widget.model.meta, {
                     version: this.widget.model.meta.version,
                     tab: utils.gettext('Documentation')
@@ -96,17 +96,17 @@
             items.push(new StyledElements.Separator());
 
             if (this.widget.layout === this.widget.tab.dragboard.freeLayout) {
-                let submenu = new se.SubMenuItem("Placement");
+                const submenu = new se.SubMenuItem("Placement");
                 items.push(submenu.addIconClass("fas fa-thumbtack"));
 
-                let halignmenu = new se.SubMenuItem("Horizontal Align", {iconClass: 'fas fa-arrows-alt-h'});
+                const halignmenu = new se.SubMenuItem("Horizontal Align", {iconClass: 'fas fa-arrows-alt-h'});
                 halignmenu.append(new se.MenuItem(
                     utils.gettext("Left"),
                     {
                         enabled: !this.widget.position.anchor.endsWith("left"),
                         iconClass: "fas fa-align-left",
                         handler: (context) => {
-                            let vertical = this.widget.position.anchor.split('-')[0];
+                            const vertical = this.widget.position.anchor.split('-')[0];
                             this.widget.setPosition({anchor: vertical + "-left"});
                             this.widget.layout.dragboard.update([this.widget.id]);
                         }
@@ -118,7 +118,7 @@
                         enabled: !this.widget.position.anchor.endsWith("center"),
                         iconClass: "fas fa-align-center",
                         handler: (context) => {
-                            let vertical = this.widget.position.anchor.split('-')[0];
+                            const vertical = this.widget.position.anchor.split('-')[0];
                             this.widget.setPosition({anchor: vertical + "-center"});
                             this.widget.layout.dragboard.update([this.widget.id]);
                         }
@@ -130,7 +130,7 @@
                         enabled: !this.widget.position.anchor.endsWith("right"),
                         iconClass: "fas fa-align-right",
                         handler: (context) => {
-                            let vertical = this.widget.position.anchor.split('-')[0];
+                            const vertical = this.widget.position.anchor.split('-')[0];
                             this.widget.setPosition({anchor: vertical + "-right"});
                             this.widget.layout.dragboard.update([this.widget.id]);
                         }
@@ -138,14 +138,14 @@
                 ));
                 submenu.append(halignmenu);
 
-                let valignmenu = new se.SubMenuItem("Vertical Align", {iconClass: 'fas fa-arrows-alt-v'});
+                const valignmenu = new se.SubMenuItem("Vertical Align", {iconClass: 'fas fa-arrows-alt-v'});
                 valignmenu.append(new se.MenuItem(
                     utils.gettext("Top"),
                     {
                         enabled: this.widget.position.anchor.startsWith("bottom"),
                         iconClass: "fas fa-arrow-up",
                         handler: (context) => {
-                            let horizontal = this.widget.position.anchor.split('-')[1];
+                            const horizontal = this.widget.position.anchor.split('-')[1];
                             this.widget.setPosition({anchor: "top-" + horizontal});
                             this.widget.layout.dragboard.update([this.widget.id]);
                         }
@@ -157,7 +157,7 @@
                         enabled: this.widget.position.anchor.startsWith("top"),
                         iconClass: "fas fa-arrow-down",
                         handler: (context) => {
-                            let horizontal = this.widget.position.anchor.split('-')[1];
+                            const horizontal = this.widget.position.anchor.split('-')[1];
                             this.widget.setPosition({anchor: "bottom-" + horizontal});
                             this.widget.layout.dragboard.update([this.widget.id]);
                         }
@@ -169,7 +169,7 @@
                 item = new se.MenuItem(title, () => {
                     const layout = this.widget.layout;
                     if (this.widget.position.relx) {
-                        let margin = this.widget.position.anchor.endsWith("left") ? layout.dragboard.leftMargin : layout.dragboard.rightMargin;
+                        const margin = this.widget.position.anchor.endsWith("left") ? layout.dragboard.leftMargin : layout.dragboard.rightMargin;
                         this.widget.setPosition({relx: false, x: layout.getColumnOffset(this.widget.position) - margin});
                     } else {
                         this.widget.setPosition({relx: true, x: layout.adaptColumnOffset(layout.getColumnOffset(this.widget.position) + 'px').inLU});
@@ -184,7 +184,7 @@
                 item = new se.MenuItem(title, () => {
                     const layout = this.widget.layout;
                     if (this.widget.position.rely) {
-                        let margin = this.widget.position.anchor.startsWith("top") ? layout.dragboard.topMargin : layout.dragboard.bottomMargin;
+                        const margin = this.widget.position.anchor.startsWith("top") ? layout.dragboard.topMargin : layout.dragboard.bottomMargin;
                         this.widget.setPosition({rely: false, y: layout.getRowOffset(this.widget.position) - margin});
                     } else {
                         this.widget.setPosition({rely: true, y: layout.adaptRowOffset(layout.getRowOffset(this.widget.position) + 'px').inLU});

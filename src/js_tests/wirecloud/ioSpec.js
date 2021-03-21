@@ -27,6 +27,31 @@
 
     "use strict";
 
+    const endRequest = function endRequest(request, status, statusText, extra) {
+        let key;
+
+        request.transport.readyState = 4;
+        request.transport.status = status;
+        request.transport.statusText = statusText;
+        if (extra != null) {
+            for (key in extra) {
+                request.transport[key] = extra[key];
+            }
+        }
+        findListener(request.transport.addEventListener, status === 0 ? 'load' : 'error')();
+    };
+
+    const findListener = function findListener(spy, name) {
+        let result = null;
+        spy.calls.allArgs().some(function (args) {
+            if (args[0] === name) {
+                result = args[1];
+                return true;
+            }
+        });
+        return result;
+    };
+
     describe("io module", function () {
 
         beforeAll(function () {
@@ -46,36 +71,36 @@
         describe("buildProxyURL(url, options)", function () {
 
             it("should work with normal urls", function () {
-                var original = "http://server:1234/path?q=1";
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
+                const original = "http://server:1234/path?q=1";
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
 
                 expect(Wirecloud.io.buildProxyURL(original)).toBe(expected);
             });
 
             it("should work with normal URL instances", function () {
-                var original = new URL("http://server:1234/path?q=1");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
+                const original = new URL("http://server:1234/path?q=1");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
 
                 expect(Wirecloud.io.buildProxyURL(original)).toBe(expected);
             });
 
             it("should do nothing when using the supportAccessControl option", function () {
-                var original = "http://server:1234/path?q=1";
+                const original = "http://server:1234/path?q=1";
 
                 expect(Wirecloud.io.buildProxyURL(original, {supportsAccessControl: true}))
                     .toBe(original);
             });
 
             it("should do nothing when using the supportAccessControl option (using URL instances)", function () {
-                var original = new URL("http://server:1234/path?q=1");
+                const original = new URL("http://server:1234/path?q=1");
 
                 expect(Wirecloud.io.buildProxyURL(original, {supportsAccessControl: true}))
                     .toBe(original.toString());
             });
 
             it("should ignore the supportAccessControl option if using the forceProxy option", function () {
-                var original = "http://server:1234/path?q=1";
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
+                const original = "http://server:1234/path?q=1";
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     supportsAccessControl: true,
@@ -84,8 +109,8 @@
             });
 
             it("should ignore the supportAccessControl option if using the forceProxy option (using URL instances)", function () {
-                var original = new URL("http://server:1234/path?q=1");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
+                const original = new URL("http://server:1234/path?q=1");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     supportsAccessControl: true,
@@ -94,7 +119,7 @@
             });
 
             it("should do nothing when using data urls and the forceProxy option", function () {
-                var original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val";
+                const original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     forceProxy: true
@@ -102,7 +127,7 @@
             });
 
             it("should do nothing when using data urls and the forceProxy option (using URL instances)", function () {
-                var original = new URL("data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val");
+                const original = new URL("data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val");
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     forceProxy: true
@@ -110,7 +135,7 @@
             });
 
             it("should do nothing when using blob urls and the forceProxy option", function () {
-                var original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf";
+                const original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     forceProxy: true
@@ -118,7 +143,7 @@
             });
 
             it("should do nothing when using blob urls and the forceProxy option (using URL instances)", function () {
-                var original = new URL("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
+                const original = new URL("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     forceProxy: true
@@ -126,8 +151,8 @@
             });
 
             it("should support the parameters option (using URL instances)", function () {
-                var original = new URL("http://server:1234/path");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
+                const original = new URL("http://server:1234/path");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -139,8 +164,8 @@
             });
 
             it("should support passing an empty parameters option (using URL instances)", function () {
-                var original = new URL("http://server:1234/path");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
+                const original = new URL("http://server:1234/path");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -149,8 +174,8 @@
             });
 
             it("should ignore parameters with a undefined value (using URL instances)", function () {
-                var original = new URL("http://server:1234/path");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
+                const original = new URL("http://server:1234/path");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -163,8 +188,8 @@
             });
 
             it("should treat null parameters as empty parameters (using URL instances)", function () {
-                var original = new URL("http://server:1234/path");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c&c=";
+                const original = new URL("http://server:1234/path");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c&c=";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -177,8 +202,8 @@
             });
 
             it("should support the parameters option (empty string, using URL instances)", function () {
-                var original = new URL("http://server:1234/path");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
+                const original = new URL("http://server:1234/path");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -187,8 +212,8 @@
             });
 
             it("should support the parameters option (string, using URL instances)", function () {
-                var original = new URL("http://server:1234/path");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
+                const original = new URL("http://server:1234/path");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?e=1&b=c";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -197,8 +222,8 @@
             });
 
             it("should support the parameters option (passing parameters in the initial url and using URL instances)", function () {
-                var original = new URL("http://server:1234/path?q=1");
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1&e=1&b=c";
+                const original = new URL("http://server:1234/path?q=1");
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1&e=1&b=c";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -210,8 +235,8 @@
             });
 
             it("should ignore the parameters option if the method is POST and postBody is null", function () {
-                var original = "http://server:1234/path";
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
+                const original = "http://server:1234/path";
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'POST',
@@ -223,7 +248,7 @@
             });
 
             it("should ignore the parameters option when using data URL instances", function () {
-                var original = new URL("data:text/html,lots of text...<p><a name%3D\"bottom\">bottom</a>?arg=val");
+                const original = new URL("data:text/html,lots of text...<p><a name%3D\"bottom\">bottom</a>?arg=val");
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -235,7 +260,7 @@
             });
 
             it("should ignore the parameters option when using blob URL instances", function () {
-                var original = new URL("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
+                const original = new URL("blob:d3958f5c-0777-0845-9dcf-2cb28783acaf");
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -247,15 +272,15 @@
             });
 
             it("should maintain the hash part for proxied URLs", function () {
-                var original = "http://server:1234/path?q=1#id";
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1#id";
+                const original = "http://server:1234/path?q=1#id";
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1#id";
 
                 expect(Wirecloud.io.buildProxyURL(original)).toBe(expected);
             });
 
             it("should maintain the hash part for proxied URLs when providing parameters", function () {
-                var original = "http://server:1234/path#id";
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1#id";
+                const original = "http://server:1234/path#id";
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1#id";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -268,7 +293,7 @@
             it("should maintain the \"hash\" part when using blob URLs", function () {
                 // In fact, blob urls don't support hashes. This test checks
                 // buildProxyURL don't process data as a hash component
-                var original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf#id";
+                const original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf#id";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET'
@@ -278,7 +303,7 @@
             it("should maintain the \"hash\" part when using blob URLs and providing parameters", function () {
                 // In fact, blob urls don't support hashes. This test checks
                 // buildProxyURL don't process data as a hash component
-                var original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf#id";
+                const original = "blob:d3958f5c-0777-0845-9dcf-2cb28783acaf#id";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -292,7 +317,7 @@
             it("should maintain the \"hash\" part when using data URLs", function () {
                 // In fact, data urls don't support hashes. This test checks
                 // buildProxyURL don't process data as a hash component
-                var original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val#id";
+                const original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val#id";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET'
@@ -302,7 +327,7 @@
             it("should maintain the \"hash\" part when using data URLs and providing parameters", function () {
                 // In fact, data urls don't support hashes. This test checks
                 // buildProxyURL don't process data as a hash component
-                var original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val#id";
+                const original = "data:text/html,lots%20of%20text...<p><a%20name%3D\"bottom\">bottom</a>?arg=val#id";
 
                 expect(Wirecloud.io.buildProxyURL(original, {
                     method: 'GET',
@@ -314,21 +339,60 @@
             });
         });
 
+        describe("ConnectionError()", () => {
+
+            let error_captureStackTrace;
+
+            beforeAll(() => {
+                error_captureStackTrace = Error.captureStackTrace;
+            });
+
+            beforeEach(() => {
+                Error.captureStackTrace = null;
+            });
+
+            afterAll(() => {
+                if (error_captureStackTrace != null) {
+                    Error.captureStackTrace = error_captureStackTrace;
+                }
+            });
+
+            it("should extend Error", () => {
+                const error = new Wirecloud.io.ConnectionError();
+
+                expect(error).toEqual(jasmine.any(Error));
+            })
+
+            it("should use the captureStackTrace method if available", () => {
+                Error.captureStackTrace = jasmine.createSpy("captureStackTrace");
+                const error = new Wirecloud.io.ConnectionError();
+
+                expect(Error.captureStackTrace).toHaveBeenCalledWith(error, error.constructor);
+            })
+
+            it("toString()", () => {
+                const error = new Wirecloud.io.ConnectionError();
+
+                expect(error.toString()).toBe(error.message);
+            });
+
+        });
+
         describe("makeRequest(url, options)", function () {
 
             it("should work with normal urls", function () {
-                var original = "http://server:1234/path?q=1";
-                var expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
+                const original = "http://server:1234/path?q=1";
+                const expected = "https://wirecloud.example.com/cdp/http/server:1234/path?q=1";
 
-                var request = Wirecloud.io.makeRequest(original);
+                const request = Wirecloud.io.makeRequest(original);
                 expect(request.url).toBe(expected);
                 expect(request.progress).toBe(0);
             });
 
             it("should ignore null headers", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     requestHeaders: {
                         empty: null
                     }
@@ -337,9 +401,9 @@
             });
 
             it("should ignore undefined headers", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     requestHeaders: {
                         empty: undefined
                     }
@@ -348,18 +412,18 @@
             });
 
             it("should convert the contentType option into a header", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     contentType: "application/json"
                 });
                 expect(request.transport.setRequestHeader).toHaveBeenCalledWith("Content-Type", "application/json");
             });
 
             it("should convert the contentType and the encoding options into a header", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     contentType: "application/json",
                     encoding: "ISO-8859-1"
                 });
@@ -367,9 +431,9 @@
             });
 
             it("should serialize the parameters option inside the request body", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     parameters: {
                         e: 1,
                         b: "c"
@@ -380,9 +444,9 @@
             });
 
             it("should add parameters to the url if the request body is not empty", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     postBody: "{}",
                     parameters: {
                         e: 1,
@@ -394,9 +458,9 @@
             });
 
             it("should take into account the contentType option when using the parameters option", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     contentType: "application/custom",
                     parameters: {
                         e: 1,
@@ -408,9 +472,9 @@
             });
 
             it("should take into account the encoding option when using the parameters option", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     encoding: "ISO-8859-1",
                     parameters: {
                         e: 1,
@@ -422,9 +486,9 @@
             });
 
             it("should support the withCredentials option", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     supportsAccessControl: true,
                     withCredentials: true
                 });
@@ -432,19 +496,19 @@
             });
 
             it("should ignore the withCredentials option if the supportsAccessControl option is not used", function () {
-                var url = "http://server:1234/path";
+                const url = "http://server:1234/path";
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     withCredentials: true
                 });
                 expect(request.transport.withCredentials).toBeFalsy();
             });
 
             it("should support the onUploadProgress listener", function () {
-                var url = "http://server:1234/path";
-                var listener = function () {};
+                const url = "http://server:1234/path";
+                const listener = function () {};
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     onUploadProgress: listener
                 });
                 expect(request.transport.upload.addEventListener)
@@ -452,10 +516,10 @@
             });
 
             it("should support the onProgress listener", function () {
-                var url = "http://server:1234/path";
-                var listener = function () {};
+                const url = "http://server:1234/path";
+                const listener = function () {};
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     onProgress: listener
                 });
                 expect(request.transport.addEventListener)
@@ -463,9 +527,9 @@
             });
 
             it("should allow to abort requests", function () {
-                var url = "http://server:1234/path?q=1";
+                const url = "http://server:1234/path?q=1";
 
-                var request = Wirecloud.io.makeRequest(url);
+                const request = Wirecloud.io.makeRequest(url);
 
                 expect(request.abort()).toBe(request);
                 expect(request.transport.abort).toHaveBeenCalled();
@@ -528,9 +592,9 @@
             });
 
             it("throw TypeError exceptions for invalid handlers", function () {
-                var listener = function () {};
+                const listener = function () {};
                 spyOn(listener, "bind");
-                var context = {};
+                const context = {};
 
                 Wirecloud.io.makeRequest("http://server:1234/path?q=1", {
                     context: context,
@@ -541,9 +605,9 @@
             });
 
             describe("throw TypeError exceptions for invalid handlers", function () {
-                var test = function test(handler) {
+                const test = function test(handler) {
                     expect(function () {
-                        var options = {};
+                        const options = {};
                         options[handler] = "a";
                         Wirecloud.io.makeRequest("http://server:1234/path?q=1", options);
                     }).toThrowError(TypeError);
@@ -558,7 +622,7 @@
 
                 it("using the context option", function () {
                     expect(function () {
-                        var options = {
+                        const options = {
                             context: {},
                             onSuccess: "a"
                         };
@@ -568,13 +632,13 @@
             });
 
             describe("should call the configured listeners", function () {
-                var test = function test(listener, status, sexception, cexception, done) {
-                    var content = "Hello world!";
-                    var statusText = "status text for " + status;
-                    var sresponse = null;
-                    var other_listeners = [];
+                const test = function test(listener, status, sexception, cexception, done) {
+                    const content = "Hello world!";
+                    const statusText = "status text for " + status;
+                    let sresponse = null;
+                    const other_listeners = [];
 
-                    var slistener = function (response) {
+                    const slistener = function (response) {
                         sresponse = response;
                         expect(response.status).toBe(status);
                         expect(response.statusText).toBe(statusText);
@@ -585,7 +649,7 @@
                         }
                     };
 
-                    var clistener = function (response) {
+                    const clistener = function (response) {
                         if (listener != null) {
                             // These lines also test, implicitly, that the main
                             // listener (onSuccess, onFailure, onXXX) was called
@@ -614,7 +678,7 @@
                         }
                     };
 
-                    var listeners = {
+                    const listeners = {
                         onComplete: clistener
                     };
                     if (listener) {
@@ -625,7 +689,7 @@
                     }
 
                     // Add other listeners to be able to check they were not called
-                    var lnames = ["onUploadProgress", "onException", "on504"];
+                    let lnames = ["onUploadProgress", "onException", "on504"];
                     if (listener != null) {
                         lnames = lnames.concat(["onSuccess", "onFailure"]);
                     }
@@ -636,7 +700,7 @@
                         }
                     });
 
-                    var request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", listeners);
+                    const request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", listeners);
 
                     endRequest(request, status, statusText, {
                         responseText: content
@@ -662,8 +726,8 @@
             });
 
             it("should provide a getHeader method on responses", function (done) {
-                var listener = function (response) {
-                    var headervalue = "value";
+                const listener = function (response) {
+                    const headervalue = "value";
                     request.transport.getResponseHeader = jasmine.createSpy("getResponseHeader").and.returnValue(headervalue);
 
                     expect(response.getHeader("Location")).toBe(headervalue);
@@ -672,7 +736,7 @@
                     done();
                 };
 
-                var request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", {
+                const request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", {
                     onComplete: listener
                 });
 
@@ -680,7 +744,7 @@
             });
 
             it("should provide a getHeader method on responses (status: 0)", function (done) {
-                var listener = function (response) {
+                const listener = function (response) {
                     request.transport.getResponseHeader = jasmine.createSpy("getResponseHeader").and.throwError();
 
                     expect(response.getHeader("Location")).toBe(null);
@@ -689,7 +753,7 @@
                     done();
                 };
 
-                var request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", {
+                const request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", {
                     onComplete: listener
                 });
 
@@ -697,8 +761,8 @@
             });
 
             it("should provide a getAllResponseHeaders method on responses", function (done) {
-                var listener = function (response) {
-                    var headervalue = "value";
+                const listener = function (response) {
+                    const headervalue = "value";
                     request.transport.getAllResponseHeaders = jasmine.createSpy("getAllResponseHeaders").and.returnValue(headervalue);
 
                     expect(response.getAllResponseHeaders()).toBe(headervalue);
@@ -707,7 +771,7 @@
                     done();
                 };
 
-                var request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", {
+                const request = Wirecloud.io.makeRequest("http://server:1234/path?q=1", {
                     onSuccess: listener
                 });
 
@@ -715,13 +779,13 @@
             });
 
             it("should support the responseType option", function () {
-                var url = "http://server:1234/path";
-                var listener = function (response) {
+                const url = "http://server:1234/path";
+                const listener = function (response) {
                     expect("responseText" in response).toBeFalsy();
                     expect("responseXML" in response).toBeFalsy();
                 };
 
-                var request = Wirecloud.io.makeRequest(url, {
+                const request = Wirecloud.io.makeRequest(url, {
                     responseType: "json",
                     onSuccess: listener
                 });
@@ -734,30 +798,5 @@
         });
 
     });
-
-    var endRequest = function endRequest(request, status, statusText, extra) {
-        var key;
-
-        request.transport.readyState = 4;
-        request.transport.status = status;
-        request.transport.statusText = statusText;
-        if (extra != null) {
-            for (key in extra) {
-                request.transport[key] = extra[key];
-            }
-        }
-        findListener(request.transport.addEventListener, status === 0 ? 'load' : 'error')();
-    };
-
-    var findListener = function findListener(spy, name) {
-        var result = null;
-        spy.calls.allArgs().some(function (args) {
-            if (args[0] === name) {
-                result = args[1];
-                return true;
-            }
-        });
-        return result;
-    };
 
 })();

@@ -29,7 +29,7 @@
     /**
      * @author aarranz
      */
-    var UserPrefDef = function UserPrefDef(options) {
+    const UserPrefDef = function UserPrefDef(options) {
 
         if (options == null || typeof options !== "object") {
             throw new TypeError('Invalid options parameter');
@@ -52,7 +52,7 @@
             options: {value: options.options}
         });
 
-        var default_value = '';
+        let default_value = '';
         if (options.type === 'boolean') {
             default_value = options.default.trim().toLowerCase() === 'true';
         } else if (options.type === 'number' && options.default != null) {

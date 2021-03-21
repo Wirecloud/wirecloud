@@ -33,8 +33,8 @@
     };
 
     const _cleanSelection = function _cleanSelection() {
-        for (var i = 0; i < this.currentSelection.length; i++) {
-            var value = this.currentSelection[i];
+        for (let i = 0; i < this.currentSelection.length; i++) {
+            const value = this.currentSelection[i];
             this.entriesByValue[value].element.classList.remove("selected");
         }
         this.currentSelection = [];
@@ -91,7 +91,7 @@
          * Añade las entradas indicadas en la lista.
          */
         addEntries(entries) {
-            var entryValue, entryText;
+            let entryValue, entryText;
 
             if (entries == null || entries.length === 0) {
                 return;
@@ -101,8 +101,8 @@
                 throw new TypeError();
             }
 
-            for (var i = 0; i < entries.length; i++) {
-                var entry = entries[i];
+            for (let i = 0; i < entries.length; i++) {
+                const entry = entries[i];
                 if (Array.isArray(entry)) {
                     entryValue = entry[0];
                     entryText = entry[1];
@@ -112,10 +112,10 @@
                 }
                 entryText = entryText ? entryText : entryValue;
 
-                var row = document.createElement("div");
+                const row = document.createElement("div");
                 row.className = "row";
 
-                var context = {listComponent: this, value: entryValue};
+                const context = {listComponent: this, value: entryValue};
                 row.addEventListener("click", itemListener.bind(context), true);
                 entry.element = row;
 
@@ -128,13 +128,12 @@
         }
 
         removeEntryByValue(value) {
-            var entry, index;
-
-            entry = this.entriesByValue[value];
+            const entry = this.entriesByValue[value];
             delete this.entriesByValue[value];
             this.entries.slice(this.entries.indexOf(entry), 1);
             entry.element.remove();
 
+            const index = this.currentSelection.indexOf(entry);
             if (index !== -1) {
                 this.currentSelection.splice(index, 1);
                 this.dispatchEvent('change', this.currentSelection, [], [value]);
@@ -167,7 +166,7 @@
                 return;  // Nothing to do
             }
 
-            var oldSelection = this.currentSelection;
+            const oldSelection = this.currentSelection;
 
             _cleanSelection.call(this);
 
@@ -189,11 +188,12 @@
          * Añade un conjunto de valores a la selección actual.
          */
         addSelection(selection) {
-            var i, entry, addedValues = [], removedValues = [];
-
             if (selection.length === 0) {
                 return;  // Nothing to do
             }
+
+            const addedValues = [];
+            let removedValues = [];
 
             if (!this.multivalued) {
                 if (selection[0] === this.currentSelection[0]) {
@@ -209,14 +209,13 @@
                 }
             }
 
-            for (i = 0; i < selection.length; i++) {
-                entry = selection[i];
+            selection.forEach((entry) => {
                 if (this.currentSelection.indexOf(entry) === -1) {
                     this.entriesByValue[entry].element.classList.add("selected");
                     this.currentSelection.push(entry);
                     addedValues.push(entry);
                 }
-            }
+            })
 
             this.dispatchEvent('change', this.currentSelection, addedValues, removedValues);
         }
@@ -225,22 +224,20 @@
          * Elimina un conjunto de valores de la selección actual.
          */
         removeSelection(selection) {
-            var i, entry, index, removedValues = [];
-
             if (selection.length === 0) {
                 return;  // Nothing to do
             }
 
-            for (i = 0; i < selection.length; i++) {
-                entry = selection[i];
+            const removedValues = [];
+            selection.forEach((entry) => {
                 this.entriesByValue[entry].element.classList.remove("selected");
-                index = this.currentSelection.indexOf(entry);
+                const index = this.currentSelection.indexOf(entry);
                 if (index !== -1) {
                     this.currentSelection.splice(index, 1);
                     this.entriesByValue[entry].element.classList.remove("selected");
                     removedValues.push(entry);
                 }
-            }
+            })
 
             if (removedValues.length > 0) {
                 this.dispatchEvent('change', this.currentSelection, [], removedValues);

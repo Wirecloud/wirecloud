@@ -34,7 +34,7 @@
          * unit tests in this Spec file.
          */
 
-        var dom;
+        let dom;
 
         beforeEach(() => {
             dom = document.createElement('div');
@@ -88,7 +88,7 @@
             });
 
             it("should allow to provide custom options", () => {
-                var myoptions = {a: "b"};
+                const myoptions = {a: "b"};
                 spyOn(StyledElements.Alternatives.prototype, "showAlternative");
                 Wirecloud.UserInterfaceManager.changeCurrentView("marketplace", myoptions);
                 expect(StyledElements.Alternatives.prototype.showAlternative).toHaveBeenCalledWith(Wirecloud.UserInterfaceManager.views.marketplace, {a: "b", effect: "dissolve"});
@@ -108,14 +108,14 @@
             });
 
             it("should call onHistoryChange on target view", (done) => {
-                let next = jasmine.createSpy("onHistoryChange");
+                const next = jasmine.createSpy("onHistoryChange");
                 spyOn(Wirecloud.UserInterfaceManager, "changeCurrentView")
                     .and.returnValue(Promise.resolve({
                         in: {
                             onHistoryChange: next
                         }
                     }));
-                let state = {
+                const state = {
                     view: "wiring"
                 };
                 Wirecloud.UserInterfaceManager.onHistoryChange(state);
@@ -161,8 +161,8 @@
 
             it("should replace any currently visible dialog", (done) => {
                 // This is required to avoid having a blocked UI
-                var dialog1 = new Wirecloud.ui.MessageWindowMenu();
-                var dialog2 = new Wirecloud.ui.MessageWindowMenu();
+                const dialog1 = new Wirecloud.ui.MessageWindowMenu();
+                const dialog2 = new Wirecloud.ui.MessageWindowMenu();
                 Wirecloud.UserInterfaceManager.init();
                 Wirecloud.UserInterfaceManager._registerRootWindowMenu(dialog1);
                 spyOn(dialog1, "hide");
@@ -193,14 +193,14 @@
             });
 
             it("should register tooltips", () => {
-                var tooltip = new StyledElements.Tooltip();
+                const tooltip = new StyledElements.Tooltip();
                 expect(Wirecloud.UserInterfaceManager._registerTooltip(tooltip)).toBe(Wirecloud.UserInterfaceManager);
                 expect(Wirecloud.UserInterfaceManager.currentTooltip).toBe(tooltip);
             });
 
             it("should hide previous visible tooltips", () => {
-                var tooltip1 = new StyledElements.Tooltip();
-                var tooltip2 = new StyledElements.Tooltip();
+                const tooltip1 = new StyledElements.Tooltip();
+                const tooltip2 = new StyledElements.Tooltip();
                 Wirecloud.UserInterfaceManager._registerTooltip(tooltip1);
                 spyOn(tooltip1, "hide");
 
@@ -223,7 +223,7 @@
 
             it("should hide any currently visible dialog", (done) => {
                 // This is required to avoid having a blocked UI
-                var dialog = new Wirecloud.ui.MessageWindowMenu();
+                const dialog = new Wirecloud.ui.MessageWindowMenu();
                 Wirecloud.UserInterfaceManager.init();
                 Wirecloud.UserInterfaceManager._registerRootWindowMenu(dialog);
 
@@ -247,7 +247,7 @@
             });
 
             it("removes tooltips form the on progress tasks", () => {
-                var tooltip = new StyledElements.Tooltip();
+                const tooltip = new StyledElements.Tooltip();
                 Wirecloud.UserInterfaceManager._registerTooltip(tooltip);
 
                 Wirecloud.UserInterfaceManager._unregisterTooltip(tooltip);
@@ -304,7 +304,7 @@
             });
 
             it("resize", () => {
-                var dialog = new Wirecloud.ui.MessageWindowMenu();
+                const dialog = new Wirecloud.ui.MessageWindowMenu();
                 dialog.show();
                 jasmine.clock().tick(1);
                 spyOn(dialog, "repaint");
@@ -315,7 +315,7 @@
             });
 
             it("resize (tooltip)", () => {
-                var tooltip = new StyledElements.Tooltip();
+                const tooltip = new StyledElements.Tooltip();
                 Wirecloud.UserInterfaceManager._registerTooltip(tooltip);
                 jasmine.clock().tick(1);
                 spyOn(tooltip, "repaint");
@@ -330,7 +330,7 @@
             });
 
             it("Escape keydown events (active popup)", () => {
-                var dialog = new Wirecloud.ui.MessageWindowMenu();
+                const dialog = new Wirecloud.ui.MessageWindowMenu();
                 dialog.show();
                 jasmine.clock().tick(1);
                 spyOn(dialog, "hide");
@@ -341,11 +341,11 @@
             });
 
             it("Escape keydown events (active popup & tooltip)", () => {
-                var dialog = new Wirecloud.ui.MessageWindowMenu();
+                const dialog = new Wirecloud.ui.MessageWindowMenu();
                 dialog.show();
                 jasmine.clock().tick(1);
                 spyOn(dialog, "hide");
-                var tooltip = new StyledElements.Tooltip();
+                const tooltip = new StyledElements.Tooltip();
                 Wirecloud.UserInterfaceManager._registerTooltip(tooltip);
                 spyOn(tooltip, "hide");
 
@@ -356,12 +356,12 @@
             });
 
             it("Backspace keydown events (active popup)", () => {
-                var dialog = new Wirecloud.ui.MessageWindowMenu();
+                const dialog = new Wirecloud.ui.MessageWindowMenu();
                 dialog.show();
                 jasmine.clock().tick(1);
                 spyOn(dialog, "hide");
 
-                let event = new KeyboardEvent("keydown", {"key": "Backspace"});
+                const event = new KeyboardEvent("keydown", {"key": "Backspace"});
                 spyOn(event, "preventDefault");
                 document.dispatchEvent(event);
 

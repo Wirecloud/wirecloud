@@ -173,7 +173,7 @@
                 clearTimeout(this.timeout);
             }
 
-            var errorCode = this.checkValue();
+            const errorCode = this.checkValue();
             this._setError(errorCode !== StyledElements.InputValidationError.NO_ERROR);
         }
 

@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var WIDGET = Object.freeze({
+    const WIDGET = Object.freeze({
         id: "1",
         meta: {
             type: 'widget'
@@ -39,13 +39,13 @@
         describe("new WidgetSourceEndpoint(widgetModel, [endpointDesc])", function () {
 
             it("should create a new instance", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     description: "description",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint).not.toBeNull();
                 expect(endpoint.component).toBe(WIDGET);
@@ -57,12 +57,12 @@
             });
 
             it("should create a new instance with no endpointDesc.description", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -73,7 +73,7 @@
             });
 
             it("should create a new instance with no endpointDesc", function () {
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -84,12 +84,12 @@
             });
 
             it("should handle empty friendcodes", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: ""
                 };
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -104,12 +104,12 @@
         describe("toString()", function () {
 
             it("should convert a widget's source endpoint to string", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint + "").toEqual([WIDGET.meta.type, WIDGET.id, endpointDesc.name].join("/"));
             });
@@ -119,17 +119,17 @@
         describe("toJSON()", function () {
 
             it("should convert a widget's source endpoint to string", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpointJSON = {
+                const endpointJSON = {
                     id: WIDGET.id,
                     type: WIDGET.meta.type,
                     endpoint: endpointDesc.name
                 };
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
 
                 expect(JSON.parse(JSON.stringify(endpoint))).toEqual(endpointJSON);
             });

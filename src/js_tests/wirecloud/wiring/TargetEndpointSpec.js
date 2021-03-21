@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var CONNECTION = Object.freeze({
+    const CONNECTION = Object.freeze({
         _connect: function () {},
         _disconnect: function () {}
     });
@@ -37,16 +37,16 @@
         describe("connect(sourceEndpoint, connection)", function () {
 
             it("should connect to source-endpoints", function () {
-                var endpoint1 = new ns.TargetEndpoint();
-                var endpoint2 = new ns.SourceEndpoint();
+                const endpoint1 = new ns.TargetEndpoint();
+                const endpoint2 = new ns.SourceEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 expect(endpoint1.connections.length).toEqual(1);
             });
 
             describe("should throw error when sourceEndpoint is not instance of SourceEndpoint", function () {
-                var test = function test(value) {
-                    var endpoint = new ns.TargetEndpoint();
+                const test = function test(value) {
+                    const endpoint = new ns.TargetEndpoint();
 
                     expect(function () {
                         endpoint.connect(value, CONNECTION);
@@ -64,8 +64,8 @@
             });
 
             it("should not connect to source-endpoints more than once", function () {
-                var endpoint1 = new ns.TargetEndpoint();
-                var endpoint2 = new ns.SourceEndpoint();
+                const endpoint1 = new ns.TargetEndpoint();
+                const endpoint2 = new ns.SourceEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 endpoint1.connect(endpoint2, CONNECTION);
@@ -77,8 +77,8 @@
         describe("disconnect(sourceEndpoint)", function () {
 
             it("should disconnect source-endpoints", function () {
-                var endpoint1 = new ns.TargetEndpoint();
-                var endpoint2 = new ns.SourceEndpoint();
+                const endpoint1 = new ns.TargetEndpoint();
+                const endpoint2 = new ns.SourceEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 endpoint1.disconnect(endpoint2);
@@ -86,8 +86,8 @@
             });
 
             it("should not throw error when sourceEndpoint does not exist", function () {
-                var endpoint1 = new ns.TargetEndpoint();
-                var endpoint2 = new ns.SourceEndpoint();
+                const endpoint1 = new ns.TargetEndpoint();
+                const endpoint2 = new ns.SourceEndpoint();
 
                 endpoint1.disconnect(endpoint2);
                 expect(endpoint1.connections.length).toEqual(0);
@@ -95,8 +95,8 @@
 
             describe("should throw error when sourceEndpoint is not instance of SourceEndpoint", function () {
 
-                var test = function test(value) {
-                    var endpoint1 = new ns.TargetEndpoint();
+                const test = function test(value) {
+                    const endpoint1 = new ns.TargetEndpoint();
 
                     expect(function () {
                         endpoint1.disconnect(null);
@@ -117,9 +117,9 @@
         describe("fullDisconnect()", function () {
 
             it("should disconnect source-endpoints", function () {
-                var endpoint1 = new ns.TargetEndpoint();
-                var endpoint2 = new ns.SourceEndpoint();
-                var endpoint3 = new ns.SourceEndpoint();
+                const endpoint1 = new ns.TargetEndpoint();
+                const endpoint2 = new ns.SourceEndpoint();
+                const endpoint3 = new ns.SourceEndpoint();
 
                 endpoint1.connect(endpoint2, CONNECTION);
                 endpoint1.connect(endpoint3, CONNECTION);
@@ -132,7 +132,7 @@
         describe("propagate(event, [options])", function () {
 
             it("should do nothing", function () {
-                var endpoint = new ns.TargetEndpoint();
+                const endpoint = new ns.TargetEndpoint();
                 endpoint.propagate("test");
             });
 

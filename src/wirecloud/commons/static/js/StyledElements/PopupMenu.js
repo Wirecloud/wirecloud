@@ -33,7 +33,7 @@
             return;
         }
 
-        var boundingBox = this.wrapperElement.getBoundingClientRect();
+        const boundingBox = this.wrapperElement.getBoundingClientRect();
 
         if (e.clientX < boundingBox.left || e.clientX > boundingBox.right || e.clientY < boundingBox.top || e.clientY > boundingBox.bottom) {
             setTimeout(this.hide.bind(this), 0);

@@ -27,6 +27,18 @@
 
     "use strict";
 
+    const getChildrenFromText = function getChildrenFromText(text) {
+        let targetElement, children = [];
+
+        if (text.length) {
+            targetElement = document.createElement('div');
+            targetElement.innerHTML = text;
+            children = Array.prototype.slice.call(targetElement.childNodes);
+        }
+
+        return children;
+    };
+
     // =========================================================================
     // CLASS DEFINITION
     // =========================================================================
@@ -121,17 +133,5 @@
         }
 
     }
-
-    var getChildrenFromText = function getChildrenFromText(text) {
-        var targetElement, children = [];
-
-        if (text.length) {
-            targetElement = document.createElement('div');
-            targetElement.innerHTML = text;
-            children = Array.prototype.slice.call(targetElement.childNodes);
-        }
-
-        return children;
-    };
 
 })(StyledElements, StyledElements.Utils);

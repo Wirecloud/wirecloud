@@ -109,8 +109,9 @@
         ]
     };
 
-    var updateLayoutSummary = function updateLayoutSummary() {
-        var summary = '', context = utils.clone(this.layout);
+    const updateLayoutSummary = function updateLayoutSummary() {
+        const context = utils.clone(this.layout);
+        let summary = '';
 
         switch (this.layout.type) {
         case 'columnlayout':
@@ -151,8 +152,8 @@
                 this.layout = utils.clone(this.layout);
                 this.layout.type = select.getValue();
 
-                var fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
-                for (var i = 0; i < fields.length; i++) {
+                const fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
+                for (let i = 0; i < fields.length; i++) {
                     if (!(fields[i].name in this.layout)) {
                         this.layout[fields[i].name] = fields[i].defaultValue;
                     }
@@ -166,10 +167,10 @@
             this.wrapperElement.appendChild(this.summary_addon);
 
             // Settings button
-            this.buttonElement = new StyledElements.Button({iconClass: 'fa fa-cogs'});
+            this.buttonElement = new StyledElements.Button({iconClass: 'fas fa-cogs'});
             this.buttonElement.addEventListener('click', function () {
-                var fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
-                var dialog = new Wirecloud.ui.FormWindowMenu(fields, utils.gettext('Layout configuration'), 'wc-layout-settings-modal');
+                const fields = LAYOUT_FIELDS_MAPPING[this.layout.type];
+                const dialog = new Wirecloud.ui.FormWindowMenu(fields, utils.gettext('Layout configuration'), 'wc-layout-settings-modal');
 
                 // Form data is sent to server
                 dialog.executeOperation = function (data) {

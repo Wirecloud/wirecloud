@@ -29,7 +29,7 @@
 
     describe("Command Queue: ", function () {
 
-        var CommandQueue = StyledElements.CommandQueue;
+        const CommandQueue = StyledElements.CommandQueue;
 
         describe("new CommandQueue(context, callback)", function () {
 
@@ -46,12 +46,12 @@
             });
 
             it("works using basic options", function () {
-                var queue = new CommandQueue({}, function () {});
+                const queue = new CommandQueue({}, function () {});
                 expect(queue.running).toBe(false);
             });
 
             it("CommandQueue(can be created using basic options", function () {
-                var queue = new CommandQueue({}, function () {});
+                const queue = new CommandQueue({}, function () {});
                 expect(queue.running).toBe(false);
             });
 
@@ -60,7 +60,7 @@
         describe("addCommand(command)", function () {
 
             const realSetTimeout = setTimeout;
-            var queue, context, callback;
+            let queue, context, callback;
 
             beforeEach(function () {
                 jasmine.clock().install();
@@ -93,7 +93,7 @@
             });
 
             it("ignore calls without a command parameter", function (done) {
-                var p = queue.addCommand();
+                const p = queue.addCommand();
 
                 expect(queue.running).toBe(false);
                 expect(p).toEqual(jasmine.any(Promise));
@@ -101,7 +101,7 @@
             });
 
             it("ignore undefined commands", function (done) {
-                var p = queue.addCommand(undefined);
+                const p = queue.addCommand(undefined);
 
                 expect(queue.running).toBe(false);
                 expect(p).toEqual(jasmine.any(Promise));
@@ -109,7 +109,7 @@
             });
 
             it("handles exceptions on the callback function", function (done) {
-                var p = queue.addCommand("exception");
+                const p = queue.addCommand("exception");
 
                 // Command is resolved immediately so the queue should be empty
                 expect(queue.running).toBe(false);
@@ -121,7 +121,7 @@
             });
 
             it("handles rejected commands", function (done) {
-                var p = queue.addCommand("reject");
+                const p = queue.addCommand("reject");
 
                 // Command is resolved asynchronously so the queue should not be empty
                 expect(queue.running).toBe(true);
@@ -149,14 +149,14 @@
             });
 
             it("supports adding several commands", (done) => {
-                var listener1 = jasmine.createSpy();
-                var listener2 = jasmine.createSpy();
-                var listener3 = jasmine.createSpy();
+                const listener1 = jasmine.createSpy();
+                const listener2 = jasmine.createSpy();
+                const listener3 = jasmine.createSpy();
 
                 expect(queue.running).toBe(false);
-                var p1 = queue.addCommand(1);
-                var p2 = queue.addCommand(2);
-                var p3 = queue.addCommand(3);
+                const p1 = queue.addCommand(1);
+                const p2 = queue.addCommand(2);
+                const p3 = queue.addCommand(3);
 
                 expect(p1).toEqual(jasmine.any(Promise));
                 expect(p2).toEqual(jasmine.any(Promise));
@@ -195,11 +195,11 @@
             });
 
             it("supports skiping a command", function (done) {
-                var listener = jasmine.createSpy();
+                const listener = jasmine.createSpy();
 
                 expect(queue.running).toBe(false);
                 queue.addCommand(1);
-                var p = queue.addCommand("skip");
+                const p = queue.addCommand("skip");
                 queue.addCommand(3);
 
                 expect(p).toEqual(jasmine.any(Promise));

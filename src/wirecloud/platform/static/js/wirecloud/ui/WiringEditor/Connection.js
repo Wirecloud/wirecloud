@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2015-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -25,6 +26,259 @@
 (function (ns, se, utils) {
 
     "use strict";
+
+    const events = ['change', 'click', 'customizestart', 'customizeend', 'optremove', 'optshare', 'remove'];
+
+    const prop_active_get = function prop_active_get(active) {
+        return !!active;
+    };
+
+    const prop_active_set = function prop_active_set(active, isActive) {
+
+        if (this.enabled) {
+            active = isActive;
+            this.toggleClassName('active', active);
+        }
+
+        if (active) {
+            showButtonGroup.call(this);
+        } else {
+            hideButtonGroup.call(this);
+        }
+
+        toggleActiveEndpoints.call(this, active);
+
+        return active;
+    };
+
+    const prop_highlighted_get = function prop_highlighted_get(highlightedCount) {
+        return !!highlightedCount;
+    };
+
+    const prop_highlighted_set = function prop_highlighted_set(highlightedCount, isHighlighted) {
+
+        if (highlightedCount == null) {
+            highlightedCount = 0;
+        }
+
+        highlightedCount = highlightedCount + (isHighlighted ? 1 : -1);
+
+        if (highlightedCount < 0) {
+            highlightedCount = 0;
+        }
+
+        this.toggleClassName('highlighted', !!highlightedCount);
+
+        return highlightedCount;
+    };
+
+    const refreshInternally = function refreshInternally() {
+        const newDepth = this.active || this.highlighted || !this.background ? 1 : 0;
+
+        this.btnLogs.depth = newDepth;
+        this.btnPrefs.depth = newDepth;
+        this.btnRemove.depth = newDepth;
+    };
+
+    const updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
+        return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
+    };
+
+    const showButtonGroup = function showButtonGroup() {
+        this.btnPrefs.show();
+        this.btnLogs.show();
+    };
+
+    const hideButtonGroup = function hideButtonGroup() {
+        this.btnPrefs.hide();
+
+        if (!this.hasClassName('has-error') && !this.missing) {
+            this.btnLogs.hide();
+        }
+    };
+
+    const appendEndpoint = function appendEndpoint(endpoint, options) {
+
+        this[endpoint.type] = {
+            endpoint: endpoint,
+            handle: new ns.ConnectionHandle(endpoint, options)
+        };
+
+        return this;
+    };
+
+    const bindWiringConnection = function bindWiringConnection(wiringConnection) {
+
+        Object.defineProperties(this, {
+
+            logManager: {value: wiringConnection.logManager},
+
+            readonly: {value: wiringConnection.readonly}
+
+        });
+
+        this._connection = wiringConnection;
+        this._connection.logManager.addEventListener('newentry', notifyErrors.bind(this));
+
+        this.options.show();
+        notifyErrors.call(this);
+
+        if (this.readonly) {
+            this.addClassName("readonly");
+            this.btnRemove.disable();
+        }
+
+        return this;
+    };
+
+    const notifyErrors = function notifyErrors() {
+        const count = this._connection.logManager.errorCount;
+
+        this.toggleClassName('has-error', !!count);
+        this.btnLogs.setBadge(count ? count : null, 'danger', true);
+
+        if (count) {
+            this.btnLogs.show();
+        } else {
+            this.btnLogs.hide();
+        }
+    };
+
+    const btnerrors_onclick = function btnerrors_onclick() {
+        this.showLogs();
+    };
+
+    const btnremove_onclick = function btnremove_onclick(event) {
+
+        if (this.background) {
+            this.dispatchEvent('optshare', event);
+        } else {
+            if (!this.readonly) {
+                this.dispatchEvent('optremove', event);
+            }
+        }
+    };
+
+    const b1 = function b1(t) { return t * t * t; };
+    const b2 = function b2(t) { return 3 * t * t * (1 - t); };
+    const b3 = function b3(t) { return 3 * t * (1 - t) * (1 - t); };
+    const b4 = function b4(t) { return (1 - t) * (1 - t) * (1 - t); };
+
+    const bezier = function bezier(percent, c1, c2, c3, c4) {
+        const x = c1.x * b1(percent) + c2.x * b2(percent) + c3.x * b3(percent) + c4.x * b4(percent);
+        const y = c1.y * b1(percent) + c2.y * b2(percent) + c3.y * b3(percent) + c4.y * b4(percent);
+        return {x: Math.round(x), y: Math.round(y)};
+    };
+
+    const calculateMiddle = function calculateMiddle(source, sourceHandle, target, targetHandle) {
+        return bezier(0.5, source, sourceHandle, targetHandle, target);
+    };
+
+    const connection_onclick = function connection_onclick(event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (event.button === 0) {
+            this.click();
+        }
+    };
+
+    const establishConnection = function establishConnection(wiringConnection) {
+
+        if (wiringConnection == null) {
+            return this;
+        }
+
+        this.source.handle.addEventListener('drag', handle_ondrag.bind(this));
+        this.source.handle.addEventListener('dragend', handle_ondragend.bind(this));
+
+        this.target.handle.addEventListener('drag', handle_ondrag.bind(this));
+        this.target.handle.addEventListener('dragend', handle_ondragend.bind(this));
+
+        bindWiringConnection.call(this, wiringConnection);
+
+        this.source.endpoint.appendConnection(this);
+        this.target.endpoint.appendConnection(this);
+
+        this.get().setAttribute('data-sourceid', this.sourceId);
+        this.get().setAttribute('data-targetid', this.targetId);
+
+        this.options.get().setAttribute('data-sourceid', this.sourceId);
+        this.options.get().setAttribute('data-targetid', this.targetId);
+
+        return this;
+    };
+
+    const handle_ondrag = function handle_ondrag(position, handle) {
+        return this.refresh();
+    };
+
+    const handle_ondragend = function handle_ondragend() {
+        return this.dispatchEvent('change', this.toJSON());
+    };
+
+    const formatDistance = function formatDistance(s, sHandle, t, tHandle) {
+        return "M " + s.x + "," + s.y + " C " + sHandle.x + "," + sHandle.y + " " + tHandle.x + "," + tHandle.y + " " + t.x + "," + t.y;
+    };
+
+    const getHandlePosition = function getHandlePosition(start, end, invert) {
+        const position = ns.ConnectionHandle.getRelativePosition(start, end, invert);
+
+        return {x: start.x + position.x, y: start.y + position.y};
+    };
+
+    const removeEndpoint = function removeEndpoint(endpoint) {
+
+        this[endpoint.type] = {};
+
+        return this;
+    };
+
+    const isCreated = function isCreated() {
+        this.toggleClassName('incomplete', !this.created);
+    };
+
+    const toggleActiveEndpoints = function toggleActiveEndpoints(active) {
+        if (this.source.endpoint != null) {
+            this.source.endpoint.toggleActive(active);
+        }
+
+        if (this.target.endpoint != null) {
+            this.target.endpoint.toggleActive(active);
+        }
+
+        return this;
+    };
+
+    const updateDistance = function updateDistance(source, sourceHandle, target, targetHandle) {
+        this.pathElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
+
+        if (this.established) {
+            const middlePosition = calculateMiddle(source, sourceHandle, target, targetHandle);
+
+            this.options.style({
+                top: middlePosition.y + 'px',
+                left: middlePosition.x + 'px'
+            });
+        }
+
+        return this;
+    };
+
+    const connection_onmouseenter = function connection_onmouseenter() {
+        if (this.established && !this.editable) {
+            this.highlighted = true;
+            toggleActiveEndpoints.call(this, true);
+        }
+    };
+
+    const connection_onmouseleave = function connection_onmouseleave() {
+        if (this.established && !this.editable) {
+            this.highlighted = false;
+            toggleActiveEndpoints.call(this, false);
+        }
+    };
 
     ns.Connection = class Connection extends se.StyledElement {
 
@@ -57,7 +311,7 @@
                 state: 'default',
                 depth: 1,
                 class: "btn-show-logs",
-                iconClass: "fa fa-bell"
+                iconClass: "fas fa-bell"
             });
             this.btnLogs.addEventListener('click', btnerrors_onclick.bind(this));
             this.btnLogs.appendTo(this.options);
@@ -67,7 +321,7 @@
                 state: 'danger',
                 depth: 1,
                 class: "btn-remove",
-                iconClass: "fa fa-remove"
+                iconClass: "fas fa-times"
             });
             this.btnRemove.addEventListener('click', btnremove_onclick.bind(this));
             this.btnRemove.appendTo(this.options);
@@ -77,7 +331,7 @@
                 state: 'default',
                 depth: 1,
                 class: "we-prefs-btn",
-                iconClass: "fa fa-reorder"
+                iconClass: "fas fa-bars"
             });
             this.btnPrefs.popup_menu.append(new ns.ConnectionPrefs(this));
             this.btnPrefs.appendTo(this.options);
@@ -87,10 +341,10 @@
             this.source = {};
             this.target = {};
 
-            var removeAllowed = true;
+            let removeAllowed = true;
 
-            var active;
-            var highlightedCount;
+            let active;
+            let highlightedCount;
 
             Object.defineProperties(this, {
 
@@ -190,7 +444,7 @@
          *      The instance on which the member is called.
          */
         _onbackground(background) {
-            var newDepth = this.active || !background ? 1 : 0;
+            const newDepth = this.active || !background ? 1 : 0;
 
             this.toggleClassName('background', background);
 
@@ -236,7 +490,7 @@
 
             this.btnRemove
                 .replaceClassName("btn-remove", "btn-add")
-                .removeIconClassName(['fa-trash', 'fa-remove'])
+                .removeIconClassName(['fa-trash', 'fa-times'])
                 .addIconClassName('fa-plus')
                 .setTitle(utils.gettext("Add"));
             this.btnRemove.state = 'info';
@@ -249,7 +503,7 @@
             this.btnRemove
                 .replaceClassName('btn-add', 'btn-remove')
                 .removeIconClassName(['fa-plus', 'fa-trash'])
-                .addIconClassName('fa-remove')
+                .addIconClassName('fa-times')
                 .setTitle(utils.gettext("Remove"));
             this.btnRemove.state = 'danger';
 
@@ -260,7 +514,7 @@
 
             this.btnRemove
                 .replaceClassName('btn-add', 'btn-remove')
-                .removeIconClassName(['fa-plus', 'fa-remove'])
+                .removeIconClassName(['fa-plus', 'fa-times'])
                 .addIconClassName('fa-trash')
                 .setTitle(utils.gettext("Remove"));
             this.btnRemove.state = 'danger';
@@ -289,7 +543,7 @@
          *      The instance on which the member is called.
          */
         createAndBind(readonly, wiringEngine) {
-            var source = this.source.endpoint._endpoint,
+            const source = this.source.endpoint._endpoint,
                 target = this.target.endpoint._endpoint;
 
             if (this.established) {
@@ -341,19 +595,17 @@
          *      The instance on which the member is called.
          */
         refresh() {
-            var sourcePosition, sourceHandle, targetPosition, targetHandle;
-
             if (!this.created) {
                 return this;
             }
 
             this.toggleClassName('missing', this.missing);
 
-            sourcePosition = this.source.endpoint.anchorPosition;
-            targetPosition = this.target.endpoint.anchorPosition;
+            const sourcePosition = this.source.endpoint.anchorPosition;
+            const targetPosition = this.target.endpoint.anchorPosition;
 
-            sourceHandle = this.source.handle.updateDistance(targetPosition).position();
-            targetHandle = this.target.handle.updateDistance(sourcePosition, true).position();
+            const sourceHandle = this.source.handle.updateDistance(targetPosition).position();
+            const targetHandle = this.target.handle.updateDistance(sourcePosition, true).position();
 
             updateDistance.call(this, sourcePosition, sourceHandle, targetPosition, targetHandle);
 
@@ -386,7 +638,7 @@
             }
 
 
-            return se.StyledElement.prototype.remove.call(this, childElement);
+            return super.remove(childElement);
         }
 
         /**
@@ -455,7 +707,7 @@
          *      The instance on which the member is called.
          */
         showLogs() {
-            var count = this._connection.logManager.errorCount;
+            const count = this._connection.logManager.errorCount;
 
             this.btnLogs.setBadge(count ? count : null, 'danger');
             this._connection.showLogs();
@@ -470,7 +722,7 @@
          *      The instance on which the member is called.
          */
         toFirst() {
-            var parentElement;
+            let parentElement;
 
             if (this.parentElement != null) {
                 this.parentElement.removeChild(this).appendChild(this);
@@ -542,7 +794,7 @@
          *      The instance on which the member is called.
          */
         updateCursorPosition(position) {
-            var source, sourceHandle, target, targetHandle;
+            let source, sourceHandle, target, targetHandle;
 
             if (this.created) {
                 return this;
@@ -567,262 +819,5 @@
 
     }
     ns.Connection.SVG_NS = "http://www.w3.org/2000/svg";
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var events = ['change', 'click', 'customizestart', 'customizeend', 'optremove', 'optshare', 'remove'];
-
-    var prop_active_get = function prop_active_get(active) {
-        return !!active;
-    };
-
-    var prop_active_set = function prop_active_set(active, isActive) {
-
-        if (this.enabled) {
-            active = isActive;
-            this.toggleClassName('active', active);
-        }
-
-        if (active) {
-            showButtonGroup.call(this);
-        } else {
-            hideButtonGroup.call(this);
-        }
-
-        toggleActiveEndpoints.call(this, active);
-
-        return active;
-    };
-
-    var prop_highlighted_get = function prop_highlighted_get(highlightedCount) {
-        return !!highlightedCount;
-    };
-
-    var prop_highlighted_set = function prop_highlighted_set(highlightedCount, isHighlighted) {
-
-        if (highlightedCount == null) {
-            highlightedCount = 0;
-        }
-
-        highlightedCount = highlightedCount + (isHighlighted ? 1 : -1);
-
-        if (highlightedCount < 0) {
-            highlightedCount = 0;
-        }
-
-        this.toggleClassName('highlighted', !!highlightedCount);
-
-        return highlightedCount;
-    };
-
-    var refreshInternally = function refreshInternally() {
-        var newDepth = this.active || this.highlighted || !this.background ? 1 : 0;
-
-        this.btnLogs.depth = newDepth;
-        this.btnPrefs.depth = newDepth;
-        this.btnRemove.depth = newDepth;
-    };
-
-    var updateFlagRemoveAllowed = function updateFlagRemoveAllowed() {
-        return this.removeAllowed ? this._showButtonRemove() : this._showButtonDelete();
-    };
-
-    var showButtonGroup = function showButtonGroup() {
-        this.btnPrefs.show();
-        this.btnLogs.show();
-    };
-
-    var hideButtonGroup = function hideButtonGroup() {
-        this.btnPrefs.hide();
-
-        if (!this.hasClassName('has-error') && !this.missing) {
-            this.btnLogs.hide();
-        }
-    };
-
-    var appendEndpoint = function appendEndpoint(endpoint, options) {
-
-        this[endpoint.type] = {
-            endpoint: endpoint,
-            handle: new ns.ConnectionHandle(endpoint, options)
-        };
-
-        return this;
-    };
-
-    var bindWiringConnection = function bindWiringConnection(wiringConnection) {
-
-        Object.defineProperties(this, {
-
-            logManager: {value: wiringConnection.logManager},
-
-            readonly: {value: wiringConnection.readonly}
-
-        });
-
-        this._connection = wiringConnection;
-        this._connection.logManager.addEventListener('newentry', notifyErrors.bind(this));
-
-        this.options.show();
-        notifyErrors.call(this);
-
-        if (this.readonly) {
-            this.addClassName("readonly");
-            this.btnRemove.disable();
-        }
-
-        return this;
-    };
-
-    var notifyErrors = function notifyErrors() {
-        var count = this._connection.logManager.errorCount;
-
-        this.toggleClassName('has-error', !!count);
-        this.btnLogs.setBadge(count ? count : null, 'danger', true);
-
-        if (count) {
-            this.btnLogs.show();
-        } else {
-            this.btnLogs.hide();
-        }
-    };
-
-    var btnerrors_onclick = function btnerrors_onclick() {
-        this.showLogs();
-    };
-
-    var btnremove_onclick = function btnremove_onclick(event) {
-
-        if (this.background) {
-            this.dispatchEvent('optshare', event);
-        } else {
-            if (!this.readonly) {
-                this.dispatchEvent('optremove', event);
-            }
-        }
-    };
-
-    var b1 = function b1(t) { return t * t * t; };
-    var b2 = function b2(t) { return 3 * t * t * (1 - t); };
-    var b3 = function b3(t) { return 3 * t * (1 - t) * (1 - t); };
-    var b4 = function b4(t) { return (1 - t) * (1 - t) * (1 - t); };
-
-    var bezier = function bezier(percent, c1, c2, c3, c4) {
-        var x = c1.x * b1(percent) + c2.x * b2(percent) + c3.x * b3(percent) + c4.x * b4(percent);
-        var y = c1.y * b1(percent) + c2.y * b2(percent) + c3.y * b3(percent) + c4.y * b4(percent);
-        return {x: Math.round(x), y: Math.round(y)};
-    };
-
-    var calculateMiddle = function calculateMiddle(source, sourceHandle, target, targetHandle) {
-        return bezier(0.5, source, sourceHandle, targetHandle, target);
-    };
-
-    var connection_onclick = function connection_onclick(event) {
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (event.button === 0) {
-            this.click();
-        }
-    };
-
-    var establishConnection = function establishConnection(wiringConnection) {
-
-        if (wiringConnection == null) {
-            return this;
-        }
-
-        this.source.handle.addEventListener('drag', handle_ondrag.bind(this));
-        this.source.handle.addEventListener('dragend', handle_ondragend.bind(this));
-
-        this.target.handle.addEventListener('drag', handle_ondrag.bind(this));
-        this.target.handle.addEventListener('dragend', handle_ondragend.bind(this));
-
-        bindWiringConnection.call(this, wiringConnection);
-
-        this.source.endpoint.appendConnection(this);
-        this.target.endpoint.appendConnection(this);
-
-        this.get().setAttribute('data-sourceid', this.sourceId);
-        this.get().setAttribute('data-targetid', this.targetId);
-
-        this.options.get().setAttribute('data-sourceid', this.sourceId);
-        this.options.get().setAttribute('data-targetid', this.targetId);
-
-        return this;
-    };
-
-    var handle_ondrag = function handle_ondrag(position, handle) {
-        return this.refresh();
-    };
-
-    var handle_ondragend = function handle_ondragend() {
-        return this.dispatchEvent('change', this.toJSON());
-    };
-
-    var formatDistance = function formatDistance(s, sHandle, t, tHandle) {
-        return "M " + s.x + "," + s.y + " C " + sHandle.x + "," + sHandle.y + " " + tHandle.x + "," + tHandle.y + " " + t.x + "," + t.y;
-    };
-
-    var getHandlePosition = function getHandlePosition(start, end, invert) {
-        var position = ns.ConnectionHandle.getRelativePosition(start, end, invert);
-
-        return {x: start.x + position.x, y: start.y + position.y};
-    };
-
-    var removeEndpoint = function removeEndpoint(endpoint) {
-
-        this[endpoint.type] = {};
-
-        return this;
-    };
-
-    var isCreated = function isCreated() {
-        this.toggleClassName('incomplete', !this.created);
-    };
-
-    var toggleActiveEndpoints = function toggleActiveEndpoints(active) {
-        if (this.source.endpoint != null) {
-            this.source.endpoint.toggleActive(active);
-        }
-
-        if (this.target.endpoint != null) {
-            this.target.endpoint.toggleActive(active);
-        }
-
-        return this;
-    };
-
-    var updateDistance = function updateDistance(source, sourceHandle, target, targetHandle) {
-        this.pathElement.setAttribute('d', formatDistance(source, sourceHandle, target, targetHandle));
-
-        if (this.established) {
-            var middlePosition = calculateMiddle(source, sourceHandle, target, targetHandle);
-
-            this.options.style({
-                top: middlePosition.y + 'px',
-                left: middlePosition.x + 'px'
-            });
-        }
-
-        return this;
-    };
-
-    var connection_onmouseenter = function connection_onmouseenter() {
-        if (this.established && !this.editable) {
-            this.highlighted = true;
-            toggleActiveEndpoints.call(this, true);
-        }
-    };
-
-    var connection_onmouseleave = function connection_onmouseleave() {
-        if (this.established && !this.editable) {
-            this.highlighted = false;
-            toggleActiveEndpoints.call(this, false);
-        }
-    };
 
 })(Wirecloud.ui.WiringEditor, StyledElements, StyledElements.Utils);

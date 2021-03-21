@@ -1,6 +1,6 @@
 /*
  *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -143,7 +143,7 @@
                     "width": "fit-content(0)",
                     "sortable": false,
                     "contentBuilder": function (entry) {
-                        var button = new se.Button({iconClass: "fa fa-remove", plain: true, title: utils.gettext("Remove this file")});
+                        var button = new se.Button({iconClass: "fas fa-times", plain: true, title: utils.gettext("Remove this file")});
                         button.addEventListener("click", this.removeFile.bind(this, entry.file));
                         return button;
                     }.bind(this)
@@ -266,7 +266,7 @@
         }
 
         show() {
-            Wirecloud.ui.WindowMenu.prototype.show.apply(this, arguments);
+            super.show(...arguments);
             this.fileTable.repaint();
             updateEmptyStatus.call(this);
         }

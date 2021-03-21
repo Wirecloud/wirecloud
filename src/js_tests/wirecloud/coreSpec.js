@@ -32,7 +32,7 @@
         beforeEach(function () {
 
             spyOn(Wirecloud, "Workspace").and.callFake(function (data, components) {
-                for (var key in data) {
+                for (const key in data) {
                     this[key] = data[key];
                 }
                 this.addEventListener = jasmine.createSpy("addEventListener");
@@ -43,7 +43,7 @@
 
         describe("changeActiveWorkspace(workspace[, options])", () => {
 
-            var initworkspace;
+            let initworkspace;
 
             beforeEach(() => {
                 initworkspace = {
@@ -92,11 +92,11 @@
 
             it("allows switching the active workspace by passing ids", function (done) {
                 // Arrange
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
 
                 // Act
-                var task = Wirecloud.changeActiveWorkspace({id: 1});
+                const task = Wirecloud.changeActiveWorkspace({id: 1});
 
                 // Assert
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
@@ -110,11 +110,11 @@
 
             it("allows switching the active workspace by passing owner/name pairs", function (done) {
                 // Arrange
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
 
                 // Act
-                var task = Wirecloud.changeActiveWorkspace({
+                const task = Wirecloud.changeActiveWorkspace({
                     owner: "wirecloud",
                     name: "home",
                     title: "Home"
@@ -132,15 +132,15 @@
 
             it("unloads previous active workspace", (done) => {
                 // Arrange
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
-                var previous_workspace = {
+                const previous_workspace = {
                     unload: jasmine.createSpy('unload')
                 };
                 Wirecloud.activeWorkspace = previous_workspace;
 
                 // Act
-                var task = Wirecloud.changeActiveWorkspace({id: 1});
+                const task = Wirecloud.changeActiveWorkspace({id: 1});
 
                 // Assert
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
@@ -155,11 +155,11 @@
 
             it("supports passing the initial tab using the initialtab option", (done) => {
                 // Arrange
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
 
                 // Act
-                var task = Wirecloud.changeActiveWorkspace({id: 1}, {initialtab: "MyTab"});
+                const task = Wirecloud.changeActiveWorkspace({id: 1}, {initialtab: "MyTab"});
 
                 // Assert
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
@@ -181,11 +181,11 @@
 
             it("supports replacing the navigation history (by using the history option)", (done) => {
                 // Arrange
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
 
                 // Act
-                var task = Wirecloud.changeActiveWorkspace({id: 1}, {history: "replace"});
+                const task = Wirecloud.changeActiveWorkspace({id: 1}, {history: "replace"});
 
                 // Assert
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
@@ -206,11 +206,11 @@
 
             it("supports not touching the navigation history by using the history option", (done) => {
                 // Arrange
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 Wirecloud.addEventListener('activeworkspacechanged', listener);
 
                 // Act
-                var task = Wirecloud.changeActiveWorkspace({id: 1}, {history: "ignore"});
+                const task = Wirecloud.changeActiveWorkspace({id: 1}, {history: "ignore"});
 
                 // Assert
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
@@ -260,7 +260,7 @@
                     });
                 });
 
-                var task = Wirecloud.createWorkspace({name: "MyWorkspace"});
+                const task = Wirecloud.createWorkspace({name: "MyWorkspace"});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then((workspace) => {
@@ -276,11 +276,11 @@
             });
 
             it("allows creating workspaces from mashup templates", (done) => {
-                var template = "Wirecloud/TestMashup/1.0";
+                const template = "Wirecloud/TestMashup/1.0";
                 Wirecloud.workspaceInstances = {};
                 Wirecloud.workspacesByUserAndName = {};
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
-                    var payload = JSON.parse(options.postBody);
+                    const payload = JSON.parse(options.postBody);
                     expect(payload.mashup).toBe(template);
                     return new Wirecloud.Task("Sending request", function (resolve) {
                         resolve({
@@ -295,7 +295,7 @@
                     });
                 });
 
-                var task = Wirecloud.createWorkspace({mashup: template});
+                const task = Wirecloud.createWorkspace({mashup: template});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then((workspace) => {
@@ -312,7 +312,7 @@
 
             describe("calls reject on unexepected responses", () => {
 
-                var test = (status) => {
+                const test = (status) => {
                     return (done) => {
                         Wirecloud.workspaceInstances = {};
                         Wirecloud.workspacesByUserAndName = {};
@@ -324,7 +324,7 @@
                             });
                         });
 
-                        var task = Wirecloud.createWorkspace({name: "Test"});
+                        const task = Wirecloud.createWorkspace({name: "Test"});
 
                         expect(task).toEqual(jasmine.any(Wirecloud.Task));
                         task.catch((error) => {
@@ -341,9 +341,9 @@
 
             describe("calls reject on error responses", () => {
 
-                var test = (status, details) => {
+                const test = (status, details) => {
                     return (done) => {
-                        var description = "detailed error description";
+                        const description = "detailed error description";
                         Wirecloud.workspaceInstances = {};
                         Wirecloud.workspacesByUserAndName = {};
                         spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
@@ -358,7 +358,7 @@
                             });
                         });
 
-                        var task = Wirecloud.createWorkspace({name: "Test"});
+                        const task = Wirecloud.createWorkspace({name: "Test"});
 
                         expect(task).toEqual(jasmine.any(Wirecloud.Task));
                         task.catch((error) => {
@@ -387,7 +387,7 @@
 
         describe("init([options])", () => {
 
-            var preferencesmanager, currentThemeBackup;
+            let preferencesmanager, currentThemeBackup;
 
             beforeEach(() => {
                 currentThemeBackup = Wirecloud.currentTheme;
@@ -429,7 +429,7 @@
                 });
                 Wirecloud.ContextManager.prototype.modify = jasmine.createSpy("modify");
                 spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
-                    var response;
+                    let response;
 
                     switch (url) {
                     case Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION:
@@ -474,7 +474,7 @@
                     view: "workspace"
                 });
 
-                var task = Wirecloud.init();
+                const task = Wirecloud.init();
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(() => {
@@ -508,7 +508,7 @@
                     view: "workspace"
                 });
 
-                var task = Wirecloud.init({preventDefault: true});
+                const task = Wirecloud.init({preventDefault: true});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(() => {
@@ -535,7 +535,7 @@
                 });
                 Wirecloud.ContextManager.and.throwError("invalid data");
 
-                var task = Wirecloud.init();
+                const task = Wirecloud.init();
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.catch(() => {
@@ -632,7 +632,7 @@
                     });
                 });
 
-                var task = Wirecloud.loadWorkspace({owner: "wirecloud", name: "home", title: "Home"});
+                const task = Wirecloud.loadWorkspace({owner: "wirecloud", name: "home", title: "Home"});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function (workspace) {
@@ -662,7 +662,7 @@
                     });
                 });
 
-                var task = Wirecloud.loadWorkspace({id: 100});
+                const task = Wirecloud.loadWorkspace({id: 100});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function (workspace) {
@@ -686,7 +686,7 @@
                     });
                 });
 
-                var task = Wirecloud.loadWorkspace({id: 100});
+                const task = Wirecloud.loadWorkspace({id: 100});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function (workspace) {
@@ -715,7 +715,7 @@
                     });
                 });
 
-                var task = Wirecloud.loadWorkspace({id: 100});
+                const task = Wirecloud.loadWorkspace({id: 100});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function (workspace) {
@@ -732,7 +732,7 @@
         describe("mergeWorkspace(options)", () => {
 
             beforeEach(() => {
-                var workspace = {
+                const workspace = {
                     id: 1,
                     owner: "user",
                     name: "dashboard"
@@ -784,7 +784,7 @@
                     expect(Wirecloud.URLs.WORKSPACE_MERGE.evaluate).toHaveBeenCalledWith({
                         to_ws_id: 1
                     });
-                    var data = JSON.parse(options.postBody);
+                    const data = JSON.parse(options.postBody);
                     expect(data.workspace).toBe(5);
                     expect(Object.keys(data)).not.toEqual(jasmine.arrayContaining(["mashup"]));
                     return new Wirecloud.Task("Merging workspace data", function (resolve) {
@@ -794,7 +794,7 @@
                     });
                 });
 
-                var task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
+                const task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then((workspace) => {
@@ -811,7 +811,7 @@
                     expect(Wirecloud.URLs.WORKSPACE_MERGE.evaluate).toHaveBeenCalledWith({
                         to_ws_id: 1
                     });
-                    var data = JSON.parse(options.postBody);
+                    const data = JSON.parse(options.postBody);
                     expect(data.workspace).toBe(5);
                     expect(Object.keys(data)).not.toEqual(jasmine.arrayContaining(["mashup"]));
                     return new Wirecloud.Task("Merging workspace data", function (resolve) {
@@ -821,7 +821,7 @@
                     });
                 });
 
-                var task = Wirecloud.mergeWorkspace({owner: "user", name: "dashboard"}, {workspace: 5});
+                const task = Wirecloud.mergeWorkspace({owner: "user", name: "dashboard"}, {workspace: 5});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then((workspace) => {
@@ -838,7 +838,7 @@
                     expect(Wirecloud.URLs.WORKSPACE_MERGE.evaluate).toHaveBeenCalledWith({
                         to_ws_id: 1
                     });
-                    var data = JSON.parse(options.postBody);
+                    const data = JSON.parse(options.postBody);
                     expect(data.mashup).toBe("Wirecloud/TestMashup/1.0");
                     expect(Object.keys(data)).not.toEqual(jasmine.arrayContaining(["workspace"]));
                     return new Wirecloud.Task("Merging workspace data", function (resolve) {
@@ -848,7 +848,7 @@
                     });
                 });
 
-                var task = Wirecloud.mergeWorkspace({id: 1}, {mashup: "Wirecloud/TestMashup/1.0"});
+                const task = Wirecloud.mergeWorkspace({id: 1}, {mashup: "Wirecloud/TestMashup/1.0"});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then((workspace) => {
@@ -861,7 +861,7 @@
 
             describe("calls reject on unexepected responses", () => {
 
-                var test = (status) => {
+                const test = (status) => {
                     return (done) => {
                         spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
                             return new Wirecloud.Task("Sending request", (resolve) => {
@@ -871,7 +871,7 @@
                             });
                         });
 
-                        var task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
+                        const task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
 
                         expect(task).toEqual(jasmine.any(Wirecloud.Task));
                         task.catch((error) => {
@@ -889,9 +889,9 @@
 
             describe("calls reject on error responses", () => {
 
-                var test = (status, details) => {
+                const test = (status, details) => {
                     return (done) => {
-                        var description = "detailed error description";
+                        const description = "detailed error description";
                         spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
                             return new Wirecloud.Task("Sending request", (resolve) => {
                                 resolve({
@@ -904,7 +904,7 @@
                             });
                         });
 
-                        var task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
+                        const task = Wirecloud.mergeWorkspace({id: 1}, {workspace: 5});
 
                         expect(task).toEqual(jasmine.any(Wirecloud.Task));
                         task.catch((error) => {
@@ -957,7 +957,7 @@
             });
 
             it("remove workspaces by owner/name", function (done) {
-                var workspace = {
+                const workspace = {
                     id: 1,
                     owner: "wirecloud",
                     name: "home",
@@ -981,7 +981,7 @@
                     });
                 });
 
-                var task = Wirecloud.removeWorkspace({owner: "wirecloud", name: "home", title: "Home"});
+                const task = Wirecloud.removeWorkspace({owner: "wirecloud", name: "home", title: "Home"});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function () {
@@ -992,7 +992,7 @@
             });
 
             it("remove workspaces by id", function (done) {
-                var workspace = {
+                const workspace = {
                     id: 100,
                     owner: "wirecloud",
                     name: "home",
@@ -1016,7 +1016,7 @@
                     });
                 });
 
-                var task = Wirecloud.removeWorkspace({id: 100});
+                const task = Wirecloud.removeWorkspace({id: 100});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function () {
@@ -1027,7 +1027,7 @@
             });
 
             it("remove workspaces by id (not tracked)", function (done) {
-                var workspace = {
+                const workspace = {
                     id: 100,
                     owner: "wirecloud",
                     name: "home",
@@ -1051,7 +1051,7 @@
                     });
                 });
 
-                var task = Wirecloud.removeWorkspace({id: 2});
+                const task = Wirecloud.removeWorkspace({id: 2});
 
                 expect(task).toEqual(jasmine.any(Wirecloud.Task));
                 task.then(function () {
@@ -1063,7 +1063,7 @@
 
             describe("calls reject on unexepected responses", () => {
 
-                var test = (status) => {
+                const test = (status) => {
                     return (done) => {
                         spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
                             return new Wirecloud.Task("Sending request", (resolve) => {
@@ -1073,7 +1073,7 @@
                             });
                         });
 
-                        var task = Wirecloud.removeWorkspace({id: 100});
+                        const task = Wirecloud.removeWorkspace({id: 100});
 
                         expect(task).toEqual(jasmine.any(Wirecloud.Task));
                         task.catch((error) => {
@@ -1090,9 +1090,9 @@
 
             describe("calls reject on error responses", () => {
 
-                var test = (status) => {
+                const test = (status) => {
                     return (done) => {
-                        var description = "detailed error description";
+                        const description = "detailed error description";
                         spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
                             return new Wirecloud.Task("Sending request", (resolve) => {
                                 resolve({
@@ -1102,7 +1102,7 @@
                             });
                         });
 
-                        var task = Wirecloud.removeWorkspace({id: 100});
+                        const task = Wirecloud.removeWorkspace({id: 100});
 
                         expect(task).toEqual(jasmine.any(Wirecloud.Task));
                         task.catch((error) => {

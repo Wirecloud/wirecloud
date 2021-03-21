@@ -37,7 +37,7 @@
         describe("new PopupMenuBase(options)", () => {
 
             it("should init default status", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.activeItem).toBe(null);
                 expect(menu.firstEnabledItem).toBe(null);
@@ -48,7 +48,7 @@
 
         describe("append(child)", () => {
 
-            var menu;
+            let menu;
 
             afterEach(() => {
                 menu = new se.PopupMenuBase();
@@ -68,9 +68,9 @@
             test('"hello world!"', "hello world!");
 
             it("should allow to append submenu items", () => {
-                var ref_element = new se.Button();
+                const ref_element = new se.Button();
                 menu.show(ref_element);
-                var item = new se.SubMenuItem("Entry");
+                const item = new se.SubMenuItem("Entry");
 
                 expect(menu.append(item)).toBe(menu);
 
@@ -80,11 +80,11 @@
             });
 
             it("should work on visible menus", () => {
-                var listener = jasmine.createSpy("listener");
-                var ref_element = new se.Button();
+                const listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
                 menu.show(ref_element);
                 menu.addEventListener("itemOver", listener);
-                var item = new se.MenuItem("Entry");
+                const item = new se.MenuItem("Entry");
 
                 expect(menu.append(item)).toBe(menu);
 
@@ -95,12 +95,12 @@
             });
 
             it("should activate child if there are no items and oneActiveAtLeast option is used", () => {
-                var listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var ref_element = new se.Button();
+                const ref_element = new se.Button();
                 menu.show(ref_element);
                 menu.addEventListener("itemOver", listener);
-                var item = new se.MenuItem("Entry");
+                const item = new se.MenuItem("Entry");
 
                 expect(menu.append(item)).toBe(menu);
 
@@ -111,12 +111,12 @@
             });
 
             it("should work when adding a disabled item while oneActiveAtLeast option is used", () => {
-                var listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var ref_element = new se.Button();
+                const ref_element = new se.Button();
                 menu.show(ref_element);
                 menu.addEventListener("itemOver", listener);
-                var item = new se.MenuItem("Entry");
+                const item = new se.MenuItem("Entry");
                 item.enabled = false;
 
                 expect(menu.append(item)).toBe(menu);
@@ -128,18 +128,18 @@
             });
 
             it("should add dynamic generated items", () => {
-                var listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var ref_element = new se.Button();
+                const ref_element = new se.Button();
                 menu.show(ref_element);
                 menu.addEventListener("itemOver", listener);
-                var item1 = new se.MenuItem("Entry");
+                const item1 = new se.MenuItem("Entry");
                 item1.enabled = false;
-                var item2 = new se.MenuItem("Entry");
-                var item3 = new se.Separator();
-                var item4 = new se.SubMenuItem("SubMenu");
-                var builder = () => {return [item1, item2, item3, item4];};
-                var dynamic_items = new se.DynamicMenuItems(builder);
+                const item2 = new se.MenuItem("Entry");
+                const item3 = new se.Separator();
+                const item4 = new se.SubMenuItem("SubMenu");
+                const builder = () => {return [item1, item2, item3, item4];};
+                const dynamic_items = new se.DynamicMenuItems(builder);
 
                 expect(menu.append(dynamic_items)).toBe(menu);
 
@@ -154,15 +154,15 @@
         describe("clear()", () => {
 
             it("should work on empty menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.clear()).toBe(menu);
             });
 
             it("should work on visible menus", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
-                var item = new se.MenuItem("Entry");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
+                const item = new se.MenuItem("Entry");
                 menu.append(item);
                 menu.show(ref_element);
 
@@ -174,16 +174,16 @@
         describe("destroy()", () => {
 
             it("should work on empty menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.destroy()).toBe(menu);
             });
 
             it("should work on visible menus", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.Separator();
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.Separator();
                 menu.append(item1).append(item2);
                 menu.show(ref_element);
                 spyOn(menu, "hide");
@@ -203,22 +203,22 @@
             });
 
             it("should work on already hidden menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.hide()).toBe(menu);
             });
 
             it("should work on visible menus", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
                 menu.show(ref_element);
 
                 expect(menu.hide()).toBe(menu);
             });
 
             it("should support WireCloud", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
                 menu.show(ref_element);
                 window.Wirecloud = {
                     UserInterfaceManager: {
@@ -231,9 +231,9 @@
             });
 
             it("should hide any visible sub-menu", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
-                var submenu = new se.SubMenuItem("Submenu");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
+                const submenu = new se.SubMenuItem("Submenu");
                 menu.append(submenu).show(ref_element);
                 spyOn(submenu, "hide");
 
@@ -242,20 +242,20 @@
             });
 
             it("should handle dynamic items", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
-                var item1 = new se.MenuItem("Entry");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
+                const item1 = new se.MenuItem("Entry");
                 item1.enabled = false;
                 spyOn(item1, "destroy");
-                var item2 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
                 spyOn(item2, "destroy");
-                var item3 = new se.Separator();
+                const item3 = new se.Separator();
                 spyOn(item3, "destroy");
-                var item4 = new se.SubMenuItem("SubMenu");
+                const item4 = new se.SubMenuItem("SubMenu");
                 spyOn(item4, "hide");
                 spyOn(item4, "destroy");
-                var builder = () => {return [item1, item2, item3, item4];};
-                var dynamic_items = new se.DynamicMenuItems(builder);
+                const builder = () => {return [item1, item2, item3, item4];};
+                const dynamic_items = new se.DynamicMenuItems(builder);
                 menu.append(dynamic_items).show(ref_element);
 
                 expect(menu.hide()).toBe(menu);
@@ -272,16 +272,16 @@
         describe("moveCursorDown()", () => {
 
             it("should ignore hidden menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.moveCursorDown()).toBe(menu);
                 expect(menu.activeItem).toBe(null);
             });
 
             it("should clean active item if current active item is the last one", () => {
-                var item = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const item = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item).moveCursorDown().addEventListener("itemOver", listener);
 
                 expect(menu.moveCursorDown()).toBe(menu);
@@ -291,11 +291,11 @@
             });
 
             it("should move down to the first menu item if there is no current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element);
                 menu.addEventListener("itemOver", listener);
 
@@ -306,11 +306,11 @@
             });
 
             it("should move down to the next menu item if there is a current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveCursorDown();
                 menu.addEventListener("itemOver", listener);
 
@@ -320,13 +320,13 @@
             });
 
             it("should skip disabled menu items", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
                 item2.enabled = false;
-                var item3 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const item3 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).append(item3).show(ref_element).moveCursorDown();
                 menu.addEventListener("itemOver", listener);
 
@@ -336,11 +336,11 @@
             });
 
             it("should return back to the first menu item if the current menu item is the last available one", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveCursorDown().moveCursorDown();
                 menu.addEventListener("itemOver", listener);
 
@@ -354,26 +354,26 @@
         describe("moveCursorUp()", () => {
 
             it("should ignore hidden menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.moveCursorUp()).toBe(menu);
             });
 
             it("should do nothing if there is only one available menu item", () => {
                 // TODO: bad implemented test
-                var item = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
+                const item = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
                 menu.append(item);
 
                 expect(menu.moveCursorUp()).toBe(menu);
             });
 
             it("should activate last menu item if there is no current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element);
                 menu.addEventListener("itemOver", listener);
 
@@ -383,11 +383,11 @@
             });
 
             it("should move up to the previous menu item if there is a current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveCursorUp();
                 menu.addEventListener("itemOver", listener);
 
@@ -397,11 +397,11 @@
             });
 
             it("should return back to the last menu item if the current menu item is the last available one", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveCursorUp().moveCursorUp();
                 menu.addEventListener("itemOver", listener);
 
@@ -415,26 +415,26 @@
         describe("moveFocusDown()", () => {
 
             it("should ignore hidden menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.moveFocusDown()).toBe(menu);
             });
 
             it("should do nothing if there is only one available menu item", () => {
                 // TODO: bad implemented test
-                var item = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
+                const item = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
                 menu.append(item);
 
                 expect(menu.moveFocusDown()).toBe(menu);
             });
 
             it("should move down to the first menu item if there is no current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element);
                 item1.addEventListener("focus", listener);
 
@@ -444,11 +444,11 @@
             });
 
             it("should move down to the next menu item if there is a current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveFocusDown();
                 item2.addEventListener("focus", listener);
 
@@ -458,11 +458,11 @@
             });
 
             it("should return back to the first menu item if the current menu item is the last available one", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveFocusDown().moveFocusDown();
                 item1.addEventListener("focus", listener);
 
@@ -476,26 +476,26 @@
         describe("moveFocusUp()", () => {
 
             it("should ignore hidden menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.moveFocusUp()).toBe(menu);
             });
 
             it("should do nothing if there is only one available menu item", () => {
                 // TODO: bad implemented test
-                var item = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
+                const item = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
                 menu.append(item);
 
                 expect(menu.moveFocusUp()).toBe(menu);
             });
 
             it("should activate last menu item if there is no current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element);
                 item2.addEventListener("focus", listener);
 
@@ -505,11 +505,11 @@
             });
 
             it("should move up to the previous menu item if there is a current active menu item", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveFocusUp();
                 item1.addEventListener("focus", listener);
 
@@ -519,11 +519,11 @@
             });
 
             it("should return back to the last menu item if the current menu item is the last available one", () => {
-                var ref_element = new se.Button();
-                var item1 = new se.MenuItem("Entry");
-                var item2 = new se.MenuItem("Entry");
-                var menu = new se.PopupMenuBase();
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const item1 = new se.MenuItem("Entry");
+                const item2 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase();
+                const listener = jasmine.createSpy("listener");
                 menu.append(item1).append(item2).show(ref_element).moveFocusUp().moveFocusUp();
                 item2.addEventListener("focus", listener);
 
@@ -537,14 +537,14 @@
         describe("repaint()", () => {
 
             it("should work on hidden menus", () => {
-                var menu = new se.PopupMenuBase();
+                const menu = new se.PopupMenuBase();
 
                 expect(menu.repaint()).toBe(menu);
             });
 
             it("should work on visible menus", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
                 menu.show(ref_element);
 
                 expect(menu.repaint()).toBe(menu);
@@ -554,7 +554,7 @@
 
         describe("show(refPosition)", () => {
 
-            var ref_element;
+            let ref_element;
 
             beforeEach(() => {
                 ref_element = new se.Button();
@@ -567,105 +567,105 @@
             });
 
             it("should support basic string placement", () => {
-                var menu = new se.PopupMenuBase({placement: 'top-right'});
+                const menu = new se.PopupMenuBase({placement: 'top-right'});
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-top-right")).toBe(true);
             });
 
             it("should ignore second calls", () => {
-                var menu = new se.PopupMenuBase({placement: 'top-right'});
+                const menu = new se.PopupMenuBase({placement: 'top-right'});
                 menu.show(ref_element);
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var elements = document.querySelectorAll('.se-popup-menu');
+                const elements = document.querySelectorAll('.se-popup-menu');
                 expect(elements.length).toBe(1);
             });
 
             it("left-bottom placement", () => {
-                var menu = new se.PopupMenuBase({placement: ['left-bottom']});
+                const menu = new se.PopupMenuBase({placement: ['left-bottom']});
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-left-bottom")).toBe(true);
             });
 
             it("right-bottom placement", () => {
-                var menu = new se.PopupMenuBase({placement: ['right-bottom']});
+                const menu = new se.PopupMenuBase({placement: ['right-bottom']});
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-right-bottom")).toBe(true);
             });
 
             it("top-left placement", () => {
-                var menu = new se.PopupMenuBase({placement: ['top-left']});
+                const menu = new se.PopupMenuBase({placement: ['top-left']});
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-top-left")).toBe(true);
             });
 
             it("top-right placement", () => {
-                var menu = new se.PopupMenuBase({placement: ['top-right']});
+                const menu = new se.PopupMenuBase({placement: ['top-right']});
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-top-right")).toBe(true);
             });
 
             it("bottom-left placement", () => {
-                var menu = new se.PopupMenuBase({placement: ['bottom-left']});
+                const menu = new se.PopupMenuBase({placement: ['bottom-left']});
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-bottom-left")).toBe(true);
             });
 
             it("bottom-right placement", () => {
-                var menu = new se.PopupMenuBase({placement: ['bottom-right']});
+                const menu = new se.PopupMenuBase({placement: ['bottom-right']});
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-bottom-right")).toBe(true);
             });
 
             it("should support dynamic items", () => {
-                var menu = new se.PopupMenuBase({placement: ['bottom-right']});
-                var item1 = new se.MenuItem("Entry");
+                const menu = new se.PopupMenuBase({placement: ['bottom-right']});
+                const item1 = new se.MenuItem("Entry");
                 item1.enabled = false;
-                var item2 = new se.MenuItem("Entry");
-                var item3 = new se.Separator();
-                var item4 = new se.SubMenuItem("SubMenu");
-                var builder = () => {return [item1, item2, item3, item4];};
-                var dynamic_items = new se.DynamicMenuItems(builder);
+                const item2 = new se.MenuItem("Entry");
+                const item3 = new se.Separator();
+                const item4 = new se.SubMenuItem("SubMenu");
+                const builder = () => {return [item1, item2, item3, item4];};
+                const dynamic_items = new se.DynamicMenuItems(builder);
                 menu.append(dynamic_items);
 
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-bottom-right")).toBe(true);
             });
 
             it("should manage the case where there is not space", () => {
-                var menu = new se.PopupMenuBase({
+                const menu = new se.PopupMenuBase({
                     placement: ['bottom-right']
                 });
 
@@ -674,14 +674,14 @@
                 }
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(element.classList.contains("se-popup-menu-bottom-right")).toBe(true);
             });
 
             it("should manage the case where ref_element is a simple coordenate", () => {
-                var ref_element = {x: 50, y: 50};
-                var menu = new se.PopupMenuBase({
+                const ref_element = {x: 50, y: 50};
+                const menu = new se.PopupMenuBase({
                     placement: ['bottom-right']
                 });
 
@@ -690,12 +690,12 @@
                 }
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
             });
 
             it("should support WireCloud", () => {
-                var menu = new se.PopupMenuBase({
+                const menu = new se.PopupMenuBase({
                     placement: ['bottom-right']
                 });
                 window.Wirecloud = {
@@ -705,7 +705,7 @@
                 };
                 expect(menu.show(ref_element)).toBe(menu);
 
-                var element = document.querySelector('.se-popup-menu');
+                const element = document.querySelector('.se-popup-menu');
                 expect(element).not.toBe(null);
                 expect(Wirecloud.UserInterfaceManager._registerPopup).toHaveBeenCalledWith(menu);
             });
@@ -715,10 +715,10 @@
         describe("should react to the following events", () => {
 
             it("mouseenter on a item", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
-                var item = new se.MenuItem("Entry");
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
+                const item = new se.MenuItem("Entry");
+                const listener = jasmine.createSpy("listener");
                 menu.append(item).show(ref_element).addEventListener("itemOver", listener);
 
                 item.dispatchEvent("mouseenter");
@@ -728,10 +728,10 @@
             });
 
             it("mouseleave on an active item", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
-                var item = new se.MenuItem("Entry");
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
+                const item = new se.MenuItem("Entry");
+                const listener = jasmine.createSpy("listener");
                 menu.append(item).show(ref_element).moveCursorDown().addEventListener("itemOver", listener);
                 spyOn(item, "deactivate");
 
@@ -743,10 +743,10 @@
             });
 
             it("should ignore mouseleave when using the oneActiveAtLeast option", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var item = new se.MenuItem("Entry");
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase({oneActiveAtLeast: true});
+                const item = new se.MenuItem("Entry");
+                const listener = jasmine.createSpy("listener");
                 menu.append(item).show(ref_element).addEventListener("itemOver", listener);
                 spyOn(item, "deactivate");
 
@@ -761,11 +761,11 @@
                 // 1. mouseenter item1
                 // 2. press key down (moveCursorDown) => activate item2
                 // 3. mouseleave item1
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase();
-                var item1 = new se.MenuItem("Entry 1");
-                var item2 = new se.MenuItem("Entry 2");
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase();
+                const item1 = new se.MenuItem("Entry 1");
+                const item2 = new se.MenuItem("Entry 2");
+                const listener = jasmine.createSpy("listener");
                 menu
                     .append(item1).append(item2).show(ref_element)
                     .moveCursorDown().moveCursorDown()
@@ -786,11 +786,11 @@
                 // 1. mouseenter item1
                 // 2. press key down (moveCursorDown) => activate item2
                 // 3. mouseleave item1
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var item1 = new se.MenuItem("Entry 1");
-                var item2 = new se.MenuItem("Entry 2");
-                var listener = jasmine.createSpy("listener");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase({oneActiveAtLeast: true});
+                const item1 = new se.MenuItem("Entry 1");
+                const item2 = new se.MenuItem("Entry 2");
+                const listener = jasmine.createSpy("listener");
                 menu
                     .append(item1).append(item2).show(ref_element)
                     .moveCursorDown()
@@ -807,10 +807,10 @@
             });
 
             it("should manage blur events", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var item1 = new se.MenuItem("Entry 1");
-                var item2 = new se.MenuItem("Entry 2");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase({oneActiveAtLeast: true});
+                const item1 = new se.MenuItem("Entry 1");
+                const item2 = new se.MenuItem("Entry 2");
                 menu
                     .append(item1).append(item2).show(ref_element)
                     .moveFocusDown();
@@ -819,10 +819,10 @@
             });
 
             it("should manage blur events", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var item1 = new se.MenuItem("Entry 1");
-                var item2 = new se.MenuItem("Entry 2");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase({oneActiveAtLeast: true});
+                const item1 = new se.MenuItem("Entry 1");
+                const item2 = new se.MenuItem("Entry 2");
                 menu
                     .append(item1).append(item2).show(ref_element)
                     .moveFocusDown();
@@ -831,9 +831,9 @@
             });
 
             it("should manage click events on submenus", () => {
-                var ref_element = new se.Button();
-                var menu = new se.PopupMenuBase({oneActiveAtLeast: true});
-                var item = new se.SubMenuItem("Entry");
+                const ref_element = new se.Button();
+                const menu = new se.PopupMenuBase({oneActiveAtLeast: true});
+                const item = new se.SubMenuItem("Entry");
                 menu
                     .append(item).show(ref_element)
                     .moveFocusDown();

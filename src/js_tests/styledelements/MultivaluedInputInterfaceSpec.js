@@ -57,7 +57,7 @@
             });
 
             it("should work by providing the minimum details", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
                 expect(field.id).toBe("list");
                 expect(field).toEqual(jasmine.any(se.InputInterface));
                 expect(field.entries).toEqual([{
@@ -73,7 +73,7 @@
         describe("clear()", () => {
 
             it("should work on empty fields", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
 
                 expect(field.clear()).toBe(field);
 
@@ -93,7 +93,7 @@
         describe("getValue()", () => {
 
             it("should work on empty fields", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
 
                 expect(field.getValue()).toEqual([{}]);
             });
@@ -103,13 +103,13 @@
         describe("_setValue(newValue)", () => {
 
             it("should support null values", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
 
                 expect(field._setValue()).toEqual(field);
             });
 
             it("should support an array of values", () => {
-                let field = new se.MultivaluedInputInterface("list", {fields: [{id: "name"}]});
+                const field = new se.MultivaluedInputInterface("list", {fields: [{id: "name"}]});
 
                 expect(field._setValue([{name: "a"}])).toEqual(field);
             });
@@ -119,7 +119,7 @@
         describe("_setError(error)", () => {
 
             it("should support null values", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
 
                 expect(field._setError()).toEqual(field);
             });
@@ -129,7 +129,7 @@
         describe("interface", () => {
 
             it("should allow to add new entries", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
 
                 field.wrapperElement.querySelector('.se-add-item-btn').click();
 
@@ -137,13 +137,13 @@
             });
 
             it("should allow to remove entries", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
 
                 field.wrapperElement.querySelector('.se-remove-item-btn').click();
             });
 
             it("should allow to remove entries", () => {
-                let field = new se.MultivaluedInputInterface("list", {});
+                const field = new se.MultivaluedInputInterface("list", {});
                 field.addEntry({name: 'a'});
 
                 field.wrapperElement.querySelector('.se-remove-item-btn').click();

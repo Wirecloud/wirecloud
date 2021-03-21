@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2011-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,7 +30,7 @@
     const privates = new WeakMap();
 
     const getFieldValue = function getFieldValue(item, field) {
-        var fieldPath, currentNode, currentField;
+        let fieldPath, currentNode, currentField;
 
         if (typeof field === "string") {
             fieldPath = [field];
@@ -50,9 +50,9 @@
         return currentNode;
     };
 
-    var elementPassFilter = function elementPassFilter(element, pattern) {
+    const elementPassFilter = function elementPassFilter(element, pattern) {
         return Object.getOwnPropertyNames(element).some(function (key, index, array) {
-            var value = getFieldValue(element, key);
+            const value = getFieldValue(element, key);
             switch (typeof value) {
             case "number":
                 return pattern.test("" + value);
@@ -64,23 +64,22 @@
         });
     };
 
-    var createFilterPattern = function createFilterPattern(keywords) {
+    const createFilterPattern = function createFilterPattern(keywords) {
         return new RegExp(utils.escapeRegExp(keywords), 'i');
     };
 
-    var filterElements = function filterElements(keywords) {
-        var filteredElements, i, element;
-        var priv = privates.get(this);
+    const filterElements = function filterElements(keywords) {
+        const priv = privates.get(this);
 
         if (!keywords) {
             priv.filteredElements = priv.elements.slice(0);
             return;
         }
 
-        var pattern = createFilterPattern(keywords);
-        filteredElements = [];
-        for (i = 0; i < priv.elements.length; i += 1) {
-            element = priv.elements[i];
+        const pattern = createFilterPattern(keywords);
+        const filteredElements = [];
+        for (let i = 0; i < priv.elements.length; i += 1) {
+            const element = priv.elements[i];
             if (elementPassFilter.call(this, element, pattern)) {
                 filteredElements.push(element);
             }
@@ -88,9 +87,9 @@
         priv.filteredElements = filteredElements;
     };
 
-    var sortElements = function sortElements(order) {
-        var sort_id, inverse, column, sortFunc, parseDate;
-        var priv = privates.get(this);
+    const sortElements = function sortElements(order) {
+        let sort_id, inverse, sortFunc, parseDate;
+        const priv = privates.get(this);
 
         if (order == null) {
             priv.sortedElements = priv.filteredElements;
@@ -103,7 +102,7 @@
             inverse = true;
             sort_id = sort_id.substr(1);
         }
-        column = priv.sort_info[sort_id] || {};
+        const column = priv.sort_info[sort_id] || {};
         if (!('field' in column)) {
             column.field = sort_id;
         }
@@ -176,21 +175,22 @@
         priv.sortedElements = priv.filteredElements.slice(0).sort(sortFunc);
     };
 
-    const requestFunc = function requestFunc(index, options, onSuccess, onError) {
-        var elements, page = index;
-        var priv = privates.get(this);
+    const requestFunc = function requestFunc(page, options, onSuccess, onError) {
+        const priv = privates.get(this);
 
-        if (index > priv.totalPages) {
-            index = priv.totalPages;
+        if (page > priv.totalPages) {
+            page = priv.totalPages;
+        } else if (page < 0) {
+            page = 0;
         }
-        index -= 1;
 
         filterElements.call(this, this.options.keywords);
         sortElements.call(this, this.options.order);
 
+        let elements;
         if (options.pageSize > 0) {
-            var start = index * options.pageSize;
-            var end = start + options.pageSize;
+            const start = (page - 1) * options.pageSize;
+            const end = start + options.pageSize;
             elements = priv.sortedElements.slice(start, end);
         } else {
             elements = priv.sortedElements;
@@ -208,7 +208,7 @@
         if (!idAttr) {
             return -2;
         }
-        var pos = -1;
+        let pos = -1;
         list.every(function (elem, i) {
             if (getFieldValue(elem, idAttr) === getFieldValue(el, idAttr)) {
                 pos = i;
@@ -269,7 +269,7 @@
          *      The new options to be used.
          */
         changeOptions(newOptions) {
-            var force_sort = false;
+            let force_sort = false;
 
             if ('keywords' in newOptions) {
                 filterElements.call(this, newOptions.keywords);
@@ -281,7 +281,7 @@
             } else if (force_sort) {
                 sortElements.call(this, this.options.order);
             }
-            return StyledElements.PaginatedSource.prototype.changeOptions.call(this, newOptions);
+            return super.changeOptions(newOptions);
         }
 
         /**
@@ -310,7 +310,7 @@
             const priv = privates.get(this);
             if (Array.isArray(newElements)) {
                 if (this.options.idAttr) {
-                    var bol = newElements.every(function (elem, i) {
+                    const bol = newElements.every(function (elem, i) {
                         if (getFieldValue(elem, this.options.idAttr) == null) {
                             throw new Error("All elements must have a valid ID");
                         }
@@ -353,7 +353,7 @@
             }
 
             // If the element already exists, remove it and add it again (updates it and sets it last)
-            var pos = searchElement(priv.elements, newElement, this.options.idAttr);
+            let pos = searchElement(priv.elements, newElement, this.options.idAttr);
             if (pos >= 0) {
                 priv.elements.splice(pos, 1);
             }
@@ -368,7 +368,7 @@
 
             // Filter the new element if there are any filters set.
             if (this.options.keywords) {
-                var pattern = createFilterPattern(this.options.keywords);
+                const pattern = createFilterPattern(this.options.keywords);
                 if (elementPassFilter.call(this, newElement, pattern)) {
                     priv.filteredElements.push(newElement);
                 }

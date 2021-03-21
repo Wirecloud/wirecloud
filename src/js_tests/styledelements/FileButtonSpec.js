@@ -27,7 +27,7 @@
 
     describe("Styled FileButtons", function () {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -44,7 +44,7 @@
         describe("new FileButton([options])", () => {
 
             it("can be created without passing any option", () => {
-                var element = new StyledElements.FileButton();
+                const element = new StyledElements.FileButton();
                 expect(element.wrapperElement.textContent).toBe("");
                 expect(element.state).toBe("");
                 expect(element.depth).toBe(null);
@@ -52,23 +52,23 @@
             });
 
             it("can be created only with a text label", () => {
-                var element = new StyledElements.FileButton({text: "hello world!!"});
+                const element = new StyledElements.FileButton({text: "hello world!!"});
                 expect(element.wrapperElement.textContent).toBe("hello world!!");
             });
 
             it("should support the id option", () => {
-                var element = new StyledElements.FileButton({id: "my-button"});
+                const element = new StyledElements.FileButton({id: "my-button"});
                 expect(element.wrapperElement.getAttribute('id')).toBe("my-button");
             });
 
             it("should handle initial depth", () => {
-                var element = new StyledElements.FileButton({text: "hello world!!", depth: 2});
+                const element = new StyledElements.FileButton({text: "hello world!!", depth: 2});
                 expect(element.depth).toBe(2);
                 expect(element.hasClassName('z-depth-2')).toBeTruthy();
             });
 
             it("should inherit from Button", () => {
-                var element = new StyledElements.FileButton({text: "hello world!!", depth: 2});
+                const element = new StyledElements.FileButton({text: "hello world!!", depth: 2});
                 expect(element).toEqual(jasmine.any(StyledElements.Button));
             });
 
@@ -76,8 +76,8 @@
 
         it("should ignore click events targeting the file input element", () => {
 
-            var element = new StyledElements.FileButton();
-            var listener = jasmine.createSpy("listener");
+            const element = new StyledElements.FileButton();
+            const listener = jasmine.createSpy("listener");
             element.addEventListener('click', listener);
 
             element.inputElement.dispatchEvent(new MouseEvent("click", {bubbles: true}));
@@ -88,8 +88,8 @@
 
         it("should redirect click events to the file input element (if the button is enabled)", () => {
 
-            var element = new StyledElements.FileButton();
-            var listener = jasmine.createSpy("listener");
+            const element = new StyledElements.FileButton();
+            const listener = jasmine.createSpy("listener");
             element.addEventListener('click', listener);
             spyOn(element.inputElement, "click");
 
@@ -101,8 +101,8 @@
 
         it("should redirect click events to the file input element (if the button is disabled)", () => {
 
-            var element = new StyledElements.FileButton();
-            var listener = jasmine.createSpy("listener");
+            const element = new StyledElements.FileButton();
+            const listener = jasmine.createSpy("listener");
             element.addEventListener('click', listener);
             element.enabled = false;
             spyOn(element.inputElement, "click");
@@ -115,17 +115,17 @@
 
         describe("provides a fileselect event", () => {
 
-            var element;
+            let element;
 
             beforeEach(() => {
                 // Provide a default instance of FileButton for testing
-                var realcreateelement = document.createElement;
+                const realcreateelement = document.createElement;
                 spyOn(document, "createElement").and.callFake(function () {return realcreateelement.call(this, "div")});
                 element = new StyledElements.FileButton({iconClass: 'a'});
             });
 
             it("supports single file events", () => {
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 element.addEventListener("fileselect", listener);
                 element.inputElement.files = ["a"];
 
@@ -135,7 +135,7 @@
             });
 
             it("supports multiple file events", () => {
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 element.addEventListener("fileselect", listener);
                 element.inputElement.files = ["a", "b"];
 
@@ -145,7 +145,7 @@
             });
 
             it("ignore cleaning events", () => {
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 element.addEventListener("fileselect", listener);
                 // Here the correct value to use would be an empty FileList,
                 // but it's easier to use null
@@ -159,7 +159,7 @@
         });
 
         it("destroy()", () => {
-            var element = new StyledElements.FileButton({id: "my-button"});
+            const element = new StyledElements.FileButton({id: "my-button"});
 
             element.destroy();
         });

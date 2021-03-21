@@ -26,7 +26,7 @@
 
     "use strict";
 
-    var InputInterfaceFactory = new StyledElements.InputInterfaceFactory();
+    const InputInterfaceFactory = new StyledElements.InputInterfaceFactory();
 
     InputInterfaceFactory.addFieldType('layout', Wirecloud.ui.LayoutInputInterface);
     InputInterfaceFactory.addFieldType('parametrizableValue', Wirecloud.ui.ParametrizableValueInputInterface);

@@ -28,12 +28,12 @@
 
     describe("Styled Selects", function () {
 
-        var dom = null;
-        var object1 = {
+        let dom = null;
+        const object1 = {
             attr: 'value',
             toString: function () { return 'object1'; }
         };
-        var object2 = {
+        const object2 = {
             attr: 'other value',
             toString: function () { return 'object2'; }
         };
@@ -52,7 +52,7 @@
 
         it("can be created without passing any option", function () {
 
-            var element = new StyledElements.Select();
+            const element = new StyledElements.Select();
             expect(element.wrapperElement.className).toBe("se-select");
             expect(element.value).toBe(undefined);
             expect(element.getLabel()).toBe('');
@@ -61,7 +61,7 @@
 
         it("can be created using the name option", function () {
 
-            var element = new StyledElements.Select({name: 'formname'});
+            const element = new StyledElements.Select({name: 'formname'});
             expect(element.wrapperElement.querySelector('select').getAttribute('name')).toBe("formname");
 
         });
@@ -69,7 +69,7 @@
         it("should handle initial entries", function () {
 
             // Use string values as they are the values handled by default
-            var element = new StyledElements.Select({
+            const element = new StyledElements.Select({
                 initialEntries: [
                     {label: 'Label', value: "1"},
                     {label: 'other value', value: "2"},
@@ -84,7 +84,7 @@
         it("should handle objects with a valid toString method", function () {
 
             // Use string values as they are the values handled by default
-            var element = new StyledElements.Select({
+            const element = new StyledElements.Select({
                 initialEntries: [
                     object1,
                     object2
@@ -97,7 +97,7 @@
 
         it("should handle initial entries with an initial value", function () {
 
-            var element = new StyledElements.Select({
+            const element = new StyledElements.Select({
                 initialEntries: [
                     {label: 'Label', value: 1},
                     {label: 'other value', value: 2},
@@ -111,7 +111,7 @@
         });
 
         it("should handle string entries", function () {
-            var element = new StyledElements.Select();
+            const element = new StyledElements.Select();
 
             element.addEntries(["a", "b", "c"]);
             expect(element.value).toBe("a");
@@ -119,7 +119,7 @@
         });
 
         it("should handle number entries", function () {
-            var element = new StyledElements.Select();
+            const element = new StyledElements.Select();
 
             element.addEntries([1, 2, 3]);
             expect(element.value).toBe(1);
@@ -128,7 +128,7 @@
 
         it("should support changing the value using the setValue method", function () {
 
-            var element = new StyledElements.Select({
+            const element = new StyledElements.Select({
                 initialEntries: [
                     {label: 'Label', value: 1},
                     {label: 'other value', value: 2},
@@ -143,7 +143,7 @@
 
         it("should support changing the value using the setValue method to the first value if there is not a default value", function () {
 
-            var element = new StyledElements.Select({
+            const element = new StyledElements.Select({
                 initialEntries: [
                     {label: 'Label', value: 1},
                     {label: 'other value', value: 2},
@@ -158,7 +158,7 @@
 
         it("should support changing the value using the setValue method to the default value", function () {
 
-            var element = new StyledElements.Select({
+            const element = new StyledElements.Select({
                 initialEntries: [
                     {label: 'Label', value: 1},
                     {label: 'other value', value: 2},
@@ -174,7 +174,7 @@
 
         it("should handle calls to the setValue method when there is not available options", function () {
 
-            var element = new StyledElements.Select();
+            const element = new StyledElements.Select();
             element.setValue(5);
             expect(element.value).toBe(undefined);
             expect(element.getLabel()).toBe('');
@@ -183,7 +183,7 @@
 
         it("should support cleaning the available options", function () {
 
-            var element = new StyledElements.Select({
+            const element = new StyledElements.Select({
                 initialEntries: [
                     {label: 'Label', value: 1},
                     {label: 'other value', value: 2},
@@ -198,7 +198,7 @@
 
         it("should trigger focus events", function (done) {
 
-            var element = new StyledElements.Select();
+            const element = new StyledElements.Select();
             element.addEventListener('focus', function (select) {
                 expect(select).toBe(element);
                 expect(element.hasClassName('focus')).toBeTruthy();
@@ -210,7 +210,7 @@
 
         it("should trigger blur events", function (done) {
 
-            var element = new StyledElements.Select();
+            const element = new StyledElements.Select();
             element.addEventListener('blur', function (select) {
                 expect(select).toBe(element);
                 expect(element.hasClassName('focus')).toBeFalsy();
@@ -222,7 +222,7 @@
         });
 
         describe("blur()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 // Provide a default instance of Select for testing
@@ -238,7 +238,7 @@
         });
 
         describe("focus()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 // Provide a default instance of Select for testing

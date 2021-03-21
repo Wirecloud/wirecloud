@@ -27,7 +27,7 @@
     "use strict";
 
     describe("Styled Off-Canvas Layout", function () {
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -44,7 +44,7 @@
         describe("new OffCanvasLayout([options])", function () {
 
             it("should create an instance with no options", function () {
-                var layout = new StyledElements.OffCanvasLayout();
+                const layout = new StyledElements.OffCanvasLayout();
 
                 expect(layout.hasClassName("se-offcanvas")).toBeTruthy();
                 expect(layout.hasClassName("left-sideway")).toBeTruthy();
@@ -53,7 +53,7 @@
             });
 
             it("should create an instance with options.sideway = 'right'", function () {
-                var layout = new StyledElements.OffCanvasLayout({
+                const layout = new StyledElements.OffCanvasLayout({
                     sideway: 'right'
                 });
 
@@ -68,8 +68,8 @@
         describe("appendChild(element)", function () {
 
             it("should insert an element into the sidebar", function () {
-                var layout = new StyledElements.OffCanvasLayout();
-                var container = new StyledElements.Container();
+                const layout = new StyledElements.OffCanvasLayout();
+                const container = new StyledElements.Container();
 
                 layout.appendChild(container);
 
@@ -79,9 +79,9 @@
             });
 
             it("should insert two elements into the sidebar", function () {
-                var layout = new StyledElements.OffCanvasLayout();
-                var container1 = new StyledElements.Container();
-                var container2 = new StyledElements.Container();
+                const layout = new StyledElements.OffCanvasLayout();
+                const container1 = new StyledElements.Container();
+                const container2 = new StyledElements.Container();
 
                 layout.appendChild(container1);
                 layout.appendChild(container2);
@@ -96,9 +96,9 @@
         describe("slideIn([index])", function () {
 
             it("should work properly with no elements attached", function () {
-                var layout = new StyledElements.OffCanvasLayout();
-                var listener = jasmine.createSpy('spy');
-                var container;
+                const layout = new StyledElements.OffCanvasLayout();
+                const listener = jasmine.createSpy('spy');
+                let container;
 
                 layout.addEventListener('slideIn', listener);
                 layout.slideIn();
@@ -109,11 +109,11 @@
             });
 
             it("should show the first element attached", function () {
-                var layout = new StyledElements.OffCanvasLayout();
-                var listener = jasmine.createSpy('spy');
+                const layout = new StyledElements.OffCanvasLayout();
+                const listener = jasmine.createSpy('spy');
 
-                var container1 = new StyledElements.Container();
-                var container2 = new StyledElements.Container();
+                const container1 = new StyledElements.Container();
+                const container2 = new StyledElements.Container();
 
                 layout.appendChild(container1);
                 layout.appendChild(container2);
@@ -129,11 +129,11 @@
             });
 
             it("should show the element indicated by argument", function () {
-                var layout = new StyledElements.OffCanvasLayout();
-                var listener = jasmine.createSpy('spy');
+                const layout = new StyledElements.OffCanvasLayout();
+                const listener = jasmine.createSpy('spy');
 
-                var container1 = new StyledElements.Container();
-                var container2 = new StyledElements.Container();
+                const container1 = new StyledElements.Container();
+                const container2 = new StyledElements.Container();
 
                 layout.appendChild(container1);
                 layout.appendChild(container2);
@@ -152,8 +152,8 @@
         describe("slideOut([index])", function () {
 
             it("should work properly with no elements attached", function () {
-                var layout = new StyledElements.OffCanvasLayout();
-                var listener = jasmine.createSpy('spy');
+                const layout = new StyledElements.OffCanvasLayout();
+                const listener = jasmine.createSpy('spy');
 
                 layout.addEventListener('slideOut', listener);
                 layout.slideOut();
@@ -163,11 +163,11 @@
             });
 
             it("should show the element previously indicated", function () {
-                var layout = new StyledElements.OffCanvasLayout();
-                var listener = jasmine.createSpy('spy');
+                const layout = new StyledElements.OffCanvasLayout();
+                const listener = jasmine.createSpy('spy');
 
-                var container1 = new StyledElements.Container();
-                var container2 = new StyledElements.Container();
+                const container1 = new StyledElements.Container();
+                const container2 = new StyledElements.Container();
 
                 layout.appendChild(container1);
                 layout.appendChild(container2);

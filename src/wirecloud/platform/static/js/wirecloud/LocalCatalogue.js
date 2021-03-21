@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -30,8 +31,8 @@
     // PRIVATE MEMBERS
     // =========================================================================
 
-    var unload_affected_components = function unload_affected_components(component, result) {
-        var task_title;
+    const unload_affected_components = function unload_affected_components(component, result) {
+        let task_title;
         switch (component.type) {
         case 'widget':
             task_title = utils.gettext('Unloading affected widgets');
@@ -44,14 +45,14 @@
         }
 
         return new Wirecloud.Task(task_title, function (resolve, reject, update) {
-            for (var workspaceid in Wirecloud.workspaceInstances) {
-                var workspace = Wirecloud.workspaceInstances[workspaceid];
+            for (const workspaceid in Wirecloud.workspaceInstances) {
+                const workspace = Wirecloud.workspaceInstances[workspaceid];
                 if (!(workspace instanceof Wirecloud.Workspace)) {
                     continue;
                 }
                 result.affectedVersions.forEach((version) => {
-                    var list;
-                    var new_meta = workspace.resources.remove(component.group_id + '/' + version);
+                    let list;
+                    const new_meta = workspace.resources.remove(component.group_id + '/' + version);
                     if (new_meta != null) {
                         if (component.type === "widget") {
                             list = workspace.widgets;
@@ -70,8 +71,8 @@
         });
     };
 
-    var purge_component_info = function purge_component_info(component, result) {
-        var task_title = utils.interpolate(
+    const purge_component_info = function purge_component_info(component, result) {
+        const task_title = utils.interpolate(
             utils.gettext("Purging %(componenttype)s info"),
             {
                 componenttype: component.type
@@ -80,7 +81,7 @@
 
         return new Wirecloud.Task(task_title, function (resolve, reject) {
             result.affectedVersions.forEach(function (version) {
-                var component_full_id, index;
+                let component_full_id, index;
                 try {
                     component_full_id = component.group_id + '/' + version;
                     component = this.resources[component_full_id];
@@ -103,32 +104,28 @@
     // CLASS DEFINITION
     // =========================================================================
 
-    var LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local', permissions: {'delete': false}});
+    const LocalCatalogue = new Wirecloud.WirecloudCatalogue({name: 'local', permissions: {'delete': false}});
 
     /**
      * Clears the component cache and init it with then
      */
     LocalCatalogue.reload = function reload() {
-        var request;
-
         this.resources = {};
         this.resourceVersions = {};
 
-        request = Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
+        const request = Wirecloud.io.makeRequest(Wirecloud.URLs.LOCAL_RESOURCE_COLLECTION, {
             method: 'GET',
             requestHeaders: {'Accept': 'application/json'}
         });
 
         return request.then((response) => {
-            var resources, resource_id, msg;
+            const resources = JSON.parse(response.responseText);
 
-            resources = JSON.parse(response.responseText);
-
-            for (resource_id in resources) {
+            for (const resource_id in resources) {
                 try {
                     this._includeResource.call(this, resources[resource_id]);
                 } catch (e) {
-                    msg = utils.gettext("Error loading %(resource)s metadata");
+                    const msg = utils.gettext("Error loading %(resource)s metadata");
                     Wirecloud.GlobalLogManager.log(
                         utils.interpolate(msg, {resource: resource_id}),
                         {details: e}
@@ -158,7 +155,7 @@
      * @returns {Wirecloud.Task}
      */
     LocalCatalogue.deleteResource = function deleteResource(resource, options) {
-        var url, msg;
+        let url, msg;
 
         options = utils.merge({
             allusers: false,
@@ -201,8 +198,9 @@
                 return Promise.reject(new Error("Unexpected response from server"));
             }
 
+            let result;
             try {
-                var result = JSON.parse(response.responseText);
+                result = JSON.parse(response.responseText);
                 if (result.affectedVersions == null) {
                     result.affectedVersions = [resource.version];
                 }
@@ -224,16 +222,16 @@
      * @returns {Wirecloud.Task}
      */
     LocalCatalogue.addComponent = function addComponent(options) {
-        var task = Wirecloud.WirecloudCatalogue.prototype.addComponent.call(this, options);
+        const task = Wirecloud.WirecloudCatalogue.prototype.addComponent.call(this, options);
         task.then((response_data) => {
-            var components;
+            let components;
             if ('resource_details' in response_data) {
                 components = [response_data.resource_details].concat(response_data.extra_resources);
             } else {
                 components = [response_data];
             }
             components.forEach((component) => {
-                var id = [component.vendor, component.name, component.version].join('/');
+                const id = [component.vendor, component.name, component.version].join('/');
                 if (!this.resourceExistsId(id)) {
                     component = this._includeResource.call(this, component);
                     this.dispatchEvent('install', component);
@@ -246,11 +244,10 @@
     };
 
     LocalCatalogue._includeResource = function _includeResource(component_data) {
-        var component, component_id, component_full_id;
+        const component_id = component_data.vendor + '/' + component_data.name;
+        const component_full_id = component_id + '/' + component_data.version;
 
-        component_id = component_data.vendor + '/' + component_data.name;
-        component_full_id = component_id + '/' + component_data.version;
-
+        let component;
         switch (component_data.type) {
         case 'widget':
             component = new Wirecloud.WidgetMeta(component_data);
@@ -278,7 +275,7 @@
             component = new Wirecloud.MashableApplicationComponent(component_data);
             break;
         default:
-            var msg = utils.interpolate(utils.gettext("Invalid component type: %(type)s"), {
+            const msg = utils.interpolate(utils.gettext("Invalid component type: %(type)s"), {
                 type: component_data.type
             });
             throw new TypeError(msg);
@@ -307,7 +304,7 @@
      * @returns {Boolean}
      */
     LocalCatalogue.hasAlternativeVersion = function hasAlternativeVersion(component) {
-        var versions = this.resourceVersions[component.group_id];
+        const versions = this.resourceVersions[component.group_id];
         return versions != null && (versions.length > 1 || versions.length === 1 && !versions[0].is(component));
     };
 
@@ -316,7 +313,7 @@
     };
 
     LocalCatalogue.getResource = function getResource(vendor, name, version) {
-        var id = [vendor, name, version].join('/');
+        const id = [vendor, name, version].join('/');
         return this.getResourceId(id);
     };
 
@@ -325,7 +322,7 @@
     };
 
     LocalCatalogue.resourceExists = function resourceExists(resource) {
-        var id = [resource.vendor, resource.name, resource.version].join('/');
+        const id = [resource.vendor, resource.name, resource.version].join('/');
         return this.resourceExistsId(id);
     };
 

@@ -135,10 +135,10 @@
             this.tabArea = new StyledElements.Container();
             tabWrapper.center.appendChild(this.tabArea.addClassName('se-notebook-tab-area'));
 
-            this.moveLeftButton = new this.Button({class: 'move_left', iconClass: 'fa fa-caret-left'});
+            this.moveLeftButton = new this.Button({class: 'move_left', iconClass: 'fas fa-caret-left'});
             tabWrapper.west.appendChild(this.moveLeftButton);
 
-            this.moveRightButton = new this.Button({class: 'move_right', iconClass: 'fa fa-caret-right'});
+            this.moveRightButton = new this.Button({class: 'move_right', iconClass: 'fas fa-caret-right'});
             tabWrapper.east.appendChild(this.moveRightButton);
 
             this.contentArea = document.createElement("div");
@@ -165,10 +165,10 @@
                 if (this.new_tab_button_tabs == null) {
                     const new_tab_main_listener = onNewTab.bind(this);
 
-                    this.new_tab_button_tabs = new this.Button({iconClass: 'fa fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
+                    this.new_tab_button_tabs = new this.Button({iconClass: 'fas fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
                     this.new_tab_button_tabs.addEventListener('click', new_tab_main_listener);
                     this.tabArea.appendChild(this.new_tab_button_tabs);
-                    this.new_tab_button_left = new this.Button({iconClass: 'fa fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
+                    this.new_tab_button_left = new this.Button({iconClass: 'fas fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
                     this.new_tab_button_left.addEventListener('click', new_tab_main_listener);
                     this.addButton(this.new_tab_button_left);
                 }
@@ -267,7 +267,7 @@
                         const cont = stepFunc(context.step, context);
 
                         if (cont) {
-                            const timeDiff = stepTimes[context.step] - (new Date()).getTime();
+                            let timeDiff = stepTimes[context.step] - (new Date()).getTime();
                             if (timeDiff < 0) {
                                 timeDiff = 0;
                             }

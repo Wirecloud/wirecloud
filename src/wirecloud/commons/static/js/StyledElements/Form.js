@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2011-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,6 +27,156 @@
 
     "use strict";
 
+    const norm_fields = function norm_fields(fields) {
+        const list = [];
+
+        // backwards compatilibity
+        for (const key in fields) {
+            const field = fields[key];
+
+            if (!('name' in field)) {
+                field.name = key;
+            }
+
+            list.push(field);
+        }
+
+        return list;
+    };
+
+    const acceptHandler = function acceptHandler() {
+        if (this.is_valid()) {
+            const data = this.getData();
+            this.dispatchEvent('submit', data);
+        }
+    };
+
+    const cancelHandler = function cancelHandler() {
+        this.dispatchEvent('cancel');
+    };
+
+    const insertColumnLayout = function insertColumnLayout(desc, wrapper) {
+        const table = document.createElement('table');
+        table.setAttribute('cellspacing', '0');
+        table.setAttribute('cellpadding', '0');
+        const tbody = document.createElement('tbody');
+        table.appendChild(tbody);
+        const row = tbody.insertRow(-1);
+
+        desc.columns.forEach((column) => {
+            const cell = row.insertCell(-1);
+            cell.appendChild(this.pBuildFieldTable(column));
+        });
+        wrapper.appendChild(table);
+    };
+
+    const insertLineLayout = function insertLineLayout(desc, wrapper) {
+
+        const fields = norm_fields(desc.fields);
+        fields.forEach(function (field) {
+            const fieldId = field.name;
+
+            const inputInterface = this.factory.createInterface(fieldId, field);
+            inputInterface.assignDefaultButton(this.acceptButton);
+            inputInterface.insertInto(wrapper);
+            // TODO
+            let wrapperElement = null;
+            if (inputInterface.wrapperElement && inputInterface.wrapperElement.wrapperElement) {
+                wrapperElement = inputInterface.wrapperElement.wrapperElement;
+            } else if (inputInterface.inputElement && inputInterface.inputElement.wrapperElement) {
+                wrapperElement = inputInterface.inputElement.wrapperElement;
+            }
+            if (wrapperElement) {
+                wrapperElement.style.display = 'inline-block';
+                wrapperElement.style.verticalAlign = 'middle';
+            }
+
+            this.fieldInterfaces[fieldId] = inputInterface;
+
+            this.fields[fieldId] = field;
+        }, this);
+    };
+
+    const insertField = function insertField(fieldId, field, row) {
+        let separator, hr, labelRow, label, requiredMark, tooltip;
+
+        if (field.type === 'separator') {
+            separator = row.insertCell(-1);
+            separator.setAttribute('colspan', '2');
+            hr = document.createElement('hr');
+            separator.appendChild(hr);
+            return;
+        }
+
+        if (field.type === 'label') {
+            labelRow = row.insertCell(-1);
+            labelRow.setAttribute('colspan', '2');
+            labelRow.addClassName('label-row');
+            if (field.url) {
+                label = document.createElement('a');
+                label.setAttribute("href", field.url);
+                label.setAttribute("target", "_blank");
+            } else {
+                label = document.createElement('label');
+            }
+            label.appendChild(document.createTextNode(field.label));
+            labelRow.appendChild(label);
+            return;
+        }
+
+        const inputInterface = this.factory.createInterface(fieldId, field);
+
+        // Label Cell
+        const labelCell = row.insertCell(-1);
+        labelCell.classList.add('label-cell');
+
+        label = document.createElement('label');
+        label.textContent = field.label;
+        labelCell.appendChild(label);
+        if (field.description != null) {
+            tooltip = new StyledElements.Tooltip({content: field.description, placement: ['right', 'bottom', 'top', 'left']});
+            tooltip.bind(label);
+        }
+
+        if (field.required && !this.readOnly) {
+            requiredMark = document.createElement('span');
+            requiredMark.appendChild(document.createTextNode('*'));
+            requiredMark.className = 'required_mark';
+            labelCell.appendChild(requiredMark);
+        }
+
+        // Input Cell
+        const inputCell = document.createElement('td');
+        row.appendChild(inputCell);
+
+        inputInterface.assignDefaultButton(this.acceptButton);
+        inputInterface.insertInto(inputCell);
+        if (this.readOnly || inputInterface._readOnly) {
+            inputInterface.setDisabled(true);
+        }
+
+        this.fieldInterfaces[fieldId] = inputInterface;
+
+        this.fields[fieldId] = field;
+    };
+
+    const setMsgs = function setMsgs(msgs) {
+        let i, wrapper;
+
+        this.msgElement.innerHTML = '';
+
+        if (msgs.length > 0) {
+            for (i = 0; i < msgs.length; i += 1) {
+                wrapper = document.createElement('p');
+                wrapper.textContent = msgs[i];
+                this.msgElement.appendChild(wrapper);
+            }
+            this.msgElement.style.display = '';
+        } else {
+            this.msgElement.style.display = 'none';
+        }
+    };
+
     se.Form = class Form extends se.StyledElement {
 
         /**
@@ -40,9 +190,7 @@
          * @param {Object.<String, *>} [options] form options
          */
         constructor(fields, options) {
-            var div, buttonArea, defaultOptions;
-
-            defaultOptions = {
+            const defaultOptions = {
                 readOnly: false,
                 buttonArea: null,
                 setdefaultsButton: false,
@@ -119,7 +267,7 @@
             this.factory = options.factory;
 
             // Build GUI
-            div = document.createElement('div');
+            const div = document.createElement('div');
             if (options.useHtmlForm) {
                 this.wrapperElement = document.createElement('form');
                 this.wrapperElement.addEventListener('submit', function (e) {
@@ -138,6 +286,7 @@
             div.appendChild(this.msgElement);
             setMsgs.call(this, []);
 
+            let buttonArea;
             if (options.buttonArea != null) {
                 buttonArea = options.buttonArea;
             } else if (options.acceptButton !== false || options.cancelButton !== false) {
@@ -172,7 +321,7 @@
         }
 
         repaint(temporal) {
-            var i;
+            let i;
 
             for (i = 0; i < this.childComponents.length; i += 1) {
                 this.childComponents[i].repaint(temporal);
@@ -186,54 +335,51 @@
         }
 
         pBuildFieldGroups(fields) {
-            var notebook, tab, tmp_field, tmp_input;
-
-            notebook = new StyledElements.Notebook({full: false});
+            const notebook = new StyledElements.Notebook({full: false});
             this.childComponents.push(notebook);
 
-            fields.forEach(function (field) {
-                tab = notebook.createTab({
+            fields.forEach((field) => {
+                const tab = notebook.createTab({
                     label: field.shortTitle,
                     closable: false
                 });
                 tab.addEventListener('show', this.repaint.bind(this));
                 if (field.nested === true) {
-                    tmp_field = {
+                    const field = {
                         'name': field.name,
                         'type': 'fieldset',
                         'fields': field.fields
                     };
-                    tmp_input = this.factory.createInterface(field.name, tmp_field);
-                    tmp_input.assignDefaultButton(this.acceptButton);
+                    const input = this.factory.createInterface(field.name, field);
+                    input.assignDefaultButton(this.acceptButton);
 
-                    this.fieldInterfaces[field.name] = tmp_input;
-                    this.fields[field.name] = tmp_field;
-                    tab.appendChild(tmp_input);
+                    this.fieldInterfaces[field.name] = input;
+                    this.fields[field.name] = field;
+                    tab.appendChild(input);
                 } else {
                     tab.appendChild(this.pBuildFieldTable(field.fields));
                 }
-            }, this);
+            });
 
             return notebook.wrapperElement;
         }
 
         pBuildFieldTable(fields) {
-            var table, tbody;
-
             // TODO
             if (fields[0] && fields[0].type === 'group') {
                 return this.pBuildFieldGroups(fields);
             }
 
-            table = document.createElement('table');
+            const table = document.createElement('table');
             table.setAttribute('cellspacing', '0');
             table.setAttribute('cellpadding', '0');
-            tbody = document.createElement('tbody');
+            const tbody = document.createElement('tbody');
             table.appendChild(tbody);
 
             fields.forEach(function (field) {
-                var row, cell, fieldId = field.name;
-                row = tbody.insertRow(-1);
+                let cell;
+                const fieldId = field.name;
+                const row = tbody.insertRow(-1);
 
                 switch (field.type) {
                 case 'columnLayout':
@@ -277,15 +423,13 @@
          *      The instance on which the member is called.
          */
         getData() {
-            var data, fieldId, field;
-
-            data = {};
-            for (fieldId in this.fieldInterfaces) {
-                field = this.fieldInterfaces[fieldId];
+            const data = {};
+            for (const fieldId in this.fieldInterfaces) {
+                const field = this.fieldInterfaces[fieldId];
                 data[fieldId] = field.getValue();
             }
             return data;
-        };
+        }
 
         /**
          * Sets the value for the fields of this form as a whole. If data is null
@@ -300,7 +444,7 @@
          *      The instance on which the member is called.
          */
         setData(data) {
-            var field, fieldId;
+            let field, fieldId;
 
             if (typeof data !== 'object' && typeof data !== 'undefined') {
                 throw new TypeError();
@@ -320,7 +464,7 @@
             }
 
             return this;
-        };
+        }
 
         /**
          * Updates the values of the fields managed by this form.
@@ -333,7 +477,7 @@
          *      The instance on which the member is called.
          */
         update(data) {
-            var field, fieldId;
+            let field, fieldId;
 
             if (data == null || typeof data !== 'object') {
                 throw new TypeError("Invalid data value");
@@ -348,21 +492,20 @@
             }
 
             return this;
-        };
+        }
 
         is_valid() {
             // Validate input fields
-            var fieldId, extraErrorMsgs, errorMsgs,
-                validationManager = new StyledElements.ValidationErrorManager();
-            for (fieldId in this.fieldInterfaces) {
+            const validationManager = new StyledElements.ValidationErrorManager();
+            for (const fieldId in this.fieldInterfaces) {
                 validationManager.validate(this.fieldInterfaces[fieldId]);
             }
 
             // Extra validations
-            extraErrorMsgs = this.extraValidation(this.fields);
+            const extraErrorMsgs = this.extraValidation(this.fields);
 
             // Build Error Message
-            errorMsgs = validationManager.toHTML();
+            let errorMsgs = validationManager.toHTML();
 
             if (extraErrorMsgs !== null) {
                 errorMsgs = errorMsgs.concat(extraErrorMsgs);
@@ -371,7 +514,7 @@
             // Show error message if needed
             setMsgs.call(this, errorMsgs);
             return errorMsgs.length === 0;
-        };
+        }
 
         /**
          * Resets form values using the initial values
@@ -380,7 +523,7 @@
          */
         reset() {
             return this.setData();
-        };
+        }
 
         /**
          * Resets form values using the default values
@@ -388,7 +531,7 @@
          * @since 0.5
          */
         defaults() {
-            var field, fieldId;
+            let field, fieldId;
 
             setMsgs.call(this, []);
             for (fieldId in this.fields) {
@@ -397,10 +540,10 @@
             }
 
             return this;
-        };
+        }
 
         destroy() {
-            var i = 0;
+            let i = 0;
 
             for (i = 0; i < this.childComponents.length; i += 1) {
                 this.childComponents[i].destroy();
@@ -426,14 +569,14 @@
                 this.cancelButton.destroy();
                 this.cancelButton = null;
             }
-        };
+        }
 
         /**
          * Enables/disables this Form
          * @private
          */
         _onenabled(enabled) {
-            var fieldId, inputInterface;
+            let fieldId, inputInterface;
 
             for (fieldId in this.fieldInterfaces) {
                 inputInterface = this.fieldInterfaces[fieldId];
@@ -451,7 +594,7 @@
             if (this.cancelButton != null) {
                 this.cancelButton.enabled = enabled;
             }
-        };
+        }
 
         /**
          * Focus this Form
@@ -462,181 +605,23 @@
          */
         focus() {
 
-            var field = this.fieldInterfaces[this.focusField];
+            const field = this.fieldInterfaces[this.focusField];
             if (field) {
                 field.focus();
             }
 
             return this;
-        };
+        }
 
         displayMessage(message) {
             setMsgs.call(this, [message]);
-        };
+        }
 
         insertInto(element, refElement) {
-            StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
+            super.insertInto(element, refElement);
             this.repaint();
-        };
+        }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var norm_fields = function norm_fields(fields) {
-        var key, field, list = [];
-
-        // backwards compatilibity
-        for (key in fields) {
-            field = fields[key];
-
-            if (!('name' in field)) {
-                field.name = key;
-            }
-
-            list.push(field);
-        }
-
-        return list;
-    };
-
-    var acceptHandler = function acceptHandler() {
-        if (this.is_valid()) {
-            var data = this.getData();
-            this.dispatchEvent('submit', data);
-        }
-    };
-
-    var cancelHandler = function cancelHandler() {
-        this.dispatchEvent('cancel');
-    };
-
-    var insertColumnLayout = function insertColumnLayout(desc, wrapper) {
-        var table, tbody, row, cell, i;
-
-        table = document.createElement('table');
-        table.setAttribute('cellspacing', '0');
-        table.setAttribute('cellpadding', '0');
-        tbody = document.createElement('tbody');
-        table.appendChild(tbody);
-        row = tbody.insertRow(-1);
-
-        for (i = 0; i < desc.columns.length; i += 1) {
-            cell = row.insertCell(-1);
-            cell.appendChild(this.pBuildFieldTable(desc.columns[i]));
-        }
-        wrapper.appendChild(table);
-    };
-
-    var insertLineLayout = function insertLineLayout(desc, wrapper) {
-
-        var fields = norm_fields(desc.fields);
-        fields.forEach(function (field) {
-            var  fieldId, inputInterface, wrapperElement;
-
-            fieldId = field.name;
-
-            inputInterface = this.factory.createInterface(fieldId, field);
-            inputInterface.assignDefaultButton(this.acceptButton);
-            inputInterface.insertInto(wrapper);
-            // TODO
-            wrapperElement = null;
-            if (inputInterface.wrapperElement && inputInterface.wrapperElement.wrapperElement) {
-                wrapperElement = inputInterface.wrapperElement.wrapperElement;
-            } else if (inputInterface.inputElement && inputInterface.inputElement.wrapperElement) {
-                wrapperElement = inputInterface.inputElement.wrapperElement;
-            }
-            if (wrapperElement) {
-                wrapperElement.style.display = 'inline-block';
-                wrapperElement.style.verticalAlign = 'middle';
-            }
-
-            this.fieldInterfaces[fieldId] = inputInterface;
-
-            this.fields[fieldId] = field;
-        }, this);
-    };
-
-    var insertField = function insertField(fieldId, field, row) {
-        var separator, hr, labelRow, labelCell, label, requiredMark, inputCell, inputInterface, tooltip;
-
-        if (field.type === 'separator') {
-            separator = row.insertCell(-1);
-            separator.setAttribute('colspan', '2');
-            hr = document.createElement('hr');
-            separator.appendChild(hr);
-            return;
-        }
-
-        if (field.type === 'label') {
-            labelRow = row.insertCell(-1);
-            labelRow.setAttribute('colspan', '2');
-            labelRow.addClassName('label-row');
-            if (field.url) {
-                label = document.createElement('a');
-                label.setAttribute("href", field.url);
-                label.setAttribute("target", "_blank");
-            } else {
-                label = document.createElement('label');
-            }
-            label.appendChild(document.createTextNode(field.label));
-            labelRow.appendChild(label);
-            return;
-        }
-
-        inputInterface = this.factory.createInterface(fieldId, field);
-
-        // Label Cell
-        labelCell = row.insertCell(-1);
-        labelCell.classList.add('label-cell');
-
-        label = document.createElement('label');
-        label.textContent = field.label;
-        labelCell.appendChild(label);
-        if (field.description != null) {
-            tooltip = new StyledElements.Tooltip({content: field.description, placement: ['right', 'bottom', 'top', 'left']});
-            tooltip.bind(label);
-        }
-
-        if (field.required && !this.readOnly) {
-            requiredMark = document.createElement('span');
-            requiredMark.appendChild(document.createTextNode('*'));
-            requiredMark.className = 'required_mark';
-            labelCell.appendChild(requiredMark);
-        }
-
-        // Input Cell
-        inputCell = document.createElement('td');
-        row.appendChild(inputCell);
-
-        inputInterface.assignDefaultButton(this.acceptButton);
-        inputInterface.insertInto(inputCell);
-        if (this.readOnly || inputInterface._readOnly) {
-            inputInterface.setDisabled(true);
-        }
-
-        this.fieldInterfaces[fieldId] = inputInterface;
-
-        this.fields[fieldId] = field;
-    };
-
-    var setMsgs = function setMsgs(msgs) {
-        var i, wrapper;
-
-        this.msgElement.innerHTML = '';
-
-        if (msgs.length > 0) {
-            for (i = 0; i < msgs.length; i += 1) {
-                wrapper = document.createElement('p');
-                wrapper.textContent = msgs[i];
-                this.msgElement.appendChild(wrapper);
-            }
-            this.msgElement.style.display = '';
-        } else {
-            this.msgElement.style.display = 'none';
-        }
-    };
 
 })(StyledElements, StyledElements.Utils);

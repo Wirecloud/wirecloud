@@ -29,7 +29,7 @@
 
     describe("Styled Tooltips", () => {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -49,7 +49,7 @@
         describe("new Tooltip([options])", () => {
 
             it("can be created without passing any option", () => {
-                var tooltip = new StyledElements.Tooltip();
+                const tooltip = new StyledElements.Tooltip();
                 expect(tooltip).not.toBe(null);
             });
 
@@ -64,8 +64,8 @@
             });
 
             it("can be displayed and hidden just immediately", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip();
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip();
                 // The expected behaviour when calling hide just after calling show
                 // is to find a computed opacity of 0
                 spyOn(window, 'getComputedStyle').and.returnValue({
@@ -79,8 +79,8 @@
             });
 
             it("should support WireCloud", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip();
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip();
                 tooltip.show(ref_element);
                 window.Wirecloud = {
                     UserInterfaceManager: {
@@ -95,8 +95,8 @@
 
             it("can be forced to be hidden", (done) => {
                 // A second call to hide should cancel current animation and hide the tooltip
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip();
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip();
                 tooltip.show(ref_element);
                 // Wait for CSS transitions to apply
                 setTimeout(() => {
@@ -114,7 +114,7 @@
             });
 
             it("should do nothing when the hide method is used and the tooltip is already hidden", function () {
-                var tooltip = new StyledElements.Tooltip();
+                const tooltip = new StyledElements.Tooltip();
                 expect(tooltip.hide()).toBe(tooltip);
                 expect(tooltip.visible).toBe(false);
             });
@@ -135,74 +135,74 @@
                         _registerTooltip: jasmine.createSpy("_unregisterTooltip")
                     }
                 };
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip({placement: ['right']});
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip({placement: ['right']});
                 expect(tooltip.show(ref_element)).toBe(tooltip);
 
-                var element = document.querySelector('.se-tooltip');
+                const element = document.querySelector('.se-tooltip');
                 expect(element).not.toBe(null);
                 expect(window.Wirecloud.UserInterfaceManager._registerTooltip).toHaveBeenCalledWith(tooltip);
             });
 
             it("second call cancels animation", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip({placement: ['right']});
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip({placement: ['right']});
                 expect(tooltip.show(ref_element)).toBe(tooltip);
                 expect(tooltip.show(ref_element)).toBe(tooltip);
 
-                var element = document.querySelector('.se-tooltip');
+                const element = document.querySelector('.se-tooltip');
                 expect(element).not.toBe(null);
             });
 
             it("support passing a bounding box", () => {
-                var ref_element = document.createElement("div");
-                var tooltip = new StyledElements.Tooltip({placement: ['right']});
+                const ref_element = document.createElement("div");
+                const tooltip = new StyledElements.Tooltip({placement: ['right']});
 
                 expect(tooltip.show(ref_element.getBoundingClientRect())).toBe(tooltip);
 
-                var element = document.querySelector('.se-tooltip');
+                const element = document.querySelector('.se-tooltip');
                 expect(element.classList.contains("se-tooltip-right")).toBe(true);
             });
 
             it("right placement", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip({placement: ['right']});
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip({placement: ['right']});
 
                 expect(tooltip.show(ref_element)).toBe(tooltip);
 
-                var element = document.querySelector('.se-tooltip');
+                const element = document.querySelector('.se-tooltip');
                 expect(element.classList.contains("se-tooltip-right")).toBe(true);
             });
 
             it("left placement", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip({placement: ['left']});
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip({placement: ['left']});
 
                 expect(tooltip.show(ref_element)).toBe(tooltip);
 
-                var element = document.querySelector('.se-tooltip');
+                const element = document.querySelector('.se-tooltip');
                 expect(element.classList.contains("se-tooltip-left")).toBe(true);
             });
 
             it("top placement", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip({placement: ['top']});
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip({placement: ['top']});
                 expect(tooltip.show(ref_element)).toBe(tooltip);
             });
 
             it("bottom placement", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip({placement: ['bottom']});
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip({placement: ['bottom']});
                 expect(tooltip.show(ref_element)).toBe(tooltip);
             });
 
             it("should manage the case where there is not space", () => {
-                var ref_element = new StyledElements.Button({text: "Test"});
-                var content = document.createElement('div');
+                const ref_element = new StyledElements.Button({text: "Test"});
+                const content = document.createElement('div');
                 content.style.width = "1400px";
                 content.style.height = "1400px";
                 content.style.background = "blue";
-                var tooltip = new StyledElements.Tooltip({
+                const tooltip = new StyledElements.Tooltip({
                     content: content,
                     placement: ['right']
                 });
@@ -223,8 +223,8 @@
         describe("toggle(refPosition)", () => {
 
             it("shows tooltips when currently hidden", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip();
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip();
                 spyOn(tooltip, "hide").and.returnValue(tooltip);
                 spyOn(tooltip, "show").and.returnValue(tooltip);
 
@@ -234,8 +234,8 @@
             });
 
             it("hide tooltip when currently visible", () => {
-                var ref_element = new StyledElements.Button();
-                var tooltip = new StyledElements.Tooltip();
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Tooltip();
                 tooltip.show(ref_element);
                 spyOn(tooltip, "hide").and.returnValue(tooltip);
                 spyOn(tooltip, "show").and.returnValue(tooltip);
@@ -251,7 +251,7 @@
 
             it("should hide the tooltip", () => {
 
-                var tooltip = new StyledElements.Tooltip();
+                const tooltip = new StyledElements.Tooltip();
                 spyOn(tooltip, 'hide');
                 expect(tooltip.destroy()).toBe(undefined);
                 expect(tooltip.hide).toHaveBeenCalled();

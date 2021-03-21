@@ -31,8 +31,8 @@
         describe("new SmartColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace])", () => {
 
             it("should work by providing options", () => {
-                var dragboard = {};
-                let layout = new ns.SmartColumnLayout(
+                const dragboard = {};
+                const layout = new ns.SmartColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -51,8 +51,8 @@
         describe("initialize()", () => {
 
             it("should work on empty layouts", () => {
-                var dragboard = {};
-                let layout = new ns.SmartColumnLayout(
+                const dragboard = {};
+                const layout = new ns.SmartColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -65,8 +65,8 @@
             });
 
             it("should not save widget positions if is not needed to move widgets", () => {
-                var dragboard = {};
-                let layout = new ns.SmartColumnLayout(
+                const dragboard = {};
+                const layout = new ns.SmartColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -76,7 +76,7 @@
                 );
                 spyOn(ns.ColumnLayout.prototype, "initialize").and.returnValue(false);
                 spyOn(layout, "moveSpaceUp").and.returnValue(false);
-                var widget = {
+                const widget = {
                     id: "1",
                     addEventListener: jasmine.createSpy("addEventListener"),
                     repaint: jasmine.createSpy("repaint")
@@ -87,10 +87,10 @@
             });
 
             it("should save widget positions if widget positions have been modified", () => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
-                let layout = new ns.SmartColumnLayout(
+                const layout = new ns.SmartColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -100,7 +100,7 @@
                 );
                 spyOn(ns.ColumnLayout.prototype, "initialize").and.returnValue(false);
                 spyOn(layout, "moveSpaceUp").and.returnValue(true);
-                var widget = {
+                const widget = {
                     id: "1",
                     addEventListener: jasmine.createSpy("addEventListener"),
                     repaint: jasmine.createSpy("repaint")
@@ -116,9 +116,9 @@
         describe("_insertAt(widget, x, y, matrix)", () => {
 
             it("should be based on ColumnLayout but moving the widget up if possible", () => {
-                var dragboard = {};
-                let widget = {};
-                let layout = new ns.SmartColumnLayout(
+                const dragboard = {};
+                const widget = {};
+                const layout = new ns.SmartColumnLayout(
                     dragboard,
                     20,
                     13,
@@ -139,10 +139,10 @@
 
         describe("_notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist", () => {
 
-            var layout;
+            let layout;
 
             const createWidgetMock = function createWidgetMock(data) {
-                let widget = {
+                const widget = {
                     position: {
                         x: data.x,
                         y: data.y
@@ -164,7 +164,7 @@
             };
 
             beforeEach(() => {
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.SmartColumnLayout(
@@ -178,7 +178,7 @@
             });
 
             it("should work on empty layouts (width increase - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
 
@@ -188,13 +188,13 @@
             });
 
             it("should work on layouts with widgets (width increase - right)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 1
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 1, y: 1, width: 3, height: 1
                 });
 
@@ -207,7 +207,7 @@
             });
 
             it("should work on empty layouts (width decrease - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
 
@@ -217,10 +217,10 @@
             });
 
             it("should work on layouts with widgets (width decrease - right)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 1, y: 4, width: 2, height: 4
                 });
 
@@ -231,7 +231,7 @@
             });
 
             it("should work on empty layouts (height increase - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
 
@@ -240,13 +240,13 @@
             });
 
             it("should work on layouts with widgets (height increase - right)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 2, y: 0, width: 1, height: 2
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 2, width: 4, height: 1
                 });
 
@@ -257,7 +257,7 @@
             });
 
             it("should work on empty layouts (height decrease - right)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 4
                 });
 
@@ -266,7 +266,7 @@
             });
 
             it("should work on empty layouts (width increase - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -276,13 +276,13 @@
             });
 
             it("should work on layouts with widgets (width increase - right)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 1
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 1, width: 3, height: 1
                 });
 
@@ -295,7 +295,7 @@
             });
 
             it("should work on empty layouts (width decrease - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 2, y: 0, width: 2, height: 4
                 });
 
@@ -306,10 +306,10 @@
             });
 
             it("should work on layouts with widgets (width decrease - left)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 2, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 1, y: 4, width: 2, height: 4
                 });
 
@@ -320,7 +320,7 @@
             });
 
             it("should work on empty layouts (height decrease - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -330,13 +330,13 @@
             });
 
             it("should work on layouts with widgets (height decrease - left)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0, y: 0, width: 1, height: 2
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 4, width: 4, height: 1
                 });
 
@@ -349,7 +349,7 @@
             });
 
             it("should work on empty layouts (height increase - left)", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 1
                 });
 
@@ -358,7 +358,7 @@
             });
 
             it("should persist changes if required", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
 
@@ -371,10 +371,10 @@
 
         describe("_removeFromMatrix(matrix, widget)", () => {
 
-            var layout, id_seq;
+            let layout, id_seq;
 
             const createWidgetMock = function createWidgetMock(data) {
-                let widget = {
+                const widget = {
                     id: "" + id_seq++,
                     position: {
                         x: data.x,
@@ -398,7 +398,7 @@
 
             beforeEach(() => {
                 id_seq = 1;
-                var dragboard = {
+                const dragboard = {
                     update: jasmine.createSpy("update")
                 };
                 layout = new ns.SmartColumnLayout(
@@ -412,7 +412,7 @@
             });
 
             it("should work on empty buffers", () => {
-                let widget = createWidgetMock({
+                const widget = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
 
@@ -420,10 +420,10 @@
             });
 
             it("should work on layouts with unaffected widgets (basic case)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
 
@@ -432,13 +432,13 @@
             });
 
             it("should work on layouts with unaffected widgets (complex case)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 4
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 4, width: 4, height: 4
                 });
 
@@ -451,10 +451,10 @@
             });
 
             it("should work on layouts with affected widgets (basic case)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0, y: 4, width: 1, height: 4
                 });
 
@@ -468,16 +468,16 @@
                 // |2233|    |   4|
                 // |22 4|    |    |
                 // |   4|    |    |
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 1, y: 0, width: 3, height: 2
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 0, y: 2, width: 2, height: 2
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 2, y: 2, width: 2, height: 1
                 });
-                let widget4 = createWidgetMock({
+                const widget4 = createWidgetMock({
                     x: 3, y: 3, width: 1, height: 2
                 });
 
@@ -489,16 +489,16 @@
             });
 
             it("should work on layouts with affected widgets (complex case)", () => {
-                let widget1 = createWidgetMock({
+                const widget1 = createWidgetMock({
                     x: 0, y: 0, width: 2, height: 4
                 });
-                let widget2 = createWidgetMock({
+                const widget2 = createWidgetMock({
                     x: 3, y: 0, width: 1, height: 3
                 });
-                let widget3 = createWidgetMock({
+                const widget3 = createWidgetMock({
                     x: 0, y: 4, width: 2, height: 1
                 });
-                let widget4 = createWidgetMock({
+                const widget4 = createWidgetMock({
                     x: 0, y: 5, width: 4, height: 4
                 });
 

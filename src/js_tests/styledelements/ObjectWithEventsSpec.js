@@ -31,7 +31,7 @@
         describe("new ObjectWithEvents([eventTypes])", function () {
 
             it("should create an instance given an eventType list", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
                 expect(Object.keys(eventTarget.events)).toEqual(['click']);
             });
         });
@@ -39,8 +39,8 @@
         describe("addEventListener(eventType, eventListener)", function () {
 
             it("should throw error if the eventType does not exist", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener = function (element) {};
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventListener = function (element) {};
 
                 expect(function () {
                     eventTarget.addEventListener('focus', eventListener);
@@ -48,7 +48,7 @@
             });
 
             it("should throw error if the eventListener is not a function", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
 
                 expect(function () {
                     eventTarget.addEventListener('click', null);
@@ -56,8 +56,8 @@
             });
 
             it("should add more than once the same eventListener", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener = function (element) {};
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventListener = function (element) {};
 
                 eventTarget.addEventListener('click', eventListener);
                 eventTarget.addEventListener('click', eventListener);
@@ -69,7 +69,7 @@
         describe("dispatchEvent(eventType[, ...args])", function () {
 
             it("should throw error if the eventType does not exist", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
 
                 expect(function () {
                     eventTarget.dispatchEvent('focus');
@@ -77,11 +77,11 @@
             });
 
             it("should allow adding an event listeners while the event is dispatching", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener1 = function (element) {
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventListener1 = function (element) {
                     eventTarget.addEventListener('click', eventListener2);
                 };
-                var eventListener2 = jasmine.createSpy('eventListener2');
+                const eventListener2 = jasmine.createSpy('eventListener2');
 
                 eventTarget.addEventListener('click', eventListener1);
                 eventTarget.dispatchEvent('click');
@@ -90,12 +90,12 @@
             });
 
             it("should allow removing event listeners while the event is dispatching", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener1 = function (element) {
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventListener1 = function (element) {
                     eventTarget.removeEventListener('click', eventListener2);
                 };
-                var eventListener2 = jasmine.createSpy('eventListener2');
-                var eventListener3 = jasmine.createSpy('eventListener3');
+                const eventListener2 = jasmine.createSpy('eventListener2');
+                const eventListener3 = jasmine.createSpy('eventListener3');
 
                 eventTarget.addEventListener('click', eventListener1);
                 eventTarget.addEventListener('click', eventListener2);
@@ -109,9 +109,9 @@
 
             it("should call all eventListener listeners despite whether one of them thrown an error", function () {
                 spyOn(window.console, "error");
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener1 = jasmine.createSpy('eventListener1').and.throwError();
-                var eventListener2 = jasmine.createSpy('eventListener2');
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventListener1 = jasmine.createSpy('eventListener1').and.throwError();
+                const eventListener2 = jasmine.createSpy('eventListener2');
 
                 eventTarget.addEventListener('click', eventListener1);
                 eventTarget.addEventListener('click', eventListener2);
@@ -127,8 +127,8 @@
         describe("removeEventListener(eventType, eventListener)", function () {
 
             it("should throw error if the eventType does not exist", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener = function (element) {};
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventListener = function (element) {};
 
                 expect(function () {
                     eventTarget.removeEventListener('focus', eventListener);
@@ -136,7 +136,7 @@
             });
 
             it("should throw error if the eventListener is not a function", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
 
                 expect(function () {
                     eventTarget.removeEventListener('click', null);
@@ -144,8 +144,8 @@
             });
 
             it("should remove all references of the eventListener", function () {
-                var eventTarget = new StyledElements.ObjectWithEvents(['click']);
-                var eventListener = function (element) {};
+                const eventTarget = new StyledElements.ObjectWithEvents(['click']);
+                const eventListener = function (element) {};
 
                 eventTarget.addEventListener('click', eventListener);
                 eventTarget.addEventListener('click', eventListener);

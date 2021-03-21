@@ -53,17 +53,17 @@
 
     const getItemCollapse = function getItemCollapse() {
         if (this.collapsed) {
-            return {title: utils.gettext("Expand"), icon: "caret-square-o-down"};
+            return {title: utils.gettext("Expand"), icon: "far fa-caret-square-down"};
         } else {
-            return {title: utils.gettext("Collapse"), icon: "caret-square-o-up"};
+            return {title: utils.gettext("Collapse"), icon: "far fa-caret-square-up"};
         }
     };
 
     const getItemOrderEndpoints = function getItemOrderEndpoints() {
         if (this.orderingEndpoints) {
-            return {title: utils.gettext("Stop ordering"), icon: "sort"};
+            return {title: utils.gettext("Stop ordering"), icon: "fas fa-sort"};
         } else {
-            return {title: utils.gettext("Order endpoints"), icon: "sort"};
+            return {title: utils.gettext("Order endpoints"), icon: "fas fa-sort"};
         }
     };
 
@@ -101,7 +101,7 @@
 
         _createMenuItem(title, iconClass, onclick, isEnabled) {
             const item = new se.MenuItem(title, onclick);
-            item.addIconClass('fa fa-' + iconClass);
+            item.addIconClass(iconClass);
 
             if (isEnabled != null) {
                 item.enabled = isEnabled.call(this.component);
@@ -114,11 +114,11 @@
          * @override
          */
         build() {
-            var item1 = getItemCollapse.call(this.component),
+            const item1 = getItemCollapse.call(this.component),
                 item2 = getItemOrderEndpoints.call(this.component);
 
-            var list = [
-                this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
+            let list = [
+                this._createMenuItem(utils.gettext("Rename"), "fas fa-pencil-alt", function () {
                     showRenameModal.call(this);
                 }.bind(this), canRename),
                 this._createMenuItem(item1.title, item1.icon, function () {
@@ -131,14 +131,14 @@
                         this.startOrderingEndpoints();
                     }
                 }.bind(this.component), canOrderEndpoints),
-                this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
+                this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "fas fa-retweet", function () {
                     const dialog = new Wirecloud.ui.UpgradeWindowMenu(this._component);
                     dialog.show();
                 }.bind(this.component), canUpgrade),
-                this._createMenuItem(utils.gettext("Logs"), "tags", function () {
+                this._createMenuItem(utils.gettext("Logs"), "fas fa-tags", function () {
                     this.showLogs();
                 }.bind(this.component)),
-                this._createMenuItem(utils.gettext("Settings"), "gear", function () {
+                this._createMenuItem(utils.gettext("Settings"), "fas fa-cog", function () {
                     this.showSettings();
                 }.bind(this.component), canShowSettings)
             ];

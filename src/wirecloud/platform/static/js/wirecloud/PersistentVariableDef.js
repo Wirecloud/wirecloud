@@ -29,7 +29,7 @@
     /**
      * @author aarranz
      */
-    var PersistentVariableDef = function PersistentVariableDef(options) {
+    const PersistentVariableDef = function PersistentVariableDef(options) {
 
         if (options == null || typeof options !== "object") {
             throw new TypeError('Invalid options parameter');

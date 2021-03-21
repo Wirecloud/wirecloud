@@ -57,7 +57,7 @@
 
         privates.get(this).active = newstatus;
 
-        let icon = this.active ? ICON[this.position] : OPPOSITE[this.position];
+        const icon = this.active ? ICON[this.position] : OPPOSITE[this.position];
         this.handleicon.className = "fas fa-caret-" + icon;
 
         this._notifyWindowResizeEvent(true, true);
@@ -124,7 +124,7 @@
         }
 
         addWidget(widget, affectsDragboard) {
-            const result = Wirecloud.ui.SmartColumnLayout.prototype.addWidget.call(this, widget, affectsDragboard);
+            const result = super.addWidget(widget, affectsDragboard);
 
             if (this.handle.classList.contains("hidden")) {
                 this.handle.classList.remove("hidden");
@@ -137,7 +137,7 @@
         }
 
         removeWidget(widget, affectsDragboard) {
-            const result = Wirecloud.ui.SmartColumnLayout.prototype.removeWidget.call(this, widget, affectsDragboard);
+            const result = super.removeWidget(widget, affectsDragboard);
 
             if (Object.keys(this.widgets).length === 0) {
                 this.handle.classList.add("hidden");
@@ -189,7 +189,7 @@
         }
 
         initialize() {
-            let modified = Wirecloud.ui.SmartColumnLayout.prototype.initialize.call(this);
+            const  modified = super.initialize();
             const firstWidget = getFirstWidget(this.matrix);
             if (firstWidget != null) {
                 firstWidget.wrapperElement.appendChild(this.handle);

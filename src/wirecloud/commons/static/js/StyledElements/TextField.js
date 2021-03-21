@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,6 +27,8 @@
 
     "use strict";
 
+    const propagate_keys = ['Escape', 'Enter'];
+
     const oninput = function oninput() {
         this.dispatchEvent('change');
     };
@@ -41,6 +44,22 @@
     const onkeypress = function onkeypress(event) {
         if (utils.normalizeKey(event) === "Enter") {
             this.dispatchEvent('submit');
+        }
+    };
+
+    const element_onkeydown = function element_onkeydown(event) {
+        const modifiers = utils.extractModifiers(event);
+        const key = utils.normalizeKey(event);
+
+        if ((!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey && propagate_keys.indexOf(key) === -1) || key === 'Backspace') {
+            event.stopPropagation();
+        }
+
+        if (this.enabled) {
+            modifiers.preventDefault = event.preventDefault.bind(event);
+            modifiers.stopPropagation = event.stopPropagation.bind(event);
+            modifiers.key = key;
+            this.dispatchEvent('keydown', modifiers, key);
         }
     };
 
@@ -125,29 +144,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var propagate_keys = ['Escape', 'Enter'];
-
-    var element_onkeydown = function element_onkeydown(event) {
-        var modifiers, key;
-
-        modifiers = utils.extractModifiers(event);
-        key = utils.normalizeKey(event);
-
-        if ((!modifiers.altKey && !modifiers.metaKey && !modifiers.ctrlKey && propagate_keys.indexOf(key) === -1) || key === 'Backspace') {
-            event.stopPropagation();
-        }
-
-        if (this.enabled) {
-            modifiers.preventDefault = event.preventDefault.bind(event);
-            modifiers.stopPropagation = event.stopPropagation.bind(event);
-            modifiers.key = key;
-            this.dispatchEvent('keydown', modifiers, key);
-        }
-    };
 
 })(StyledElements, StyledElements.Utils);

@@ -26,26 +26,26 @@
 
     "use strict";
 
-    var CONNECTION = Object.freeze({
+    const CONNECTION = Object.freeze({
         _connect: function () {},
         _disconnect: function () {}
     });
 
-    var OPERATOR = Object.freeze({
+    const OPERATOR = Object.freeze({
         id: "1",
         meta: {
             type: 'operator'
         }
     });
 
-    var WIDGET = Object.freeze({
+    const WIDGET = Object.freeze({
         id: "1",
         meta: {
             type: 'widget'
         }
     });
 
-    var DEFAULT_ENDPOINT_NAME = "source";
+    const DEFAULT_ENDPOINT_NAME = "source";
 
 
     describe("GhostSourceEndpoint", function () {
@@ -53,7 +53,7 @@
         describe("new GhostSourceEndpoint(componentModel, endpointName)", function () {
 
             it("should allow to create operator endpoints", function () {
-                var endpoint = new ns.GhostSourceEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostSourceEndpoint(OPERATOR, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.component).toBe(OPERATOR);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -64,7 +64,7 @@
             });
 
             it("should allow to create widget endpoints", function () {
-                var endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint.component).toBe(WIDGET);
                 expect(endpoint instanceof ns.SourceEndpoint).toBe(true);
@@ -79,18 +79,18 @@
         describe("toString()", function () {
 
             it("should convert a missing source endpoint to string", function () {
-                var endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
 
                 expect(endpoint + "").toEqual([WIDGET.meta.type, WIDGET.id, DEFAULT_ENDPOINT_NAME].join("/"));
             });
 
             it("should convert a widget's source endpoint to string", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
 
                 expect(endpoint + "").toEqual([WIDGET.meta.type, WIDGET.id, endpointDesc.name].join("/"));
             });
@@ -100,28 +100,28 @@
         describe("toJSON()", function () {
 
             it("should convert a missing source endpoint to string", function () {
-                var endpointJSON = {
+                const endpointJSON = {
                     id: WIDGET.id,
                     type: WIDGET.meta.type,
                     endpoint: DEFAULT_ENDPOINT_NAME
                 };
-                var endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
 
                 expect(JSON.parse(JSON.stringify(endpoint))).toEqual(endpointJSON);
             });
 
             it("should convert a widget's source endpoint to string", function () {
-                var endpointDesc = {
+                const endpointDesc = {
                     name: "source",
                     label: "title",
                     friendcode: "a b c"
                 };
-                var endpointJSON = {
+                const endpointJSON = {
                     id: WIDGET.id,
                     type: WIDGET.meta.type,
                     endpoint: endpointDesc.name
                 };
-                var endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
+                const endpoint = new ns.WidgetSourceEndpoint(WIDGET, endpointDesc);
 
                 expect(JSON.parse(JSON.stringify(endpoint))).toEqual(endpointJSON);
             });
@@ -131,14 +131,14 @@
         describe("propagate(event, [options])", function () {
 
             it("should do nothing if there are no connected endpoints", function () {
-                var endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
                 endpoint.propagate("test");
             });
 
             it("should do nothing also if there are connected endpoints", function () {
-                var endpoint1 = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
-                var endpoint2 = new ns.TargetEndpoint();
-                var endpoint3 = new ns.TargetEndpoint();
+                const endpoint1 = new ns.GhostSourceEndpoint(WIDGET, DEFAULT_ENDPOINT_NAME);
+                const endpoint2 = new ns.TargetEndpoint();
+                const endpoint3 = new ns.TargetEndpoint();
 
                 spyOn(endpoint2, 'propagate');
                 spyOn(endpoint3, 'propagate');

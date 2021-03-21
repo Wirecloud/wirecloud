@@ -65,14 +65,14 @@
 
             const h1 = this.north.wrapperElement.offsetHeight;
             const h2 = usableArea.height - this.south.wrapperElement.offsetHeight;
-            const centerHeight = h2 - h1;
+            let centerHeight = h2 - h1;
             if (centerHeight < 0) {
                 centerHeight = 0;
             }
 
             const v1 = this.west.wrapperElement.offsetWidth;
             const v2 = usableArea.width - this.east.wrapperElement.offsetWidth;
-            const centerWidth = v2 - v1;
+            let centerWidth = v2 - v1;
             if (centerWidth < 0) {
                 centerWidth = 0;
             }

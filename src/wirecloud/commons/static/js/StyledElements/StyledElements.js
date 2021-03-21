@@ -304,18 +304,18 @@
          * @ example
          *
          * element.className;
-         * => "fa fa-plus";
+         * => "fas fa-plus";
          * element.replaceClassName("fa-plus", "fa-minus");
          * => element
          * element.className;
-         * => "fa fa-minus";
+         * => "fas fa-minus";
          *
          * element.className;
          * => "icon icon-plus";
-         * element.replaceClassName("", "fa fa-plus");
+         * element.replaceClassName("", "fas fa-plus");
          * => element
          * element.className;
-         * => "fa fa-plus";
+         * => "fas fa-plus";
          *
          */
         replaceClassName(removeList, addList) {
@@ -361,7 +361,7 @@
                     return this.get().style[properties];
                 }
 
-                for (let name in properties) {
+                for (const name in properties) {
                     this.get().style[name] = properties[name];
                 }
             } else {

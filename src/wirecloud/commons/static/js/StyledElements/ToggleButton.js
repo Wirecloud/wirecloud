@@ -51,7 +51,7 @@
         set active(value) {
             // Convert value to boolean, just in case
             value = !!value;
-            let current = this.hasClassName('active');
+            const current = this.hasClassName('active');
             if (current !== value) {
                 this.toggleClassName('active', value);
                 this.dispatchEvent('active', value);

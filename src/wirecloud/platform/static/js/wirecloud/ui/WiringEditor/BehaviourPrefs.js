@@ -42,7 +42,7 @@
 
         _createMenuItem(title, iconClass, onclick, isEnabled) {
             const item = new se.MenuItem(utils.gettext(title), onclick);
-            item.addIconClass('fa fa-' + iconClass);
+            item.addIconClass(iconClass);
 
             if (isEnabled != null) {
                 item.enabled = isEnabled.call(this.behaviour);
@@ -56,10 +56,10 @@
          */
         build() {
             return [
-                this._createMenuItem("Logs", "tags", () => {
+                this._createMenuItem("Logs", "fas fa-tags", () => {
                     this.behaviour.showLogs();
                 }),
-                this._createMenuItem("Settings", "gear", () => {
+                this._createMenuItem("Settings", "fas fa-cog", () => {
                     this.behaviour.showSettings();
                 })
             ];

@@ -27,90 +27,92 @@
 
     "use strict";
 
-    var ValidationErrorManager, InputValidationError = {};
-    InputValidationError.NO_ERROR           = 0;
-    InputValidationError.REQUIRED_ERROR     = 1;
-    InputValidationError.URL_ERROR          = 2;
-    InputValidationError.EMAIL_ERROR        = 3;
-    InputValidationError.ID_ERROR           = 4;
-    InputValidationError.COLOR_ERROR        = 5;
-    InputValidationError.BOOLEAN_ERROR      = 6;
-    InputValidationError.VERSION_ERROR      = 7;
-    InputValidationError.OUT_OF_RANGE_ERROR = 8;
-    StyledElements.InputValidationError = InputValidationError;
-
-
-    ValidationErrorManager = function ValidationErrorManager() {
-        this.fieldsWithErrorById = {};
+    se.InputValidationError = {
+        NO_ERROR: 0,
+        REQUIRED_ERROR: 1,
+        URL_ERROR: 2,
+        EMAIL_ERROR: 3,
+        ID_ERROR: 4,
+        COLOR_ERROR: 5,
+        BOOLEAN_ERROR: 6,
+        VERSION_ERROR: 7,
+        OUT_OF_RANGE_ERROR: 8
     };
 
-    ValidationErrorManager.prototype._addValidationError = function _addValidationError(errorCode, fieldName) {
-        if (this.fieldsWithErrorById[errorCode] === undefined) {
-            this.fieldsWithErrorById[errorCode] = [];
+    se.ValidationErrorManager = class ValidationErrorManager {
+
+        constructor() {
+            this.fieldsWithErrorById = {};
         }
 
-        this.fieldsWithErrorById[errorCode].push(fieldName);
-    };
+        _addValidationError(errorCode, fieldName) {
+            if (this.fieldsWithErrorById[errorCode] === undefined) {
+                this.fieldsWithErrorById[errorCode] = [];
+            }
 
-    ValidationErrorManager.prototype.validate = function validate(field) {
-        const errorCode = field.checkValue();
-        if (errorCode !== StyledElements.InputValidationError.NO_ERROR) {
-            field._setError(true);
-            this._addValidationError(errorCode, field.getLabel());
-        } else {
-            field._setError(false);
-        }
-    };
-
-    ValidationErrorManager.prototype._buildErrorMsg = function _buildErrorMsg(errorCode) {
-        let msg;
-
-        errorCode = parseInt(errorCode, 10);
-        switch (errorCode) {
-        case StyledElements.InputValidationError.REQUIRED_ERROR:
-            msg = StyledElements.Utils.gettext("The following required fields are empty: %(fields)s.");
-            break;
-        case StyledElements.InputValidationError.URL_ERROR:
-            msg = StyledElements.Utils.gettext("The following fields do not contain a valid URL: %(fields)s.");
-            break;
-        case StyledElements.InputValidationError.EMAIL_ERROR:
-            msg = StyledElements.Utils.gettext("The following fields do not contain a valid E-Mail address: %(fields)s.");
-            break;
-        case StyledElements.InputValidationError.VERSION_ERROR:
-            msg = StyledElements.Utils.gettext("The following field do not contain a valid version number: %(fields)s.");
-            break;
-        case StyledElements.InputValidationError.ID_ERROR:
-            msg = StyledElements.Utils.gettext("The following fields contain invalid characters: %(fields)s.");
-            break;
-        case StyledElements.InputValidationError.COLOR_ERROR:
-            msg = StyledElements.Utils.gettext("The following fields do not contain a valid color value: %(fields)s.");
-            break;
-        case StyledElements.InputValidationError.OUT_OF_RANGE_ERROR:
-            msg = StyledElements.Utils.gettext("The following fields does contain an out of range value: %(fields)s.");
-            break;
+            this.fieldsWithErrorById[errorCode].push(fieldName);
         }
 
-        let fields = "";
-        for (let i = 0; i < this.fieldsWithErrorById[errorCode].length; i += 1) {
-            fields += ", " + this.fieldsWithErrorById[errorCode][i];
-        }
-
-        fields = fields.substring(2);
-        return utils.interpolate(msg, {'fields': fields});
-    };
-
-    ValidationErrorManager.prototype.toHTML = function toHTML() {
-        const errorMsgs = [];
-
-        for (let errorCode in this.fieldsWithErrorById) {
-            if (this.fieldsWithErrorById.hasOwnProperty(errorCode)) {
-                errorMsgs.push(this._buildErrorMsg(errorCode));
+        validate(field) {
+            const errorCode = field.checkValue();
+            if (errorCode !== StyledElements.InputValidationError.NO_ERROR) {
+                field._setError(true);
+                this._addValidationError(errorCode, field.getLabel());
+            } else {
+                field._setError(false);
             }
         }
 
-        return errorMsgs;
-    };
-    StyledElements.ValidationErrorManager = ValidationErrorManager;
+        _buildErrorMsg(errorCode) {
+            let msg;
+
+            errorCode = parseInt(errorCode, 10);
+            switch (errorCode) {
+            case StyledElements.InputValidationError.REQUIRED_ERROR:
+                msg = StyledElements.Utils.gettext("The following required fields are empty: %(fields)s.");
+                break;
+            case StyledElements.InputValidationError.URL_ERROR:
+                msg = StyledElements.Utils.gettext("The following fields do not contain a valid URL: %(fields)s.");
+                break;
+            case StyledElements.InputValidationError.EMAIL_ERROR:
+                msg = StyledElements.Utils.gettext("The following fields do not contain a valid E-Mail address: %(fields)s.");
+                break;
+            case StyledElements.InputValidationError.VERSION_ERROR:
+                msg = StyledElements.Utils.gettext("The following field do not contain a valid version number: %(fields)s.");
+                break;
+            case StyledElements.InputValidationError.ID_ERROR:
+                msg = StyledElements.Utils.gettext("The following fields contain invalid characters: %(fields)s.");
+                break;
+            case StyledElements.InputValidationError.COLOR_ERROR:
+                msg = StyledElements.Utils.gettext("The following fields do not contain a valid color value: %(fields)s.");
+                break;
+            case StyledElements.InputValidationError.OUT_OF_RANGE_ERROR:
+                msg = StyledElements.Utils.gettext("The following fields does contain an out of range value: %(fields)s.");
+                break;
+            }
+
+            let fields = "";
+            for (let i = 0; i < this.fieldsWithErrorById[errorCode].length; i += 1) {
+                fields += ", " + this.fieldsWithErrorById[errorCode][i];
+            }
+
+            fields = fields.substring(2);
+            return utils.interpolate(msg, {'fields': fields});
+        }
+
+        toHTML() {
+            const errorMsgs = [];
+
+            for (const errorCode in this.fieldsWithErrorById) {
+                if (this.fieldsWithErrorById.hasOwnProperty(errorCode)) {
+                    errorMsgs.push(this._buildErrorMsg(errorCode));
+                }
+            }
+
+            return errorMsgs;
+        }
+
+    }
 
     /**
      *
@@ -304,7 +306,7 @@
             if (typeof desc.entries === 'function') {
                 this._update = desc.entries;
             } else if (desc.initialEntries && !this.required) {
-                var i, found = false;
+                let i, found = false;
 
                 for (i = 0; i < desc.initialEntries.length; i += 1) {
                     if (this._isEmptyValue(desc.initialEntries[i].value)) {
@@ -382,7 +384,7 @@
     se.ButtonGroupInputInterface = class ButtonGroupInputInterface extends se.InputInterface {
 
         constructor(fieldId, fieldDesc) {
-            var ButtonClass, buttonDesc, i, button, label;
+            let ButtonClass, buttonDesc, i, button, label;
 
             super(fieldId, fieldDesc);
 

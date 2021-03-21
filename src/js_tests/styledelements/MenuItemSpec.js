@@ -49,7 +49,7 @@
             });
 
             it("Should allow title to be a StyledElement", () => {
-                let textArea = new StyledElements.TextArea();
+                const textArea = new StyledElements.TextArea();
                 menuItem = new StyledElements.MenuItem(textArea);
 
                 expect(menuItem).toBeTruthy();
@@ -57,7 +57,7 @@
             });
 
             it("Should allow to use the handler option", () => {
-                let listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 menuItem = new StyledElements.MenuItem("customTitle", {handler: listener});
                 expect(menuItem).toBeTruthy();
 
@@ -65,7 +65,7 @@
             });
 
             it("Should allow to use the handler parameter (backwards compability)", () => {
-                let listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 menuItem = new StyledElements.MenuItem("customTitle", listener);
                 expect(menuItem).toBeTruthy();
 
@@ -82,7 +82,7 @@
 
             it("Should allow to use the context parameter (backwards compability)", () => {
                 const context = {};
-                let listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 menuItem = new StyledElements.MenuItem("customTitle", listener, context);
                 expect(menuItem).toBeTruthy();
 
@@ -98,11 +98,11 @@
             });
 
             it("Should allow to use the iconClass option", () => {
-                let iconClass = "arrow";
+                const iconClass = "arrow";
                 menuItem = new StyledElements.MenuItem("customTitle", {iconClass: iconClass});
                 expect(menuItem).toBeTruthy();
 
-                let iconelement = menuItem.wrapperElement.querySelector(".se-icon");
+                const iconelement = menuItem.wrapperElement.querySelector(".se-icon");
                 expect(iconelement.className).toBe("se-icon " + iconClass);
             });
 
@@ -118,7 +118,7 @@
 
                 expect(menuItem.wrapperElement.querySelector(".se-icon")).toBe(null);
                 menuItem.addIconClass(iconClass);
-                let iconelement = menuItem.wrapperElement.querySelector(".se-icon");
+                const iconelement = menuItem.wrapperElement.querySelector(".se-icon");
                 expect(iconelement.className).toBe("se-icon " + iconClass);
             });
 
@@ -128,7 +128,7 @@
                 menuItem.addIconClass(iconClass);
                 iconClass = "open";
                 menuItem.addIconClass(iconClass);
-                let iconelement = menuItem.wrapperElement.querySelector(".se-icon");
+                const iconelement = menuItem.wrapperElement.querySelector(".se-icon");
                 expect(iconelement.className).toBe("se-icon " + iconClass);
             });
 
@@ -138,7 +138,7 @@
 
             it("should sent click events on enabled elements", () => {
                 menuItem = new StyledElements.MenuItem();
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("click", listener);
 
                 expect(menuItem.click()).toBe(menuItem);
@@ -150,7 +150,7 @@
             it("should ignore disabled elements", () => {
                 menuItem = new StyledElements.MenuItem();
                 menuItem.enabled = false;
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("click", listener);
 
                 expect(menuItem.click()).toBe(menuItem);
@@ -164,7 +164,7 @@
 
             it("should focus on enabled elements", () => {
                 menuItem = new StyledElements.MenuItem();
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("focus", listener);
 
                 expect(menuItem.focus()).toBe(menuItem);
@@ -176,7 +176,7 @@
             it("should ignore disabled elements", () => {
                 menuItem = new StyledElements.MenuItem();
                 menuItem.enabled = false;
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("focus", listener);
 
                 expect(menuItem.focus()).toBe(menuItem);
@@ -193,7 +193,7 @@
 
                 expect(menuItem.setDescription("Hello World")).toBe(menuItem);
 
-                let descriptionelement = menuItem.wrapperElement.querySelector(".se-popup-menu-item-description");
+                const descriptionelement = menuItem.wrapperElement.querySelector(".se-popup-menu-item-description");
                 expect(descriptionelement).toBeTruthy();
                 expect(menuItem.description).toBe("Hello World");
             });
@@ -203,17 +203,17 @@
 
                 expect(menuItem.setDescription("Hi").setDescription("Hello World")).toBe(menuItem);
 
-                let descriptionelement = menuItem.wrapperElement.querySelector(".se-popup-menu-item-description");
+                const descriptionelement = menuItem.wrapperElement.querySelector(".se-popup-menu-item-description");
                 expect(descriptionelement).toBeTruthy();
                 expect(menuItem.description).toBe("Hello World");
             });
 
             it("should work with StyledElements", () => {
-                let textArea = new StyledElements.TextArea();
+                const textArea = new StyledElements.TextArea();
                 menuItem = new StyledElements.MenuItem();
                 menuItem.setDescription(textArea);
 
-                let descriptionelement = menuItem.wrapperElement.querySelector(".se-popup-menu-item-description");
+                const descriptionelement = menuItem.wrapperElement.querySelector(".se-popup-menu-item-description");
                 expect(descriptionelement.innerHTML).toBe("<textarea class=\"se-text-area\"></textarea>");
             });
 
@@ -228,7 +228,7 @@
 
             it("mouseenter (enabled)", () => {
                 menuItem = new StyledElements.MenuItem();
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("mouseenter", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("mouseenter"));
@@ -239,7 +239,7 @@
             it("mouseenter (disabled)", () => {
                 menuItem = new StyledElements.MenuItem();
                 menuItem.enabled = false;
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("mouseenter", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("mouseenter"));
@@ -249,7 +249,7 @@
 
             it("mouseleave (enabled)", () => {
                 menuItem = new StyledElements.MenuItem();
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("mouseleave", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("mouseleave"));
@@ -260,7 +260,7 @@
             it("mouseleave (disabled)", () => {
                 menuItem = new StyledElements.MenuItem();
                 menuItem.enabled = false;
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("mouseleave", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("mouseleave"));
@@ -270,7 +270,7 @@
 
             it("focus (enabled)", () => {
                 menuItem = new StyledElements.MenuItem();
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("focus", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("focus"));
@@ -281,7 +281,7 @@
             it("focus (disabled)", () => {
                 menuItem = new StyledElements.MenuItem();
                 menuItem.enabled = false;
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("focus", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("focus"));
@@ -291,7 +291,7 @@
 
             it("blur (enabled)", () => {
                 menuItem = new StyledElements.MenuItem();
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("blur", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("blur"));
@@ -302,7 +302,7 @@
             it("blur (disabled)", () => {
                 menuItem = new StyledElements.MenuItem();
                 menuItem.enabled = false;
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 menuItem.addEventListener("blur", listener);
 
                 menuItem.wrapperElement.dispatchEvent(new MouseEvent("blur"));

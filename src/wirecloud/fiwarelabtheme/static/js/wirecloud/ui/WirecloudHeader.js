@@ -36,7 +36,7 @@
 
         this.backButton = new StyledElements.Button({
             class: 'btn-large wc-back-button',
-            iconClass: 'fa fa-caret-left'
+            iconClass: 'fas fa-caret-left'
         });
         this.backButton.addEventListener('click', function () {
             this.currentView.goUp();
@@ -46,7 +46,7 @@
 
         this.menuButton = new StyledElements.PopupButton({
             class: 'btn-large wc-menu-button',
-            iconClass: 'fa fa-reorder'
+            iconClass: 'fas fa-bars'
         });
         this.menuButton.disable();
         this.menuButton.insertInto(this.breadcrum.parentNode);
@@ -98,14 +98,14 @@
                 var dialog = new Wirecloud.ui.PreferencesWindowMenu('platform', Wirecloud.preferences);
                 dialog.show();
             });
-            item.addIconClass('fa fa-gear');
+            item.addIconClass('fas fa-cog');
             user_menu.append(item);
 
             if (Wirecloud.contextManager.get('isstaff') === true && 'DJANGO_ADMIN' in Wirecloud.URLs) {
                 item = new StyledElements.MenuItem(utils.gettext('Django Admin panel'), function () {
                     window.open(Wirecloud.URLs.DJANGO_ADMIN, '_blank');
                 });
-                item.addIconClass('fa fa-tasks');
+                item.addIconClass('fas fa-tasks');
                 user_menu.append(item);
             }
 
@@ -127,7 +127,7 @@
 
                     dialog.show();
                 });
-                user_menu.append(item.addIconClass('fa fa-exchange'));
+                user_menu.append(item.addIconClass('fas fa-exchange-alt'));
             }
 
             const realuser = Wirecloud.contextManager.get('realuser');
@@ -140,7 +140,7 @@
             }
 
             item = new StyledElements.MenuItem(utils.gettext('Sign out'), Wirecloud.logout);
-            item.addIconClass('fa fa-sign-out');
+            item.addIconClass('fas fa-sign-out-alt');
             user_menu.append(item);
 
             if (Wirecloud.constants.FIWARE_OFFICIAL_PORTAL) {

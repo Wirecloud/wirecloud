@@ -268,7 +268,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready()
 
         menu_widg = self.driver.find_element_by_css_selector(
-            '.wirecloud_header_nav .fa-reorder')
+            '.wirecloud_header_nav .fa-bars')
 
         # Empty workspace screenshot
         imgp = take_capture(self.driver, 'empty_workspace')

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,6 +26,16 @@
 (function (se, utils) {
 
     "use strict";
+
+    const privates = new WeakMap();
+
+    const on_label_get = function on_label_get() {
+        return privates.get(this).tabElement.textContent;
+    };
+
+    const on_tabelement_get = function on_tabelement_get() {
+        return privates.get(this).tabElement;
+    };
 
     const defaultOptions = Object.freeze({
         closable: true,
@@ -103,7 +113,7 @@
                 }
             });
 
-            var priv = {
+            const priv = {
                 labelElement: document.createElement('span'),
                 tabElement: document.createElement("li")
             };
@@ -124,8 +134,8 @@
 
             /* Process options */
             if (options.closable) {
-                var closeButton = new this.Button({
-                    iconClass: "fa fa-remove",
+                const closeButton = new this.Button({
+                    iconClass: "fas fa-times",
                     plain: true,
                     class: "close_button"
                 });
@@ -222,7 +232,7 @@
          * @name StyledElements.Tab#hide
          */
         hide() {
-            se.Container.prototype.hide.call(this);
+            super.hide();
             privates.get(this).tabElement.classList.remove("selected");
             return this;
         }
@@ -232,7 +242,7 @@
          * @name StyledElements.Tab#show
          */
         show() {
-            se.Container.prototype.show.call(this);
+            super.show();
             privates.get(this).tabElement.classList.add("selected");
             this.repaint(false);
             return this;
@@ -266,19 +276,5 @@
 
     se.Tab.prototype.Tooltip = se.Tooltip;
     se.Tab.prototype.Button = se.Button;
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
-    var on_label_get = function on_label_get() {
-        return privates.get(this).tabElement.textContent;
-    };
-
-    var on_tabelement_get = function on_tabelement_get() {
-        return privates.get(this).tabElement;
-    };
 
 })(StyledElements, StyledElements.Utils);

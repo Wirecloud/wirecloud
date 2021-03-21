@@ -64,7 +64,7 @@
     se.PaginationInterface = class PaginationInterface extends se.StyledElement {
 
         constructor(source, options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 layout: utils.gettext(builder.DEFAULT_OPENING + '<div class="se-input-group"><t:firstBtn/><t:prevBtn/><div class="se-box">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></div>' + builder.DEFAULT_CLOSING),
                 autoHide: false
             };
@@ -77,16 +77,16 @@
             this.wrapperContainer = new StyledElements.Container({class: 'pagination'});
             this.wrapperElement = this.wrapperContainer.wrapperElement;
 
-            this.firstBtn = new StyledElements.Button({class: 'btn-first-page', iconClass: 'fa fa-step-backward fa-fw'});
+            this.firstBtn = new StyledElements.Button({class: 'btn-first-page', iconClass: 'fas fa-step-backward fa-fw'});
             this.firstBtn.addEventListener('click', source.goToFirst.bind(source));
 
-            this.prevBtn = new StyledElements.Button({class: 'btn-previous-page', iconClass: 'fa fa-chevron-left fa-fw'});
+            this.prevBtn = new StyledElements.Button({class: 'btn-previous-page', iconClass: 'fas fa-chevron-left fa-fw'});
             this.prevBtn.addEventListener('click', source.goToPrevious.bind(source));
 
-            this.nextBtn = new StyledElements.Button({class: 'btn-next-page', iconClass: 'fa fa-chevron-right fa-fw'});
+            this.nextBtn = new StyledElements.Button({class: 'btn-next-page', iconClass: 'fas fa-chevron-right fa-fw'});
             this.nextBtn.addEventListener('click', source.goToNext.bind(source));
 
-            this.lastBtn = new StyledElements.Button({class: 'btn-last-page', iconClass: 'fa fa-step-forward fa-fw'});
+            this.lastBtn = new StyledElements.Button({class: 'btn-last-page', iconClass: 'fas fa-step-forward fa-fw'});
             this.lastBtn.addEventListener('click', source.goToLast.bind(source));
 
             this.currentPageLabel = document.createElement('span');

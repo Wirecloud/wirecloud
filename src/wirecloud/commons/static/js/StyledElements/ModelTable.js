@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,22 +28,20 @@
 
     const privates = new WeakMap();
 
-    var buildHeader = function buildHeader() {
-        var i, column, cell, label, tooltip;
-
-        var priv = privates.get(this);
+    const buildHeader = function buildHeader() {
+        const priv = privates.get(this);
 
         priv.header = document.createElement('div');
         priv.header.className = 'se-model-table-headrow';
 
         priv.headerCells = [];
         priv.columnTemplate = [];
-        for (i = 0; i < this.columns.length; i += 1) {
-            column = this.columns[i];
+        for (let i = 0; i < this.columns.length; i += 1) {
+            const column = this.columns[i];
 
-            label = column.label != null ? column.label : column.field;
+            const label = column.label != null ? column.label : column.field;
 
-            cell = document.createElement('div');
+            const cell = document.createElement('div');
             cell.className = 'se-model-table-cell';
             if (typeof column.class === 'string') {
                 cell.classList.add(column.class);
@@ -56,7 +54,7 @@
             cell.textContent = label;
             if (column.sortable !== false) {
                 cell.classList.add('sortable');
-                tooltip = new this.Tooltip({
+                const tooltip = new this.Tooltip({
                     content: utils.interpolate(utils.gettext('Sort by %(column_name)s'), {column_name: label}),
                     placement: ['bottom', 'top', 'right', 'left']
                 });
@@ -71,8 +69,8 @@
         priv.tableBody.wrapperElement.style.gridTemplateColumns = priv.columnTemplate.join(" ");
     };
 
-    var highlight_selection = function highlight_selection() {
-        var priv = privates.get(this);
+    const highlight_selection = function highlight_selection() {
+        const priv = privates.get(this);
         this.selection.forEach(function (id) {
             if (id in priv.current_elements) {
                 priv.current_elements[id].row.classList.add('highlight');
@@ -80,11 +78,11 @@
         }, this);
     };
 
-    var paintTable = function paintTable(items) {
-        var i, j, item, row, cell, callback, today, cellContent,
+    const paintTable = function paintTable(items) {
+        let i, j, item, row, cell, callback, today, cellContent,
             column, state;
 
-        var priv = privates.get(this);
+        const priv = privates.get(this);
         clearTable.call(this);
         priv.tableBody.appendChild(priv.header);
 
@@ -176,23 +174,23 @@
         highlight_selection.call(this);
     };
 
-    var onRequestEnd = function onRequestEnd(source, error) {
+    const onRequestEnd = function onRequestEnd(source, error) {
         if (error == null) {
             this.reload();
         } else {
-            var priv = privates.get(this);
+            const priv = privates.get(this);
             clearTable.call(this);
-            var message = document.createElement('div');
+            const message = document.createElement('div');
             message.className = "alert alert-danger se-model-table-msg";
             message.textContent = error;
             priv.tableBody.appendChild(message);
         }
     };
 
-    var sortByColumn = function sortByColumn(column, descending) {
-        var sort_id, order, oldSortHeaderCell, sortHeaderCell;
+    const sortByColumn = function sortByColumn(column, descending) {
+        let sort_id, order, oldSortHeaderCell, sortHeaderCell;
 
-        var priv = privates.get(this);
+        const priv = privates.get(this);
 
         if (priv.sortColumn != null) {
             oldSortHeaderCell = priv.headerCells[priv.sortColumn];
@@ -228,17 +226,17 @@
         this.source.changeOptions({order: order});
     };
 
-    var sortByColumnCallback = function sortByColumnCallback() {
-        var priv = privates.get(this.widget);
-        var descending = priv.sortColumn === this.column ?
+    const sortByColumnCallback = function sortByColumnCallback() {
+        const priv = privates.get(this.widget);
+        const descending = priv.sortColumn === this.column ?
             !priv.sortInverseOrder :
             false;
 
         sortByColumn.call(this.widget, this.column, descending);
     };
 
-    var getFieldValue = function getFieldValue(item, field) {
-        var fieldPath, currentNode, currentField;
+    const getFieldValue = function getFieldValue(item, field) {
+        let fieldPath, currentNode, currentField;
 
         if (typeof field === "string") {
             fieldPath = [field];
@@ -258,19 +256,19 @@
         return currentNode;
     };
 
-    var renderDate = function renderDate(format, m) {
+    const renderDate = function renderDate(format, m) {
         if (format === "relative") {
             return m.fromNow();
         } else if (format === "calendar") {
-            let timezone = m.format(" z");
+            const timezone = m.format(" z");
             return (m.calendar() + timezone).trim();
         } else {
             return m.format(format).trim();
         }
     };
 
-    var formatDate = function formatDate(item, column, today) {
-        var date, m, fullVersion, element, tooltip;
+    const formatDate = function formatDate(item, column, today) {
+        let date, fullVersion, tooltip;
 
         date = getFieldValue(item, column.field);
 
@@ -281,7 +279,7 @@
             date = new Date(date);
         }
 
-        m = moment(date);
+        const m = moment(date);
         if (column.timezone != null) {
             m.tz(column.timezone);
         }
@@ -289,7 +287,7 @@
         const tooltipFormat = column.tooltip != null ? column.tooltip : "LLLL z";
         const shortVersion = renderDate(format, m);
 
-        element = document.createElement('span');
+        const element = document.createElement('span');
         element.textContent = shortVersion;
         if (tooltipFormat !== "none") {
             fullVersion = m.format(tooltipFormat);
@@ -302,7 +300,7 @@
 
         if (format === "relative" || format === "calendar") {
             // Update rendered date form time to time
-            var timer = setInterval(function () {
+            const timer = setInterval(function () {
                 // Clear timer if deleted.
                 if (!element.ownerDocument.body.contains(element)) {
                     clearInterval(timer);
@@ -319,7 +317,7 @@
     };
 
     // Row clicked callback
-    var rowCallback = function rowCallback(evt) {
+    const rowCallback = function rowCallback(evt) {
         // Stop propagation so wrapperElement's click is not called
         evt.stopPropagation();
 
@@ -328,21 +326,21 @@
         this.table.events.click.dispatch(this.item, evt);
     };
 
-    var isSelectionEnabled = function isSelectionEnabled(selectionSettings) {
+    const isSelectionEnabled = function isSelectionEnabled(selectionSettings) {
         return selectionSettings === "single" || selectionSettings === "multiple";
     };
 
     // Row selection
-    var changeSelection = function changeSelection(row, event, index) {
-        var priv = privates.get(this);
+    const changeSelection = function changeSelection(row, event, index) {
+        const priv = privates.get(this);
 
         // Check if selection is ignored
         if (!isSelectionEnabled(priv.selectionType)) {
             return;
         }
 
-        var selected, data, lastSelectedIndex, lower, upper, j;
-        var id = priv.extractIdFunc(row);
+        let selected, data, lastSelectedIndex, lower, upper, j;
+        const id = priv.extractIdFunc(row);
 
         if (priv.selectionType === "multiple" && (event.ctrlKey || event.metaKey) && event.shiftKey) {
             // Control + shift behaviour
@@ -356,7 +354,7 @@
                 selected.splice(selected.indexOf(priv.extractIdFunc(priv.lastSelected)), 1); // Remove pivot row from selection as it will be selected again
 
                 // Get the new selection group and append it
-                var aux = [];
+                const aux = [];
                 lower = Math.min(index, lastSelectedIndex);
                 upper = Math.max(index, lastSelectedIndex);
                 for (j = lower; j <= upper; j++) {
@@ -391,7 +389,7 @@
             priv.lastSelected = row;
             selected = this.selection.slice();
 
-            var i = selected.indexOf(id);
+            const i = selected.indexOf(id);
 
             // Remove from selection
             if (i !== -1) {
@@ -416,9 +414,9 @@
         this.events.select.dispatch(selected);
     };
 
-    var clearTable = function clearTable() {
-        var i, entry;
-        var priv = privates.get(this);
+    const clearTable = function clearTable() {
+        let i, entry;
+        const priv = privates.get(this);
 
         for (i = 0; i < priv.listeners.length; i += 1) {
             entry = priv.listeners[i];
@@ -447,9 +445,9 @@
     se.ModelTable = class ModelTable extends se.StyledElement {
 
         constructor(columns, options) {
-            var className, i, sort_info, defaultOptions;
+            let className, i, sort_info;
 
-            defaultOptions = {
+            const defaultOptions = {
                 'initialSortColumn': -1,
                 'pageSize': 5,
                 'emptyMessage': utils.gettext('No data available'),
@@ -466,21 +464,14 @@
             super(['click', 'select']);
 
             // Initialize private variables
-            var priv = {};
-            privates.set(this, priv);
-
-            // Initialize private variables
-            var priv = {};
+            const priv = {};
             privates.set(this, priv);
 
             priv.selection = [];
             priv.selectionType = options.selectionType;
-            var source;
+            let source;
             if (options.source != null) {
                 source = options.source;
-            } else if (options.pagination != null) {
-                // Backwards compatilibity
-                source = options.pagination;
             } else {
                 sort_info = {};
                 columns.forEach((column) => {
@@ -501,34 +492,6 @@
                     writable: true,
                     value: options.emptyMessage
                 },
-                selection: {
-                    get: function () {
-                        return priv.selection;
-                    },
-                    set: function (value) {
-                        // Check if selection is ignored
-                        if (!isSelectionEnabled(priv.selectionType)) {
-                            throw new Error("Selection is disabled");
-                        }
-                        if (!Array.isArray(value)) {
-                            throw new TypeError();
-                        }
-                        if (priv.selectionType === "single" && value.length > 1) {
-                            throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
-                        }
-                        // Unhighlihgt previous selection
-                        priv.selection.forEach(function (id) {
-                            if (id in priv.current_elements) {
-                                priv.current_elements[id].row.classList.remove('highlight');
-                            }
-                        }, this);
-
-                        priv.selection = value;
-
-                        // Highlight the new selection
-                        highlight_selection.call(this);
-                    }
-                },
                 source: {
                     writable: false,
                     value: source
@@ -545,7 +508,7 @@
 
             // Deselect rows if clicked no row is clicked
             this.wrapperElement.addEventListener("click", function (evt) {
-                var priv = privates.get(this);
+                const priv = privates.get(this);
                 if (!isSelectionEnabled(priv.selectionType)) {
                     return;
                 }
@@ -575,8 +538,6 @@
             priv.statusBar.addClassName('se-model-table-statusrow');
 
             priv.sortColumn = null;
-
-            Object.defineProperty(this, 'pagination', {get: function () { return this.source; }});
 
             this.source.addEventListener('requestEnd', onRequestEnd.bind(this));
 
@@ -626,6 +587,36 @@
             }
         }
 
+        get selection() {
+            return privates.get(this).selection;
+        }
+
+        set selection(value) {
+            const priv = privates.get(this);
+
+            // Check if selection is ignored
+            if (!isSelectionEnabled(priv.selectionType)) {
+                throw new Error("Selection is disabled");
+            }
+            if (!Array.isArray(value)) {
+                throw new TypeError();
+            }
+            if (priv.selectionType === "single" && value.length > 1) {
+                throw new Error("Selection is set to \"single\" but tried to select more than one rows.");
+            }
+            // Unhighlihgt previous selection
+            priv.selection.forEach((id) => {
+                if (id in priv.current_elements) {
+                    priv.current_elements[id].row.classList.remove('highlight');
+                }
+            });
+
+            priv.selection = value;
+
+            // Highlight the new selection
+            highlight_selection.call(this);
+        }
+
         /**
          * Changes current selection. Removes the selection when no passing any parameter
          *
@@ -651,8 +642,8 @@
         }
 
         destroy() {
-            var i, cell;
-            var priv = privates.get(this);
+            let i, cell;
+            const priv = privates.get(this);
 
             for (i = 0; i < priv.headerCells.length; i += 1) {
                 cell = priv.headerCells[i];

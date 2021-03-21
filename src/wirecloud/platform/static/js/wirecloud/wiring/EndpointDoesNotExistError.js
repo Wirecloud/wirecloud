@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,20 +23,24 @@
 /* globals Wirecloud */
 
 
-(function () {
+(function (ns) {
 
     "use strict";
 
-    var EndpointDoesNotExistError = function EndpointDoesNotExistError(message) {
-        this.name = "EndpointDoesNotExistError";
-        this.message = message || "";
-    };
-    EndpointDoesNotExistError.prototype = new Error();
-    EndpointDoesNotExistError.prototype.constructor = EndpointDoesNotExistError;
+    ns.EndpointDoesNotExistError = class EndpointDoesNotExistError extends Error {
 
-    Object.freeze(EndpointDoesNotExistError.prototype);
-    Object.freeze(EndpointDoesNotExistError);
+        constructor(message) {
+            super(message);
 
-    Wirecloud.wiring.EndpointDoesNotExistError = EndpointDoesNotExistError;
+            this.name = "EndpointDoesNotExistError";
+            this.message = message || "";
 
-})();
+            // Maintains proper stack trace for where our error was thrown (only available on V8)
+            if (Error.captureStackTrace) {
+                Error.captureStackTrace(this, this.constructor);
+            }
+        }
+
+    }
+
+})(Wirecloud.wiring);

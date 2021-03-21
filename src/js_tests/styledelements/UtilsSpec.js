@@ -27,7 +27,7 @@
 
     "use strict";
 
-    var check_simple_call = function check_simple_call(label, method, args, expected_result) {
+    const check_simple_call = function check_simple_call(label, method, args, expected_result) {
         it(label, function () {
             expect(method.apply(StyledElements.Utils, args)).toBe(expected_result);
         });
@@ -36,15 +36,15 @@
     describe("Styled Element Utils - Object helpers", function () {
 
         describe("clone(object, deep)", function () {
-            var clone = StyledElements.Utils.clone;
+            const clone = StyledElements.Utils.clone;
 
             it("returns null if object is null", function () {
                 expect(clone(null)).toBe(null);
             });
 
             it("returns a shallow copy if object is an array", function () {
-                var original = ['a', 1, true, {'b': 'c'}, [1], null, undefined];
-                var result = clone(original);
+                const original = ['a', 1, true, {'b': 'c'}, [1], null, undefined];
+                const result = clone(original);
                 expect(result).not.toBe(original);
                 expect(result).toEqual(original);
 
@@ -54,8 +54,8 @@
             });
 
             it("returns a shallow copy if object is an object", function () {
-                var original = {'a': 1, 'b': true, 'c': {'b': 'c'}, 'd': [1], 'e': null, 'f': undefined};
-                var result = clone(original);
+                const original = {'a': 1, 'b': true, 'c': {'b': 'c'}, 'd': [1], 'e': null, 'f': undefined};
+                const result = clone(original);
                 expect(result).not.toBe(original);
                 expect(result).toEqual(original);
 
@@ -65,8 +65,8 @@
             });
 
             it("returns a depp copy if object is an array and deep is true", function () {
-                var original = ['a', 1, true, {'b': 'c'}, [1], null, undefined];
-                var result = clone(original, true);
+                const original = ['a', 1, true, {'b': 'c'}, [1], null, undefined];
+                const result = clone(original, true);
                 expect(result).not.toBe(original);
                 expect(result).toEqual(original);
 
@@ -76,8 +76,8 @@
             });
 
             it("returns a deep copy if object is an object and deep is true", function () {
-                var original = {'a': 1, 'b': true, 'c': {'b': 'c'}, 'd': [1], 'e': null, 'f': undefined};
-                var result = clone(original, true);
+                const original = {'a': 1, 'b': true, 'c': {'b': 'c'}, 'd': [1], 'e': null, 'f': undefined};
+                const result = clone(original, true);
                 expect(result).not.toBe(original);
                 expect(result).toEqual(original);
 
@@ -88,7 +88,7 @@
         });
 
         describe("escapeHTML(text)", function () {
-            var escapeHTML = StyledElements.Utils.escapeHTML;
+            const escapeHTML = StyledElements.Utils.escapeHTML;
 
             it("returns an unescaped string if the text parameter doesn't contain especial characters", function () {
                 expect(escapeHTML("hello world")).toBe("hello world");
@@ -100,7 +100,7 @@
         });
 
         describe("escapeRegExp(text)", function () {
-            var escapeRegExp = StyledElements.Utils.escapeRegExp;
+            const escapeRegExp = StyledElements.Utils.escapeRegExp;
 
             it("returns an unescaped string if the text parameter doesn't contain especial characters", function () {
                 expect(escapeRegExp("helloworld")).toBe("helloworld");
@@ -112,7 +112,7 @@
         });
 
         describe("formatSize(size)", function () {
-            var formatSize = StyledElements.Utils.formatSize;
+            const formatSize = StyledElements.Utils.formatSize;
 
             check_simple_call("should format work without passing arguments", formatSize, [], 'N/A');
             check_simple_call("should format `null` correctly", formatSize, [null], 'N/A');
@@ -131,7 +131,8 @@
         });
 
         describe("getRelativePosition(element1, element2)", function () {
-            var element1, element2, getRelativePosition = StyledElements.Utils.getRelativePosition;
+            let element1, element2;
+            const getRelativePosition = StyledElements.Utils.getRelativePosition;
 
             beforeEach(function () {
                 element1 = document.createElement('div');
@@ -159,8 +160,8 @@
         });
 
         describe("hasFocus(element)", function () {
-            var hasFocus = StyledElements.Utils.hasFocus;
-            var dom = null;
+            const hasFocus = StyledElements.Utils.hasFocus;
+            let dom = null;
 
             beforeEach(function () {
                 dom = document.createElement('div');
@@ -173,10 +174,10 @@
             });
 
             it("should return false if the provided element is not focused", function () {
-                var element1 = document.createElement('input');
+                const element1 = document.createElement('input');
                 dom.appendChild(element1);
 
-                var element2 = document.createElement('input');
+                const element2 = document.createElement('input');
                 dom.appendChild(element2);
 
                 element2.focus();
@@ -185,7 +186,7 @@
             });
 
             it("should return true if the provided element is focused", function () {
-                var element = document.createElement('input');
+                const element = document.createElement('input');
                 dom.appendChild(element);
 
                 element.focus();
@@ -196,41 +197,41 @@
         });
 
         describe("inherit(child, parent, [members])", function () {
-            var inherit = StyledElements.Utils.inherit;
+            const inherit = StyledElements.Utils.inherit;
 
             it("should inherit from another class", function () {
-                var A = function A() {};
-                var B = function B() {};
+                const A = function A() {};
+                const B = function B() {};
 
                 expect(inherit(B, A)).toBeUndefined();
 
-                var test = new B();
+                const test = new B();
 
                 expect(test instanceof B).toBe(true);
                 expect(test instanceof A).toBe(true);
             });
 
             it("should inherit from another class overwriting methods", function () {
-                var A = function A() {};
+                const A = function A() {};
                 A.prototype.toString = function toString() {
                     return "A";
                 };
 
-                var B = function B() {};
+                const B = function B() {};
 
                 inherit(B, A, {
                     toString: function toString() {
                         return "B";
                     }
                 });
-                var test = new B();
+                const test = new B();
 
                 expect(test.toString()).toEqual("B");
             });
         });
 
         describe("isElement(value)", function () {
-            var isElement = StyledElements.Utils.isElement;
+            const isElement = StyledElements.Utils.isElement;
 
             it("returns false if value is null", function () {
                 expect(isElement(null)).toBeFalsy();
@@ -269,8 +270,8 @@
             });
 
             it("returns true for third-party Elements", function () {
-                var PseudoElementClass = function () {};
-                var element = new PseudoElementClass();
+                const PseudoElementClass = function () {};
+                const element = new PseudoElementClass();
                 element.ownerDocument = {
                     defaultView: {
                         HTMLElement: PseudoElementClass
@@ -282,7 +283,7 @@
         });
 
         describe("isEmpty(value)", function () {
-            var isEmpty;
+            let isEmpty;
 
             beforeAll(function () {
                 isEmpty = StyledElements.Utils.isEmpty;
@@ -342,7 +343,7 @@
         });
 
         describe("merge(object, ...sources)", function () {
-            var merge;
+            let merge;
 
             beforeAll(function () {
                 merge = StyledElements.Utils.merge;
@@ -361,13 +362,13 @@
             });
 
             it("should merge sources into object", function () {
-                var src = {};
-                var defaults = {
+                const src = {};
+                const defaults = {
                     depth: 0,
                     state: "default",
                     events: ["click", "focus"]
                 };
-                var options = {
+                const options = {
                     state: "primary",
                     events: ["mouseover"],
                     other: true
@@ -382,9 +383,9 @@
         });
 
         describe("normalizeKey(event)", function () {
-            var normalizeKey = StyledElements.Utils.normalizeKey;
+            const normalizeKey = StyledElements.Utils.normalizeKey;
 
-            var initkeyevent = function initkeyevent(event) {
+            const initkeyevent = function initkeyevent(event) {
                 ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].forEach(function (attr) {
                     if (!(attr in event)) {
                         event[attr] = false;
@@ -418,7 +419,7 @@
         describe("preventDefaultListener(event)", function () {
 
             it("should stop the propagation of the event", function () {
-                var event = jasmine.createSpyObj("event", ["stopPropagation", "preventDefault"]);
+                const event = jasmine.createSpyObj("event", ["stopPropagation", "preventDefault"]);
 
                 StyledElements.Utils.preventDefaultListener(event);
 
@@ -432,7 +433,7 @@
         describe("removeFromArray(arr, element)", () => {
 
             it("should remove basic primitives from an array", () => {
-                let arr = [1, 2, 3];
+                const arr = [1, 2, 3];
 
                 utils.removeFromArray(arr, 2);
 
@@ -440,7 +441,7 @@
             });
 
             it("should remove only first element", () => {
-                let arr = [1, 2, 3, 2];
+                const arr = [1, 2, 3, 2];
 
                 utils.removeFromArray(arr, 2);
 
@@ -448,7 +449,7 @@
             });
 
             it("should work if element is not found", () => {
-                let arr = [1, 2, 3];
+                const arr = [1, 2, 3];
 
                 utils.removeFromArray(arr, 4);
 
@@ -460,8 +461,8 @@
         describe("setupdate(setA, setB)", () => {
 
             it("should add all elements from setB into setA", () => {
-                let setA = new Set([1, 2, 3]);
-                let setB = new Set([5, 6, 7]);
+                const setA = new Set([1, 2, 3]);
+                const setB = new Set([5, 6, 7]);
 
                 expect(utils.setupdate(setA, setB)).toBe(setA);
 
@@ -483,9 +484,9 @@
 
             it("should resolve if original promise resolves before timeout", (done) => {
                 let resolve;
-                let original = new Promise((_resolve, reject) => {resolve = _resolve;});
-                let listener = jasmine.createSpy("listener");
-                let p = StyledElements.Utils.timeoutPromise(original, 200);
+                const original = new Promise((_resolve, reject) => {resolve = _resolve;});
+                const listener = jasmine.createSpy("listener");
+                const p = StyledElements.Utils.timeoutPromise(original, 200);
                 p.then(listener);
 
                 // Allow Promises to react
@@ -501,9 +502,9 @@
 
             it("should reject if original promise rejects before timeout", (done) => {
                 let reject;
-                let original = new Promise((resolve, _reject) => {reject = _reject;});
-                let listener = jasmine.createSpy("listener");
-                let p = StyledElements.Utils.timeoutPromise(original, 200);
+                const original = new Promise((resolve, _reject) => {reject = _reject;});
+                const listener = jasmine.createSpy("listener");
+                const p = StyledElements.Utils.timeoutPromise(original, 200);
                 p.catch(listener);
 
                 // Allow Promises to react
@@ -518,9 +519,9 @@
             });
 
             it("should reject on timeout", (done) => {
-                let original = new Promise((resolve, reject) => {});
-                let listener = jasmine.createSpy("listener");
-                let p = StyledElements.Utils.timeoutPromise(original, 200);
+                const original = new Promise((resolve, reject) => {});
+                const listener = jasmine.createSpy("listener");
+                const p = StyledElements.Utils.timeoutPromise(original, 200);
                 p.catch(listener);
 
                 jasmine.clock().tick(201);
@@ -534,10 +535,10 @@
             });
 
             it("should resolve on timeout when providing a fallback", (done) => {
-                let fallback = "fallback";
-                let original = new Promise((resolve, reject) => {});
-                let listener = jasmine.createSpy("listener");
-                let p = StyledElements.Utils.timeoutPromise(original, 200, fallback);
+                const fallback = "fallback";
+                const original = new Promise((resolve, reject) => {});
+                const listener = jasmine.createSpy("listener");
+                const p = StyledElements.Utils.timeoutPromise(original, 200, fallback);
                 p.then(listener);
 
                 jasmine.clock().tick(201);
@@ -555,7 +556,7 @@
         describe("stopPropagationListener(event)", function () {
 
             it("should stop the propagation of the event", function () {
-                var event = jasmine.createSpyObj("event", ["stopPropagation", "preventDefault"]);
+                const event = jasmine.createSpyObj("event", ["stopPropagation", "preventDefault"]);
 
                 StyledElements.Utils.stopPropagationListener(event);
 
@@ -567,7 +568,7 @@
         });
 
         describe("update(object, ...sources)", function () {
-            var update;
+            let update;
 
             beforeAll(function () {
                 update = StyledElements.Utils.update;
@@ -586,17 +587,17 @@
             });
 
             it("should update sources into object", function () {
-                var src = {
+                const src = {
                     depth: 0,
                     state: "default",
                     events: ["click", "focus"]
                 };
-                var source1 = {
+                const source1 = {
                     depth: 1,
                     state: "danger",
                     other: ["mouseover"]
                 };
-                var source2 = {
+                const source2 = {
                     state: "primary"
                 };
                 expect(update(src, source1, source2)).toBe(src);
@@ -608,7 +609,7 @@
         });
 
         describe("waitTransition(element)", () => {
-            var waitTransition, toclean = null;
+            let waitTransition, toclean = null;
 
             beforeAll(() => {
                 waitTransition = StyledElements.Utils.waitTransition;
@@ -622,7 +623,7 @@
             });
 
             it("should immediatelly resolve for display: none elements", (done) => {
-                let element = document.createElement("div");
+                const element = document.createElement("div");
                 element.style.display = "none";
                 document.body.appendChild(element);
                 toclean = element;
@@ -631,15 +632,15 @@
             });
 
             it("should immediatelly resolve for elements not in DOM", (done) => {
-                let element = document.createElement("div");
+                const element = document.createElement("div");
                 element.style.display = "none";
 
                 waitTransition(element).then(done, fail);
             });
 
             it("should wait transitionend events on elements", (done) => {
-                let listener = jasmine.createSpy("listener");
-                let element = document.createElement("div");
+                const listener = jasmine.createSpy("listener");
+                const element = document.createElement("div");
                 document.body.appendChild(element);
                 toclean = element;
 
@@ -659,7 +660,7 @@
         });
 
         describe("values(object)", function () {
-            var values;
+            let values;
 
             beforeAll(function () {
                 values = StyledElements.Utils.values;

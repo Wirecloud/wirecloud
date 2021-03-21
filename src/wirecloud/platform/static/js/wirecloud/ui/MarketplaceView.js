@@ -27,17 +27,13 @@
 
     "use strict";
 
-    var onGetMarketsSuccess, auto_select_initial_market, notifyError, builder, ERROR_TEMPLATE;
+    const ERROR_TEMPLATE = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-error"><t:message/></div></s:styledgui>';
 
-    ERROR_TEMPLATE = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="alert alert-error"><t:message/></div></s:styledgui>';
+    const builder = new StyledElements.GUIBuilder();
 
-    builder = new StyledElements.GUIBuilder();
-
-    notifyError = function notifyError(message, context) {
-        var error_alert;
-
+    const notifyError = function notifyError(message, context) {
         message = builder.parse(builder.DEFAULT_OPENING + message + builder.DEFAULT_CLOSING, context);
-        error_alert = builder.parse(ERROR_TEMPLATE, {
+        const error_alert = builder.parse(ERROR_TEMPLATE, {
             'message': message
         });
 
@@ -46,37 +42,35 @@
         this.alternatives.showAlternative(this.errorsAlternative);
     };
 
-    auto_select_initial_market = function auto_select_initial_market() {
-        var currentState = Wirecloud.HistoryManager.getCurrentState();
+    const auto_select_initial_market = function auto_select_initial_market() {
+        const currentState = Wirecloud.HistoryManager.getCurrentState();
         if (currentState.market && currentState.market in this.viewsByName) {
             this.changeCurrentMarket(currentState.market, {history: "ignore"});
         } else if (this.viewList.length > 0) {
             this.changeCurrentMarket(this.viewList[0].market_id, {history: "replace"});
         } else {
-            var msg = utils.gettext("<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my resources view instead</li></ul>");
+            const msg = utils.gettext("<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my resources view instead</li></ul>");
             notifyError.call(this, msg);
         }
     };
 
-    onGetMarketsSuccess = function onGetMarketsSuccess(response) {
-        var market_key, old_views, view_element, view_constructor, i, p;
-
+    const onGetMarketsSuccess = function onGetMarketsSuccess(response) {
         this.loading = false;
         this.loadtask = null;
 
-        old_views = this.viewsByName;
+        const old_views = this.viewsByName;
         this.viewsByName = {};
         this.viewList = [];
 
-        for (i = 0; i < response.length; i++) {
-            view_element = response[i];
-            market_key = view_element.user + '/' + view_element.name;
+        for (let i = 0; i < response.length; i++) {
+            const view_element = response[i];
+            const market_key = view_element.user + '/' + view_element.name;
 
             if (market_key in old_views) {
                 this.viewsByName[market_key] = old_views[market_key];
                 delete old_views[market_key];
             } else {
-                view_constructor = Wirecloud.MarketManager.getMarketViewClass(view_element.type);
+                const view_constructor = Wirecloud.MarketManager.getMarketViewClass(view_element.type);
                 if (view_constructor == null) {
                     continue;
                 }
@@ -88,14 +82,14 @@
             this.number_of_alternatives += 1;
         }
 
-        p = Promise.resolve();
-        for (market_key in old_views) {
+        let p = Promise.resolve();
+        for (const market_key in old_views) {
             p = p.then(remove_market.bind(this, old_views[market_key]));
         }
 
         return p.then(() => {
             return new Promise((resolve, reject) => {
-                for (market_key in old_views) {
+                for (const market_key in old_views) {
                     old_views[market_key].destroy();
                 }
 
@@ -110,6 +104,30 @@
                 resolve();
             });
         });
+    };
+
+    const refresh_view_info = function refresh_view_info() {
+        this.loading = true;
+        this.number_of_alternatives = 0;
+        Wirecloud.dispatchEvent('viewcontextchanged');
+
+        this.loadtask = Wirecloud.MarketManager.getMarkets().then(
+            onGetMarketsSuccess.bind(this),
+            (error) => {
+                this.loading = false;
+
+                this.errorsAlternative.clear();
+                notifyError.call(this, error);
+                return Promise.reject(error);
+            }
+        );
+    };
+
+    const remove_market = function remove_market(market_view) {
+        return new Promise(function (alt, resolve) {
+            delete Wirecloud.UserInterfaceManager.workspaceviews[market_view.market_id];
+            this.alternatives.removeAlternative(alt, {onComplete: resolve});
+        }.bind(this, market_view));
     };
 
     ns.MarketplaceView = class MarketplaceView extends se.Alternative {
@@ -156,7 +174,7 @@
             });
 
             this.myresourcesButton = new StyledElements.Button({
-                iconClass: 'fa fa-archive',
+                iconClass: 'fas fa-archive',
                 class: "wc-show-myresources-button",
                 title: utils.gettext('My Resources')
             });
@@ -170,10 +188,8 @@
         }
 
         buildStateData() {
-            var currentState, data, subview;
-
-            currentState = Wirecloud.HistoryManager.getCurrentState();
-            data = {
+            const currentState = Wirecloud.HistoryManager.getCurrentState();
+            const data = {
                 workspace_owner: currentState.workspace_owner,
                 workspace_name: currentState.workspace_name,
                 view: 'marketplace'
@@ -182,7 +198,7 @@
             if (this.loading === false && this.error === false && this.alternatives.getCurrentAlternative() !== this.emptyAlternative) {
                 // TODO
                 if (this.alternatives.getCurrentAlternative().alternatives != null) {
-                    subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();
+                    const subview = this.alternatives.getCurrentAlternative().alternatives.getCurrentAlternative();
                     if (subview.view_name != null) {
                         data.subview = subview.view_name;
                         if ('buildStateData' in subview) {
@@ -206,9 +222,9 @@
         }
 
         goUp() {
-            var current_alternative, change = false;
+            let change = false;
 
-            current_alternative = this.alternatives.getCurrentAlternative();
+            const current_alternative = this.alternatives.getCurrentAlternative();
             if (this.temporalAlternatives.indexOf(current_alternative) === -1) {
                 change = this.alternatives.getCurrentAlternative().goUp();
             }
@@ -219,19 +235,17 @@
         }
 
         getBreadcrumb() {
-            var breadcrum, current_alternative, subalternative;
-
-            current_alternative = this.alternatives.getCurrentAlternative();
+            const current_alternative = this.alternatives.getCurrentAlternative();
             if (current_alternative === this.emptyAlternative) {
                 return [utils.gettext('loading marketplace view...')];
             } else if (current_alternative === this.errorsAlternative) {
                 return [utils.gettext('marketplace list not available')];
             } else {
-                breadcrum = ['marketplace'];
+                const breadcrum = ['marketplace'];
                 breadcrum.push(current_alternative.getLabel());
                 // TODO
                 if (current_alternative.alternatives != null) {
-                    subalternative = current_alternative.alternatives.getCurrentAlternative();
+                    const subalternative = current_alternative.alternatives.getCurrentAlternative();
 
                     if (subalternative.view_name === 'details' && subalternative.currentEntry != null) {
                         breadcrum.push({
@@ -245,17 +259,15 @@
         }
 
         getTitle() {
-            var current_alternative, subalternative, marketname, title;
-
-            current_alternative = this.alternatives.getCurrentAlternative();
+            const current_alternative = this.alternatives.getCurrentAlternative();
             if (current_alternative === this.emptyAlternative || current_alternative === this.errorsAlternative) {
                 return utils.gettext('Marketplace');
             } else {
-                marketname = current_alternative.getLabel();
-                title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
+                const marketname = current_alternative.getLabel();
+                let title = utils.interpolate(utils.gettext('Marketplace - %(marketname)s'), {marketname: marketname});
                 // Deprecated code, currently used for WireCloud and for the deprecated FIWARE Marketplace (now replaced by the BAE)
                 if (current_alternative.alternatives) {
-                    subalternative = current_alternative.alternatives.getCurrentAlternative();
+                    const subalternative = current_alternative.alternatives.getCurrentAlternative();
                     if (subalternative.view_name === "details" && subalternative.currentEntry != null) {
                         title += ' - ' + subalternative.currentEntry.title;
                     }
@@ -280,7 +292,7 @@
 
             if (options.include_markets === true) {
                 options.onComplete = function (onComplete) {
-                    var count = Object.keys(this.viewsByName).length;
+                    let count = Object.keys(this.viewsByName).length;
 
                     if (count === 0) {
                         try {
@@ -289,12 +301,12 @@
                         return;
                     }
 
-                    var listener = function () {
+                    const listener = function () {
                         if (--count === 0) {
                             onComplete();
                         }
                     };
-                    for (var key in this.viewsByName) {
+                    for (const key in this.viewsByName) {
                         this.viewsByName[key].wait_ready(listener);
                     }
                 }.bind(this, options.onComplete);
@@ -323,8 +335,8 @@
         }
 
         addMarket(market_info) {
-            var market_key = market_info.user + '/' + market_info.name;
-            var view_constructor = Wirecloud.MarketManager.getMarketViewClass(market_info.type);
+            const market_key = market_info.user + '/' + market_info.name;
+            const view_constructor = Wirecloud.MarketManager.getMarketViewClass(market_info.type);
             market_info.permissions = {'delete': true};
             this.viewsByName[market_key] = this.alternatives.createAlternative({alternative_constructor: view_constructor, containerOptions: {catalogue: this, marketplace_desc: market_info}});
             Wirecloud.UserInterfaceManager.workspaceviews[market_key] = this.viewsByName[market_key];
@@ -341,7 +353,7 @@
 
             this.alternatives.showAlternative(this.viewsByName[market], {
                 onComplete: function () {
-                    var new_status = this.buildStateData();
+                    const new_status = this.buildStateData();
                     if (options.history === "push") {
                         Wirecloud.HistoryManager.pushState(new_status);
                     } else if (options.history === "replace") {
@@ -354,29 +366,5 @@
     }
 
     ns.MarketplaceView.prototype.view_name = 'marketplace';
-
-    var refresh_view_info = function refresh_view_info() {
-        this.loading = true;
-        this.number_of_alternatives = 0;
-        Wirecloud.dispatchEvent('viewcontextchanged');
-
-        this.loadtask = Wirecloud.MarketManager.getMarkets().then(
-            onGetMarketsSuccess.bind(this),
-            (error) => {
-                this.loading = false;
-
-                this.errorsAlternative.clear();
-                notifyError.call(this, error);
-                return Promise.reject(error);
-            }
-        );
-    };
-
-    var remove_market = function remove_market(market_view) {
-        return new Promise(function (alt, resolve) {
-            delete Wirecloud.UserInterfaceManager.workspaceviews[market_view.market_id];
-            this.alternatives.removeAlternative(alt, {onComplete: resolve});
-        }.bind(this, market_view));
-    };
 
 })(Wirecloud.ui, StyledElements, Wirecloud.Utils);

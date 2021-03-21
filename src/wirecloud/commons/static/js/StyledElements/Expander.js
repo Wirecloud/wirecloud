@@ -55,7 +55,7 @@
                 this.addClassName('panel-' + options.state);
             }
 
-            var header = document.createElement('div');
+            const header = document.createElement('div');
             header.className = 'panel-heading';
             this.wrapperElement.appendChild(header);
 
@@ -79,7 +79,7 @@
             this.contentContainer.insertInto(this.wrapperElement);
 
             // Internal event handlers
-            var callback = function () {
+            const callback = function () {
                 this.setExpanded(!this.isExpanded());
             }.bind(this);
 
@@ -93,7 +93,7 @@
         }
 
         repaint(temporal) {
-            var height, computedStyle;
+            let height, computedStyle;
 
             if (this.isExpanded()) {
 

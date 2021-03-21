@@ -28,7 +28,7 @@
 
     describe("Styled Elements framework", function () {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -46,10 +46,10 @@
 
             it("should allow to add elements to containers using an HTML element as refElement", function () {
 
-                var container = new StyledElements.Container();
-                var refElement = document.createElement('span');
-                var otherElement = new StyledElements.Button();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const refElement = document.createElement('span');
+                const otherElement = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 container.appendChild(otherElement).appendChild(refElement);
 
                 expect(element.appendTo(container, refElement)).toBe(element);
@@ -60,10 +60,10 @@
 
             it("should allow to add elements to containers using a StyledElement as refElement", function () {
 
-                var container = new StyledElements.Container();
-                var refElement = new StyledElements.Button();
-                var otherElement = new StyledElements.Button();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const refElement = new StyledElements.Button();
+                const otherElement = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 container.appendChild(refElement).appendChild(otherElement);
 
                 expect(element.appendTo(container, refElement)).toBe(element);
@@ -74,10 +74,10 @@
 
             it("should allow to add elements to containers using a Fragment as refElement", function () {
 
-                var container = new StyledElements.Container();
-                var refElement = new StyledElements.Fragment("<div/>");
-                var otherElement = new StyledElements.Button();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const refElement = new StyledElements.Fragment("<div/>");
+                const otherElement = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 container.appendChild(refElement).appendChild(otherElement);
 
                 expect(element.appendTo(container, refElement)).toBe(element);
@@ -88,8 +88,8 @@
 
             it("should allow to append elements into containers", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
 
                 expect(element.appendTo(container)).toBe(element);
 
@@ -99,8 +99,8 @@
 
             it("should allow to append containers into containers", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Container();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Container();
 
                 expect(element.appendTo(container)).toBe(element);
 
@@ -110,8 +110,8 @@
 
             it("should allow to add elements to containers using the appendTo method (duplicated)", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
                 element.appendTo(container);
                 element.appendTo(container);
                 // Container should contain only a copy of element
@@ -124,14 +124,14 @@
         describe("addClassName(classList)", function () {
 
             it("should do nothing when passing an empty string", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.addClassName("")).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn");
             });
 
             it("should support class lists", function () {
 
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.addClassName(["a", "b"])).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn a b");
 
@@ -139,7 +139,7 @@
 
             it("should support whitespace separated class lists", function () {
 
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.addClassName("a b")).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn a b");
 
@@ -151,10 +151,10 @@
 
             it("should allow to add elements to containers using an HTML element as refElement", function () {
 
-                var container = new StyledElements.Container();
-                var refElement = document.createElement('span');
-                var otherElement = new StyledElements.Button();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const refElement = document.createElement('span');
+                const otherElement = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 container.appendChild(otherElement).appendChild(refElement);
 
                 expect(element.prependTo(container, refElement)).toBe(element);
@@ -166,10 +166,10 @@
 
             it("should allow to add elements to containers using a StyledElement as refElement", function () {
 
-                var container = new StyledElements.Container();
-                var refElement = new StyledElements.Button();
-                var otherElement = new StyledElements.Button();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const refElement = new StyledElements.Button();
+                const otherElement = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 container.appendChild(refElement).appendChild(otherElement);
 
                 expect(element.prependTo(container, refElement)).toBe(element);
@@ -180,10 +180,10 @@
 
             it("should allow to add elements to containers using a Fragment as refElement", function () {
 
-                var container = new StyledElements.Container();
-                var refElement = new StyledElements.Fragment("<div/>");
-                var otherElement = new StyledElements.Button();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const refElement = new StyledElements.Fragment("<div/>");
+                const otherElement = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 container.appendChild(refElement).appendChild(otherElement);
 
                 expect(element.prependTo(container, refElement)).toBe(element);
@@ -194,8 +194,8 @@
 
             it("should allow to prepend containers into containers", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Container();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Container();
 
                 expect(element.prependTo(container)).toBe(element);
 
@@ -205,8 +205,8 @@
 
             it("should allow to prepend elements into containers", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
 
                 expect(element.prependTo(container)).toBe(element);
 
@@ -216,8 +216,8 @@
 
             it("should ignore child elements when adding them into containers", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
                 element.appendTo(container);
 
                 expect(element.prependTo(container)).toBe(element);
@@ -232,7 +232,7 @@
         describe("removeClassName(classList)", function () {
 
             it("should clear all classes when passing null", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.wrapperElement.className += " a test b";
                 expect(element.removeClassName()).toBe(element);
                 expect(element.wrapperElement.className).toBe("");
@@ -240,7 +240,7 @@
 
             it("should do nothing when removing an inexistent class name", function () {
 
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.removeClassName("inexistent")).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn");
 
@@ -248,7 +248,7 @@
 
             it("should support class lists", function () {
 
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.wrapperElement.className += " a test b";
                 expect(element.removeClassName(["a", "inexistent", "b"])).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn test");
@@ -257,7 +257,7 @@
 
             it("should support whitespace separated class lists", function () {
 
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.wrapperElement.className += " a test b";
                 expect(element.removeClassName("a inexistent b")).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn test");
@@ -269,11 +269,9 @@
         describe("replaceClassName(removeList, addList)", function () {
 
             it("should call removeClassName and addClassName", function () {
-                var element, removeList, addList;
-
-                element = new StyledElements.Button();
-                removeList = [];
-                addList = [];
+                const element = new StyledElements.Button();
+                const removeList = [];
+                const addList = [];
                 spyOn(element, "addClassName");
                 spyOn(element, "removeClassName");
                 expect(element.replaceClassName(removeList, addList)).toBe(element);
@@ -288,46 +286,46 @@
         describe("toggleClassName(classList, state)", function () {
 
             it("should do nothing when passing an empty classList", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.toggleClassName("")).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn");
             });
 
             it("should add class names if they are not present", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.toggleClassName("a b")).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn a b");
             });
 
             it("should add class names if they are not present (using lists)", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 expect(element.toggleClassName(["a", "b"])).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn a b");
             });
 
             it("should add class names if state is true", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.wrapperElement.className += " a";
                 expect(element.toggleClassName("se-btn a b", true)).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn a b");
             });
 
             it("should remove class names if they are present", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.wrapperElement.className += " a test b";
                 expect(element.toggleClassName("a b")).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn test");
             });
 
             it("should remove class names if they are present (using lists)", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.wrapperElement.className += " a test b";
                 expect(element.toggleClassName(["a", "b"])).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn test");
             });
 
             it("should remove class names if state is false", function () {
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.wrapperElement.className += " a test b";
                 expect(element.toggleClassName("a b c", false)).toBe(element);
                 expect(element.wrapperElement.className).toBe("se-btn test");
@@ -339,7 +337,7 @@
 
             it("should not crash if the element has no parent", function () {
 
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 // Initial checks
                 expect(element.wrapperElement.parentElement).toBe(null);
                 expect(element.parentElement).toBe(null);
@@ -353,7 +351,7 @@
 
             it("should allow to remove elements from the DOM", function () {
 
-                var element = new StyledElements.Button();
+                const element = new StyledElements.Button();
                 element.appendTo(dom);
                 // Initial checks
                 expect(element.wrapperElement.parentElement).not.toBe(null);
@@ -368,8 +366,8 @@
 
             it("should allow to remove elements from containers", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
                 container.appendChild(element);
                 // Initial checks
                 expect(element.wrapperElement.parentElement).not.toBe(null);

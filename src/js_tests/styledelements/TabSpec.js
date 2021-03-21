@@ -27,7 +27,7 @@
     "use strict";
 
     describe("Tab", function () {
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -56,26 +56,26 @@
             });
 
             it("should create a Tab instance when not passing any option", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = new StyledElements.Tab("1", notebook);
+                const notebook = new StyledElements.Notebook();
+                const tab = new StyledElements.Tab("1", notebook);
                 expect(tab.getTabElement().querySelectorAll('.se-btn').length).toBe(1);
             });
 
             it("should support the closable option", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = new StyledElements.Tab("1", notebook, {closable: false});
+                const notebook = new StyledElements.Notebook();
+                const tab = new StyledElements.Tab("1", notebook, {closable: false});
                 expect(tab.getTabElement().querySelectorAll('.se-btn').length).toBe(0);
             });
 
             it("should support the label option", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = new StyledElements.Tab("1", notebook, {label: "My Tab"});
+                const notebook = new StyledElements.Notebook();
+                const tab = new StyledElements.Tab("1", notebook, {label: "My Tab"});
                 expect(tab.tabElement.textContent).toBe("My Tab");
             });
 
             it("should support the name option [deprecated]", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = new StyledElements.Tab("1", notebook, {name: "My Tab"});
+                const notebook = new StyledElements.Notebook();
+                const tab = new StyledElements.Tab("1", notebook, {name: "My Tab"});
                 expect(tab.tabElement.textContent).toBe("My Tab");
             });
 
@@ -84,8 +84,8 @@
         describe("close()", function () {
 
             it("should remove the tab from the notebook", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = notebook.createTab();
+                const notebook = new StyledElements.Notebook();
+                const tab = notebook.createTab();
                 expect(tab.close()).toBe(tab);
                 expect(notebook.tabs).toEqual([]);
             });
@@ -95,9 +95,9 @@
         describe("setLabel([newLabel])", function () {
 
             it("should discard previous label", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = notebook.createTab({label: "Tab label"});
-                var newlabel = "New tab label";
+                const notebook = new StyledElements.Notebook();
+                const tab = notebook.createTab({label: "Tab label"});
+                const newlabel = "New tab label";
                 expect(tab.setLabel(newlabel)).toBe(tab);
                 expect(tab.label).toBe(newlabel);
                 expect(tab.tabElement.textContent).toBe(newlabel);
@@ -108,32 +108,32 @@
         describe("setTitle([title])", function () {
 
             it("should support replacing current tooltip", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = new StyledElements.Tab("1", notebook, {title: "My tooltip"});
+                const notebook = new StyledElements.Notebook();
+                const tab = new StyledElements.Tab("1", notebook, {title: "My tooltip"});
                 expect(tab.setTitle("My new tooltip")).toBe(tab);
             });
 
             it("should support cleanig current tooltip", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = new StyledElements.Tab("1", notebook, {title: "My tooltip"});
+                const notebook = new StyledElements.Notebook();
+                const tab = new StyledElements.Tab("1", notebook, {title: "My tooltip"});
                 expect(tab.setTitle()).toBe(tab);
             });
 
         });
 
         it("should display the tab when the user clicks in the tab element", function () {
-            var notebook = new StyledElements.Notebook();
+            const notebook = new StyledElements.Notebook();
             notebook.appendTo(dom);
-            var tab = notebook.createTab();
+            const tab = notebook.createTab();
             spyOn(notebook, 'goToTab');
             tab.getTabElement().dispatchEvent(new MouseEvent("click"));
             expect(notebook.goToTab).toHaveBeenCalledWith(tab.tabId);
         });
 
         it("should close the tab when the user clicks on the close button", function () {
-            var notebook = new StyledElements.Notebook();
+            const notebook = new StyledElements.Notebook();
             notebook.appendTo(dom);
-            var tab = notebook.createTab({closable: true});
+            const tab = notebook.createTab({closable: true});
             tab.getTabElement().querySelector('.se-btn').dispatchEvent(new MouseEvent("click"));
             expect(notebook.tabs).toEqual([]);
         });
@@ -141,9 +141,9 @@
         describe("rename([newName]) [deprecated]", function () {
 
             it("should discard previous label", function () {
-                var notebook = new StyledElements.Notebook();
-                var tab = notebook.createTab({label: "Tab name"});
-                var newlabel = "New tab name";
+                const notebook = new StyledElements.Notebook();
+                const tab = notebook.createTab({label: "Tab name"});
+                const newlabel = "New tab name";
                 expect(tab.rename(newlabel)).toBe(tab);
                 expect(tab.label).toBe(newlabel);
             });

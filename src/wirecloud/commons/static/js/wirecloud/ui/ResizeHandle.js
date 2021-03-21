@@ -31,12 +31,12 @@
         return true;
     };
 
-    var ResizeHandle = function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, onFinish, canBeResized) {
-        var xDelta = 0, yDelta = 0;
-        var xStart = 0, yStart = 0;
-        var scrollDelta, scrollStart = 0;
-        var dragboardCover;
-        var endresize, resize, startresize, scroll;
+    const ResizeHandle = function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, onFinish, canBeResized) {
+        let xDelta = 0, yDelta = 0;
+        let xStart = 0, yStart = 0;
+        let scrollDelta, scrollStart = 0;
+        let dragboardCover;
+        let endresize, resize, startresize, scroll;
         canBeResized = canBeResized ? canBeResized : returnTrue;
 
 
@@ -76,7 +76,7 @@
 
         // fire each time the mouse is moved while resizing
         resize = function resize(e) {
-            var clientX, clientY;
+            let clientX, clientY;
 
             if ('touches' in e) {
                 clientX = e.touches[0].clientX;
@@ -95,9 +95,9 @@
 
         // fire each time the dragboard is scrolled while dragging
         scroll = function scroll() {
-            var dragboard = dragboardCover.parentNode;
+            const dragboard = dragboardCover.parentNode;
             dragboardCover.style.height = dragboard.scrollHeight + "px";
-            var scrollTop = parseInt(dragboard.scrollTop, 10);
+            const scrollTop = parseInt(dragboard.scrollTop, 10);
             scrollDelta = scrollStart - scrollTop;
 
             onResize(resizableElement, handleElement, data, xDelta, yDelta - scrollDelta);
@@ -132,7 +132,7 @@
             document.addEventListener("mousemove", resize, false);
             document.addEventListener("touchmove", resize, false);
 
-            var dragboard = document.body;
+            const dragboard = document.body;
             dragboardCover = document.createElement("div");
             dragboardCover.className = "cover";
             dragboardCover.addEventListener("mouseup", endresize, true);

@@ -1,6 +1,6 @@
 /*
  *     Copyright 2012-2017 (c) CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,12 +27,10 @@
 
     "use strict";
 
-    var HANDLER_RE = new RegExp(/^on(?:Complete|Exception|Failure|Success|UploadProgress|\d{3})$/);
+    const HANDLER_RE = new RegExp(/^on(?:Complete|Exception|Failure|Success|UploadProgress|\d{3})$/);
 
-    var setRequestHeaders = function setRequestHeaders() {
-        var headers, name;
-
-        headers = utils.merge({
+    const setRequestHeaders = function setRequestHeaders() {
+        const headers = utils.merge({
             'X-Requested-With': 'XMLHttpRequest',
             'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
         }, this.options.requestHeaders);
@@ -44,18 +42,18 @@
             }
         }
 
-        for (name in headers) {
+        for (const name in headers) {
             if (headers[name] != null) {
                 this.transport.setRequestHeader(name, headers[name]);
             }
         }
     };
 
-    var onAbort = function onAbort(event) {
+    const onAbort = function onAbort(event) {
         event.stopPropagation();
         event.preventDefault();
 
-        var response = new Response(this);
+        const response = new Response(this);
         Wirecloud.Task.prototype.abort.call(this, response);
 
         utils.callCallback(this.options.onAbort);
@@ -68,8 +66,8 @@
         }
     };
 
-    var onReadyStateChange = function onReadyStateChange(handler, error) {
-        var response = new Response(this);
+    const onReadyStateChange = function onReadyStateChange(handler, error) {
+        const response = new Response(this);
         if (error) {
             handler(new io.ConnectionError(this));
         } else {
@@ -99,35 +97,39 @@
         return response;
     };
 
-    var Response = function Response(request) {
-        Object.defineProperties(this, {
-            'request': {value: request},
-            'transport': {value: request.transport},
-            'status': {value: request.transport.status},
-            'statusText': {value: request.transport.statusText},
-            'response': {value: request.transport.response}
-        });
+    const Response = class Response {
 
-        if (request.options.responseType == null || request.options.responseType === '') {
+        constructor(request) {
             Object.defineProperties(this, {
-                'responseText': {value: request.transport.responseText},
-                'responseXML': {value: request.transport.responseXML}
+                'request': {value: request},
+                'transport': {value: request.transport},
+                'status': {value: request.transport.status},
+                'statusText': {value: request.transport.statusText},
+                'response': {value: request.transport.response}
             });
+
+            if (request.options.responseType == null || request.options.responseType === '') {
+                Object.defineProperties(this, {
+                    'responseText': {value: request.transport.responseText},
+                    'responseXML': {value: request.transport.responseXML}
+                });
+            }
         }
-    };
 
-    Response.prototype.getHeader = function getHeader(name) {
-        try {
-            return this.transport.getResponseHeader(name);
-        } catch (e) { return null; }
-    };
+        getHeader(name) {
+            try {
+                return this.transport.getResponseHeader(name);
+            } catch (e) { return null; }
+        }
 
-    Response.prototype.getAllResponseHeaders = function getAllResponseHeaders() {
-        return this.transport.getAllResponseHeaders();
-    };
+        getAllResponseHeaders() {
+            return this.transport.getAllResponseHeaders();
+        }
 
-    var toQueryString = function toQueryString(parameters) {
-        var key, query = [];
+    }
+
+    const toQueryString = function toQueryString(parameters) {
+        const query = [];
 
         if (parameters == null) {
             return null;
@@ -139,7 +141,7 @@
                 return null;
             }
         } else /* if (typeof parameters === 'object') */ {
-            for (key in parameters) {
+            for (const key in parameters) {
                 if (typeof parameters[key] === 'undefined') {
                     continue;
                 } else if (parameters[key] === null) {
@@ -157,7 +159,7 @@
         }
     };
 
-    var Request = class Request extends Wirecloud.Task {
+    const Request = class Request extends Wirecloud.Task {
 
         constructor(url, options) {
             options = utils.merge({
@@ -169,14 +171,14 @@
                 postBody: null
             }, options);
 
-            for (let key in options) {
+            for (const key in options) {
                 if (HANDLER_RE.test(key) && options[key] != null && typeof options[key] !== 'function') {
                     throw new TypeError(utils.interpolate('Invalid %(callback)s callback', {callback: key}, true));
                 }
             }
 
             if (options.context != null) {
-                for (let key in options) {
+                for (const key in options) {
                     if (HANDLER_RE.test(key) && typeof options[key] === 'function') {
                         options[key] = options[key].bind(options.context);
                     }
@@ -208,12 +210,12 @@
 
             super("making request", (resolve, reject, update) => {
                 transport.upload.addEventListener('progress', (event) => {
-                    var progress = Math.round(event.loaded * 100 / event.total);
+                    const progress = Math.round(event.loaded * 100 / event.total);
                     update(progress / 2);
                 });
                 transport.addEventListener("progress", (event) => {
                     if (event.lengthComputable) {
-                        var progress = Math.round(event.loaded * 100 / event.total);
+                        const progress = Math.round(event.loaded * 100 / event.total);
                         update(50 + (progress / 2));
                     }
                 });
@@ -261,7 +263,7 @@
 
     }
 
-    var io = {};
+    const io = {};
 
     /**
      * Error raised if there are problems connecting to the server. Browsers
@@ -273,21 +275,30 @@
      * @name Wirecloud.io.ConnectionError
      * @summary Exception raised for connection problems.
      */
-    io.ConnectionError = function ConnectionError() {
-        this.name = 'ConnectionError';
-        this.message = 'Connection Error';
-    };
+    io.ConnectionError = class ConnectionError extends Error {
 
-    io.ConnectionError.prototype = new Error();
-    io.ConnectionError.prototype.constructor = io.ConnectionError;
+        constructor() {
+            const message = "Connection Error";
 
-    io.ConnectionError.prototype.toString = function toString() {
-        return this.message;
-    };
+            super(message);
+
+            this.name = "ConnectionError";
+            this.message = message;
+
+            // Maintains proper stack trace for where our error was thrown (only available on V8)
+            if (Error.captureStackTrace) {
+                Error.captureStackTrace(this, this.constructor);
+            }
+        }
+
+        toString() {
+            return this.message;
+        }
+
+    }
+
 
     io.buildProxyURL = function buildProxyURL(url, options) {
-        var forceProxy, hash;
-
         options = utils.merge({
             method: 'POST',
             asynchronous: true,
@@ -301,12 +312,12 @@
             url = new URL(url, Wirecloud.location.base);
         }
 
-        forceProxy = !!options.forceProxy;
+        const forceProxy = !!options.forceProxy;
         if (["blob:", "data:"].indexOf(url.protocol) !== -1) {
             return url.toString();
         }
 
-        hash = url.hash;
+        const hash = url.hash;
         url.hash = '';
         if (forceProxy || (options.supportsAccessControl !== true && url.origin !== Wirecloud.location.domain)) {
             url = new URL(
@@ -319,7 +330,7 @@
 
         // Add parameters
         if (['PUT', 'POST'].indexOf(options.method) === -1 || options.postBody != null) {
-            var parameters = toQueryString(options.parameters);
+            const parameters = toQueryString(options.parameters);
             if (parameters != null) {
                 if (url.indexOf('?') !== -1) {
                     url += '&' + parameters;

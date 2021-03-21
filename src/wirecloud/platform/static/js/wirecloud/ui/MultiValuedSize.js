@@ -29,7 +29,7 @@
     /**
      * @class Represents a size in several units.
      */
-    var MultiValuedSize = function MultiValuedSize(inPixels, inLU) {
+    const MultiValuedSize = function MultiValuedSize(inPixels, inLU) {
         Object.defineProperties(this, {
             inPixels: {value: inPixels},
             inLU: {value: inLU}

@@ -45,7 +45,7 @@
 
             // remove holes by moving widgets to the topmost position available
             const keys = [];
-            for (let key in this.widgets) {
+            for (const key in this.widgets) {
                 keys.push(key);
                 const widget = this.widgets[key];
                 modified = modified || this.moveSpaceUp(this._buffers.base, widget);
@@ -59,10 +59,10 @@
         }
 
         _notifyResizeEvent(widget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, resizeTopSide, persist) {
-            var x, y;
-            var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
-            var position = widget.position;
-            var step2X, finalYPos, widthDiff, iWidgetToMove, limitX, limitY;
+            let x, y;
+            let step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
+            const position = widget.position;
+            let step2X, finalYPos, widthDiff, iWidgetToMove, limitX, limitY;
             step2X = position.x;
 
             // First Step
@@ -193,7 +193,7 @@
 
         // Returns if any widget's position has been modified
         _insertAt(widget, x, y, buffer) {
-            var affectedwidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, widget, x, y, buffer);
+            const affectedwidgets = Wirecloud.ui.ColumnLayout.prototype._insertAt.call(this, widget, x, y, buffer);
             return utils.setupdate(affectedwidgets, this.moveSpaceUp(buffer, widget));
         }
 
@@ -203,15 +203,15 @@
         _removeFromMatrix(buffer, widget) {
             this._clearSpace(buffer, widget);
 
-            var visitedwidgets = new Set(), modifiedwidgets = new Set();
-            var position = this._getPositionOn(buffer, widget);
-            var edgeY = position.y + widget.shape.height;
+            const visitedwidgets = new Set(), modifiedwidgets = new Set();
+            const position = this._getPositionOn(buffer, widget);
+            const edgeY = position.y + widget.shape.height;
 
-            let matrix = buffer.matrix;
+            const matrix = buffer.matrix;
 
             // check if we have to update the representations of the widget instances
             for (let x = 0; x < widget.shape.width; x++) {
-                let currentwidget = matrix[position.x + x][edgeY];
+                const currentwidget = matrix[position.x + x][edgeY];
                 if (currentwidget != null && !visitedwidgets.has(currentwidget.id)) {
                     visitedwidgets.add(currentwidget.id);
                     utils.setupdate(modifiedwidgets, this.moveSpaceUp(buffer, currentwidget));

@@ -48,7 +48,7 @@
             super(options);
             this.wrapperElement.classList.add('se-popup-submenu');
 
-            let menuitem = new StyledElements.MenuItem(title, () => {
+            const menuitem = new StyledElements.MenuItem(title, () => {
                 this.show(menuitem);
             });
             menuitem.addClassName('submenu');
@@ -73,7 +73,7 @@
         }
 
         _menuItemCallback(menuitem) {
-            var currentMenu = this;
+            let currentMenu = this;
             while (currentMenu.parentMenu) {
                 currentMenu = currentMenu.parentMenu;
             }

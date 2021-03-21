@@ -72,7 +72,7 @@
 
         _createMenuItem(title, iconClass, onclick, isEnabled) {
             const item = new se.MenuItem(title, onclick);
-            item.addIconClass('fa fa-' + iconClass);
+            item.addIconClass(iconClass);
 
             if (isEnabled != null) {
                 item.enabled = isEnabled.call(this);
@@ -86,17 +86,17 @@
          */
         build() {
             return [
-                this._createMenuItem(utils.gettext("Rename"), "pencil", function () {
+                this._createMenuItem(utils.gettext("Rename"), "fas fa-pencil-alt", function () {
                     showRenameModal.call(this);
                 }.bind(this), canRename),
-                this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "retweet", function () {
-                    var dialog = new Wirecloud.ui.UpgradeWindowMenu(this.component._component);
+                this._createMenuItem(utils.gettext("Upgrade/Downgrade"), "fas fa-retweet", function () {
+                    const dialog = new Wirecloud.ui.UpgradeWindowMenu(this.component._component);
                     dialog.show();
                 }.bind(this), canUpgrade),
-                this._createMenuItem(utils.gettext("Logs"), "tags", function () {
+                this._createMenuItem(utils.gettext("Logs"), "fas fa-tags", function () {
                     this.component.showLogs();
                 }.bind(this)),
-                this._createMenuItem(utils.gettext("Settings"), "gear", function () {
+                this._createMenuItem(utils.gettext("Settings"), "fas fa-cog", function () {
                     this.component.showSettings();
                 }.bind(this), canShowSettings)
             ];

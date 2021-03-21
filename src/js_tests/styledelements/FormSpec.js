@@ -26,14 +26,14 @@
 
     "use strict";
 
-    var fields_with_defaults_and_initial_values = [
+    const fields_with_defaults_and_initial_values = [
         {name: "field1", type: "boolean", defaultValue: true, initialValue: false},
         {name: "field2", type: "number", defaultValue: 10, initialValue: 1},
         {name: "field3", type: "text", defaultValue: "default text", initialValue: "hello world!", required: true},
         {name: "field4", type: "longtext", defaultValue: "default long text", initialValue: "long hello world!"}
     ];
 
-    var grouped_fields = [
+    const grouped_fields = [
         {
             name: "group1",
             type: "group",
@@ -55,7 +55,7 @@
 
     describe("Styled Forms", function () {
 
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -84,13 +84,13 @@
             });
 
             it("can be created with an empty field set", function () {
-                var fields = [];
-                var element = new StyledElements.Form(fields);
+                const fields = [];
+                const element = new StyledElements.Form(fields);
                 expect(element).not.toBe(null);
             });
 
             it("can be created with field descriptions", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
                 expect(element).not.toBe(null);
 
                 // Check buttons
@@ -111,7 +111,7 @@
             });
 
             it("allows adding a set defaults button by passing true to the setdefaultsButton option", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values, {
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values, {
                     setdefaultsButton: true
                 });
                 expect(element).not.toBe(null);
@@ -124,7 +124,7 @@
             });
 
             it("allows adding a reset button by passing true to the resetButton option", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values, {
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values, {
                     resetButton: true
                 });
                 expect(element).not.toBe(null);
@@ -137,13 +137,13 @@
             });
 
             describe("allows creating forms using custom buttons:", () => {
-                var test = (buttonName) => {
+                const test = (buttonName) => {
                     it(buttonName, () => {
-                        var button = new StyledElements.Button();
-                        var buttonAttr = buttonName + "Button";
-                        var options = {};
+                        const button = new StyledElements.Button();
+                        const buttonAttr = buttonName + "Button";
+                        const options = {};
                         options[buttonAttr] = button;
-                        var element = new StyledElements.Form(fields_with_defaults_and_initial_values, options);
+                        const element = new StyledElements.Form(fields_with_defaults_and_initial_values, options);
 
                         expect(element[buttonAttr]).toBe(button);
                     });
@@ -157,7 +157,7 @@
             });
 
             it("allows creating read only forms", () => {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values, {
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values, {
                     readOnly: true
                 });
 
@@ -167,7 +167,7 @@
             });
 
             it("allows creating forms using field groups", () => {
-                var element = new StyledElements.Form(grouped_fields);
+                const element = new StyledElements.Form(grouped_fields);
 
                 expect(element).not.toBe(null);
             });
@@ -177,19 +177,19 @@
         describe("getData()", function () {
 
             it("returns an empty object if there are not fields", function () {
-                var fields = [];
-                var element = new StyledElements.Form(fields);
+                const fields = [];
+                const element = new StyledElements.Form(fields);
                 expect(element.getData()).toEqual({});
             });
 
             it("returns an object with the values", function () {
-                var fields = [
+                const fields = [
                     {name: "field1", type: "boolean", initialValue: true},
                     {name: "field2", type: "number", initialValue: 1},
                     {name: "field3", type: "text", initialValue: "hello world!"},
                     {name: "field4", type: "longtext", initialValue: "long hello world!"}
                 ];
-                var element = new StyledElements.Form(fields);
+                const element = new StyledElements.Form(fields);
                 expect(element.getData()).toEqual({
                     field1: true,
                     field2: 1,
@@ -202,9 +202,9 @@
 
         describe("setData()", function () {
 
-            var check_invalid_parameter = function check_invalid_parameter(label, value) {
+            const check_invalid_parameter = function check_invalid_parameter(label, value) {
                 it("raises a TypeError exception if the passed parameter is a function", function () {
-                    var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                    const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                     expect(function () {element.setData(value);}).toThrow(jasmine.any(TypeError));
                 });
@@ -216,7 +216,7 @@
             check_invalid_parameter("raises a TypeError exception if the passed parameter is a string", "hello");
 
             it("should allow to replace current values", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.setData({
                     field1: true,
@@ -234,7 +234,7 @@
             });
 
             it("should use empty values if the attribute is undefined", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.setData({})).toBe(element);
 
@@ -247,7 +247,7 @@
             });
 
             it("should reset form values if the passed value is null", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.setData(null)).toBe(element);
 
@@ -260,7 +260,7 @@
             });
 
             it("should reset form values if the passed value is undefined", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.setData()).toBe(element);
 
@@ -277,7 +277,7 @@
         describe("reset()", function () {
 
             it("should reset form values", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.reset()).toBe(element);
 
@@ -294,7 +294,7 @@
         describe("defaults()", function () {
 
             it("reset form values to their default values", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.defaults()).toBe(element);
 
@@ -311,13 +311,13 @@
         describe("focus()", function () {
 
             it("should do nothing if the form has no fields", function () {
-                var element = new StyledElements.Form([]);
+                const element = new StyledElements.Form([]);
 
                 expect(element.focus()).toBe(element);
             });
 
             it("should reset form values", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
 
                 expect(element.focus()).toBe(element);
             });
@@ -325,7 +325,7 @@
         });
 
         describe("is_valid()", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Form(fields_with_defaults_and_initial_values);
@@ -344,7 +344,7 @@
         describe("repaint()", () => {
 
             it("repaint all the fields on temporal repaints", () => {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
                 element.fieldList.forEach((field) => {
                     spyOn(element.fieldInterfaces[field.name], "repaint");
                 });
@@ -359,14 +359,14 @@
         });
 
         describe("update(data)", () => {
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Form(fields_with_defaults_and_initial_values);
             });
 
             describe("throws TypeError exceptions when passing invalid data parameter values:", function () {
-                var test = (value) => {
+                const test = (value) => {
                     return () => {
                         expect(() => {
                             element.update(value);
@@ -390,7 +390,7 @@
         describe("should support the enable/disable methods/attributes", function () {
 
             it("should support disabling the component using the disable() method", function () {
-                var element = new StyledElements.Form(fields_with_defaults_and_initial_values);
+                const element = new StyledElements.Form(fields_with_defaults_and_initial_values);
                 expect(element.disable()).toBe(element);
                 expect(element.enabled).toBe(false);
                 expect(element.acceptButton.enabled).toBe(false);
@@ -398,7 +398,7 @@
             });
 
             it("should support disabling the component using the enabled attribute", function () {
-                var element = new StyledElements.Form(
+                const element = new StyledElements.Form(
                     fields_with_defaults_and_initial_values,
                     {
                         acceptButton: true,
@@ -414,7 +414,7 @@
             });
 
             it("should work also if the form has not buttons", function () {
-                var element = new StyledElements.Form(
+                const element = new StyledElements.Form(
                     fields_with_defaults_and_initial_values,
                     {
                         acceptButton: false,
@@ -430,14 +430,14 @@
         });
 
         describe("should handle internal events -", function () {
-            var element;
+            let element;
 
             beforeEach(function () {
                 element = new StyledElements.Form(fields_with_defaults_and_initial_values);
             });
 
             it("cancel event is triggered when the cancelButton is clicked", function () {
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 element.addEventListener('cancel', listener);
 
                 element.cancelButton.click();
@@ -447,7 +447,7 @@
             });
 
             it("submit event is triggered when the acceptButton is clicked and data is valid", function () {
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 element.addEventListener('submit', listener);
 
                 element.acceptButton.click();
@@ -465,7 +465,7 @@
             });
 
             it("submit event is not triggered when the acceptButton is clicked and current values are not valid", function () {
-                var listener = jasmine.createSpy('listener');
+                const listener = jasmine.createSpy('listener');
                 element.addEventListener('submit', listener);
 
                 element.update({field3: ""});  // field3 is required
@@ -478,7 +478,7 @@
         describe("deprecated", function () {
 
             it("should support passing fields using a dict", function () {
-                var element = new StyledElements.Form({
+                const element = new StyledElements.Form({
                     field1: {name: "field1", type: "boolean", default: true, initialValue: false},
                     field2: {name: "field2", type: "number", default: 10, initialValue: 1}
                 });
@@ -486,7 +486,7 @@
             });
 
             it("should support passing fields using a dict without using the name property", function () {
-                var element = new StyledElements.Form({
+                const element = new StyledElements.Form({
                     field1: {type: "boolean", default: true, initialValue: false},
                     field2: {type: "number", default: 10, initialValue: 1}
                 });

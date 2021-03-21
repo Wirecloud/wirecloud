@@ -27,7 +27,7 @@
     "use strict";
 
     describe("Containers", function () {
-        var dom = null;
+        let dom = null;
 
         beforeEach(function () {
             dom = document.createElement('div');
@@ -44,12 +44,12 @@
         describe("new Container([options])", function () {
 
             it("can be created without passing any option", function () {
-                var element = new StyledElements.Container();
+                const element = new StyledElements.Container();
                 expect(element.children).toEqual([]);
             });
 
             it("should support the id option", function () {
-                var element = new StyledElements.Container({id: 5});
+                const element = new StyledElements.Container({id: 5});
                 expect(element.children).toEqual([]);
             });
 
@@ -59,15 +59,15 @@
 
             it("should allow to append elements", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
                 expect(container.appendChild(element).children).toEqual([element]);
 
             });
 
             it("should allow to append string nodes", function () {
 
-                var container = new StyledElements.Container();
+                const container = new StyledElements.Container();
                 expect(container.appendChild("hello ").appendChild("world!!").children).toEqual([]);
                 expect(container.wrapperElement.textContent, "hello world!!");
 
@@ -75,9 +75,9 @@
 
             it("should move child elements", function () {
 
-                var container = new StyledElements.Container();
-                var element1 = new StyledElements.Button();
-                var element2 = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element1 = new StyledElements.Button();
+                const element2 = new StyledElements.Button();
                 container.appendChild(element1);
                 container.appendChild(element2);
                 container.appendChild(element1);
@@ -90,7 +90,7 @@
         describe("clear()", function () {
 
             it("should work also when using it on disabled containers", function () {
-                var element = new StyledElements.Container();
+                const element = new StyledElements.Container();
                 element.enabled = false;
                 expect(element.clear()).toBe(element);
             });
@@ -100,28 +100,28 @@
         describe("has(element)", function () {
 
             it("should return true when testing for child DOM elements", function () {
-                var container = new StyledElements.Container();
-                var test_element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const test_element = new StyledElements.Button();
                 container.appendChild(test_element);
                 expect(container.has(test_element)).toBe(true);
             });
 
             it("should return false when testing for non-child DOM elements", function () {
-                var container = new StyledElements.Container();
-                var test_element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const test_element = new StyledElements.Button();
                 expect(container.has(test_element)).toBe(false);
             });
 
             it("should return true when testing for child DOM elements", function () {
-                var container = new StyledElements.Container();
-                var test_element = document.createElement('div');
+                const container = new StyledElements.Container();
+                const test_element = document.createElement('div');
                 container.appendChild(test_element);
                 expect(container.has(test_element)).toBe(true);
             });
 
             it("should return false when testing for non-child DOM elements", function () {
-                var container = new StyledElements.Container();
-                var test_element = document.createElement('div');
+                const container = new StyledElements.Container();
+                const test_element = document.createElement('div');
                 expect(container.has(test_element)).toBe(false);
             });
 
@@ -131,15 +131,15 @@
 
             it("should allow to prepend elements", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
                 expect(container.prependChild(element).children).toEqual([element]);
 
             });
 
             it("should allow to add string nodes", function () {
 
-                var container = new StyledElements.Container();
+                const container = new StyledElements.Container();
                 expect(container.prependChild("world!!").prependChild("hello ").children).toEqual([]);
                 expect(container.wrapperElement.textContent, "hello world!!");
 
@@ -147,8 +147,8 @@
 
             it("should allow to add elements to containers using the prependChild method (duplicated)", function () {
 
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
                 container.appendChild(element);
                 expect(container.prependChild(element).children).toEqual([element]);
 
@@ -160,9 +160,9 @@
 
             it("should allow to replace all the content", function () {
 
-                var text = 'this is a test';
-                var container = new StyledElements.Container();
-                var element = new StyledElements.Button();
+                const text = 'this is a test';
+                const container = new StyledElements.Container();
+                const element = new StyledElements.Button();
                 container.appendChild(element);
                 expect(container.text(text)).toBe(container);
                 expect(container.text()).toBe(text);
@@ -173,7 +173,7 @@
 
         it('should allow to reenable the container', function () {
 
-            var container = new StyledElements.Container();
+            const container = new StyledElements.Container();
             container.enabled = false;
             container.enabled = true;
             expect(container.enabled).toBe(true);
@@ -188,14 +188,14 @@
 
             it("should return false if the element is enabled", function () {
 
-                var container = new StyledElements.Container();
+                const container = new StyledElements.Container();
                 expect(container.isDisabled()).toBe(false);
 
             });
 
             it("should return true if the element is disabled", function () {
 
-                var container = new StyledElements.Container();
+                const container = new StyledElements.Container();
                 container.enabled = false;
                 expect(container.isDisabled()).toBe(true);
 

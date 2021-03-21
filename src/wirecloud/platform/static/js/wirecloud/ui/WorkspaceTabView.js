@@ -27,10 +27,93 @@
 
     "use strict";
 
+    const privates = new WeakMap();
+
+    const _create_widget = function _create_widget(model) {
+        const widget = new Wirecloud.ui.WidgetView(this, model);
+
+        privates.get(this).widgets.push(widget);
+
+        return widget;
+    };
+
+    const clean_number = function clean_number(value, min, max) {
+
+        if (typeof value !== 'number' || value < min) {
+            return min;
+        }
+
+        return value > max ? max : value;
+    };
+
+    const get_widgets_by_id = function get_widgets_by_id() {
+        const widgets = {};
+
+        privates.get(this).widgets.forEach(function (widget) {
+            widgets[widget.id] = widget;
+        });
+
+        return widgets;
+    };
+
+    // =========================================================================
+    // EVENT HANDLERS
+    // =========================================================================
+
+    const on_change_preferences = function on_change_preferences(preferences, modifiedValues) {
+        if ('baselayout' in modifiedValues) {
+            this.dragboard._updateBaseLayout();
+        }
+    };
+
+    const on_changetab = function on_changetab(tab, changes) {
+        if (changes.indexOf('title') !== -1) {
+            se.Tab.prototype.rename.call(this, tab.title);
+        }
+
+        if (changes.indexOf('name') !== -1 && !this.hidden) {
+            this.tabElement.setAttribute('data-name', this.name);
+            const currentState = Wirecloud.HistoryManager.getCurrentState();
+            const newState = utils.merge({}, currentState, {
+                tab: tab.name
+            });
+            Wirecloud.HistoryManager.replaceState(newState);
+        }
+    };
+
+    const on_addwidget = function on_addwidget(tab, model, view) {
+        const priv = privates.get(this);
+
+        if (view == null) {
+            view = _create_widget.call(this, model);
+
+            if (!this.hidden) {
+                view.load();
+            }
+        } else {
+            priv.widgets.push(view);
+        }
+        this.initialMessage.hidden = true;
+    };
+
+    const on_removetab = function on_removetab(model) {
+        se.Tab.prototype.close.call(this);
+    };
+
+    const on_removewidget = function on_removewidget(widget) {
+        const priv = privates.get(this);
+        priv.widgets.splice(priv.widgets.indexOf(widget), 1);
+        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || priv.widgets.length > 0;
+    };
+
+    const update_pref_button = function update_pref_button() {
+        this.prefbutton.enabled = this.workspace.editing;
+    };
+
     ns.WorkspaceTabView = class WorkspaceTabView extends se.Tab {
 
         constructor(id, notebook, options) {
-            var model = options.model,
+            const model = options.model,
                 workspace = options.workspace;
 
             super(id, notebook, {
@@ -38,7 +121,7 @@
                 name: model.title
             });
 
-            var priv = {
+            const priv = {
                 widgets: [],
                 on_changetab: on_changetab.bind(this),
                 on_addwidget: on_addwidget.bind(this),
@@ -163,8 +246,6 @@
          * resolved, or an Error if rejected.
          */
         createWidget(resource, options) {
-            var layout, position;
-
             options = utils.merge({
                 commit: true,
                 height: resource.default_height,
@@ -177,13 +258,13 @@
                 relheight: false
             }, options);
 
-            var layouts = [
+            const layouts = [
                 this.dragboard.baseLayout,
                 this.dragboard.freeLayout,
                 this.dragboard.leftLayout,
                 this.dragboard.rightLayout
             ];
-            layout = layouts[options.layout];
+            const layout = layouts[options.layout];
 
             if (options.left != null) {
                 if (layout !== this.dragboard.freeLayout || options.relx) {
@@ -214,7 +295,7 @@
                 if (options.refposition && "searchBestPosition" in layout) {
                     layout.searchBestPosition(options);
                 } else if ("_searchFreeSpace" in layout) {
-                    position = layout._searchFreeSpace(options.width, options.height);
+                    const position = layout._searchFreeSpace(options.width, options.height);
                     options.left = position.x;
                     options.top = position.y;
                 } else {
@@ -258,7 +339,7 @@
         }
 
         show() {
-            se.Tab.prototype.show.call(this);
+            super.show(this);
 
             if (this.workspace.editing) {
                 this.dragboard.leftLayout.active = true;
@@ -283,92 +364,5 @@
         }
 
     }
-
-    // =========================================================================
-    // PRIVATE MEMBERS
-    // =========================================================================
-
-    var privates = new WeakMap();
-
-    var _create_widget = function _create_widget(model) {
-        var widget = new Wirecloud.ui.WidgetView(this, model);
-
-        privates.get(this).widgets.push(widget);
-
-        return widget;
-    };
-
-    var clean_number = function clean_number(value, min, max) {
-
-        if (typeof value !== 'number' || value < min) {
-            return min;
-        }
-
-        return value > max ? max : value;
-    };
-
-    var get_widgets_by_id = function get_widgets_by_id() {
-        var widgets = {};
-
-        privates.get(this).widgets.forEach(function (widget) {
-            widgets[widget.id] = widget;
-        });
-
-        return widgets;
-    };
-
-    // =========================================================================
-    // EVENT HANDLERS
-    // =========================================================================
-
-    var on_change_preferences = function on_change_preferences(preferences, modifiedValues) {
-        if ('baselayout' in modifiedValues) {
-            this.dragboard._updateBaseLayout();
-        }
-    };
-
-    var on_changetab = function on_changetab(tab, changes) {
-        if (changes.indexOf('title') !== -1) {
-            se.Tab.prototype.rename.call(this, tab.title);
-        }
-
-        if (changes.indexOf('name') !== -1 && !this.hidden) {
-            this.tabElement.setAttribute('data-name', this.name);
-            var currentState = Wirecloud.HistoryManager.getCurrentState();
-            var newState = utils.merge({}, currentState, {
-                tab: tab.name
-            });
-            Wirecloud.HistoryManager.replaceState(newState);
-        }
-    };
-
-    var on_addwidget = function on_addwidget(tab, model, view) {
-        const priv = privates.get(this);
-
-        if (view == null) {
-            view = _create_widget.call(this, model);
-
-            if (!this.hidden) {
-                view.load();
-            }
-        } else {
-            priv.widgets.push(view);
-        }
-        this.initialMessage.hidden = true;
-    };
-
-    var on_removetab = function on_removetab(model) {
-        se.Tab.prototype.close.call(this);
-    };
-
-    var on_removewidget = function on_removewidget(widget) {
-        const priv = privates.get(this);
-        priv.widgets.splice(priv.widgets.indexOf(widget), 1);
-        this.initialMessage.hidden = !this.workspace.model.isAllowed("edit") || priv.widgets.length > 0;
-    };
-
-    var update_pref_button = function update_pref_button() {
-        this.prefbutton.enabled = this.workspace.editing;
-    };
 
 })(Wirecloud.ui, StyledElements, StyledElements.Utils);

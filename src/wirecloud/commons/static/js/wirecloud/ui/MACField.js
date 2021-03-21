@@ -34,7 +34,7 @@
             e.preventDefault();
         }
 
-        var dialog = new Wirecloud.ui.MACSelectionWindowMenu(this.dialog_title, {
+        const dialog = new Wirecloud.ui.MACSelectionWindowMenu(this.dialog_title, {
             scope: this.scope,
         });
         dialog.show(Wirecloud.UserInterfaceManager.currentWindowMenu);
@@ -60,7 +60,7 @@
     ns.MACField = class MACField extends se.InputElement {
 
         constructor(options) {
-            var defaultOptions = {
+            const defaultOptions = {
                 'class': '',
                 'scope': '',
                 'dialog': null
@@ -86,7 +86,7 @@
                 this.wrapperElement.setAttribute("id", options.id);
             }
 
-            var close_button = new StyledElements.Button({iconClass: 'fa fa-remove', title: utils.gettext('Clear current selection')});
+            const close_button = new StyledElements.Button({iconClass: 'fas fa-times', title: utils.gettext('Clear current selection')});
             close_button.appendTo(this.wrapperElement);
             close_button.disable().addEventListener('click', function () {
                 this.setValue('');
@@ -97,7 +97,7 @@
             this.wrapperElement.appendChild(this.name_preview);
             this.wrapperElement.appendChild(this.inputElement);
 
-            var button = new StyledElements.Button({iconClass: 'fa fa-search', title: utils.gettext('Search')});
+            const button = new StyledElements.Button({iconClass: 'fas fa-search', title: utils.gettext('Search')});
             button.appendTo(this.wrapperElement);
 
             /* Public fields */
@@ -122,7 +122,7 @@
         }
 
         setValue(new_value) {
-            var mac_id, mac_title;
+            let mac_id, mac_title;
 
             if (typeof new_value !== 'string') {
                 mac_id = new_value.uri;

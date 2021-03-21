@@ -109,7 +109,7 @@
         addWidget(iWidget, affectsDragboard) {
             iWidget.wrapperElement.classList.add('wc-widget-fulldragboard');
 
-            Wirecloud.ui.DragboardLayout.prototype.addWidget.call(this, iWidget, affectsDragboard);
+            super.addWidget(iWidget, affectsDragboard);
 
             if (!this.initialized) {
                 return new Set();
@@ -122,7 +122,7 @@
         removeWidget(iWidget, affectsDragboard) {
             iWidget.wrapperElement.classList.remove('wc-widget-fulldragboard');
 
-            return Wirecloud.ui.DragboardLayout.prototype.removeWidget.call(this, iWidget, affectsDragboard);
+            return super.removeWidget(iWidget, affectsDragboard);
         }
 
     }

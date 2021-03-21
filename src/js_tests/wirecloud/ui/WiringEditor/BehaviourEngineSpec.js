@@ -54,7 +54,7 @@
         describe("new BehaviourEngine()", () => {
 
             it("it is an styledelement", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
 
                 expect(engine.enabled).toBe(false);
                 expect(engine).toEqual(jasmine.any(se.StyledElement));
@@ -65,7 +65,7 @@
         describe("activate()", () => {
 
             it("should do nothing if the engine is disabled", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
 
                 expect(engine.activate()).toBe(engine);
             });
@@ -75,7 +75,7 @@
         describe("btnCreate", () => {
 
             it("should allow to create behaviours", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.enable = true;
                 let dialog;
                 spyOn(Wirecloud.ui, "FormWindowMenu").and.callFake(function () {
@@ -95,7 +95,7 @@
         describe("btnEnable", () => {
 
             it("should allow to enable the behaviour engine", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
 
                 engine.btnEnable.click();
 
@@ -105,9 +105,9 @@
             });
 
             it("should allow to disable the behaviour engine", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                var alert_handler;
+                let alert_handler;
                 spyOn(Wirecloud.ui, "AlertWindowMenu").and.callFake(function () {
                     this.setHandler = jasmine.createSpy("setHandler").and.callFake((listener) => {
                         alert_handler = listener;
@@ -130,10 +130,10 @@
         describe("btnOrder", () => {
 
             it("should allow to start and stop ordering without changing nothing", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour1 = engine.behaviours[0];
-                let behaviour2 = engine.behaviours[1];
+                const behaviour1 = engine.behaviours[0];
+                const behaviour2 = engine.behaviours[1];
 
                 // Start ordering
                 engine.btnOrder.enable().click()
@@ -149,16 +149,16 @@
             });
 
             it("should allow to order behaviours", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}, {}, {}]);
-                let behaviour1 = engine.behaviours[0];
-                let behaviour2 = engine.behaviours[1];
-                let behaviour3 = engine.behaviours[2];
-                let behaviour4 = engine.behaviours[3];
-                var dragstartlisteners = [];
-                var draglisteners = [];
-                var dragendlisteners = [];
-                var contexts = [];
+                const behaviour1 = engine.behaviours[0];
+                const behaviour2 = engine.behaviours[1];
+                const behaviour3 = engine.behaviours[2];
+                const behaviour4 = engine.behaviours[3];
+                const dragstartlisteners = [];
+                const draglisteners = [];
+                const dragendlisteners = [];
+                const contexts = [];
                 spyOn(Wirecloud.ui, "Draggable").and.callFake(function (handler, context, dragstart, drag, dragend) {
                     contexts.push(context);
                     dragstartlisteners.push(dragstart);
@@ -228,19 +228,19 @@
         describe("clear()", () => {
 
             it("should work with an empty status", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
 
                 expect(engine.clear()).toBe(engine);
             });
 
             it("should remove all the components and the connections (engine disabled)", () => {
-                let engine = new ns.BehaviourEngine();
-                let component1 = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const component1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
                 engine.updateComponent(component1);
-                let component2 = createComponentMock({
+                const component2 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
@@ -254,10 +254,10 @@
             });
 
             it("should remove all the behaviours (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour1 = engine.behaviours[0];
-                let behaviour2 = engine.behaviours[1];
+                const behaviour1 = engine.behaviours[0];
+                const behaviour2 = engine.behaviours[1];
                 spyOn(engine, "removeBehaviour");
 
                 expect(engine.clear()).toBe(engine);
@@ -273,16 +273,16 @@
         describe("createBehaviour(details)", () => {
 
             it("should allow to create behaviours without info", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.createBehaviour();
             });
 
             it("should handle change events on active behaviours", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour1 = engine.behaviours[0];
+                const behaviour1 = engine.behaviours[0];
                 behaviour1.getCurrentStatus = jasmine.createSpy("getCurrentStatus").and.returnValue("currentstatus");
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 callEventListener(behaviour1, "change");
@@ -291,10 +291,10 @@
             });
 
             it("should handle change events on inactive behaviours", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour2 = engine.behaviours[1];
-                let listener = jasmine.createSpy("listener");
+                const behaviour2 = engine.behaviours[1];
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 callEventListener(behaviour2, "change");
@@ -303,10 +303,10 @@
             });
 
             it("should handle click events on behaviours", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour2 = engine.behaviours[1];
-                let listener = jasmine.createSpy("listener");
+                const behaviour2 = engine.behaviours[1];
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("activate", listener);
 
                 callEventListener(behaviour2, "click");
@@ -315,10 +315,10 @@
             });
 
             it("should ignore click events on behaviours when ordering them", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour2 = engine.behaviours[1];
-                let listener = jasmine.createSpy("listener");
+                const behaviour2 = engine.behaviours[1];
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("activate", listener);
                 // Start ordering
                 engine.btnOrder.enable().click()
@@ -329,9 +329,9 @@
             });
 
             it("should handle remove events on behaviours", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour2 = engine.behaviours[1];
+                const behaviour2 = engine.behaviours[1];
                 spyOn(engine, "removeBehaviour");
 
                 callEventListener(behaviour2, "optremove");
@@ -344,7 +344,7 @@
         describe("disabledAlert", () => {
 
             it("provides a link for starting the behaviour engine tutorial", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 // TODO
                 Wirecloud.TutorialCatalogue = {
                     get: jasmine.createSpy('get').and.returnValue({
@@ -362,24 +362,24 @@
         describe("emptyBehaviour(behaviour)", () => {
 
             it("does nothing if the engine is disabled", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.emptyBehaviour({});
             });
 
             it("removes components from the behaviour", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component1 = createComponentMock({
+                const component1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
                 engine.updateComponent(component1);
-                let component2 = createComponentMock({
+                const component2 = createComponentMock({
                     id: "2",
                     type: "widget"
                 });
                 engine.updateComponent(component2);
-                let behaviour1 = engine.behaviours[0];
+                const behaviour1 = engine.behaviours[0];
                 behaviour1.hasComponent.and.returnValues(true, false);
                 spyOn(engine, "forEachComponent").and.callFake((listener) => {
                     listener(component1);
@@ -394,13 +394,13 @@
         describe("getConnectionIndex(connection)", () => {
 
             it("should return -1 if the connection is not present", () => {
-                let engine = new ns.BehaviourEngine();
-                let connection1 = createConnectionMock({
+                const engine = new ns.BehaviourEngine();
+                const connection1 = createConnectionMock({
                     sourceId: "sourcename",
                     targetId: "targetname"
                 });
                 engine.updateConnection(connection1);
-                let connection2 = createConnectionMock({
+                const connection2 = createConnectionMock({
                     sourceId: "othersourcename",
                     targetId: "targetname"
                 });
@@ -409,13 +409,13 @@
             });
 
             it("should return connection index if the connection is present", () => {
-                let engine = new ns.BehaviourEngine();
-                let connection1 = createConnectionMock({
+                const engine = new ns.BehaviourEngine();
+                const connection1 = createConnectionMock({
                     sourceId: "sourcename",
                     targetId: "targetname"
                 });
                 engine.updateConnection(connection1);
-                let connection2 = createConnectionMock({
+                const connection2 = createConnectionMock({
                     sourceId: "othersourcename",
                     targetId: "targetname"
                 });
@@ -429,14 +429,14 @@
         describe("hasComponent(component)", () => {
 
             it("should return false if the component is not available (engine disabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
 
                 expect(engine.hasComponent({id: "1", type: "widget"})).toBe(false);
             });
 
             it("should return true if the component is available (engine disabled)", () => {
-                let engine = new ns.BehaviourEngine();
-                let component = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
@@ -446,16 +446,16 @@
             });
 
             it("should return false if the component is not available (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
 
                 expect(engine.hasComponent({id: "1", type: "operator"})).toBe(false);
             });
 
             it("should return true if the component is available (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}, {}]);
-                let component = createComponentMock({
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
@@ -470,7 +470,7 @@
         describe("hasComponents()", () => {
 
             it("should return false if there are no components", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
 
                 expect(engine.hasComponents()).toBe(false);
             });
@@ -480,7 +480,7 @@
         describe("loadBehaviours(behaviours)", () => {
 
             it("should work when passing an empty list", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 const listener = jasmine.createSpy("listener");
                 engine.addEventListener("activate", listener);
 
@@ -491,7 +491,7 @@
             });
 
             it("should work when passing a list of behaviours", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 const listener = jasmine.createSpy("listener");
                 engine.addEventListener("activate", listener);
 
@@ -506,8 +506,8 @@
         describe("removeBehaviour(behaviour)", () => {
 
             it("should do nothing if the engine is disabled", () => {
-                let engine = new ns.BehaviourEngine();
-                let listener = jasmine.createSpy("listener");
+                const engine = new ns.BehaviourEngine();
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("activate", listener);
 
                 expect(engine.removeBehaviour({})).toBe(engine);
@@ -516,11 +516,11 @@
             });
 
             it("should allow to remove the active behaviour when the engine is enabled", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour_to_remove = engine.behaviours[0];
-                let other_behaviour = engine.behaviours[1];
-                let listener = jasmine.createSpy("listener");
+                const behaviour_to_remove = engine.behaviours[0];
+                const other_behaviour = engine.behaviours[1];
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("activate", listener);
 
                 expect(engine.removeBehaviour(behaviour_to_remove)).toBe(engine);
@@ -532,11 +532,11 @@
             });
 
             it("should allow to remove inactive behaviours when the engine is enabled", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let other_behaviour = engine.behaviours[0];
-                let behaviour_to_remove = engine.behaviours[1];
-                let listener = jasmine.createSpy("listener");
+                const other_behaviour = engine.behaviours[0];
+                const behaviour_to_remove = engine.behaviours[1];
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("activate", listener);
 
                 expect(engine.removeBehaviour(behaviour_to_remove)).toBe(engine);
@@ -549,10 +549,10 @@
             it("should cancel behaviour ordering", () => {
                 // This works, but it is not possible through the user interface
                 // (at least on WireCloud 1.2)
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let other_behaviour = engine.behaviours[0];
-                let behaviour_to_remove = engine.behaviours[1];
+                const other_behaviour = engine.behaviours[0];
+                const behaviour_to_remove = engine.behaviours[1];
                 // Enable Behaviour ordering
                 engine.btnOrder.click();
 
@@ -569,16 +569,16 @@
         describe("removeComponent(component[, cascade=false])", () => {
 
             it("should remove components (engine disabled)", () => {
-                let engine = new ns.BehaviourEngine();
-                let connection = {};
-                let component = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const connection = {};
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
                 component.forEachConnection.and.callFake((listener) => {listener(connection);});
                 engine.updateComponent(component);
                 spyOn(engine, "removeConnection");
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeComponent(component));
@@ -590,9 +590,9 @@
             });
 
             it("should remove components from the active behaviour (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component = createComponentMock({
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
@@ -600,7 +600,7 @@
                 // Simulate the component is on both behaviours
                 engine.behaviours[0].hasComponent.and.returnValue(true);
                 engine.behaviours[1].hasComponent.and.returnValue(true);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeComponent(component));
@@ -613,9 +613,9 @@
             });
 
             it("should remove components from all the behaviour when using the cascade option (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}, {}]);
-                let component = createComponentMock({
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
@@ -624,9 +624,9 @@
                 engine.behaviours[0].hasComponent.and.returnValue(true);
                 engine.behaviours[1].hasComponent.and.returnValue(true);
                 engine.behaviours[2].hasComponent.and.returnValue(false);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
-                var alert_handler;
+                let alert_handler;
                 spyOn(Wirecloud.ui, "AlertWindowMenu").and.callFake(function () {
                     this.setHandler = jasmine.createSpy("setHandler").and.callFake((listener) => {
                         alert_handler = listener;
@@ -655,18 +655,18 @@
             });
 
             it("should completely remove components if only in one behaviour (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component = createComponentMock({
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
                 engine.updateComponent(component);
                 // Simulate the component is only on one behaviour
                 engine.behaviour.hasComponent.and.returnValues(true, false);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
-                var alert_handler;
+                let alert_handler;
                 spyOn(Wirecloud.ui, "AlertWindowMenu").and.callFake(function () {
                     this.setHandler = jasmine.createSpy("setHandler").and.callFake((listener) => {
                         alert_handler = listener;
@@ -694,13 +694,13 @@
         describe("removeComponentList(components)", () => {
 
             it("should remove components (engine disabled)", () => {
-                let engine = new ns.BehaviourEngine();
-                let component = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
                 engine.updateComponent(component);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeComponentList([component]));
@@ -711,9 +711,9 @@
             });
 
             it("should remove components from the active behaviour (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component = createComponentMock({
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
@@ -721,7 +721,7 @@
                 // Simulate the component is on both behaviours
                 engine.behaviours[0].hasComponent.and.returnValue(true);
                 engine.behaviours[1].hasComponent.and.returnValue(true);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeComponentList([component]));
@@ -734,18 +734,18 @@
             });
 
             it("should completely remove components if only in one behaviour (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component = createComponentMock({
+                const component = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
                 engine.updateComponent(component);
                 // Simulate the component is only on one behaviour
                 engine.behaviour.hasComponent.and.returnValues(true, false);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
-                var alert_handler;
+                let alert_handler;
                 spyOn(Wirecloud.ui, "AlertWindowMenu").and.callFake(function () {
                     this.setHandler = jasmine.createSpy("setHandler").and.callFake((listener) => {
                         alert_handler = listener;
@@ -773,13 +773,13 @@
         describe("removeConnection(connection)", () => {
 
             it("should remove connections (engine disabled)", () => {
-                let engine = new ns.BehaviourEngine();
-                let connection = createConnectionMock({
+                const engine = new ns.BehaviourEngine();
+                const connection = createConnectionMock({
                     sourceId: "sourcename",
                     targetId: "targetname"
                 });
                 engine.updateConnection(connection);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeConnection(connection)).toBe(engine);
@@ -790,19 +790,19 @@
             });
 
             it("should remove connections (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component1 = createComponentMock({
+                const component1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
-                let component2 = createComponentMock({
+                const component2 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
                 engine.updateComponent(component1);
                 engine.updateComponent(component2);
-                let connection = createConnectionMock({
+                const connection = createConnectionMock({
                     sourceComponent: component1,
                     sourceId: "sourcename",
                     targetComponent: component2,
@@ -811,7 +811,7 @@
                 engine.updateConnection(connection);
                 // Simulate the connection is also on the second behaviour
                 engine.behaviours[1].hasConnection.and.returnValue(true);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeConnection(connection)).toBe(engine);
@@ -823,26 +823,26 @@
             });
 
             it("should completely remove connections if they are not in any other behaviour (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component1 = createComponentMock({
+                const component1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
-                let component2 = createComponentMock({
+                const component2 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
                 engine.updateComponent(component1);
                 engine.updateComponent(component2);
-                let connection = createConnectionMock({
+                const connection = createConnectionMock({
                     sourceComponent: component1,
                     sourceId: "sourcename",
                     targetComponent: component2,
                     targetId: "targetname"
                 });
                 engine.updateConnection(connection);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeConnection(connection)).toBe(engine);
@@ -853,26 +853,26 @@
             });
 
             it("should remove connections from all the behaviours when using the cascade option (engine enabled)", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let component1 = createComponentMock({
+                const component1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
-                let component2 = createComponentMock({
+                const component2 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
                 engine.updateComponent(component1);
                 engine.updateComponent(component2);
-                let connection = createConnectionMock({
+                const connection = createConnectionMock({
                     sourceComponent: component1,
                     sourceId: "sourcename",
                     targetComponent: component2,
                     targetId: "targetname"
                 });
                 engine.updateConnection(connection);
-                let listener = jasmine.createSpy("listener");
+                const listener = jasmine.createSpy("listener");
                 engine.addEventListener("change", listener);
 
                 expect(engine.removeConnection(connection, true)).toBe(engine);
@@ -888,10 +888,10 @@
         describe("stopOrdering()", () => {
 
             it("should allow to stop ordering", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
                 engine.loadBehaviours([{}, {}]);
-                let behaviour1 = engine.behaviours[0];
-                let behaviour2 = engine.behaviours[1];
+                const behaviour1 = engine.behaviours[0];
+                const behaviour2 = engine.behaviours[1];
 
                 // Start ordering
                 engine.btnOrder.enable().click()
@@ -911,7 +911,7 @@
         describe("toJSON()", () => {
 
             it("should work for empty configurations", () => {
-                let engine = new ns.BehaviourEngine();
+                const engine = new ns.BehaviourEngine();
 
                 expect(engine.toJSON()).toEqual({
                     behaviours: [],
@@ -927,12 +927,12 @@
         describe("updateComponent(component)", () => {
 
             it("should allow to add components", () => {
-                let engine = new ns.BehaviourEngine();
-                let component1 = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const component1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
-                let component2 = createComponentMock({
+                const component2 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
@@ -942,20 +942,20 @@
             });
 
             it("should allow to update components", () => {
-                let engine = new ns.BehaviourEngine();
-                let component1_1 = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const component1_1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
-                let component1_2 = createComponentMock({
+                const component1_2 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
-                let component2_1 = createComponentMock({
+                const component2_1 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
-                let component2_2 = createComponentMock({
+                const component2_2 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
@@ -967,15 +967,15 @@
             });
 
             it("should allow to add components to the current behaviour", () => {
-                let engine = new ns.BehaviourEngine();
-                let component = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const component = createComponentMock({
                     id: "1",
                     type: "widget",
                     background: true
                 });
                 engine.loadBehaviours([{}, {}]);
-                let behaviour1 = engine.behaviours[0];
-                let behaviour2 = engine.behaviours[0];
+                const behaviour1 = engine.behaviours[0];
+                const behaviour2 = engine.behaviours[0];
                 behaviour1.hasComponent.and.returnValue(true);
                 behaviour2.hasComponent.and.returnValue(true);
 
@@ -990,8 +990,8 @@
         describe("updateConnection(connection)", () => {
 
             it("should allow to add connections", () => {
-                let engine = new ns.BehaviourEngine();
-                let connection = createConnectionMock({
+                const engine = new ns.BehaviourEngine();
+                const connection = createConnectionMock({
                     sourceId: "sourcename",
                     targetId: "targetname"
                 });
@@ -1000,12 +1000,12 @@
             });
 
             it("should allow to update connections", () => {
-                let engine = new ns.BehaviourEngine();
-                let connection1 = createConnectionMock({
+                const engine = new ns.BehaviourEngine();
+                const connection1 = createConnectionMock({
                     sourceId: "sourcename",
                     targetId: "targetname"
                 });
-                let connection2 = createConnectionMock({
+                const connection2 = createConnectionMock({
                     sourceId: "sourcename",
                     targetId: "targetname"
                 });
@@ -1015,8 +1015,8 @@
             });
 
             it("should ignore background connections", () => {
-                let engine = new ns.BehaviourEngine();
-                let connection = createConnectionMock({
+                const engine = new ns.BehaviourEngine();
+                const connection = createConnectionMock({
                     sourceId: "sourcename",
                     targetId: "targetname"
                 });
@@ -1025,16 +1025,16 @@
             });
 
             it("should allow to add components to the current behaviour", () => {
-                let engine = new ns.BehaviourEngine();
-                let component1 = createComponentMock({
+                const engine = new ns.BehaviourEngine();
+                const component1 = createComponentMock({
                     id: "1",
                     type: "widget"
                 });
-                let component2 = createComponentMock({
+                const component2 = createComponentMock({
                     id: "1",
                     type: "operator"
                 });
-                let connection = createConnectionMock({
+                const connection = createConnectionMock({
                     sourceComponent: component1,
                     sourceId: "sourcename",
                     targetComponent: component2,
@@ -1042,8 +1042,8 @@
                     background: true
                 });
                 engine.loadBehaviours([{}, {}]);
-                let behaviour1 = engine.behaviours[0];
-                let behaviour2 = engine.behaviours[0];
+                const behaviour1 = engine.behaviours[0];
+                const behaviour2 = engine.behaviours[0];
                 behaviour1.hasConnection.and.returnValue(true);
                 behaviour2.hasConnection.and.returnValue(true);
                 spyOn(engine, "updateComponent");
@@ -1082,7 +1082,7 @@
         };
 
         const callEventListener = function callEventListener(instance, event) {
-            var largs = Array.prototype.slice.call(arguments, 2);
+            const largs = Array.prototype.slice.call(arguments, 2);
             largs.unshift(instance);
             instance.addEventListener.calls.allArgs().some(function (args) {
                 if (args[0] === event) {
