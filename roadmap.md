@@ -21,20 +21,19 @@ any time.
 
 The following list of features are planned to be addressed in the short term,
 and incorporated in the next release of the product planned for
-**March 2020**:
+**September 2021**:
 
-* Initial support for NGSI-LD (targeting orion-ld and Scorpio)
-  * Next version of WireCloud will incorporate a version of the NGSIJS with
-    support for NGSI-LD
-  * In a first step, NGSI-Source and NGSI-datamodel2poi operators will be
-    updated to cope with NGSI-LD.
+* Improved NGSI-LD support. WireCloud 1.4 already incorporate NGSI-LD support
+  but it was just an initial version so it is going to be actively worked for
+  next versions of WireCloud. Some of the tasks that will be done are:
+  * Update NGSIJS library with better NGSI-LD support
+  * Release of a set of basic widgets and operators supporting NGSI-LD (e.g.
+    NGSILD-source, NGSILD-temporal-source, ... )
   * After this, the rest of widgets and operatos will be updated to support
     NGSI-LD
-
-Already in-place features to be released on next version:
-* Support for Django 1.9 and 1.10 has been dropped and support for Django 2.0,
-  2.1 and 2.2 added.
-* WireCloud 1.4 has been move to use django-channels 2.x
+* Support elastic search 7
+* Creation of the documentation and templates required for deploying WireCloud
+  using kubernetes
 
 
 ## Medium term
@@ -43,11 +42,11 @@ The following list of features are planned to be addressed in the medium term,
 typically within the subsequent release(s) generated in the next **9 months**
 after next planned release:
 
-* Support elastic search 6-7
 * Improved free layout with support for new relative placements (instead of
-  always using top-left square as origin) and better z-index management.
-* New layout modes.
-* User interface rework.
+  always using top-left square as origin) and better z-index management
+* New layout modes
+* User interface rework
+* Use web components for widgets
 
 
 ## Long term
