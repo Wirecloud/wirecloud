@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -27,24 +27,6 @@
 
     "use strict";
 
-    // Notify preference changes to widget
-    const widgetCallback = function widgetCallback(new_values) {
-        if (typeof this.widgetModel.prefCallback === 'function') {
-            try {
-                // Censor secure preferences
-                for (var varName in new_values) {
-                    if (this.widgetModel.preferences[varName].meta.secure && this.widgetModel.preferences[varName].value !== "") {
-                        new_values[varName] = "********";
-                    }
-                }
-                this.widgetModel.prefCallback(new_values);
-            } catch (error) {
-                var details = this.widgetModel.logManager.formatException(error);
-                this.widgetModel.logManager.log(utils.gettext('Exception catched while processing preference changes'), {details: details});
-            }
-        }
-    };
-
     ns.PreferencesWindowMenu = class PreferencesWindowMenu extends Wirecloud.ui.WindowMenu {
 
         constructor() {
@@ -52,47 +34,20 @@
         }
 
         _savePrefs(form, new_values) {
-            var oldValue, newValue, varName;
-
-            for (varName in new_values) {
-                oldValue = this.widgetModel.preferences[varName].value;
-                newValue = new_values[varName];
-
-                if (newValue !== oldValue) {
-                    if (this.widgetModel.preferences[varName].meta.secure && newValue !== "") {
-                        this.widgetModel.preferences[varName].value = "********";
-                    } else {
-                        this.widgetModel.preferences[varName].value = newValue;
-                    }
-                } else {
-                    delete new_values[varName];
-                }
-            }
-
-            this.hide();
-            if (!this.widgetModel.volatile) {
-                Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
-                    workspace_id: this.widgetModel.tab.workspace.id,
-                    tab_id: this.widgetModel.tab.id,
-                    iwidget_id: this.widgetModel.id
-                }), {
-                    method: 'POST',
-                    contentType: 'application/json',
-                    requestHeaders: {'Accept': 'application/json'},
-                    postBody: JSON.stringify(new_values),
-                    onSuccess: widgetCallback.call(this, new_values)
-                });
-            }
+            this.form.acceptButton.disable().addClassName('busy');
+            this.widgetModel.setPreferences(new_values).then(() => {
+                this.hide();
+            }).finally(() => {
+                this.form.acceptButton.removeClassName('busy').enable();
+            });
         }
 
         show(widgetModel, parentWindow) {
-            var i, prefs, pref, fields;
+            const fields = {};
+            const prefs = widgetModel.preferenceList;
 
-            fields = {};
-            prefs = widgetModel.preferenceList;
-
-            for (i = 0; i < prefs.length; i++) {
-                pref = prefs[i];
+            for (let i = 0; i < prefs.length; i++) {
+                const pref = prefs[i];
 
                 if (!pref.hidden) {
                     fields[pref.meta.name] = pref.getInterfaceDescription();
