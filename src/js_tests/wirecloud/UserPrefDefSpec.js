@@ -61,7 +61,8 @@
                     type: "text",
                     label: "label content",
                     description: "pref description",
-                    required: true
+                    required: true,
+                    secure: false
                 });
 
                 expect(meta.name).toBe("pref");
@@ -69,7 +70,7 @@
                 expect(meta.label).toBe("label content");
                 expect(meta.description).toBe("pref description");
                 expect(meta.required).toBe(true);
-
+                expect(meta.secure).toBe(false);
             });
 
             describe("boolean", () => {

@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2018-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2018-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -142,6 +142,38 @@
     };
     Object.freeze(WIDGET_META);
 
+    const PREF2 = new Wirecloud.UserPrefDef({name: "pref2", type: "text", default: "5"});
+    const SPREF = new Wirecloud.UserPrefDef({name: "spref", type: "text", secure: true});
+    const WIDGET_META_PREFS = {
+        uri: "Vendor/Widget/1.0",
+        title: "My Widget",
+        inputList: [
+            {name: "input", label: "input", friendcode: ""}
+        ],
+        missing: false,
+        requirements: [],
+        outputList: [
+            {name: "output", label: "output", friendcode: ""}
+        ],
+        preferences: {
+            "pref": PREF,
+            "pref2": PREF2,
+            "spref": SPREF
+        },
+        preferenceList: [
+            PREF,
+            PREF2,
+            SPREF
+        ],
+        properties: {
+            "prop": PROP
+        },
+        propertyList: [
+            PROP
+        ],
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+    };
+    Object.freeze(WIDGET_META_PREFS);
 
     describe("Wirecloud.Widget", function () {
 
@@ -1356,6 +1388,195 @@
                         done();
                     }
                 );
+            });
+
+        });
+
+        describe("setPreferences(newValues)", () => {
+
+            it("applies changes immediatelly for volatile widgets", (done) => {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, WIDGET_META, {
+                    id: "1/1",
+                    title: "old title",
+                    volatile: true
+                });
+
+                const p = widget.setPreferences({pref: "a value"});
+                expect(widget.preferences.pref.value).toBe("a value");
+                expect(p).toEqual(jasmine.any(Promise));
+                p.then(
+                    (value) => {
+                        expect(value).toEqual({pref: "a value"});
+                        expect(widget.preferences.pref.value).toBe("a value");
+                        expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                ).finally(() => done());
+            });
+
+            it("updates preferences on the server", (done) => {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, WIDGET_META, {
+                    id: "1",
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                    expect(options.method).toEqual("POST");
+                    return new Wirecloud.Task("Sending request", (resolve) => {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                const p = widget.setPreferences({pref: "a value"});
+                p.then(
+                    (value) => {
+                        expect(value).toEqual({pref: "a value"});
+                        expect(widget.preferences.pref.value).toBe("a value");
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                ).finally(() => done());
+            });
+
+            it("updates preferences on the server (multiple)", (done) => {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, WIDGET_META_PREFS, {
+                    id: "1",
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                    expect(options.method).toEqual("POST");
+                    return new Wirecloud.Task("Sending request", (resolve) => {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                const p = widget.setPreferences({pref: "a value", pref2: "another value"});
+                p.then(
+                    (value) => {
+                        expect(value).toEqual({pref: "a value", pref2: "another value"});
+                        expect(widget.preferences.pref.value).toBe("a value");
+                        expect(widget.preferences.pref2.value).toBe("another value");
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                ).finally(() => done());
+            });
+
+            it("censor secure preferences", (done) => {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, WIDGET_META_PREFS, {
+                    id: "1",
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                    expect(options.method).toEqual("POST");
+                    const body = JSON.parse(options.postBody);
+                    expect(body).toEqual({
+                        pref: "a value",
+                        spref: "another value"
+                    });
+                    return new Wirecloud.Task("Sending request", (resolve) => {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                const p = widget.setPreferences({pref: "a value", spref: "another value"});
+                p.then(
+                    (value) => {
+                        expect(value).toEqual({pref: "a value", spref: "********"});
+                        expect(widget.preferences.pref.value).toBe("a value");
+                        expect(widget.preferences.spref.value).toBe("********");
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                ).finally(() => done());
+            });
+
+            it("ignores non-changed preferences", (done) => {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, WIDGET_META_PREFS, {
+                    id: "1",
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("POST");
+                    expect(Object.keys(JSON.parse(options.postBody))).toEqual(["pref"]);
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                const p = widget.setPreferences({pref: PREF.default, nonexistent: "other"});
+                p.then(
+                    (value) => {
+                        expect(value).toEqual({});
+                        expect(widget.preferences.pref.value).toBe(PREF.default);
+                        expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                ).finally(() => done());
+            });
+
+            it("ignores non-existent preferences", (done) => {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, WIDGET_META, {
+                    id: "1",
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
+                    expect(options.method).toEqual("POST");
+                    expect(Object.keys(JSON.parse(options.postBody))).toEqual(["pref"]);
+                    return new Wirecloud.Task("Sending request", function (resolve) {
+                        resolve({
+                            status: 204
+                        });
+                    });
+                });
+
+                const p = widget.setPreferences({pref: "a value", nonexistent: "other"});
+                p.then(
+                    (value) => {
+                        expect(value).toEqual({pref: "a value"});
+                        expect(widget.preferences.pref.value).toBe("a value");
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                    },
+                    (error) => {
+                        fail("error callback called");
+                    }
+                ).finally(() => done());
+            });
+
+            it("handles unexpected responses", (done) => {
+                const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, WIDGET_META, {
+                    id: "1"
+                });
+                spyOn(Wirecloud.io, "makeRequest").and.callFake((url, options) => {
+                    expect(options.method).toEqual("POST");
+                    return new Wirecloud.Task("Sending request", (resolve) => {
+                        resolve({
+                            status: 200
+                        });
+                    });
+                });
+
+                const p = widget.setPreferences({pref: "a value"});
+                p.then(
+                    (value) => {
+                        fail("success callback called");
+                    },
+                    (error) => {
+                        expect(Wirecloud.io.makeRequest).toHaveBeenCalled();
+                    }
+                ).finally(() => done());
             });
 
         });

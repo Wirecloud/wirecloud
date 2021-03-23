@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -49,6 +50,7 @@
             label: {value: options.label},
             description: {value: options.description},
             required: {value: options.required},
+            secure: {value: options.secure},
             options: {value: options.options}
         });
 

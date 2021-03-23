@@ -864,7 +864,7 @@
                 }
             }
 
-            if (!this.volatile) {
+            if (!this.volatile && Object.keys(newValues).length > 0) {
                 return Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
                     workspace_id: this.tab.workspace.id,
                     tab_id: this.tab.id,
