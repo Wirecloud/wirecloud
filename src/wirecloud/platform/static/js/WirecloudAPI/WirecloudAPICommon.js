@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -26,12 +27,12 @@
 
     "use strict";
 
-    var platform = window.parent;
-    var Wirecloud = platform.Wirecloud;
-    var workspaceview = MashupPlatform.priv.workspaceview;
-    var resource = MashupPlatform.priv.resource;
-    var componentType = resource instanceof Wirecloud.Widget ? "widget" : "operator";
-    var guibuilder = new platform.StyledElements.GUIBuilder();
+    const platform = window.parent;
+    const Wirecloud = platform.Wirecloud;
+    const workspaceview = MashupPlatform.priv.workspaceview;
+    const component = MashupPlatform.priv.resource;
+    const componentType = component instanceof Wirecloud.Widget ? "widget" : "operator";
+    const guibuilder = new platform.StyledElements.GUIBuilder();
 
     // HTTP module
     Object.defineProperty(window.MashupPlatform, 'http', {value: {}});
@@ -43,7 +44,7 @@
                 options.requestHeaders = {};
             }
             options.requestHeaders["wirecloud-component-type"] = componentType;
-            options.requestHeaders["wirecloud-component-id"] = resource.id;
+            options.requestHeaders["wirecloud-component-id"] = component.id;
             return Wirecloud.io.makeRequest(url, options);
         }
     });
@@ -67,7 +68,7 @@
                 throw new TypeError('callback must be a function');
             }
 
-            resource.registerContextAPICallback('platform', callback);
+            component.registerContextAPICallback('platform', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.context);
@@ -99,7 +100,7 @@
                 throw new TypeError('callback must be a function');
             }
 
-            resource.registerContextAPICallback('mashup', callback);
+            component.registerContextAPICallback('mashup', callback);
         }
     });
     Object.preventExtensions(window.MashupPlatform.mashup.context);
@@ -109,10 +110,10 @@
     Object.defineProperty(window.MashupPlatform, 'prefs', {value: {}});
     Object.defineProperty(window.MashupPlatform.prefs, 'get', {
         value: function get(key) {
-            if (key in resource.meta.preferences) {
-                return resource.preferences[key].value;
+            if (key in component.meta.preferences) {
+                return component.preferences[key].value;
             } else {
-                var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
+                const exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
                 throw new MashupPlatform.prefs.PreferenceDoesNotExistError(exception_msg);
             }
         }
@@ -123,17 +124,24 @@
                 throw new TypeError('callback must be a function');
             }
 
-            resource.registerPrefCallback(callback);
+            component.registerPrefCallback(callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'set', {
         value: function set(key, value) {
-            if (key in resource.meta.preferences) {
-                resource.preferences[key].value = value;
-            } else {
-                var exception_msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
-                throw new MashupPlatform.prefs.PreferenceDoesNotExistError(exception_msg);
+            const newValues = typeof key === "string" ? {[key]: value} : arguments[0];
+            if (newValues == null || typeof newValues !== "object") {
+                throw new TypeError();
             }
+
+            Object.keys(newValues).forEach((key) => {
+                if (!(key in component.meta.preferences)) {
+                    const msg = platform.interpolate('"%(pref)s" is not a valid preference name', {pref: key}, true);
+                    throw new MashupPlatform.prefs.PreferenceDoesNotExistError(msg);
+                }
+            });
+
+            component.setPreferences(newValues);
         }
     });
     Object.defineProperty(window.MashupPlatform.prefs, 'PreferenceDoesNotExistError', {value: Wirecloud.PreferenceDoesNotExistError});
@@ -148,66 +156,66 @@
                 throw new TypeError('callback must be a function');
             }
 
-            if (inputName in resource.inputs) {
-                resource.inputs[inputName].callback = callback;
+            if (inputName in component.inputs) {
+                component.inputs[inputName].callback = callback;
             } else {
-                var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
+                const exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
                 throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'registerStatusCallback', {
         value: function registerCallback(callback) {
-            var wiring;
+            let wiring;
 
             if (typeof callback !== "function") {
                 throw new TypeError('callback must be a function');
             }
 
-            if ('wiring' in resource) {
-                wiring = resource.wiring;
+            if ('wiring' in component) {
+                wiring = component.wiring;
             } else {
-                wiring = resource.tab.workspace.wiring;
+                wiring = component.tab.workspace.wiring;
             }
             wiring.addEventListener('load', callback);
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'pushEvent', {
         value: function pushEvent(outputName, data, options) {
-            if (outputName in resource.outputs) {
-                resource.outputs[outputName].propagate(data, options);
+            if (outputName in component.outputs) {
+                component.outputs[outputName].propagate(data, options);
             } else {
-                var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
+                const exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
                 throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'hasInputConnections', {
         value: function hasInputConnections(inputName) {
-            if (inputName in resource.inputs) {
-                return resource.inputs[inputName].inputs.length > 0;
+            if (inputName in component.inputs) {
+                return component.inputs[inputName].inputs.length > 0;
             } else {
-                var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
+                const exception_msg = platform.interpolate('"%(endpoint)s" is not a valid input endpoint', {endpoint: inputName}, true);
                 throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'hasOutputConnections', {
         value: function hasOutputConnections(outputName) {
-            if (outputName in resource.outputs) {
-                return resource.outputs[outputName].outputList.length > 0;
+            if (outputName in component.outputs) {
+                return component.outputs[outputName].outputList.length > 0;
             } else {
-                var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
+                const exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
                 throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
     });
     Object.defineProperty(window.MashupPlatform.wiring, 'getReachableEndpoints', {
         value: function getReachableEndpoints(outputName) {
-            if (outputName in resource.outputs) {
-                return resource.outputs[outputName].getReachableEndpoints();
+            if (outputName in component.outputs) {
+                return component.outputs[outputName].getReachableEndpoints();
             } else {
-                var exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
+                const exception_msg = platform.interpolate('"%(endpoint)s" is not a valid output endpoint', {endpoint: outputName}, true);
                 throw new MashupPlatform.wiring.EndpointDoesNotExistError(exception_msg);
             }
         }
@@ -220,12 +228,12 @@
 
     // General error handler
     window.onerror = function (message, url, line, column, error) {
-        var details;
+        let details;
 
         if (error) {
             details = platform.gettext("<ul><li><b>File:</b> <t:file/></li><li><b>Line: </b><t:line/></li></ul><p>See the <a href=\"http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers\" target=\"_blank\">browser console</a> for more details</p>");
-            details = guibuilder.parse(guibuilder.DEFAULT_OPENING + details + guibuilder.DEFAULT_CLOSING, {file: url.replace(resource.meta.base_url, ''), line: line});
-            resource.logManager.log(message, {details: details, console: false});
+            details = guibuilder.parse(guibuilder.DEFAULT_OPENING + details + guibuilder.DEFAULT_CLOSING, {file: url.replace(component.meta.base_url, ''), line: line});
+            component.logManager.log(message, {details: details, console: false});
         }
     };
 })();

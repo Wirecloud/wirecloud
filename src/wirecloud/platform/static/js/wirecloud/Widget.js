@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -205,6 +205,15 @@
     const send_pending_event = function send_pending_event(pendingEvent) {
         this.inputs[pendingEvent.endpoint].propagate(pendingEvent.value);
     };
+
+    const censor_secure_preferences = function censor_secure_preferences(newValues) {
+        // Censor secure preferences
+        for (const varName in newValues) {
+            if (this.preferences[varName].meta.secure) {
+                newValues[varName] = "********";
+            }
+        }
+    }
 
     // =========================================================================
     // EVENT HANDLERS
@@ -829,6 +838,62 @@
         setPosition(position) {
             utils.update(privates.get(this).position, position);
             return this;
+        }
+
+        setPreferences(newValues) {
+            // We are going to modify the object, let's create a copy
+            newValues = Object.assign({}, newValues);
+
+            for (const prefName in newValues) {
+                if (!(prefName in this.preferences)) {
+                    delete newValues[prefName];
+                    continue;
+                }
+
+                const oldValue = this.preferences[prefName].value;
+                const newValue = newValues[prefName];
+
+                if (newValue !== oldValue) {
+                    if (this.preferences[prefName].meta.secure && newValue !== "") {
+                        this.preferences[prefName].value = "********";
+                    } else {
+                        this.preferences[prefName].value = newValue;
+                    }
+                } else {
+                    delete newValues[prefName];
+                }
+            }
+
+            if (!this.volatile && Object.keys(newValues).length > 0) {
+                return Wirecloud.io.makeRequest(Wirecloud.URLs.IWIDGET_PREFERENCES.evaluate({
+                    workspace_id: this.tab.workspace.id,
+                    tab_id: this.tab.id,
+                    iwidget_id: this.id
+                }), {
+                    method: 'POST',
+                    contentType: 'application/json',
+                    requestHeaders: {'Accept': 'application/json'},
+                    postBody: JSON.stringify(newValues)
+                }).then((response) => {
+                    if (response.status !== 204) {
+                        return Promise.reject(new Error("Unexpected response from server"));
+                    }
+
+                    censor_secure_preferences.call(this, newValues);
+
+                    try {
+                        this.prefCallback(newValues);
+                    } catch (error) {
+                        const details = this.logManager.formatException(error);
+                        this.logManager.log(utils.gettext('Exception catched while processing preference changes'), {details: details});
+                    }
+
+                    return newValues;
+                });
+            } else {
+                censor_secure_preferences.call(this, newValues);
+                return Promise.resolve(newValues);
+            }
         }
 
         setShape(shape) {
