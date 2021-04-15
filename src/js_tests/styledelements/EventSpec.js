@@ -66,7 +66,8 @@
             });
 
             it("should work on events with listeners (dispatching)", () => {
-                const event = new se.Event({});
+                const context = {};
+                const event = new se.Event(context);
                 const listener1 = jasmine.createSpy("listener1").and.callFake(() => {
                     event.clearEventListeners();
                 });
@@ -76,7 +77,7 @@
 
                 event.dispatch();
 
-                expect(listener1).toHaveBeenCalledWith();
+                expect(listener1).toHaveBeenCalledWith(context);
                 expect(listener2).not.toHaveBeenCalled();
                 expect(event.handlers).toEqual([]);
             });
