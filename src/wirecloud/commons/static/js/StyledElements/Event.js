@@ -80,6 +80,7 @@
 
         dispatch() {
             const priv = privates.get(this);
+            const args = [this.context, ...arguments];
             priv.dispatching = true;
 
             for (let i = 0; i < this.handlers.length; i++) {
@@ -87,7 +88,7 @@
                     continue;
                 }
                 try {
-                    this.handlers[i].apply(this.context, arguments);
+                    this.handlers[i].apply(this.context, args);
                 } catch (e) {
                     if (window.console != null && typeof window.console.error === 'function') {
                         window.console.error(e);

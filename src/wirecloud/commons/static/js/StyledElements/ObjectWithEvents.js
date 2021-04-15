@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2008-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -58,15 +58,14 @@
          * @returns {StyledElements.ObjectWithEvents}
          *      The instance on which the member is called.
          */
-        dispatchEvent(name) {
+        dispatchEvent(name, ...args) {
             if (!(name in this.events)) {
                 throw new Error(utils.interpolate("Unhandled event '%(name)s'", {
                     name: name
                 }));
             }
 
-            const handlerArgs = [this].concat(Array.prototype.slice.call(arguments, 1));
-            this.events[name].dispatch.apply(this.events[name], handlerArgs);
+            this.events[name].dispatch(...args);
 
             return this;
         }
@@ -98,11 +97,12 @@
         }
 
         /**
-         * Removes all event handlers for a given event.
+         * Removes all event handlers for a given event. If no event name is
+         * provided, all events will be cleared.
          *
          * @since 0.5
          *
-         * @param {String} name
+         * @param {String} [name]
          *      event name
          *
          * @returns {StyledElements.ObjectWithEvents}
@@ -164,46 +164,50 @@
             return this;
         }
 
+        /**
+         * Attaches an event handler for a given event. This method is an alias of
+         * {@link StyledElements.ObjectWithEvents#addEventListener}.
+         *
+         * @since 0.7
+         *
+         * @memberof StyledElements.ObjectWithEvents
+         * @name StyledElements.ObjectWithEvents#on
+         * @method
+         *
+         * @param {String} name
+         *      Event name
+         * @param {Function} handler
+         *      An event handler to execute when the event is triggered
+         *
+         * @returns {StyledElements.ObjectWithEvents}
+         *      The instance on which the member is called
+         */
+        on() {
+            return this.addEventListener(...arguments);
+        }
+
+        /**
+         * Removes an event handler from a given event. This method is an alias of
+         * {@link StyledElements.ObjectWithEvents#removeEventListener}.
+         *
+         * @since 0.7
+         *
+         * @memberof StyledElements.ObjectWithEvents
+         * @name StyledElements.ObjectWithEvents#off
+         * @method
+         *
+         * @param {String} name
+         *      Event name
+         * @param {Function} handler
+         *      A previously attached event
+         *
+         * @returns {StyledElements.ObjectWithEvents}
+         *      The instance on which the member is called
+         */
+        off() {
+            return this.removeEventListener(...arguments);
+        }
+
     }
-
-    /**
-     * Attaches an event handler for a given event. This method is an alias of
-     * {@link StyledElements.ObjectWithEvents#addEventListener}.
-     *
-     * @since 0.7
-     *
-     * @memberof StyledElements.ObjectWithEvents
-     * @name StyledElements.ObjectWithEvents#on
-     * @method
-     *
-     * @param {String} name
-     *      Event name
-     * @param {Function} handler
-     *      An event handler to execute when the event is triggered
-     *
-     * @returns {StyledElements.ObjectWithEvents}
-     *      The instance on which the member is called
-     */
-    se.ObjectWithEvents.prototype.on = se.ObjectWithEvents.prototype.addEventListener;
-
-    /**
-     * Removes an event handler from a given event. This method is an alias of
-     * {@link StyledElements.ObjectWithEvents#removeEventListener}.
-     *
-     * @since 0.7
-     *
-     * @memberof StyledElements.ObjectWithEvents
-     * @name StyledElements.ObjectWithEvents#off
-     * @method
-     *
-     * @param {String} name
-     *      Event name
-     * @param {Function} handler
-     *      A previously attached event
-     *
-     * @returns {StyledElements.ObjectWithEvents}
-     *      The instance on which the member is called
-     */
-    se.ObjectWithEvents.prototype.off = se.ObjectWithEvents.prototype.removeEventListener;
 
 })(StyledElements, StyledElements.Utils);
