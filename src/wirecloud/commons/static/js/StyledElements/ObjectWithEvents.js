@@ -97,11 +97,12 @@
         }
 
         /**
-         * Removes all event handlers for a given event.
+         * Removes all event handlers for a given event. If no event name is
+         * provided, all events will be cleared.
          *
          * @since 0.5
          *
-         * @param {String} name
+         * @param {String} [name]
          *      event name
          *
          * @returns {StyledElements.ObjectWithEvents}
