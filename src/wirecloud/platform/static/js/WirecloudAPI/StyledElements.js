@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2020-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -28,9 +28,9 @@
     "use strict";
 
     // StyledElements
-    var RealStyledElements = window.parent.StyledElements;
-    var platform = window.parent;
-    var iwidget = MashupPlatform.priv.resource;
+    const RealStyledElements = window.parent.StyledElements;
+    const platform = window.parent;
+    const iwidget = MashupPlatform.priv.resource;
 
     window.StyledElements = {
         'Accordion': window.parent.StyledElements.Accordion,
@@ -80,142 +80,146 @@
         return new_class;
     };
 
-    var proxy_method = function (wrapper, instance, method) {
-        wrapper[method] = function () {
-            instance[method].apply(instance, arguments);
+    const wrap_ref_position = function wrap_ref_position(refPosition) {
+        const _refPosition = {
+            getBoundingClientRect: () => {
+                const position = iwidget.wrapperElement.getBoundingClientRect();
+                const refBox = 'getBoundingClientRect' in refPosition ? refPosition.getBoundingClientRect() : refPosition;
 
-            return wrapper;
+                const box = {
+                    height: Number.isFinite(refBox.height) ? refBox.height : 0,
+                    left: refBox.left + position.left + platform.document.body.scrollLeft,
+                    top: refBox.top + position.top + platform.document.body.scrollTop,
+                    width: Number.isFinite(refBox.width) ? refBox.width : 0
+                };
+                box.right = position.left + refBox.left + box.width;
+                box.bottom = position.top + refBox.top + box.height;
+                Object.freeze(box);
+                return box;
+            }
         };
+        Object.freeze(_refPosition);
+        return _refPosition;
     };
 
-    var proxy_getter = function (wrapper, instance, method) {
-        wrapper[method] = function () {
-            return instance[method].apply(instance, arguments);
-        };
+    const redirect_events = function redirect_events(source, target) {
+        Object.keys(source.events).forEach((name) => {
+            const newEvent = new StyledElements.Event(target);
+            target.events[name] = newEvent;
+            source.events[name] = newEvent;
+        });
     };
 
     /* PopupMenu */
-    var PopupMenu = function PopupMenu(options) {
-        var menu = new RealStyledElements.PopupMenu(options);
+    const privates = new WeakMap();
 
-        proxy_method(this, menu, 'append');
+    window.StyledElements.PopupMenu = class PopupMenu extends StyledElements.StyledElement {
 
-        this.show = function show(refPosition) {
-            var position = iwidget.wrapperElement.getBoundingClientRect();
+        constructor(options) {
+            super();
 
-            if ('getBoundingClientRect' in refPosition) {
-                refPosition = refPosition.getBoundingClientRect();
-            }
+            const priv = {
+                menu: new RealStyledElements.PopupMenu(options)
+            };
+            privates.set(this, priv);
+            redirect_events(priv.menu, this);
+        }
 
-            let _refPosition = {};
-            Object.defineProperties(_refPosition, {
-                bottom: {get: () => {return refPosition.top + _refPosition.height;}},
-                height: {value: Number.isFinite(refPosition.height) ? refPosition.height : 0},
-                left: {get: () => {return refPosition.left + position.left + platform.document.body.scrollLeft}},
-                right: {get: () => {return refPosition.left + _refPosition.width;}},
-                top: {get: () => {return refPosition.top + position.top + platform.document.body.scrollTop;}},
-                width: {value: Number.isFinite(refPosition.width) ? refPosition.width : 0}
-            });
+        append() {
+            const menu = privates.get(this).menu;
+            menu.append.call(menu, ...arguments);
+            return this;
+        }
 
-            menu.show(_refPosition);
+        show(refPosition) {
+            const menu = privates.get(this).menu;
+            menu.show(wrap_ref_position(refPosition));
 
             return this;
-        };
+        }
 
-        this.moveFocusDown = function moveFocusDown() {
-            menu.moveFocusDown();
+        hide() {
+            privates.get(this).menu.hide();
+            return this;
+        }
+
+        isVisible() {
+            return privates.get(this).menu.isVisible();
+        }
+
+        moveFocusDown() {
+            privates.get(this).menu.moveFocusDown();
 
             return this;
-        };
+        }
 
-        this.moveFocusUp = function moveFocusUp() {
-            menu.moveFocusUp();
+        moveFocusUp() {
+            privates.get(this).menu.moveFocusUp();
 
             return this;
-        };
+        }
 
-        this.hasEnabledItem = function hasEnabledItem() {
-            return menu.hasEnabledItem();
-        };
+        hasEnabledItem() {
+            return privates.get(this).menu.hasEnabledItem();
+        }
 
-        proxy_method(this, menu, 'addEventListener');
-        proxy_method(this, menu, 'hide');
-        proxy_getter(this, menu, 'isVisible');
-        proxy_method(this, menu, 'off');
-        proxy_method(this, menu, 'on');
-        proxy_method(this, menu, 'removeEventListener');
-
-        this.destroy = function destroy() {
-            menu = null;
-        };
-    };
-    PopupMenu.prototype = new window.StyledElements.StyledElement();
-    window.StyledElements.PopupMenu = PopupMenu;
+        destroy() {
+            super.destroy();
+            privates.get(this).menu.destroy();
+            return this;
+        }
+    }
 
     /* Popover */
+    window.StyledElements.Popover = class Popover extends window.StyledElements.StyledElement {
 
-    var Popover = function Popover(options) {
-        var popover = new RealStyledElements.Popover(options);
+        constructor(options) {
+            super();
 
-        Object.defineProperty(this, 'visible', {
-            get: function () {
-                return popover.visible;
-            }
-        });
-
-        this.show = function show(refPosition) {
-            let _refPosition = {
-                getBoundingClientRect: () => {
-                    let position = iwidget.wrapperElement.getBoundingClientRect();
-
-                    if ('getBoundingClientRect' in refPosition) {
-                        refPosition = refPosition.getBoundingClientRect();
-                    }
-
-                    let box = {
-                        height: Number.isFinite(refPosition.height) ? refPosition.height : 0,
-                        left: refPosition.left + position.left + platform.document.body.scrollLeft,
-                        top: refPosition.top + position.top + platform.document.body.scrollTop,
-                        width: Number.isFinite(refPosition.width) ? refPosition.width : 0
-                    };
-                    box.right = position.left + refPosition.left + box.width;
-                    box.bottom = position.top + refPosition.top + box.height;
-                    return box;
-                }
+            const priv = {
+                popover: new RealStyledElements.Popover(options)
             };
-
-            popover.show(_refPosition);
-        };
-
-        proxy_method(this, popover, 'addEventListener');
-        proxy_method(this, popover, 'off');
-        proxy_method(this, popover, 'on');
-        proxy_method(this, popover, 'removeEventListener');
-        proxy_method(this, popover, 'hide');
-
-        this.bind = function bind(element, mode) {
-            element.addEventListener('click', this.toggle.bind(this));
-        };
-    };
-    Popover.prototype = new window.StyledElements.StyledElement();
-
-    Popover.prototype.toggle = function toggle(refPosition) {
-        if (this.visible) {
-            this.hide();
-        } else {
-            this.show(refPosition);
+            privates.set(this, priv);
+            redirect_events(priv.popover, this);
         }
-    };
-    window.StyledElements.Popover = Popover;
+
+        get visible() {
+            return privates.get(this).popover.visible;
+        }
+
+        show(refPosition) {
+            const popover = privates.get(this).popover;
+            popover.show(wrap_ref_position(refPosition));
+
+            return this;
+        }
+
+        hide() {
+            privates.get(this).popover.hide();
+            return this;
+        }
+
+        bind(element, mode) {
+            element.addEventListener('click', this.toggle.bind(this));
+        }
+
+        toggle(refPosition) {
+            if (this.visible) {
+                this.hide();
+            } else {
+                this.show(refPosition);
+            }
+        }
+    }
 
     /* SendMenuItems */
 
-    var getEventActions = function getEventActions(endpoint) {
-        var i, actions, endpoints, endpointsByLabel, endpointInfo, actionLabel;
+    const getEventActions = function getEventActions(endpoint) {
+        let i, endpointInfo, actionLabel;
 
-        endpoints = endpoint.getReachableEndpoints();
-        endpointsByLabel = {};
-        actions = [];
+        const endpoints = endpoint.getReachableEndpoints();
+        const endpointsByLabel = {};
+        const actions = [];
 
         for (i = 0; i < endpoints.length; i += 1) {
             endpointInfo = endpoints[i];
@@ -240,11 +244,11 @@
         return actions;
     };
 
-    var send = function send(context) {
+    const send = function send(context) {
         MashupPlatform.wiring.pushEvent(this.control.endpoint, this.control.getData(context), {targetEndpoints: this.endpoints});
     };
 
-    var SendMenuItems = function SendMenuItems(endpoint, getData) {
+    const SendMenuItems = function SendMenuItems(endpoint, getData) {
         if (typeof getData !== 'function') {
             throw new TypeError();
         }
@@ -257,61 +261,49 @@
     SendMenuItems.prototype = new window.StyledElements.DynamicMenuItems();
 
     SendMenuItems.prototype.build = function build() {
-        var i, actions, action, items, item;
-
-        actions = getEventActions(this.endpoint);
-        items = [];
-
-        for (i = 0; i < actions.length; i += 1) {
-            action = actions[i];
-
-            item = new window.StyledElements.MenuItem(action.label, send.bind({control: this, endpoints: [action.value]}));
-
-            items.push(item);
-        }
-
-        return items;
+        const actions = getEventActions(this.endpoint);
+        return actions.forEach((action) => {
+            return new window.StyledElements.MenuItem(action.label, send.bind({control: this, endpoints: [action.value]}));
+        });
     };
     window.StyledElements.SendMenuItems = SendMenuItems;
 
 
     /* Tooltip */
-    StyledElements.Tooltip = function Tooltip(options) {
-        var tooltip = new RealStyledElements.Tooltip(options);
+    StyledElements.Tooltip = class Tooltip extends window.StyledElements.StyledElement {
 
-        this.options = tooltip.options;
+        constructor(options) {
+            super();
 
-        this.show = function show(refPosition) {
-            var position = iwidget.wrapperElement.getBoundingClientRect();
-
-            if ('getBoundingClientRect' in refPosition) {
-                refPosition = refPosition.getBoundingClientRect();
-            }
-
-            refPosition = {
-                top: refPosition.top + position.top + platform.document.body.scrollTop,
-                left: refPosition.left + position.left + platform.document.body.scrollLeft,
-                width: refPosition.width,
-                height: refPosition.height
+            const priv = {
+                tooltip: new RealStyledElements.Tooltip(options)
             };
-            refPosition.right = refPosition.left + refPosition.width;
-            refPosition.bottom = refPosition.top + refPosition.height;
-            Object.freeze(refPosition);
+            privates.set(this, priv);
+            redirect_events(priv.tooltip, this);
+        }
 
-            tooltip.show(refPosition);
-        };
+        get options() {
+            privates.get(this).tooltip.options;
+        }
 
-        proxy_method(this, tooltip, 'addEventListener');
-        proxy_method(this, tooltip, 'off');
-        proxy_method(this, tooltip, 'on');
-        proxy_method(this, tooltip, 'removeEventListener');
-        proxy_method(this, tooltip, 'hide');
+        show(refPosition) {
+            const tooltip = privates.get(this).tooltip;
+            tooltip.show(wrap_ref_position(refPosition));
 
-        this.bind = function bind(element) {
-            tooltip.bind.call(this, element);
-        };
-    };
-    StyledElements.Tooltip.prototype = new StyledElements.StyledElement();
+            return this;
+        }
+
+        hide() {
+            privates.get(this).tooltip.hide();
+            return this;
+        }
+
+        bind(element, mode) {
+            privates.get(this).tooltip.bind(element, mode);
+            return this;
+        }
+
+    }
 
     /* ModelTable */
     StyledElements.ModelTable = extend(RealStyledElements.ModelTable, {
