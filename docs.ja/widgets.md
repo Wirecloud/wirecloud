@@ -516,24 +516,24 @@ Orion Context Broker サーバの利用可能なエンティティ型をブラ�
 Orion Context Broker サーバから来た、NGSI エンティティを Point of Interests に変換します (マップ・ウィジェットで使用可能)。
 
 * ベンダー : CoNWeT
-* バージョン : 3.1.2
+* バージョン : 3.2.0
 * ライセンス : Apache License 2.0
 
 ホームページ : [https://github.com/wirecloud-fiware/ngsi-entity2poi-operator](https://github.com/wirecloud-fiware/ngsi-entity2poi-operator)
 
-**[Download CoNWeT\_ngsientity2poi\_3.1.2.wgt](https://github.com/wirecloud-fiware/ngsi-entity2poi-operator/releases/download/3.1.2/CoNWeT_ngsientity2poi_3.1.2.wgt)**
+**[Download CoNWeT\_ngsientity2poi\_3.2.0.wgt](https://github.com/wirecloud-fiware/ngsi-entity2poi-operator/releases/download/v3.2.0/CoNWeT_ngsientity2poi_3.2.0.wgt)**
 
 ### OpenLayers Map
 
 OpenLayers を使用したマップ・ビューア・ウィジェットです。
 
 * ベンダー : CoNWeT
-* バージョン : 1.2.1
+* バージョン : 1.2.3
 * ライセンス : Apache License 2.0
 
 ホームページ : [https://github.com/Wirecloud/ol3-map-widget](https://github.com/Wirecloud/ol3-map-widget)
 
-**[Download CoNWeT\_ol3-map\_1.2.1.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.2.1/CoNWeT_ol3-map_1.2.1.wgt)**
+**[Download CoNWeT\_ol3-map\_1.2.3.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.2.3/CoNWeT_ol3-map_1.2.3.wgt)**
 
 ### Open item webpage
 
