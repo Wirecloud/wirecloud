@@ -9,13 +9,33 @@ WireCloud に何か貢献したいですか？ **手助けをする方法は次�
 
 **内容**
 
+-   [基本ルールと期待](#ground-rules--expectations)
 -   [Issue トラッカーの使用](#using-the-issue-tracker)
 -   [バグ・レポート](#bug-reports)
 -   [機能リクエスト](#feature-requests)
 -   [コントリビューションするコード](#contributing-code)
     -   [コード・ガイドライン](#code-guidelines)
     -   [コード・スタイル git hooks](#code-style-git-hooks)
+-   [コミュニティ](#community)
 
+
+<a name="ground-rules--expectations"></a>
+## 基本ルールと期待
+
+始める前に、ここに私たちがあなたに期待するいくつかのことを示します (そしてあなたが他の人に期待すべきこと):
+
+-   このプロジェクトに関する会話には、親切で思慮深くしてください。私たちは皆、さまざまなバックグラウンドとプロジェクト
+    から来ています。つまり、"オープンソースがどのように行われるか"についてさまざまな見方をしている可能性があります。
+    あなたのやり方が正しいことを彼らに納得させるのではなく、他の人の話を聞くようにしてください
+-   このプロジェクトは、[Contributor Code of Conduct](./CODE_OF_CONDUCT.md)とともにリリースされます。このプロジェクトに
+    参加することにより、あなたはその条件に従うことに同意するものとします。
+-   プル・リクエストを開く場合は、_"I have read the CLA Document and I hereby sign the CLA"_ とコメントを記載して、
+    [Individual Contributor License Agreement](https://fiware.github.io/contribution-requirements/individual-cla.pdf)
+    に署名する必要があります
+-   あなたの貢献がすべてのテストに合格することを確認してください。テストが失敗した場合は、貢献をマージする前にそれらに
+    対処する必要があります。
+-   コンテンツを追加するときは、それが広く価値があるかどうかを考慮してください。 あなたやあなたの雇用主が作成したもの
+    への参照やリンクを追加しないでください。他の人がそれを高く評価した場合にそうします。
 
 <a name="using-the-issue-tracker"></a>
 ## Issue トラッカーの使用
@@ -227,3 +247,13 @@ pre-commit install
 ```
 
 これで、`git commit` で `pre-commit` が自動的に実行されます!
+
+<a name="community"></a>
+## コミュニティ
+
+オープンソース・ガイドに関する議論は、このリポジトリの
+[イシュー](https://github.com/Wirecloud/wirecloud/issues) と [プル・リクエスト](https://github.com/Wirecloud/wirecloud/pulls)
+セクションで行われます。どなたでもこれらの会話に参加できます。
+
+可能な限り、メンテナに直接連絡するなど、これらの会話をプライベート・チャネルに持ち込まないでください。コミュニケーションを
+公開し続けることは、誰もが会話から利益を得て学ぶことができることを意味します。
