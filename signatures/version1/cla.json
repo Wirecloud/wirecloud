@@ -1,3 +1,12 @@
 {
-   "signedContributors": []
+  "signedContributors": [
+    {
+      "name": "fisuda",
+      "id": 31051904,
+      "comment_id": 821899825,
+      "created_at": "2021-04-17T23:06:44Z",
+      "repoId": 2087417,
+      "pullRequestNo": 505
+    }
+  ]
 }
