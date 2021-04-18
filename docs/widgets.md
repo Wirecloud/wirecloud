@@ -517,24 +517,24 @@ Homepage: [https://github.com/wirecloud-fiware/ngsi-type-browser-widget](https:/
 Convert NGSI entities coming from the orion context broker to Point of Interests (usable by map widgets).
 
 * Vendor: CoNWeT
-* Version: 3.1.2
+* Version: 3.2.0
 * License: Apache License 2.0
 
 Homepage: [https://github.com/wirecloud-fiware/ngsi-entity2poi-operator](https://github.com/wirecloud-fiware/ngsi-entity2poi-operator)
 
-**[Download CoNWeT\_ngsientity2poi\_3.1.2.wgt](https://github.com/wirecloud-fiware/ngsi-entity2poi-operator/releases/download/3.1.2/CoNWeT_ngsientity2poi_3.1.2.wgt)**
+**[Download CoNWeT\_ngsientity2poi\_3.2.0.wgt](https://github.com/wirecloud-fiware/ngsi-entity2poi-operator/releases/download/v3.2.0/CoNWeT_ngsientity2poi_3.2.0.wgt)**
 
 ### OpenLayers Map
 
 Map viewer widget using OpenLayers.
 
 * Vendor: CoNWeT
-* Version: 1.2.1
+* Version: 1.2.3
 * License: Apache License 2.0
 
 Homepage: [https://github.com/Wirecloud/ol3-map-widget](https://github.com/Wirecloud/ol3-map-widget)
 
-**[Download CoNWeT\_ol3-map\_1.2.1.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.2.1/CoNWeT_ol3-map_1.2.1.wgt)**
+**[Download CoNWeT\_ol3-map\_1.2.3.wgt](https://github.com/Wirecloud/ol3-map-widget/releases/download/1.2.3/CoNWeT_ol3-map_1.2.3.wgt)**
 
 ### Open item webpage
 

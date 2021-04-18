@@ -18,6 +18,7 @@ features.
 -   [Contributing code](#contributing-code)
     -   [Code Guidelines](#code-guidelines)
     -   [Code style git hooks](#code-style-git-hooks)
+-   [Community](#Community)
 
 ## Ground rules & expectations
 
