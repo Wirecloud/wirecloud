@@ -299,7 +299,7 @@
         }
 
         bind(element, mode) {
-            privates.get(this).tooltip.bind(element, mode);
+            privates.get(this).tooltip.bind.call(this, element, mode);
             return this;
         }
 
