@@ -283,7 +283,7 @@
         }
 
         get options() {
-            privates.get(this).tooltip.options;
+            return privates.get(this).tooltip.options;
         }
 
         show(refPosition) {
