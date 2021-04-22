@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -116,7 +116,7 @@
                 expect(document.querySelector('.popover')).toBe(null);
             });
 
-            it("should support WireCloud", () => {
+            it("should support WireCloud when sticky option is false (default)", () => {
                 const ref_element = new se.Button();
                 const popover = new se.Popover();
                 popover.show(ref_element);
@@ -128,6 +128,22 @@
 
                 expect(popover.hide()).toBe(popover);
                 expect(Wirecloud.UserInterfaceManager._unregisterPopup).toHaveBeenCalledWith(popover);
+            });
+
+            it("should ignore WireCloud support when sticky is true", () => {
+                const ref_element = new se.Button();
+                const popover = new se.Popover({
+                    sticky: true
+                });
+                popover.show(ref_element);
+                window.Wirecloud = {
+                    UserInterfaceManager: {
+                        _unregisterPopup: jasmine.createSpy("_unregisterPopup")
+                    }
+                };
+
+                expect(popover.hide()).toBe(popover);
+                expect(Wirecloud.UserInterfaceManager._unregisterPopup).not.toHaveBeenCalled();
             });
 
         });
@@ -223,7 +239,7 @@
                 expect(element.style.left).not.toBe("");
             });
 
-            it("should support WireCloud", () => {
+            it("should support WireCloud when sticky option is false (default)", () => {
                 const ref_element = new se.Button({text: "Test"});
                 const popover = new se.Popover({
                     placement: ['bottom-right']
@@ -238,6 +254,24 @@
                 const element = document.querySelector('.popover');
                 expect(element).not.toBe(null);
                 expect(Wirecloud.UserInterfaceManager._registerPopup).toHaveBeenCalledWith(popover);
+            });
+
+            it("should ignore WireCloud support when sticky option is true", () => {
+                const ref_element = new se.Button({text: "Test"});
+                const popover = new se.Popover({
+                    placement: ['bottom-right'],
+                    sticky: true
+                });
+                window.Wirecloud = {
+                    UserInterfaceManager: {
+                        _registerPopup: jasmine.createSpy("_registerPopup")
+                    }
+                };
+                expect(popover.show(ref_element)).toBe(popover);
+
+                const element = document.querySelector('.popover');
+                expect(element).not.toBe(null);
+                expect(Wirecloud.UserInterfaceManager._registerPopup).not.toHaveBeenCalled();
             });
 
         });
