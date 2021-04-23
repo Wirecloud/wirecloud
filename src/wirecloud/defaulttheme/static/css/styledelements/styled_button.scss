@@ -236,7 +236,7 @@ button::-moz-focus-inner, input::-moz-focus-inner {
 /* Grouped buttons */
 
 .btn-group {
-    display: inline-block;
+    display: inline-flex;
     white-space: nowrap;
     vertical-align: middle;
     margin: 3px;
