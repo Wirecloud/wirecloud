@@ -170,7 +170,6 @@
             });
 
             it("can be created using the initialSortColumn option", () => {
-
                 const columns = [
                     {field: "test", type: "string", sortable: true},
                     {field: "test2", type: "string", sortable: true}
@@ -194,6 +193,32 @@
                 const column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
                 const observed = Array.prototype.map.call(column, function (cell) {return cell.innerHTML;});
                 expect(observed).toEqual(["b", "a"]);
+            });
+
+            it("should support passing a custom source", () => {
+                const columns = [
+                    {field: "test", type: "string", sortable: true},
+                    {field: "test2", type: "string", sortable: true}
+                ];
+
+                const source = new StyledElements.StaticPaginatedSource({pageSize: 20, id: "test"});
+                const data = [
+                    {test: "a", test2: "b"},
+                    {test: "b", test2: "a"}
+                ];
+                source.changeElements(data);
+                const options = {
+                    source
+                };
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, options);
+
+                // Check table has been rendered correctly
+                expect(table.statusBar).toEqual(jasmine.any(se.Container));
+                const column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+                const observed = Array.prototype.map.call(column, (cell) => cell.innerHTML);
+                expect(observed).toEqual(["a", "b"]);
             });
 
         });

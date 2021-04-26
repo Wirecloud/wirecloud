@@ -448,10 +448,10 @@
             let className, i, sort_info;
 
             const defaultOptions = {
-                'initialSortColumn': -1,
-                'pageSize': 5,
-                'emptyMessage': utils.gettext('No data available'),
-                'selectionType': "none"
+                initialSortColumn: -1,
+                pageSize: 5,
+                emptyMessage: utils.gettext("No data available"),
+                selectionType: "none"
             };
 
             options = utils.merge(defaultOptions, options);
@@ -569,8 +569,6 @@
                 }
             }
 
-            sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
-
             priv.current_elements = {};
             if (typeof options.id === 'string') {
                 priv.extractIdFunc = function (data) {
@@ -579,12 +577,9 @@
             } else if (typeof options.id === 'function') {
                 priv.extractIdFunc = options.id;
             }
+            priv.stateFunc = typeof options.stateFunc === "function" ? options.stateFunc : () => {};
 
-            if (typeof options.stateFunc === 'function') {
-                priv.stateFunc = options.stateFunc;
-            } else {
-                priv.stateFunc = function () {};
-            }
+            sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
         }
 
         get selection() {
