@@ -516,6 +516,21 @@
                 expect(observed).toEqual(expected);
             });
 
+            it("should allow to select/unselect non-visible entries", () => {
+                expect(table.select(3)).toBe(table);
+                expect(table.selection).toEqual([3]);
+
+                // Check if css are applied properly
+                expected = [false, false, false];
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
+
+                expect(observed).toEqual(expected);
+
+                // clear selection
+                expect(table.select([])).toBe(table);
+                expect(table.selection).toEqual([]);
+            });
+
             it("should retrieve row id using custom functions", () => {
                 const columns = [
                     {field: "col1", type: "number"},
@@ -688,6 +703,21 @@
                 expect(table.selection).toEqual([0]);
             });
 
+            it("should ignore click events on table body when using the control key", () => {
+                table.select(0);
+
+                event = new MouseEvent("click", {ctrlKey: true});
+                table.wrapperElement.dispatchEvent(event);
+
+                // Check selection has changed
+                expect(table.selection).toEqual([0]);
+
+                // Check if css are applied properly
+                expected = [true, false, false];
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                expect(observed).toEqual(expected);
+            });
+
             describe("should allow click selections with control key pressed", () => {
 
                 it("should allow first selection", () => {
@@ -729,6 +759,7 @@
                     observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
                     expect(observed).toEqual(expected);
                 });
+
             });
 
             describe("should allow click selections with shift key pressed", () => {

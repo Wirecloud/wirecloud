@@ -507,20 +507,17 @@
             this.wrapperElement = priv.layout.wrapperElement;
 
             // Deselect rows if clicked no row is clicked
-            this.wrapperElement.addEventListener("click", function (evt) {
+            this.wrapperElement.addEventListener("click", (evt) => {
                 const priv = privates.get(this);
-                if (!isSelectionEnabled(priv.selectionType)) {
+
+                // Only deselect if no modifier key is pressed
+                if (!isSelectionEnabled(priv.selectionType) || evt.shiftKey || evt.ctrlKey || evt.metaKey) {
                     return;
                 }
 
-                // Only deselect if no modifier key is pressed
-                if (!evt.shiftKey && !evt.ctrlKey && !evt.metaKey) {
-                    this.select([]);
-                    // this.trigger("select", []);
-                    this.events.select.dispatch([]);
-                }
-
-            }.bind(this));
+                this.select([]);
+                this.events.select.dispatch([]);
+            });
 
             /*
              * Table body
