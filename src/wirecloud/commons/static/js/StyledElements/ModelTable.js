@@ -448,10 +448,10 @@
             let className, i, sort_info;
 
             const defaultOptions = {
-                'initialSortColumn': -1,
-                'pageSize': 5,
-                'emptyMessage': utils.gettext('No data available'),
-                'selectionType': "none"
+                initialSortColumn: -1,
+                pageSize: 5,
+                emptyMessage: utils.gettext("No data available"),
+                selectionType: "none"
             };
 
             options = utils.merge(defaultOptions, options);
@@ -507,20 +507,17 @@
             this.wrapperElement = priv.layout.wrapperElement;
 
             // Deselect rows if clicked no row is clicked
-            this.wrapperElement.addEventListener("click", function (evt) {
+            this.wrapperElement.addEventListener("click", (evt) => {
                 const priv = privates.get(this);
-                if (!isSelectionEnabled(priv.selectionType)) {
+
+                // Only deselect if no modifier key is pressed
+                if (!isSelectionEnabled(priv.selectionType) || evt.shiftKey || evt.ctrlKey || evt.metaKey) {
                     return;
                 }
 
-                // Only deselect if no modifier key is pressed
-                if (!evt.shiftKey && !evt.ctrlKey && !evt.metaKey) {
-                    this.select([]);
-                    // this.trigger("select", []);
-                    this.events.select.dispatch([]);
-                }
-
-            }.bind(this));
+                this.select([]);
+                this.events.select.dispatch([]);
+            });
 
             /*
              * Table body
@@ -569,22 +566,17 @@
                 }
             }
 
-            sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
-
             priv.current_elements = {};
-            if (typeof options.id === 'string') {
-                priv.extractIdFunc = function (data) {
-                    return data[options.id];
-                };
-            } else if (typeof options.id === 'function') {
+            if (typeof options.id === "string") {
+                priv.extractIdFunc = (data) => data[options.id];
+            } else if (Array.isArray(options.id)) {
+                priv.extractIdFunc = (data) => getFieldValue(data, options.id);
+            } else if (typeof options.id === "function") {
                 priv.extractIdFunc = options.id;
             }
+            priv.stateFunc = typeof options.stateFunc === "function" ? options.stateFunc : () => {};
 
-            if (typeof options.stateFunc === 'function') {
-                priv.stateFunc = options.stateFunc;
-            } else {
-                priv.stateFunc = function () {};
-            }
+            sortByColumn.call(this, options.initialSortColumn, options.initialDescendingOrder);
         }
 
         get selection() {

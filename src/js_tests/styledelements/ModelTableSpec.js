@@ -170,7 +170,6 @@
             });
 
             it("can be created using the initialSortColumn option", () => {
-
                 const columns = [
                     {field: "test", type: "string", sortable: true},
                     {field: "test2", type: "string", sortable: true}
@@ -194,6 +193,32 @@
                 const column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
                 const observed = Array.prototype.map.call(column, function (cell) {return cell.innerHTML;});
                 expect(observed).toEqual(["b", "a"]);
+            });
+
+            it("should support passing a custom source", () => {
+                const columns = [
+                    {field: "test", type: "string", sortable: true},
+                    {field: "test2", type: "string", sortable: true}
+                ];
+
+                const source = new StyledElements.StaticPaginatedSource({pageSize: 20, id: "test"});
+                const data = [
+                    {test: "a", test2: "b"},
+                    {test: "b", test2: "a"}
+                ];
+                source.changeElements(data);
+                const options = {
+                    source
+                };
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, options);
+
+                // Check table has been rendered correctly
+                expect(table.statusBar).toEqual(jasmine.any(se.Container));
+                const column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+                const observed = Array.prototype.map.call(column, (cell) => cell.innerHTML);
+                expect(observed).toEqual(["a", "b"]);
             });
 
         });
@@ -222,6 +247,34 @@
                     expect(cols[j + 2 * i].innerHTML).toBe(data[i][keys[j]]);
                 }
             }
+        });
+
+        it("should support using columns accessing subfields", () => {
+            const columns = [
+                {field: ["test", "value"], type: "string", sortable: true},
+                {field: "test2", type: "string", sortable: true}
+            ];
+
+            const source = new StyledElements.StaticPaginatedSource({pageSize: 20, id: "test"});
+            const data = [
+                {test: {value: "a"}, test2: "b"},
+                {test: {value: "b", other: 3}, test2: "a"},
+                {test: {other: 4}, test2: "c"},
+                {test2: "d"}
+            ];
+            source.changeElements(data);
+            const options = {
+                source
+            };
+
+            // Create a new table
+            table = new StyledElements.ModelTable(columns, options);
+
+            // Check table has been rendered correctly
+            expect(table.statusBar).toEqual(jasmine.any(se.Container));
+            const column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+            const observed = Array.prototype.map.call(column, (cell) => cell.innerHTML);
+            expect(observed).toEqual(["", "", "a", "b"]);
         });
 
         it("should handle errors retrieving data", () => {
@@ -316,6 +369,10 @@
                 {field: "test", sortable: true, type: "date", format: "dddd", tooltip: "none"}
             ];
 
+            const timezone_columns = [
+                {field: "test", sortable: true, type: "date", format: "LLL z", timezone: "Europe/Stockholm"}
+            ];
+
             beforeEach(() => {
                 // Create a new table using the defaults options
                 table = new StyledElements.ModelTable(columns);
@@ -337,12 +394,14 @@
             const date1_rendered = "<span>5 years ago</span>";
             const date1_rendered_calendar = "<span>02/20/2011</span>";
             const date1_rendered_custom = "<span>Sunday</span>";
+            const date1_rendered_timezone = "<span>February 20, 2011 1:00 AM CET</span>";
 
             create_basic_field_test('null values should be handled correctly', null, "");
             create_basic_field_test('undefined values should be handled correctly', undefined, "");
             create_basic_field_test('timestamps should be handled correctly', date1, date1_rendered);
             create_basic_field_test('timestamps should be handled correctly (calendar format)', date1, date1_rendered_calendar, calendar_dates);
             create_basic_field_test('timestamps should be handled correctly (custom format)', date1, date1_rendered_custom, customformat_dates);
+            create_basic_field_test('timestamps should be handled correctly (target timezone)', date1, date1_rendered_timezone, timezone_columns);
             create_basic_field_test('date instances should be handled correctly', date2, date2_rendered);
             create_basic_field_test('string should be handled correctly', date2, date2_rendered);
             create_basic_field_test('should accept custom date parsing functions', date1, date1_rendered, dateparser_columns);
@@ -408,11 +467,11 @@
 
         describe("select(selection)", () => {
             let expected, observed, rows;
-            beforeEach(() => {
 
+            beforeEach(() => {
                 const columns = [
                     {field: "id", type: "number"},
-                    {field: "test", type: "number"}
+                    {field: "test", type: "string"}
                 ];
 
                 // Create a new table
@@ -452,7 +511,82 @@
 
                 // Check if css are applied properly
                 expected = [false, true, false];
-                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
+
+                expect(observed).toEqual(expected);
+            });
+
+            it("should allow to select/unselect non-visible entries", () => {
+                expect(table.select(3)).toBe(table);
+                expect(table.selection).toEqual([3]);
+
+                // Check if css are applied properly
+                expected = [false, false, false];
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
+
+                expect(observed).toEqual(expected);
+
+                // clear selection
+                expect(table.select([])).toBe(table);
+                expect(table.selection).toEqual([]);
+            });
+
+            it("should retrieve row id using custom functions", () => {
+                const columns = [
+                    {field: "col1", type: "number"},
+                    {field: "col2", type: "string"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {
+                    id: (row) => `${row.col1}-${row.col2}`,
+                    selectionType: "single"
+                });
+
+                // Create and push the data
+                const data = [
+                    {col1: 0, col2: "a"},
+                    {col1: 1, col2: "b"}
+                ];
+                table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+
+                expect(table.select("0-a")).toBe(table);
+                expect(table.selection).toEqual(["0-a"]);
+
+                // Check if css are applied properly
+                expected = [true, false];
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
+
+                expect(observed).toEqual(expected);
+            });
+
+            it("should retrieve row id using custom functions (subfields)", () => {
+                const columns = [
+                    {field: ["col1", "value"], type: "string"},
+                    {field: "col2", type: "string"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {
+                    id: ["col1", "value"],
+                    selectionType: "single"
+                });
+
+                // Create and push the data
+                const data = [
+                    {col1: {value: 0}, col2: "a"},
+                    {col1: {value: 1}, col2: "b"}
+                ];
+                table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+
+                expect(table.select("0")).toBe(table);
+                expect(table.selection).toEqual(["0"]);
+
+                // Check if css are applied properly
+                expected = [true, false];
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
 
                 expect(observed).toEqual(expected);
             });
@@ -569,6 +703,21 @@
                 expect(table.selection).toEqual([0]);
             });
 
+            it("should ignore click events on table body when using the control key", () => {
+                table.select(0);
+
+                event = new MouseEvent("click", {ctrlKey: true});
+                table.wrapperElement.dispatchEvent(event);
+
+                // Check selection has changed
+                expect(table.selection).toEqual([0]);
+
+                // Check if css are applied properly
+                expected = [true, false, false];
+                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                expect(observed).toEqual(expected);
+            });
+
             describe("should allow click selections with control key pressed", () => {
 
                 it("should allow first selection", () => {
@@ -610,6 +759,7 @@
                     observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
                     expect(observed).toEqual(expected);
                 });
+
             });
 
             describe("should allow click selections with shift key pressed", () => {
