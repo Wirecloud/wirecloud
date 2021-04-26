@@ -570,11 +570,11 @@
             }
 
             priv.current_elements = {};
-            if (typeof options.id === 'string') {
-                priv.extractIdFunc = function (data) {
-                    return data[options.id];
-                };
-            } else if (typeof options.id === 'function') {
+            if (typeof options.id === "string") {
+                priv.extractIdFunc = (data) => data[options.id];
+            } else if (Array.isArray(options.id)) {
+                priv.extractIdFunc = (data) => getFieldValue(data, options.id);
+            } else if (typeof options.id === "function") {
                 priv.extractIdFunc = options.id;
             }
             priv.stateFunc = typeof options.stateFunc === "function" ? options.stateFunc : () => {};

@@ -461,11 +461,11 @@
 
         describe("select(selection)", () => {
             let expected, observed, rows;
-            beforeEach(() => {
 
+            beforeEach(() => {
                 const columns = [
                     {field: "id", type: "number"},
-                    {field: "test", type: "number"}
+                    {field: "test", type: "string"}
                 ];
 
                 // Create a new table
@@ -505,7 +505,67 @@
 
                 // Check if css are applied properly
                 expected = [false, true, false];
-                observed = Array.prototype.map.call(rows, function (row) {return row.classList.contains("highlight");});
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
+
+                expect(observed).toEqual(expected);
+            });
+
+            it("should retrieve row id using custom functions", () => {
+                const columns = [
+                    {field: "col1", type: "number"},
+                    {field: "col2", type: "string"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {
+                    id: (row) => `${row.col1}-${row.col2}`,
+                    selectionType: "single"
+                });
+
+                // Create and push the data
+                const data = [
+                    {col1: 0, col2: "a"},
+                    {col1: 1, col2: "b"}
+                ];
+                table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+
+                expect(table.select("0-a")).toBe(table);
+                expect(table.selection).toEqual(["0-a"]);
+
+                // Check if css are applied properly
+                expected = [true, false];
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
+
+                expect(observed).toEqual(expected);
+            });
+
+            it("should retrieve row id using custom functions (subfields)", () => {
+                const columns = [
+                    {field: ["col1", "value"], type: "string"},
+                    {field: "col2", type: "string"}
+                ];
+
+                // Create a new table
+                table = new StyledElements.ModelTable(columns, {
+                    id: ["col1", "value"],
+                    selectionType: "single"
+                });
+
+                // Create and push the data
+                const data = [
+                    {col1: {value: 0}, col2: "a"},
+                    {col1: {value: 1}, col2: "b"}
+                ];
+                table.source.changeElements(data);
+                rows = table.wrapperElement.querySelectorAll(".se-model-table-row");
+
+                expect(table.select("0")).toBe(table);
+                expect(table.selection).toEqual(["0"]);
+
+                // Check if css are applied properly
+                expected = [true, false];
+                observed = Array.prototype.map.call(rows, (row) => row.classList.contains("highlight"));
 
                 expect(observed).toEqual(expected);
             });

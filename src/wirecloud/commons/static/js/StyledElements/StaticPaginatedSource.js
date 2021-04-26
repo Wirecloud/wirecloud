@@ -204,13 +204,14 @@
     };
 
     // Search the position of the element
-    const searchElement = function searchElement(list, el, idAttr) {
-        if (!idAttr) {
+    const searchElement = function searchElement(list, el, getId) {
+        if (!getId) {
             return -2;
         }
         let pos = -1;
-        list.every(function (elem, i) {
-            if (getFieldValue(elem, idAttr) === getFieldValue(el, idAttr)) {
+        const searchId = getId(el);
+        list.every((elem, i) => {
+            if (getId(elem) === searchId) {
                 pos = i;
                 return false;
             } else {
@@ -247,6 +248,13 @@
             priv.sort_info = options.sort_info;
             if (typeof priv.sort_info !== 'object') {
                 priv.sort_info = {};
+            }
+            if (typeof options.idAttr === "string") {
+                priv.extractIdFunc = (data) => data[options.idAttr];
+            } else if (Array.isArray(options.idAttr)) {
+                priv.extractIdFunc = (data) => getFieldValue(data, options.idAttr);
+            } else if (typeof options.idAttr === "function") {
+                priv.extractIdFunc = options.idAttr;
             }
 
             // Properties
@@ -310,18 +318,17 @@
             const priv = privates.get(this);
             if (Array.isArray(newElements)) {
                 if (this.options.idAttr) {
-                    const bol = newElements.every(function (elem, i) {
-                        if (getFieldValue(elem, this.options.idAttr) == null) {
+                    const bol = newElements.every((elem, i) => {
+                        if (priv.extractIdFunc(elem) == null) {
                             throw new Error("All elements must have a valid ID");
                         }
-                        return searchElement(newElements.slice(0, i), elem, this.options.idAttr) <= -1;
-                    }.bind(this));
+                        return searchElement(newElements.slice(0, i), elem, priv.extractIdFunc) <= -1;
+                    });
                     if (!bol) {
                         throw new Error("All elements must have an unique ID");
                     }
                 }
                 priv.elements = newElements;
-
             } else {
                 priv.elements = [];
             }
@@ -348,12 +355,12 @@
         addElement(newElement) {
             const priv = privates.get(this);
 
-            if (this.options.idAttr && getFieldValue(newElement, this.options.idAttr) == null) {
+            if (this.options.idAttr && priv.extractIdFunc(newElement) == null) {
                 throw new Error("The element must have a valid ID");
             }
 
             // If the element already exists, remove it and add it again (updates it and sets it last)
-            let pos = searchElement(priv.elements, newElement, this.options.idAttr);
+            let pos = searchElement(priv.elements, newElement, priv.extractIdFunc);
             if (pos >= 0) {
                 priv.elements.splice(pos, 1);
             }
@@ -361,7 +368,7 @@
             // Add the element to the source
             priv.elements.push(newElement);
             // Remove it from the filtered elements
-            pos = searchElement(priv.filteredElements, newElement, this.options.idAttr);
+            pos = searchElement(priv.filteredElements, newElement, priv.extractIdFunc);
             if (pos >= 0) {
                 priv.filteredElements.splice(pos, 1);
             }
@@ -401,13 +408,13 @@
             if (!this.options.idAttr) {
                 throw new Error("options.idAttr is not set");
             } else {
-                if (getFieldValue(element, this.options.idAttr) == null) {
+                if (priv.extractIdFunc(element) == null) {
                     throw new Error("The element must have a valid ID");
                 }
             }
 
             // Look for the target element
-            const pos = searchElement(priv.elements, element, this.options.idAttr);
+            const pos = searchElement(priv.elements, element, priv.extractIdFunc);
             if (pos >= 0) {
                 priv.elements.splice(pos, 1);
                 filterElements.call(this, this.options.keywords);
