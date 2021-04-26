@@ -249,6 +249,34 @@
             }
         });
 
+        it("should support using columns accessing subfields", () => {
+            const columns = [
+                {field: ["test", "value"], type: "string", sortable: true},
+                {field: "test2", type: "string", sortable: true}
+            ];
+
+            const source = new StyledElements.StaticPaginatedSource({pageSize: 20, id: "test"});
+            const data = [
+                {test: {value: "a"}, test2: "b"},
+                {test: {value: "b", other: 3}, test2: "a"},
+                {test: {other: 4}, test2: "c"},
+                {test2: "d"}
+            ];
+            source.changeElements(data);
+            const options = {
+                source
+            };
+
+            // Create a new table
+            table = new StyledElements.ModelTable(columns, options);
+
+            // Check table has been rendered correctly
+            expect(table.statusBar).toEqual(jasmine.any(se.Container));
+            const column = table.wrapperElement.querySelectorAll(".se-model-table-row .se-model-table-cell:first-child");
+            const observed = Array.prototype.map.call(column, (cell) => cell.innerHTML);
+            expect(observed).toEqual(["", "", "a", "b"]);
+        });
+
         it("should handle errors retrieving data", () => {
             const columns = [
                 {field: "test", "label": "TestName", sortable: false, type: "string"},
