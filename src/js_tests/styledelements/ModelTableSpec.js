@@ -369,6 +369,10 @@
                 {field: "test", sortable: true, type: "date", format: "dddd", tooltip: "none"}
             ];
 
+            const timezone_columns = [
+                {field: "test", sortable: true, type: "date", format: "LLL z", timezone: "Europe/Stockholm"}
+            ];
+
             beforeEach(() => {
                 // Create a new table using the defaults options
                 table = new StyledElements.ModelTable(columns);
@@ -390,12 +394,14 @@
             const date1_rendered = "<span>5 years ago</span>";
             const date1_rendered_calendar = "<span>02/20/2011</span>";
             const date1_rendered_custom = "<span>Sunday</span>";
+            const date1_rendered_timezone = "<span>February 20, 2011 1:00 AM CET</span>";
 
             create_basic_field_test('null values should be handled correctly', null, "");
             create_basic_field_test('undefined values should be handled correctly', undefined, "");
             create_basic_field_test('timestamps should be handled correctly', date1, date1_rendered);
             create_basic_field_test('timestamps should be handled correctly (calendar format)', date1, date1_rendered_calendar, calendar_dates);
             create_basic_field_test('timestamps should be handled correctly (custom format)', date1, date1_rendered_custom, customformat_dates);
+            create_basic_field_test('timestamps should be handled correctly (target timezone)', date1, date1_rendered_timezone, timezone_columns);
             create_basic_field_test('date instances should be handled correctly', date2, date2_rendered);
             create_basic_field_test('string should be handled correctly', date2, date2_rendered);
             create_basic_field_test('should accept custom date parsing functions', date1, date1_rendered, dateparser_columns);

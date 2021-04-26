@@ -29,6 +29,7 @@ const dependencies = [
     'wirecloud/platform/static/js/common/ComputedStyle.js',
     'wirecloud/commons/static/js/lib/urlify.js',
     'wirecloud/commons/static/js/lib/moment-with-locales.min.js',
+    'wirecloud/commons/static/js/lib/moment-timezone-with-data.min.js',
 ];
 
 const styledElementsFiles = [
