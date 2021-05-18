@@ -45,10 +45,11 @@
             if (proxy_info.usages === 0) {
                 proxy_info.proxy.close();
                 delete proxy_connections[proxy.url];
+            } else {
+                try {
+                    proxy.close();
+                } catch (e) {}
             }
-            try {
-                proxy.close();
-            } catch (e) {}
         });
         proxies.length = 0;
 
