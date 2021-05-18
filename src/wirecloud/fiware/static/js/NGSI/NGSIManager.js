@@ -228,6 +228,9 @@
             let subscription = callbackSubscriptions[callback];
             if (subscription != null) {
                 switch (subscription.version) {
+                case "ld":
+                    this.connection.ld.deleteSubscription(subscription.id);
+                    break;
                 case "v2":
                     this.connection.v2.deleteSubscription(subscription.id);
                     break;
