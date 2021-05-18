@@ -131,6 +131,11 @@
             return this;
         }
 
+        repaint() {
+            privates.get(this).menu.repaint(...arguments);
+            return this;
+        }
+
         show(refPosition) {
             const menu = privates.get(this).menu;
             menu.show(wrap_ref_position(refPosition));
@@ -185,6 +190,11 @@
 
         get visible() {
             return privates.get(this).popover.visible;
+        }
+
+        repaint() {
+            privates.get(this).popover.repaint(...arguments);
+            return this;
         }
 
         show(refPosition) {
@@ -284,6 +294,11 @@
 
         get options() {
             return privates.get(this).tooltip.options;
+        }
+
+        repaint() {
+            privates.get(this).tooltip.repaint(...arguments);
+            return this;
         }
 
         show(refPosition) {
