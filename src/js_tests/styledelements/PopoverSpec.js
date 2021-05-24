@@ -23,7 +23,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se) {
+(function (se, utils) {
 
     "use strict";
 
@@ -347,8 +347,38 @@
                 element.dispatchEvent(new Event("transitionend"));
             });
 
+            it("should manage fullscreen mode change events (entering fullscreen)", () => {
+                const ref_element = new StyledElements.Button();
+                const popover = new StyledElements.Popover();
+                const fullscreen_element = document.createElement("div");
+                spyOn(utils, "onFullscreenChange");
+                spyOn(utils, "getFullscreenElement");
+                expect(popover.show(ref_element)).toBe(popover);
+                // Change fullscreen element
+                utils.getFullscreenElement.and.returnValue(fullscreen_element);
+
+                utils.onFullscreenChange.calls.argsFor(0)[1]();
+
+                expect(fullscreen_element.childElementCount).toBe(1);
+            });
+
+            it("should manage fullscreen mode change events (exiting fullscreen)", () => {
+                const ref_element = new StyledElements.Button();
+                const popover = new StyledElements.Popover();
+                const fullscreen_element = document.createElement("div");
+                spyOn(utils, "onFullscreenChange");
+                spyOn(utils, "getFullscreenElement").and.returnValue(fullscreen_element);
+                expect(popover.show(ref_element)).toBe(popover);
+                // Remove fullscreen element
+                utils.getFullscreenElement.and.returnValue(null);
+
+                utils.onFullscreenChange.calls.argsFor(0)[1]();
+
+                expect(fullscreen_element.childElementCount).toBe(0);
+            });
+
         });
 
     });
 
-})(StyledElements);
+})(StyledElements, StyledElements.Utils);

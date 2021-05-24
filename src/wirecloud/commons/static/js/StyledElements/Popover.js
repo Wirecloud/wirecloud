@@ -152,6 +152,7 @@
         priv.baseelement = utils.getFullscreenElement() || document.body;
         priv.baseelement.appendChild(priv.element);
         priv.baseelement.addEventListener("click", priv.disableCallback, true);
+        utils.onFullscreenChange(document.body, priv.on_fullscreen_change);
 
         priv.refPosition = refPosition;
         searchBestPosition.call(this, priv.refPosition, this.options.placement);
@@ -164,6 +165,7 @@
     const _hide = function _hide() {
         const priv = privates.get(this);
         if (priv.element != null && !priv.element.classList.contains('in')) {
+            utils.removeFullscreenChangeCallback(document.body, priv.on_fullscreen_change);
             priv.element.remove();
             priv.element = null;
             priv.refPosition = null;
@@ -192,7 +194,12 @@
 
             const priv = {
                 element: null,
-                disableCallback: disableCallback.bind(this)
+                disableCallback: disableCallback.bind(this),
+                on_fullscreen_change: (event) => {
+                    priv.baseelement = utils.getFullscreenElement() || document.body;
+                    priv.baseelement.appendChild(priv.element);
+                    this.repaint();
+                }
             };
             privates.set(this, priv);
             Object.defineProperties(this, {
