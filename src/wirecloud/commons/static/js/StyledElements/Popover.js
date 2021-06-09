@@ -31,6 +31,24 @@
     const builder = new StyledElements.GUIBuilder();
     const template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="popover fade"><div class="arrow"/><h3 class="popover-title"><t:title/></h3><div class="popover-content"><t:content/></div></div></s:styledgui>';
 
+    const update_popover_visibility = function update_popover_visibility(changes) {
+        if ("visible" in changes) {
+            privates.get(this).element.classList.toggle("hidden", !changes.visible);
+        }
+    };
+
+    const track_element = function track_element(ref, popover) {
+        const priv = privates.get(popover);
+        priv.update_popover_visibility_bound = update_popover_visibility.bind(popover);
+        ref.contextManager.addCallback(priv.update_popover_visibility_bound);
+    };
+
+    const untrack_element = function untrack_element(ref, popover) {
+        const priv = privates.get(popover);
+        ref.contextManager.removeCallback(priv.update_popover_visibility_bound);
+        delete priv.update_popover_visibility_bound;
+    };
+
     const disableCallback = function disableCallback(e) {
 
         if (e.button !== 0) {
@@ -134,8 +152,8 @@
     const _show = function _show(refPosition) {
         const priv = privates.get(this);
 
-        if (!this.options.sticky && 'Wirecloud' in window) {
-            Wirecloud.UserInterfaceManager._registerPopup(this);
+        if ('Wirecloud' in window) {
+            Wirecloud.UserInterfaceManager._registerPopup(this, this.options.sticky);
         }
 
         if (this.visible) {
@@ -151,8 +169,15 @@
 
         priv.baseelement = utils.getFullscreenElement() || document.body;
         priv.baseelement.appendChild(priv.element);
-        priv.baseelement.addEventListener("click", priv.disableCallback, true);
         utils.onFullscreenChange(document.body, priv.on_fullscreen_change);
+        if (priv.refContainer != null) {
+            track_element(priv.refContainer, this);
+        }
+
+        priv.element.classList.toggle("sticky", this.options.sticky);
+        if (!this.options.sticky) {
+            priv.baseelement.ownerDocument.addEventListener("click", priv.disableCallback, true);
+        }
 
         priv.refPosition = refPosition;
         searchBestPosition.call(this, priv.refPosition, this.options.placement);
@@ -169,23 +194,33 @@
             priv.element.remove();
             priv.element = null;
             priv.refPosition = null;
-            if (!this.options.sticky && 'Wirecloud' in window) {
+            if (priv.refContainer != null) {
+                untrack_element(priv.refContainer, this);
+            }
+            if ('Wirecloud' in window) {
                 Wirecloud.UserInterfaceManager._unregisterPopup(this);
             }
-            priv.baseelement.removeEventListener('click', priv.disableCallback, true);
+            if (!this.options.sticky) {
+                priv.baseelement.ownerDocument.removeEventListener('click', priv.disableCallback, true);
+            }
             this.dispatchEvent('hide');
         }
     };
 
+    /**
+     * options:
+     * - `sticky` (experimental)
+     */
     se.Popover = class Popover extends se.StyledElement {
 
         constructor(options) {
             const defaultOptions = {
-                content: '',
-                title: '',
-                class: '',
+                refContainer: null,
+                content: "",
+                title: "",
+                class: "",
                 html: false,
-                placement: ['right', 'bottom', 'left', 'top'],
+                placement: ["right", "bottom", "left", "top"],
                 sticky: false
             };
 
@@ -195,6 +230,7 @@
             const priv = {
                 element: null,
                 disableCallback: disableCallback.bind(this),
+                refContainer: this.options.refContainer,
                 on_fullscreen_change: (event) => {
                     priv.baseelement = utils.getFullscreenElement() || document.body;
                     priv.baseelement.appendChild(priv.element);
@@ -202,13 +238,12 @@
                 }
             };
             privates.set(this, priv);
-            Object.defineProperties(this, {
-                visible: {
-                    get: function () {
-                        return priv.element != null;
-                    }
-                },
-            });
+
+            delete options.refContainer;
+        }
+
+        get visible() {
+            return privates.get(this).element != null;
         }
 
         bind(element, mode) {

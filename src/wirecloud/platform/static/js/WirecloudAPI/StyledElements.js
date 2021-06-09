@@ -83,19 +83,23 @@
     const wrap_ref_position = function wrap_ref_position(refPosition) {
         const _refPosition = {
             getBoundingClientRect: () => {
-                const position = iwidget.wrapperElement.getBoundingClientRect();
-                const refBox = 'getBoundingClientRect' in refPosition ? refPosition.getBoundingClientRect() : refPosition;
+                const widgetBox = iwidget.wrapperElement.getBoundingClientRect();
+                const frameBox = new DOMRect(
+                    widgetBox.left + platform.document.body.scrollLeft,
+                    widgetBox.top + platform.document.body.scrollTop,
+                    widgetBox.width, widgetBox.height
+                );
+                let refBox = 'getBoundingClientRect' in refPosition ? refPosition.getBoundingClientRect() : refPosition;
+                if (refBox.right == null || refBox.bottom == null) {
+                    refBox = new DOMRect(refBox.left, refBox.top, refBox.width, refBox.height);
+                }
 
-                const box = {
-                    height: Number.isFinite(refBox.height) ? refBox.height : 0,
-                    left: refBox.left + position.left + platform.document.body.scrollLeft,
-                    top: refBox.top + position.top + platform.document.body.scrollTop,
-                    width: Number.isFinite(refBox.width) ? refBox.width : 0
-                };
-                box.right = position.left + refBox.left + box.width;
-                box.bottom = position.top + refBox.top + box.height;
-                Object.freeze(box);
-                return box;
+                const left = refBox.left < 0 ? frameBox.left : (refBox.left > frameBox.width ? frameBox.right : frameBox.left + refBox.left);
+                const right = refBox.right < 0 ? frameBox.left : (refBox.right > frameBox.width ? frameBox.right : frameBox.left + refBox.right);
+                const top = refBox.top < 0 ? frameBox.top : (refBox.top > frameBox.height ? frameBox.bottom : frameBox.top + refBox.top);
+                const bottom = refBox.bottom < 0 ? frameBox.top : (refBox.bottom > frameBox.height ? frameBox.bottom : frameBox.top + refBox.bottom);
+
+                return new DOMRect(left, top, right - left, bottom - top);
             }
         };
         Object.freeze(_refPosition);
@@ -180,6 +184,9 @@
 
         constructor(options) {
             super();
+
+            options = options == null ? {} : Object.assign({}, options);
+            options.refContainer = iwidget;
 
             const priv = {
                 popover: new RealStyledElements.Popover(options)
