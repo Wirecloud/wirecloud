@@ -556,6 +556,11 @@
                     description: utils.gettext("Widget's height in layout cells"),
                     value: data.height
                 },
+                visible: {
+                    label: utils.gettext("Visible"),
+                    description: utils.gettext("Specifies if the widget is being displayed, altough the user may have to do scroll to be able to see it"),
+                    value: false
+                },
                 width: {
                     label: utils.gettext("Width"),
                     description: utils.gettext("Widget's width in layout cells"),
