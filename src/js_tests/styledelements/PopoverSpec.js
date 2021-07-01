@@ -183,6 +183,8 @@
             it("should work when using the refContainer option", () => {
                 const ref_element = new se.Button();
                 const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
                     contextManager: {
                         addCallback: jasmine.createSpy(),
                         removeCallback: jasmine.createSpy()
@@ -451,9 +453,11 @@
             it("should manage visible changes when using the refContainer option", () => {
                 const ref_element = new StyledElements.Button();
                 const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
                     contextManager: {
-                        addCallback: jasmine.createSpy(),
-                        removeCallback: jasmine.createSpy()
+                        addCallback: jasmine.createSpy("addCallback"),
+                        removeCallback: jasmine.createSpy("removeCallback")
                     }
                 };
                 const popover = new StyledElements.Popover({
@@ -471,9 +475,11 @@
             it("should ignore widget changes not affecting visiblity when using the refContainer option", () => {
                 const ref_element = new StyledElements.Button();
                 const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
                     contextManager: {
-                        addCallback: jasmine.createSpy(),
-                        removeCallback: jasmine.createSpy()
+                        addCallback: jasmine.createSpy("addCallback"),
+                        removeCallback: jasmine.createSpy("removeCallback")
                     }
                 };
                 const popover = new StyledElements.Popover({
@@ -486,6 +492,29 @@
                 });
                 const element = document.querySelector('.popover');
                 expect([...element.classList]).not.toContain("hidden");
+            });
+
+            it("should manage unload events from widgets when using the refContainer option", () => {
+                const ref_element = new StyledElements.Button();
+                const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
+                    contextManager: {
+                        addCallback: jasmine.createSpy("addCallback"),
+                        removeCallback: jasmine.createSpy("removeCallback")
+                    }
+                };
+                const popover = new StyledElements.Popover({
+                    refContainer: refContainer
+                });
+                spyOn(popover, "hide").and.callThrough();
+                expect(popover.show(ref_element)).toBe(popover);
+
+                refContainer.addEventListener.calls.argsFor(0)[1](popover, refContainer);
+
+                expect(refContainer.removeEventListener).toHaveBeenCalled();
+                expect(refContainer.contextManager.removeCallback).toHaveBeenCalled();
+                expect(popover.hide).toHaveBeenCalled();
             });
 
         });

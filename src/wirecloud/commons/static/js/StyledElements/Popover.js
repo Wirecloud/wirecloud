@@ -37,16 +37,24 @@
         }
     };
 
-    const track_element = function track_element(ref, popover) {
-        const priv = privates.get(popover);
-        priv.update_popover_visibility_bound = update_popover_visibility.bind(popover);
-        ref.contextManager.addCallback(priv.update_popover_visibility_bound);
+    const on_widget_unload = function on_widget_unload(popover, widget) {
+        popover.hide();
     };
 
-    const untrack_element = function untrack_element(ref, popover) {
+    const track_element = function track_element(widget, popover) {
         const priv = privates.get(popover);
-        ref.contextManager.removeCallback(priv.update_popover_visibility_bound);
+        priv.update_popover_visibility_bound = update_popover_visibility.bind(popover);
+        widget.contextManager.addCallback(priv.update_popover_visibility_bound);
+        priv.on_widget_unload = on_widget_unload.bind(null, popover);
+        widget.addEventListener("unload", priv.on_widget_unload);
+    };
+
+    const untrack_element = function untrack_element(widget, popover) {
+        const priv = privates.get(popover);
+        widget.contextManager.removeCallback(priv.update_popover_visibility_bound);
+        widget.removeEventListener("unload", priv.on_widget_unload);
         delete priv.update_popover_visibility_bound;
+        delete priv.on_widget_unload;
     };
 
     const disableCallback = function disableCallback(e) {
