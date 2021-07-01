@@ -1,5 +1,5 @@
 /*
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -94,7 +94,8 @@
                 model: {},
                 workspace: {
                     addEventListener: jasmine.createSpy("addEventListener")
-                }
+                },
+                addEventListener: jasmine.createSpy("addEventListener")
             };
             tab.dragboard = {
                 tab: tab,
@@ -640,6 +641,86 @@
                 widget.grip.dispatchEvent("click");
 
                 expect(widget.togglePermission).toHaveBeenCalledWith("move", true);
+            });
+
+            it("should manage hide events from tab", () => {
+                widget.tab.workspace.hidden = false;
+                widget.tab.hidden = true;
+                callEventListener(widget.tab, "hide");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: false
+                });
+            });
+
+            it("should manage hide events from tab (workspace hidden)", () => {
+                widget.tab.workspace.hidden = true;
+                widget.tab.hidden = true;
+                callEventListener(widget.tab, "hide");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: false
+                });
+            });
+
+            it("should manage hide events from workspace", () => {
+                widget.tab.workspace.hidden = true;
+                widget.tab.hidden = false;
+                callEventListener(widget.tab.workspace, "hide");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: false
+                });
+            });
+
+            it("should manage hide events from workspace (tab hidden)", () => {
+                widget.tab.workspace.hidden = true;
+                widget.tab.hidden = true;
+                callEventListener(widget.tab.workspace, "hide");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: false
+                });
+            });
+
+            it("should manage show events from tab", () => {
+                widget.tab.workspace.hidden = false;
+                widget.tab.hidden = false;
+                callEventListener(widget.tab, "show");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: true
+                });
+            });
+
+            it("should manage show events from tab (workspace hidden)", () => {
+                widget.tab.workspace.hidden = true;
+                widget.tab.hidden = false;
+                callEventListener(widget.tab, "show");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: false
+                });
+            });
+
+            it("should manage show events from workspace", () => {
+                widget.tab.workspace.hidden = false;
+                widget.tab.hidden = false;
+                callEventListener(widget.tab.workspace, "show");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: true
+                });
+            });
+
+            it("should manage show events from workspace (tab hidden)", () => {
+                widget.tab.workspace.hidden = false;
+                widget.tab.hidden = true;
+                callEventListener(widget.tab.workspace, "show");
+
+                expect(widget.model.contextManager.modify).toHaveBeenCalledWith({
+                    visible: false
+                });
             });
 
         });

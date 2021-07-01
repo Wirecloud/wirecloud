@@ -153,7 +153,7 @@
         const priv = privates.get(this);
 
         if ('Wirecloud' in window) {
-            Wirecloud.UserInterfaceManager._registerPopup(this, this.options.sticky);
+            Wirecloud.UserInterfaceManager._registerPopup(this);
         }
 
         if (this.visible) {
@@ -207,12 +207,18 @@
         }
     };
 
-    /**
-     * options:
-     * - `sticky` (experimental)
-     */
+
     se.Popover = class Popover extends se.StyledElement {
 
+        /**
+         * @param {Object} [options] a dictionary with popover options
+         * @param {Wirecloud.ui.WidgetView} [options.refContainer] Widget
+         *   associated with this popover. Visibility of the popover with be
+         *   controlled also with the visibility of the widget. This is a
+         *   WireCloud related feature.
+         * @param {boolean} [options.sticky] If `true`, the popover won't be
+         *   closed when clicking on the document.
+         */
         constructor(options) {
             const defaultOptions = {
                 refContainer: null,
@@ -239,7 +245,7 @@
             };
             privates.set(this, priv);
 
-            delete options.refContainer;
+            delete this.options.refContainer;
         }
 
         get visible() {
