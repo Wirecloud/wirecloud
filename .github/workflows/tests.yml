@@ -86,7 +86,7 @@ jobs:
           DJANGO_VERSION: ${{ matrix.django-version }}
         run: |
           pip install "Django>=${DJANGO_VERSION},<${DJANGO_VERSION%.*}.$((${DJANGO_VERSION#*.} + 1))"
-          pip install psycopg2-binary
+          pip install "psycopg2-binary<2.9"
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
           python manage.py collectstatic -v 0 -c --noinput
@@ -131,7 +131,7 @@ jobs:
         working-directory: ./src
         run: |
           pip install "Django>=2.2,<2.3"
-          pip install psycopg2-binary
+          pip install "psycopg2-binary<2.9"
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
           cp ci_scripts/base_settings.py settings.py
@@ -185,7 +185,7 @@ jobs:
           MOZ_HEADLESS: 1
         run: |
           pip install "Django>=2.2,<2.3"
-          pip install psycopg2-binary
+          pip install "psycopg2-binary<2.9"
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
           cp ci_scripts/base_settings.py settings.py
