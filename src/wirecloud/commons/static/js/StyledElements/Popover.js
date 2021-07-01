@@ -271,6 +271,26 @@
             return this;
         }
 
+        disablePointerEvents() {
+            const priv = privates.get(this);
+
+            if (priv.element) {
+                priv.element.style.pointerEvents = "none";
+            }
+
+            return this;
+        }
+
+        enablePointerEvents() {
+            const priv = privates.get(this);
+
+            if (priv.element) {
+                priv.element.style.pointerEvents = "";
+            }
+
+            return this;
+        }
+
         toggle(refElement) {
             if (this.visible) {
                 return this.hide();

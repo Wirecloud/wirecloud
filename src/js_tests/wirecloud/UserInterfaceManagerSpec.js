@@ -96,6 +96,46 @@
 
         });
 
+        describe("handleEscapeEvent", () => {
+
+            beforeEach(() => {
+                spyOn(Wirecloud.HistoryManager, "getCurrentState");
+                spyOn(Wirecloud.HistoryManager, "replaceState");
+                Wirecloud.UserInterfaceManager.init();
+                jasmine.clock().install();
+            });
+
+            afterEach(() => {
+                jasmine.clock().uninstall();
+            });
+
+            it("should allow to be called from click events", () => {
+                const dialog = new Wirecloud.ui.MessageWindowMenu();
+                dialog.show();
+                jasmine.clock().tick(1);
+                spyOn(dialog, "hide");
+                const tooltip = new StyledElements.Tooltip();
+                Wirecloud.UserInterfaceManager._registerTooltip(tooltip);
+                spyOn(tooltip, "hide");
+
+                Wirecloud.UserInterfaceManager.handleEscapeEvent(true);
+
+                expect(dialog.hide).not.toHaveBeenCalled();
+                expect(tooltip.hide).toHaveBeenCalledWith();
+            });
+
+            it("should allow to be called from click events", () => {
+                const popover = new StyledElements.Popover({sticky: true});
+                Wirecloud.UserInterfaceManager._registerPopup(popover);
+                spyOn(popover, "hide");
+
+                Wirecloud.UserInterfaceManager.handleEscapeEvent(true);
+
+                expect(popover.hide).not.toHaveBeenCalled();
+            });
+
+        });
+
         describe("onHistoryChange(state)", () => {
 
             it("should change current view", () => {

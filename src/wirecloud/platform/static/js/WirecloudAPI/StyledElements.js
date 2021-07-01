@@ -195,6 +195,16 @@
             redirect_events(priv.popover, this);
         }
 
+        disablePointerEvents() {
+            privates.get(this).popover.disablePointerEvents();
+            return this;
+        }
+
+        enablePointerEvents() {
+            privates.get(this).popover.enablePointerEvents();
+            return this;
+        }
+
         get visible() {
             return privates.get(this).popover.visible;
         }

@@ -387,7 +387,7 @@
                 }, true);
 
                 model.wrapperElement.contentDocument.defaultView.addEventListener('click', () => {
-                    Wirecloud.UserInterfaceManager.handleEscapeEvent();
+                    Wirecloud.UserInterfaceManager.handleEscapeEvent(true);
                     this.unhighlight();
                 }, true);
 

@@ -345,13 +345,17 @@
         return alternatives.showAlternative(newView, options);
     };
 
-    UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent() {
+    UserInterfaceManager.handleEscapeEvent = function handleEscapeEvent(click) {
         if (currentTooltip != null) {
             currentTooltip.hide();
             currentTooltip = null;
         } else if (currentPopups.length > 0) {
-            // Popup hide method will call _unregisterPopup
-            currentPopups[currentPopups.length - 1].hide();
+            const popup = currentPopups[currentPopups.length - 1];
+
+            if (!click || !(popup instanceof StyledElements.Popover) || !popup.options.sticky) {
+                // Popup hide method will call _unregisterPopup
+                popup.hide();
+            }
         }
     };
 

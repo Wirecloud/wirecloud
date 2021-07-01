@@ -79,6 +79,40 @@
 
         });
 
+        describe("disablePointerEvents()", () => {
+
+            it("should work when popover is not visible", () => {
+                const tooltip = new StyledElements.Popover();
+                expect(tooltip.disablePointerEvents()).toBe(tooltip);
+            });
+
+            it("should work when popover is visible", () => {
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Popover();
+                tooltip.show(ref_element);
+
+                expect(tooltip.disablePointerEvents()).toBe(tooltip);
+            });
+
+        });
+
+        describe("enablePointerEvents()", () => {
+
+            it("should work when popover is not visible", () => {
+                const tooltip = new StyledElements.Popover();
+                expect(tooltip.enablePointerEvents()).toBe(tooltip);
+            });
+
+            it("should work when popover is visible", () => {
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Popover();
+                tooltip.show(ref_element);
+
+                expect(tooltip.enablePointerEvents()).toBe(tooltip);
+            });
+
+        });
+
         describe("hide()", () => {
 
             afterEach(() => {
