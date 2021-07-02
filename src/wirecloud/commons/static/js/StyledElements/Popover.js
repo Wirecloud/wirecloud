@@ -31,6 +31,32 @@
     const builder = new StyledElements.GUIBuilder();
     const template = '<s:styledgui xmlns:s="http://wirecloud.conwet.fi.upm.es/StyledElements" xmlns:t="http://wirecloud.conwet.fi.upm.es/Template" xmlns="http://www.w3.org/1999/xhtml"><div class="popover fade"><div class="arrow"/><h3 class="popover-title"><t:title/></h3><div class="popover-content"><t:content/></div></div></s:styledgui>';
 
+    const update_popover_visibility = function update_popover_visibility(changes) {
+        if ("visible" in changes) {
+            privates.get(this).element.classList.toggle("hidden", !changes.visible);
+        }
+    };
+
+    const on_widget_unload = function on_widget_unload(popover, widget) {
+        popover.hide();
+    };
+
+    const track_element = function track_element(widget, popover) {
+        const priv = privates.get(popover);
+        priv.update_popover_visibility_bound = update_popover_visibility.bind(popover);
+        widget.contextManager.addCallback(priv.update_popover_visibility_bound);
+        priv.on_widget_unload = on_widget_unload.bind(null, popover);
+        widget.addEventListener("unload", priv.on_widget_unload);
+    };
+
+    const untrack_element = function untrack_element(widget, popover) {
+        const priv = privates.get(popover);
+        widget.contextManager.removeCallback(priv.update_popover_visibility_bound);
+        widget.removeEventListener("unload", priv.on_widget_unload);
+        delete priv.update_popover_visibility_bound;
+        delete priv.on_widget_unload;
+    };
+
     const disableCallback = function disableCallback(e) {
 
         if (e.button !== 0) {
@@ -134,7 +160,7 @@
     const _show = function _show(refPosition) {
         const priv = privates.get(this);
 
-        if (!this.options.sticky && 'Wirecloud' in window) {
+        if ('Wirecloud' in window) {
             Wirecloud.UserInterfaceManager._registerPopup(this);
         }
 
@@ -151,7 +177,15 @@
 
         priv.baseelement = utils.getFullscreenElement() || document.body;
         priv.baseelement.appendChild(priv.element);
-        priv.baseelement.addEventListener("click", priv.disableCallback, true);
+        utils.onFullscreenChange(document.body, priv.on_fullscreen_change);
+        if (priv.refContainer != null) {
+            track_element(priv.refContainer, this);
+        }
+
+        priv.element.classList.toggle("sticky", this.options.sticky);
+        if (!this.options.sticky) {
+            priv.baseelement.ownerDocument.addEventListener("click", priv.disableCallback, true);
+        }
 
         priv.refPosition = refPosition;
         searchBestPosition.call(this, priv.refPosition, this.options.placement);
@@ -164,26 +198,43 @@
     const _hide = function _hide() {
         const priv = privates.get(this);
         if (priv.element != null && !priv.element.classList.contains('in')) {
+            utils.removeFullscreenChangeCallback(document.body, priv.on_fullscreen_change);
             priv.element.remove();
             priv.element = null;
             priv.refPosition = null;
-            if (!this.options.sticky && 'Wirecloud' in window) {
+            if (priv.refContainer != null) {
+                untrack_element(priv.refContainer, this);
+            }
+            if ('Wirecloud' in window) {
                 Wirecloud.UserInterfaceManager._unregisterPopup(this);
             }
-            priv.baseelement.removeEventListener('click', priv.disableCallback, true);
+            if (!this.options.sticky) {
+                priv.baseelement.ownerDocument.removeEventListener('click', priv.disableCallback, true);
+            }
             this.dispatchEvent('hide');
         }
     };
 
+
     se.Popover = class Popover extends se.StyledElement {
 
+        /**
+         * @param {Object} [options] a dictionary with popover options
+         * @param {Wirecloud.ui.WidgetView} [options.refContainer] Widget
+         *   associated with this popover. Visibility of the popover with be
+         *   controlled also with the visibility of the widget. This is a
+         *   WireCloud related feature.
+         * @param {boolean} [options.sticky] If `true`, the popover won't be
+         *   closed when clicking on the document.
+         */
         constructor(options) {
             const defaultOptions = {
-                content: '',
-                title: '',
-                class: '',
+                refContainer: null,
+                content: "",
+                title: "",
+                class: "",
                 html: false,
-                placement: ['right', 'bottom', 'left', 'top'],
+                placement: ["right", "bottom", "left", "top"],
                 sticky: false
             };
 
@@ -192,16 +243,21 @@
 
             const priv = {
                 element: null,
-                disableCallback: disableCallback.bind(this)
+                disableCallback: disableCallback.bind(this),
+                refContainer: this.options.refContainer,
+                on_fullscreen_change: (event) => {
+                    priv.baseelement = utils.getFullscreenElement() || document.body;
+                    priv.baseelement.appendChild(priv.element);
+                    this.repaint();
+                }
             };
             privates.set(this, priv);
-            Object.defineProperties(this, {
-                visible: {
-                    get: function () {
-                        return priv.element != null;
-                    }
-                },
-            });
+
+            delete this.options.refContainer;
+        }
+
+        get visible() {
+            return privates.get(this).element != null;
         }
 
         bind(element, mode) {
@@ -218,6 +274,26 @@
                 break;
             default:
                 throw new TypeError('Invalid mode: ' + mode);
+            }
+
+            return this;
+        }
+
+        disablePointerEvents() {
+            const priv = privates.get(this);
+
+            if (priv.element) {
+                priv.element.style.pointerEvents = "none";
+            }
+
+            return this;
+        }
+
+        enablePointerEvents() {
+            const priv = privates.get(this);
+
+            if (priv.element) {
+                priv.element.style.pointerEvents = "";
             }
 
             return this;

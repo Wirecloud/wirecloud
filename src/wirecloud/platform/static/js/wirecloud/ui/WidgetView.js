@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019-2020 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -95,6 +95,12 @@
             'width': this.shape.width,
             'heightInPixels': this.model.wrapperElement.offsetHeight,
             'widthInPixels': this.model.wrapperElement.offsetWidth
+        });
+    };
+
+    const update_widget_visibility = function update_widget_visibility() {
+        this.model.contextManager.modify({
+            visible: !this.minimized && !this.tab.hidden && !this.tab.workspace.hidden
         });
     };
 
@@ -381,7 +387,7 @@
                 }, true);
 
                 model.wrapperElement.contentDocument.defaultView.addEventListener('click', () => {
-                    Wirecloud.UserInterfaceManager.handleEscapeEvent();
+                    Wirecloud.UserInterfaceManager.handleEscapeEvent(true);
                     this.unhighlight();
                 }, true);
 
@@ -390,6 +396,12 @@
 
             this.tab.workspace.addEventListener('editmode', update.bind(this));
             model.addEventListener('remove', on_remove.bind(this));
+
+            this.tab.workspace.addEventListener('show', update_widget_visibility.bind(this));
+            this.tab.workspace.addEventListener('hide', update_widget_visibility.bind(this));
+            this.tab.addEventListener('show', update_widget_visibility.bind(this));
+            this.tab.addEventListener('hide', update_widget_visibility.bind(this));
+
             update.call(this);
         }
 
@@ -432,8 +444,9 @@
             }
 
             this.model.contextManager.modify({
-                'height': this.shape.height,
-                'heightInPixels': this.model.wrapperElement.offsetHeight
+                height: this.shape.height,
+                heightInPixels: this.model.wrapperElement.offsetHeight,
+                visible: !priv.minimized && !this.tab.hidden && !this.tab.workspace.hidden
             });
 
             // Notify resize event

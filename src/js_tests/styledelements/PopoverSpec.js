@@ -23,7 +23,7 @@
 /* globals StyledElements, Wirecloud */
 
 
-(function (se) {
+(function (se, utils) {
 
     "use strict";
 
@@ -79,6 +79,40 @@
 
         });
 
+        describe("disablePointerEvents()", () => {
+
+            it("should work when popover is not visible", () => {
+                const tooltip = new StyledElements.Popover();
+                expect(tooltip.disablePointerEvents()).toBe(tooltip);
+            });
+
+            it("should work when popover is visible", () => {
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Popover();
+                tooltip.show(ref_element);
+
+                expect(tooltip.disablePointerEvents()).toBe(tooltip);
+            });
+
+        });
+
+        describe("enablePointerEvents()", () => {
+
+            it("should work when popover is not visible", () => {
+                const tooltip = new StyledElements.Popover();
+                expect(tooltip.enablePointerEvents()).toBe(tooltip);
+            });
+
+            it("should work when popover is visible", () => {
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Popover();
+                tooltip.show(ref_element);
+
+                expect(tooltip.enablePointerEvents()).toBe(tooltip);
+            });
+
+        });
+
         describe("hide()", () => {
 
             afterEach(() => {
@@ -130,7 +164,7 @@
                 expect(Wirecloud.UserInterfaceManager._unregisterPopup).toHaveBeenCalledWith(popover);
             });
 
-            it("should ignore WireCloud support when sticky is true", () => {
+            it("should also use WireCloud support when sticky is true", () => {
                 const ref_element = new se.Button();
                 const popover = new se.Popover({
                     sticky: true
@@ -143,7 +177,32 @@
                 };
 
                 expect(popover.hide()).toBe(popover);
-                expect(Wirecloud.UserInterfaceManager._unregisterPopup).not.toHaveBeenCalled();
+                expect(Wirecloud.UserInterfaceManager._unregisterPopup).toHaveBeenCalled();
+            });
+
+            it("should work when using the refContainer option", () => {
+                const ref_element = new se.Button();
+                const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
+                    contextManager: {
+                        addCallback: jasmine.createSpy(),
+                        removeCallback: jasmine.createSpy()
+                    }
+                };
+                const popover = new se.Popover({
+                    refContainer: refContainer
+                });
+                popover.show(ref_element);
+                window.Wirecloud = {
+                    UserInterfaceManager: {
+                        _unregisterPopup: jasmine.createSpy("_unregisterPopup")
+                    }
+                };
+
+                expect(popover.hide()).toBe(popover);
+                expect(refContainer.contextManager.removeCallback).toHaveBeenCalled();
+                expect(Wirecloud.UserInterfaceManager._unregisterPopup).toHaveBeenCalledWith(popover);
             });
 
         });
@@ -256,7 +315,7 @@
                 expect(Wirecloud.UserInterfaceManager._registerPopup).toHaveBeenCalledWith(popover);
             });
 
-            it("should ignore WireCloud support when sticky option is true", () => {
+            it("should also support WireCloud when sticky option is true", () => {
                 const ref_element = new se.Button({text: "Test"});
                 const popover = new se.Popover({
                     placement: ['bottom-right'],
@@ -271,7 +330,7 @@
 
                 const element = document.querySelector('.popover');
                 expect(element).not.toBe(null);
-                expect(Wirecloud.UserInterfaceManager._registerPopup).not.toHaveBeenCalled();
+                expect(Wirecloud.UserInterfaceManager._registerPopup).toHaveBeenCalled();
             });
 
         });
@@ -319,6 +378,20 @@
                 });
             });
 
+            it("should not hide popover when clicking outside the popover when using the sticky option", (done) => {
+                const ref_element = new StyledElements.Button();
+                const popover = new StyledElements.Popover({sticky: true});
+                spyOn(popover, "hide").and.callThrough();
+                expect(popover.show(ref_element)).toBe(popover);
+
+                document.body.dispatchEvent(new MouseEvent("click", {button: 0}));
+
+                setTimeout(() => {
+                    expect(popover.hide).not.toHaveBeenCalled();
+                    done();
+                });
+            });
+
             it("should ignore click events outside the popover when the not using the main button", (done) => {
                 const ref_element = new StyledElements.Button();
                 const popover = new StyledElements.Popover();
@@ -347,8 +420,105 @@
                 element.dispatchEvent(new Event("transitionend"));
             });
 
+            it("should manage fullscreen mode change events (entering fullscreen)", () => {
+                const ref_element = new StyledElements.Button();
+                const popover = new StyledElements.Popover();
+                const fullscreen_element = document.createElement("div");
+                spyOn(utils, "onFullscreenChange");
+                spyOn(utils, "getFullscreenElement");
+                expect(popover.show(ref_element)).toBe(popover);
+                // Change fullscreen element
+                utils.getFullscreenElement.and.returnValue(fullscreen_element);
+
+                utils.onFullscreenChange.calls.argsFor(0)[1]();
+
+                expect(fullscreen_element.childElementCount).toBe(1);
+            });
+
+            it("should manage fullscreen mode change events (exiting fullscreen)", () => {
+                const ref_element = new StyledElements.Button();
+                const popover = new StyledElements.Popover();
+                const fullscreen_element = document.createElement("div");
+                spyOn(utils, "onFullscreenChange");
+                spyOn(utils, "getFullscreenElement").and.returnValue(fullscreen_element);
+                expect(popover.show(ref_element)).toBe(popover);
+                // Remove fullscreen element
+                utils.getFullscreenElement.and.returnValue(null);
+
+                utils.onFullscreenChange.calls.argsFor(0)[1]();
+
+                expect(fullscreen_element.childElementCount).toBe(0);
+            });
+
+            it("should manage visible changes when using the refContainer option", () => {
+                const ref_element = new StyledElements.Button();
+                const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
+                    contextManager: {
+                        addCallback: jasmine.createSpy("addCallback"),
+                        removeCallback: jasmine.createSpy("removeCallback")
+                    }
+                };
+                const popover = new StyledElements.Popover({
+                    refContainer: refContainer
+                });
+                expect(popover.show(ref_element)).toBe(popover);
+
+                refContainer.contextManager.addCallback.calls.argsFor(0)[0]({
+                    visible: false
+                });
+                const element = document.querySelector('.popover');
+                expect([...element.classList]).toContain("hidden");
+            });
+
+            it("should ignore widget changes not affecting visiblity when using the refContainer option", () => {
+                const ref_element = new StyledElements.Button();
+                const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
+                    contextManager: {
+                        addCallback: jasmine.createSpy("addCallback"),
+                        removeCallback: jasmine.createSpy("removeCallback")
+                    }
+                };
+                const popover = new StyledElements.Popover({
+                    refContainer: refContainer
+                });
+                expect(popover.show(ref_element)).toBe(popover);
+
+                refContainer.contextManager.addCallback.calls.argsFor(0)[0]({
+                    other: false
+                });
+                const element = document.querySelector('.popover');
+                expect([...element.classList]).not.toContain("hidden");
+            });
+
+            it("should manage unload events from widgets when using the refContainer option", () => {
+                const ref_element = new StyledElements.Button();
+                const refContainer = {
+                    addEventListener: jasmine.createSpy("addEventListener"),
+                    removeEventListener: jasmine.createSpy("removeEventListener"),
+                    contextManager: {
+                        addCallback: jasmine.createSpy("addCallback"),
+                        removeCallback: jasmine.createSpy("removeCallback")
+                    }
+                };
+                const popover = new StyledElements.Popover({
+                    refContainer: refContainer
+                });
+                spyOn(popover, "hide").and.callThrough();
+                expect(popover.show(ref_element)).toBe(popover);
+
+                refContainer.addEventListener.calls.argsFor(0)[1](popover, refContainer);
+
+                expect(refContainer.removeEventListener).toHaveBeenCalled();
+                expect(refContainer.contextManager.removeCallback).toHaveBeenCalled();
+                expect(popover.hide).toHaveBeenCalled();
+            });
+
         });
 
     });
 
-})(StyledElements);
+})(StyledElements, StyledElements.Utils);
