@@ -32,27 +32,11 @@
     const privates = new WeakMap();
 
     const addChildWindow = function addChildWindow(parent, child) {
-
         const priv_parent = privates.get(parent);
         const priv_child = privates.get(child);
 
         if (priv_parent.child != null) {
             throw new TypeError('Parent modal already has a child modal');
-        } else if (priv_child.parent != null) {
-            throw new TypeError('Modal already has a parent modal');
-        }
-
-        // Check child is not an ancestor
-        if (parent === child) {
-            throw new TypeError('Modals cannot descend themselves');
-        }
-
-        let currentmodal = priv_parent.parent;
-        while (currentmodal != null) {
-            if (currentmodal === child) {
-                throw new TypeError('Modals cannot descend themselves');
-            }
-            currentmodal = privates.get(currentmodal).parent;
         }
 
         // Add relationships
@@ -62,13 +46,11 @@
 
     const removeChildWindow = function removeChildWindow(parent, child) {
         const priv_parent = privates.get(parent);
-        if (priv_parent.child === child) {
-            const priv_child = privates.get(child);
+        const priv_child = privates.get(child);
 
-            // Remove relationships
-            priv_parent.child = null;
-            priv_child.parent = null;
-        }
+        // Remove relationships
+        priv_parent.child = null;
+        priv_child.parent = null;
     };
 
     const makeDraggable = function makeDraggable(handler) {
@@ -104,7 +86,18 @@
     ns.WindowMenu = class WindowMenu extends se.ObjectWithEvents {
 
         constructor(title, extra_class, events) {
-            super(events || []);
+            try {
+                events = [...events];
+            } catch (e) {
+                events = [];
+            }
+            if (!events.includes("show")) {
+                events.push("show");
+            }
+            if (!events.includes("hide")) {
+                events.push("hide");
+            }
+            super(events);
 
             privates.set(this, {
                 parent: null,
@@ -149,6 +142,7 @@
                 const element = ui_fragment.elements[i];
                 if (element instanceof Element) {
                     this.htmlElement = element;
+                    element.remove();
                     break;
                 }
             }
@@ -171,6 +165,8 @@
         setPosition(coordinates) {
             this.htmlElement.style.left = coordinates.posX + 'px';
             this.htmlElement.style.top = coordinates.posY + 'px';
+
+            return this;
         }
 
         /**
@@ -246,6 +242,16 @@
          * @param parentWindow
          */
         show(parentWindow) {
+            const priv = privates.get(this);
+
+            if (this.htmlElement.parentElement != null) {
+                parentWindow = parentWindow || null;
+                if (priv.parent !== parentWindow) {
+                    throw new TypeError("This window menu is already displayed and configured in a different way.");
+                }
+                return this;
+            }
+
             if (parentWindow != null) {
                 addChildWindow(parentWindow, this);
                 Wirecloud.UserInterfaceManager._registerPopup(this);
@@ -253,24 +259,26 @@
                 Wirecloud.UserInterfaceManager._registerRootWindowMenu(this);
             }
 
-            const priv = privates.get(this);
             priv.insert();
             utils.onFullscreenChange(document.body, priv.insert);
 
             this.htmlElement.style.display = "block";
             this.setFocus();
+
+            this.dispatchEvent("show");
+
+            return this;
         }
 
         /**
          * Makes this WindowMenu hidden.
          */
         hide() {
-
             const priv = privates.get(this);
 
             if (this.htmlElement.parentElement == null) {
                 // This windowmenu is currently hidden => Nothing to do
-                return;
+                return this;
             }
 
             this.htmlElement.parentNode.removeChild(this.htmlElement);
@@ -280,8 +288,8 @@
 
             // Remove fullscreen listener
             utils.removeFullscreenChangeCallback(document.body, priv.insert);
-            if (this.child != null) {
-                this.child.hide();
+            if (priv.child != null) {
+                priv.child.hide();
             }
 
             if (priv.parent != null) {
@@ -290,9 +298,14 @@
             } else {
                 Wirecloud.UserInterfaceManager._unregisterRootWindowMenu(this);
             }
+
+            this.dispatchEvent("hide");
+
+            return this;
         }
 
         setFocus() {
+            return this;
         }
 
         destroy() {
