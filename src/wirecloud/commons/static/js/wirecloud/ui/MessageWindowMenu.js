@@ -74,7 +74,7 @@
 
         setType(type) {
             // Update title
-            this.setTitle(titles[type]);
+            this.setTitle(typeof type === "number" ? titles[type] : type);
         }
 
     }
