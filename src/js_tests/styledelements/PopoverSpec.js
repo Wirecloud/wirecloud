@@ -362,6 +362,30 @@
 
         });
 
+        describe("update(title, content)", () => {
+
+            it("should work when currently hidden", () => {
+                const tooltip = new StyledElements.Popover({placement: ['top']});
+
+                expect(tooltip.update("new title", "new content")).toBe(tooltip);
+
+                expect(tooltip.options.title).toBe("new title");
+                expect(tooltip.options.content).toBe("new content");
+            });
+
+            it("should work when visible", () => {
+                const ref_element = new StyledElements.Button();
+                const tooltip = new StyledElements.Popover({placement: ['top']});
+                tooltip.show(ref_element);
+
+                expect(tooltip.update("new title", "new content")).toBe(tooltip);
+
+                expect(tooltip.options.title).toBe("new title");
+                expect(tooltip.options.content).toBe("new content");
+            });
+
+        });
+
         describe("events", () => {
 
             it("should hide popover when clicking outside the popover", (done) => {

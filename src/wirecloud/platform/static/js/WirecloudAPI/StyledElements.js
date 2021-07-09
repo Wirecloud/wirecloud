@@ -177,6 +177,7 @@
             privates.get(this).menu.destroy();
             return this;
         }
+
     }
 
     /* Popover */
@@ -237,6 +238,12 @@
                 this.show(refPosition);
             }
         }
+
+        update(title, content) {
+            privates.get(this).popover.update(title, content);
+            return this;
+        }
+
     }
 
     /* SendMenuItems */
