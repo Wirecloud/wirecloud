@@ -123,13 +123,13 @@
     };
 
     const _logout = function _logout() {
-        let logout_url = Wirecloud.URLs.LOGOUT_VIEW;
+        const logout_url = new URL(Wirecloud.URLs.LOGOUT_VIEW, document.location);
         const publicdashboard = Wirecloud.activeWorkspace.preferences.get("public");
         const requireauth = Wirecloud.activeWorkspace.preferences.get("requireauth");
 
         if (publicdashboard && !requireauth) {
             const next_url = window.location.pathname + window.location.search + window.location.hash;
-            logout_url += '?next=' + encodeURIComponent(next_url);
+            logout_url.searchParams.set("next", next_url);
         }
         window.location = logout_url;
     };
@@ -340,12 +340,17 @@
     /**
      * Redirects to the login view.
      **/
-    Wirecloud.login = function login() {
-        let login_url = Wirecloud.URLs.LOGIN_VIEW;
+    Wirecloud.login = function login(force) {
+        const login_url = new URL(Wirecloud.URLs.LOGIN_VIEW, document.location);
+
         const next_url = window.location.pathname + window.location.search + window.location.hash;
         if (next_url !== '/') {
-            login_url += '?next=' + encodeURIComponent(next_url);
+            login_url.searchParams.set("next", next_url);
         }
+        if (force) {
+            login_url.searchParams.set("force", "true");
+        }
+
         window.location = login_url;
     };
 
