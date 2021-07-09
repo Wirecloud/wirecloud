@@ -321,6 +321,28 @@
             return _show.call(this, refElement);
         }
 
+        update(title, content) {
+            this.options.title = title;
+            this.options.content = content;
+
+            const priv = privates.get(this);
+            if (priv.element) {
+                priv.element.remove();
+
+                priv.element = builder.parse(template, {
+                    title: this.options.title,
+                    content: this.options.content
+                }).elements[0];
+                priv.element.addEventListener("transitionend", _hide.bind(this));
+                priv.element.classList.toggle("sticky", this.options.sticky);
+                priv.element.classList.add("in");
+                priv.baseelement.appendChild(priv.element);
+
+                this.repaint();
+            }
+            return this;
+        }
+
         hide() {
             if (!this.visible) {
                 return this;
