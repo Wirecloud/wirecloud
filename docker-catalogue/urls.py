@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
@@ -8,10 +10,22 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from wirecloud.commons import authentication as wc_auth
 import wirecloud.commons.urls
-from wirecloud.platform.plugins import get_plugin_urls
 from wirecloud.fiware import views as wc_fiware
+from wirecloud.keycloak import views as wc_keycloak
+from wirecloud.platform.plugins import get_plugin_urls
+import wirecloud.platform.urls
 
 admin.autodiscover()
+
+login_method = django_auth.LoginView.as_view()
+logout_method = wc_auth.logout
+
+if settings.IDM_AUTH == 'fiware':
+    login_method = wc_fiware.login
+
+if settings.IDM_AUTH == 'keycloak':
+    login_method = wc_keycloak.login
+    logout_method = wc_keycloak.logout
 
 urlpatterns = (
 
@@ -20,16 +34,18 @@ urlpatterns = (
     url(r'^catalogue/', include('wirecloud.catalogue.urls')),
 
     # Login/logout
-    url(r'^login/?$', wc_fiware.login if settings.IDM_AUTH_ENABLED else django_auth.login, name="login"),
-    url(r'^logout/?$', wc_auth.logout, name="logout"),
+    url(r'^login/?$', login_method, name="login"),
+    url(r'^logout/?$', logout_method, name="logout"),
     url(r'^admin/logout/?$', wc_auth.logout),
 
     # Admin interface
-    url(r'^admin/', include(admin.site.urls)),
+    url(os.environ.get("ADMIN_URL_PATH", r'^admin/'), admin.site.urls),
 ) + wirecloud.commons.urls.urlpatterns + get_plugin_urls()
 
-if settings.IDM_AUTH_ENABLED:
+if settings.IDM_AUTH:
     urlpatterns += (url('', include('social_django.urls', namespace='social')),)
+    if settings.IDM_AUTH == "keycloak":
+        urlpatterns += (url('', include('wirecloud.keycloak.urls')),)
 
 urlpatterns += tuple(staticfiles_urlpatterns())
 

@@ -3,7 +3,7 @@
 
 import os
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 
 DEBUG = os.environ.get("DEBUG", "False").strip().lower() == "true"
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
@@ -45,10 +45,10 @@ else:
 
 if "ELASTICSEARCH2_URL" in os.environ:
     HAYSTACK_CONNECTIONS = {
-        'default': {
-            'ENGINE': 'wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine',
-            'URL': os.environ['ELASTICSEARCH2_URL'],
-            'INDEX_NAME': 'wirecloud',
+        "default": {
+            "ENGINE": "wirecloud.commons.haystack_backends.elasticsearch2_backend.Elasticsearch2SearchEngine",
+            "URL": os.environ["ELASTICSEARCH2_URL"],
+            "INDEX_NAME": os.environ.get("ELASTICSEARCH2_INDEX", "wirecloud_macs"),
         },
     }
 else:
@@ -126,15 +126,105 @@ ROOT_URLCONF = 'wirecloud_instance.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'wirecloud_instance.wsgi.application'
 
-# FIWARE IdM configuration
-FIWARE_IDM_SERVER = os.environ.get('FIWARE_IDM_SERVER', '').strip()
-SOCIAL_AUTH_FIWARE_KEY = os.environ.get('SOCIAL_AUTH_FIWARE_KEY', '').strip()
-SOCIAL_AUTH_FIWARE_SECRET = os.environ.get('SOCIAL_AUTH_FIWARE_SECRET', '').strip()
-IDM_AUTH_ENABLED = FIWARE_IDM_SERVER and SOCIAL_AUTH_FIWARE_KEY and SOCIAL_AUTH_FIWARE_SECRET
+# Handle some basic settings
 
-if IDM_AUTH_ENABLED:
+## String settings
+STRING_SETTINGS = (
+    "CSRF_COOKIE_NAME",
+    "DEFAULT_FROM_EMAIL",
+    "EMAIL_HOST",
+    "EMAIL_HOST_PASSWORD",
+    "EMAIL_HOST_USER",
+    "FIWARE_IDM_SERVER",
+    "FIWARE_IDM_PUBLIC_URL",
+    "FORCE_SCRIPT_NAME",
+    "LOGOUT_REDIRECT_URL",
+    "SECRET_KEY",
+    "SESSION_COOKIE_NAME",
+    "SOCIAL_AUTH_FIWARE_KEY",
+    "SOCIAL_AUTH_FIWARE_SECRET",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_KEY",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_REALM",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_SECRET",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_URL",
+)
+SENSITIVE_SETTINGS = (
+    "EMAIL_HOST_PASSWORD",
+    "LOGOUT_REDIRECT_URL",
+    "SECRET_KEY",
+    "SOCIAL_AUTH_FIWARE_KEY",
+    "SOCIAL_AUTH_FIWARE_SECRET",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_KEY",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_SECRET",
+)
+for setting in STRING_SETTINGS:
+    if setting in SENSITIVE_SETTINGS and (setting + '_FILE') in os.environ:
+        filename = os.environ[setting + '_FILE']
+        try:
+            with open(filename, 'rb') as f:
+                value = f.read()
+        except IOError as error:
+            print("Error reading the file ({}) pointed out by {}: {}".format(setting + '_FILE', filename, error))
+            print("Ignoring it")
+            value = os.environ.get(setting, "").strip()
+    else:
+        value = os.environ.get(setting, "").strip()
+    if value != "":
+        locals()[setting] = value
+
+## Number settings
+NUMBER_SETTINGS = (
+    "CSRF_COOKIE_AGE",
+    "EMAIL_PORT",
+    "SESSION_COOKIE_AGE",
+)
+for setting in NUMBER_SETTINGS:
+    value = os.environ.get(setting, "").strip()
+    try:
+        locals()[setting] = int(value)
+    except ValueError:
+        pass
+
+## Boolean settings
+BOOLEAN_SETTINGS = (
+    "CSRF_COOKIE_HTTPONLY",
+    "CSRF_COOKIE_SECURE",
+    "EMAIL_USE_TLS",
+    "EMAIL_USE_SSL",
+    "SESSION_COOKIE_HTTPONLY",
+    "SESSION_COOKIE_SECURE",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_GLOBAL_ROLE",
+)
+for setting in BOOLEAN_SETTINGS:
+    value = os.environ.get(setting, "").strip()
+    if value != "":
+        locals()[setting] = value.lower() == "true"
+
+## Verify SSL settings
+VERIFY_SETTINGS = (
+    "WIRECLOUD_HTTPS_VERIFY",
+    "SOCIAL_AUTH_FIWARE_VERIFY_SSL",
+    "SOCIAL_AUTH_VERIFY_SSL",
+    "SOCIAL_AUTH_KEYCLOAK_OIDC_VERIFY_SSL",
+)
+for setting in VERIFY_SETTINGS:
+    value = os.environ.get(setting, "/etc/ssl/certs/ca-certificates.crt").strip()
+    locals()[setting] = True if value.lower() == "true" else False if value.lower() == "false" else value
+
+# FIWARE & Keycloak configuration
+IDM_AUTH = 'fiware' if "FIWARE_IDM_SERVER" in locals() and "SOCIAL_AUTH_FIWARE_KEY" in locals() and "SOCIAL_AUTH_FIWARE_SECRET" in locals() else None
+IDM_AUTH = 'keycloak' if "SOCIAL_AUTH_KEYCLOAK_OIDC_URL" in locals() and "SOCIAL_AUTH_KEYCLOAK_OIDC_REALM" in locals() and "SOCIAL_AUTH_KEYCLOAK_OIDC_KEY" in locals() and "SOCIAL_AUTH_KEYCLOAK_OIDC_SECRET" in locals() else IDM_AUTH
+
+if IDM_AUTH == 'fiware':
     INSTALLED_APPS += (
         'wirecloud.fiware',
+        'social_django',
+        'haystack',
+    )
+elif IDM_AUTH == 'keycloak':
+    INSTALLED_APPS += (
+        'wirecloud.fiware',
+        'wirecloud.keycloak',
         'social_django',
         'haystack',
     )
@@ -151,7 +241,15 @@ LOGOUT_URL = reverse_lazy('wirecloud.root')
 LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 
 THEME_ACTIVE = os.environ.get("DEFAULT_THEME", "wirecloud.defaulttheme")
-DEFAULT_LANGUAGE = 'browser'
+DEFAULT_LANGUAGE = os.environ.get("DEFAULT_LANGUAGE", 'browser')
+from django.conf.global_settings import LANGUAGES
+
+# Configure available translations
+# Filter using available translations by default
+lang_filter = os.environ.get("LANGUAGES", "en es ja").split()
+if len(lang_filter) > 0:
+    LANGUAGES = dict(LANGUAGES)
+    LANGUAGES = [(lang_code, LANGUAGES[lang_code]) for lang_code in lang_filter if lang_code in LANGUAGES]
 
 # WGT deployment dirs
 CATALOGUE_MEDIA_ROOT = os.path.join(DATADIR, 'catalogue_resources')
@@ -174,6 +272,7 @@ else:
             'MAX_ENTRIES': 3000,
         },
     }
+CACHE_MIDDLEWARE_KEY_PREFIX = os.environ.get("CACHE_MIDDLEWARE_KEY_PREFIX", "macs/")
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
@@ -183,15 +282,72 @@ USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 
 # Auth configuration
-if IDM_AUTH_ENABLED:
+if IDM_AUTH == 'fiware':
     AUTHENTICATION_BACKENDS = (
         'wirecloud.fiware.social_auth_backend.FIWAREOAuth2',
+    )
+elif IDM_AUTH == 'keycloak':
+    AUTHENTICATION_BACKENDS = (
+        'wirecloud.keycloak.social_auth_backend.KeycloakOpenIdConnect',
     )
 else:
     AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
     )
 
+SOCIAL_AUTH_NO_DEFAULT_PROTECTED_USER_FIELDS = True
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ('username', 'id', 'pk', 'email', 'password', 'is_active')
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+if os.environ.get("SOCIAL_AUTH_FIWARE_SYNC_ORGANIZATIONS", "False").strip().lower() == "true":
+    SOCIAL_AUTH_PIPELINE += ('wirecloud.fiware.social_auth_backend.create_organizations',)
+
+if os.environ.get("SOCIAL_AUTH_FIWARE_SYNC_ROLE_GROUPS", "False").strip().lower() == "true":
+    SOCIAL_AUTH_PIPELINE += ('wirecloud.fiware.social_auth_backend.sync_role_groups',)
+
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
 
-LOGGING['disable_existing_loggers'] = False
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+        'skip_unreadable_posts': {
+            '()': 'wirecloud.commons.utils.log.SkipUnreadablePosts',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false', 'skip_unreadable_posts'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+        },
+        'django.request': {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
+}
