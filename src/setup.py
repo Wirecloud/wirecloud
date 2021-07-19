@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2012-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+# Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
 
 # This file is part of Wirecloud.
 
@@ -149,7 +150,8 @@ class install(setuptools_install):
 
 
 def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    with open(os.path.join(os.path.dirname(__file__), fname)) as f:
+        return f.read()
 
 
 for scheme in INSTALL_SCHEMES.values():
@@ -173,11 +175,8 @@ setup(
         ),
     },
     include_package_data=True,
-    install_requires=read('requirements.txt'),
-    tests_require=(
-        'django-nose',
-        'parameterized',
-    ),
+    install_requires=read('./requirements.txt'),
+    tests_require=read('./requirements-dev.txt'),
     setup_requires=(
         'wheel>=0.24',
     ),
