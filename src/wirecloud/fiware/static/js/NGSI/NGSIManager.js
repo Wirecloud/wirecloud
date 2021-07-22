@@ -45,10 +45,11 @@
             if (proxy_info.usages === 0) {
                 proxy_info.proxy.close();
                 delete proxy_connections[proxy.url];
+            } else {
+                try {
+                    proxy.close();
+                } catch (e) {}
             }
-            try {
-                proxy.close();
-            } catch (e) {}
         });
         proxies.length = 0;
 
@@ -227,6 +228,9 @@
             let subscription = callbackSubscriptions[callback];
             if (subscription != null) {
                 switch (subscription.version) {
+                case "ld":
+                    this.connection.ld.deleteSubscription(subscription.id);
+                    break;
                 case "v2":
                     this.connection.v2.deleteSubscription(subscription.id);
                     break;
