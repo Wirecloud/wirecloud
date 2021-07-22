@@ -1259,6 +1259,35 @@
         return Promise.reject(exc);
     };
 
+    /**
+     * Parses comma-separated value options allowing arrays.
+     *
+     * @param value value to be processed
+     * @param [allow_empty=true] if false, passing an empty string/array value
+     *        (undefined/null is still possible) will throw a TypeError exception.
+     * @param [option] option name. required if allow_empty is false
+     *
+     * @throws {TypeError}
+     */
+    const parse_list_option = function parse_list_option(value, allow_empty, option) {
+        allow_empty = allow_empty == null ? true : !!allow_empty;
+        if (Array.isArray(value)) {
+            if (!allow_empty && value.length === 0) {
+                throw new TypeError(`invalid empty array value for the ${option} option`);
+            }
+
+            return value.length > 0 ? value.join(',') : undefined;
+        } else if (value != null) {
+            value = value.toString().trim();
+            if (!allow_empty && value === "") {
+                throw new TypeError(`invalid empty value for the ${option} option`);
+            }
+            return value;
+        } else {
+            return undefined;
+        }
+    };
+
     NGSI.parseNotifyContextRequest = function parseNotifyContextRequest(data, options) {
         return {
             elements: parse_context_response_list_json(data.contextResponses, false, options)[0],
@@ -1314,23 +1343,33 @@
                 priv.promise = null;
                 priv.connection_id = data.id;
 
-                priv.source.removeEventListener('error', handle_connection_rejected, true);
-                priv.source.removeEventListener('init', wait_event_source_init, true);
-                priv.source.addEventListener('error', function (e) {
-                    priv.connected = false;
-                    priv.source = null;
-                    priv.connection_id = null;
-                    var oldCallbacks = priv.callbacks;
-                    priv.callbacks = {};
-                    priv.callbacksBySubscriptionId = {};
-
-                    for (var key in oldCallbacks) {
-                        oldCallbacks[key].method(null, null, true);
+                priv.source.removeEventListener("error", handle_connection_rejected, true);
+                priv.source.removeEventListener("init", wait_event_source_init, true);
+                priv.source.addEventListener("open", () => {
+                    priv.promise = null;
+                    Object.values(priv.callbacks).forEach((callback) => {
+                        callback.method(null, null, true, "connected");
+                    });
+                }, true);
+                priv.source.addEventListener("error", (e) => {
+                    const callbacks = Object.values(priv.callbacks);
+                    if (e.target.readyState === e.target.CLOSED) {
+                        priv.promise = null;
+                        priv.source = null;
+                        priv.connection_id = null;
+                        priv.callbacks = {};
+                        priv.callbacksBySubscriptionId = {};
+                    } else {
+                        // Use a resolved promise to mark this connection as connecting
+                        priv.promise = Promise.resolve();
                     }
+                    callbacks.forEach((callback) => {
+                        callback.method(null, null, true, e.target.readyState === e.target.CLOSED ? "closed" : "disconnected");
+                    });
                 }, true);
                 priv.source.addEventListener('notification', function (e) {
                     var data = JSON.parse(e.data);
-                    priv.callbacks[data.callback_id].method(data.payload, data.headers);
+                    priv.callbacks[data.callback_id].method(data.payload, data.headers, false, null);
                 }, true);
 
                 resolve();
@@ -1415,7 +1454,6 @@
         privates.set(this, {
             callbacks: {},
             callbacksBySubscriptionId: {},
-            connected: false,
             connection_id: null,
             promise: null,
             source: null
@@ -2694,7 +2732,7 @@
      *     null,
      *     [{type: 'ONCHANGE', condValues: ['position']}],
      *     {
-     *         onNotify: function (data) {
+     *         onNotify: function (data, error, statechange, newstate) {
      *             // called when a notification arrives
      *         },
      *         onSuccess: function (data) {
@@ -2727,10 +2765,12 @@
         var url = new URL(NGSI.endpoints.v1.SUBSCRIBE_CONTEXT, this.url);
         if (typeof options.onNotify === 'function' && this.ngsi_proxy != null) {
 
-            var onNotify = function onNotify(payload) {
-                var doc = JSON.parse(payload);
-                var data = NGSI.parseNotifyContextRequest(doc, options);
-                options.onNotify(data);
+            const onNotify = (payload, headers, statechange, newstate) => {
+                if (payload != null) {
+                    payload = JSON.parse(payload);
+                    payload = NGSI.parseNotifyContextRequest(payload, options);
+                }
+                options.onNotify(payload, headers, statechange, newstate);
             };
 
             this.ngsi_proxy.requestCallback(onNotify).then(function (proxy_callback) {
@@ -2993,14 +3033,15 @@
      *
      * Object with extra options:
      *
-     * - `attrs` (`String`): Comma-separated list of attribute names whose data
-     *   are to be included in the response. The attributes are retrieved in the
-     *   order specified by this parameter. If this parameter is not included,
-     *   the attributes are retrieved in arbitrary order.
+     * - `attrs` (`String`|`Array`): String array or comma-separated list of
+     *   attribute names whose data are to be included in the response. The
+     *   attributes are retrieved in the order specified by this parameter. If
+     *   this parameter is not included, the attributes are retrieved in
+     *   arbitrary order.
      * - `correlator` (`String`): Transaction id
      * - `count` (`Boolean`; default: `false`): Request total count
-     * - `id` (`String`): A comma-separated list of entity ids to retrieve.
-     *   Incompatible with the `idPattern` option.
+     * - `id` (`String`|`Array`): String array or comma-separated list of entity
+     *   ids to retrieve. Incompatible with the `idPattern` option.
      * - `idPattern` (`String`): A correctly formated regular expression.
      *   Retrieve entities whose ID matches the regular expression. Incompatible
      *   with the `id` option
@@ -3008,8 +3049,8 @@
      *   the maximum number of entities you want to receive from the server
      * - `offset` (`Number`; default: `0`): Allows you to skip a given number of
      *   elements at the beginning
-     * - `metadata` (`String`): A comma-separated list of metadata names to
-     *   include in the response
+     * - `metadata` (`String`|`Array`): String array or comma-separated list of
+     *   attribute metadata names to include in the response
      * - `mq` (`String`): A query expression for attribute metadata, composed of
      *   a list of statements separated by semicolons (`;`)
      * - `orderBy` (`String`): Criteria for ordering results
@@ -3025,8 +3066,8 @@
      *   for details.
      * - `service` (`String`): Service/tenant to use in this operation
      * - `servicepath` (`String`): Service path to use in this operation
-     * - `type` (`String`): A comma-separated list of entity types to retrieve.
-     *   Incompatible with the `typePattern` option.
+     * - `type` (`String`|`Array`): String array or comma-separated list of
+     *   entity types to retrieve. Incompatible with the `typePattern` option.
      * - `typePattern` (`String`): A correctly formated regular expression.
      *   Retrieve entities whose type matches the regular expression.
      *   Incompatible with the `type` option.
@@ -3104,14 +3145,14 @@
             parameters.options = optionsparams.join(',');
         }
 
-        parameters.attrs = options.attrs;
-        parameters.id = options.id;
+        parameters.attrs = parse_list_option(options.attrs);
+        parameters.id = parse_list_option(options.id, false, "id");
         parameters.idPattern = options.idPattern;
         parameters.orderBy = options.orderBy;
-        parameters.metadata = options.metadata;
+        parameters.metadata = parse_list_option(options.metadata);
         parameters.mq = options.mq;
         parameters.q = options.q;
-        parameters.type = options.type;
+        parameters.type = parse_list_option(options.type, false, "type");
         parameters.typePattern = options.typePattern;
         parameters.georel = options.georel;
         parameters.geometry = options.geometry;
@@ -5014,15 +5055,17 @@
      *        }
      *    },
      *    "notification": {
-     *        "callback": function (notification, headers, error) {
+     *        "callback": (notification, headers, statechange, newstate) => {
      *            // notification.attrsformat provides information about the format used by notification.data
      *            // notification.data contains the modified entities
      *            // notification.subscriptionId provides the associated subscription id
      *            // etc...
      *
-     *            // In case of disconnection from the ngsi-proxy, this method
-     *            // will be called with error = true and notification and
-     *            // header being null
+     *            // In case of state change, statechange will be true and
+     *            // newstate will provide details about the new state.
+     *            // Supported states are: disconnected, connected and closed.
+     *            // notification and header parameters will be null if
+     *            // statechange is true
      *        },
      *        "attrs": [
      *            "temperature",
@@ -5060,11 +5103,14 @@
                 throw new TypeError('invalid callback configuration');
             }
 
-            var onNotify = function onNotify(payload, headers) {
-                var notification = JSON.parse(payload);
-                notification.attrsformat = headers['ngsiv2-attrsformat'];
-                this(notification);
-            }.bind(subscription.notification.callback);
+            const callback = subscription.notification.callback;
+            const onNotify = (payload, headers, statechange, newstate) => {
+                if (payload != null) {
+                    payload = JSON.parse(payload);
+                    payload.attrsformat = headers['ngsiv2-attrsformat'];
+                }
+                callback(payload, headers, statechange, newstate);
+            };
 
             p = connection.ngsi_proxy.requestCallback(onNotify).then(
                 function (response) {
@@ -5967,8 +6013,10 @@
      *      - `type` or `typePattern`: Type or type pattern of the entities total
      *      search for. Both cannot be used at the same time. If omitted, it
      *      means "any entity type"
-     * - `attributes` (`Array`): a list of attribute names to search for. If
+     * - `attrs` (`Array`): a list of attribute names to search for. If
      *   omitted, it means "all attributes".
+     * - `expression` (`Object`) an expression composed of `q`, `mq`, `georel`,
+     *   `geometry` and `coords`.
      * - `metadata` (`Array`): a list of metadata names to include in the
      *   response. See "Filtering out attributes and metadata" section for more
      *   detail.
@@ -6151,7 +6199,8 @@
      * - `sysAttrs` (`Boolean`): Request system-generated attributes (`createdAt`,
      *   `modifiedAt`).
      * - `tenant` (`String`): Tenant to use in this operation
-     * - `type` (`String`): A comma-separated list of entity types to retrieve.
+     * - `type` (`String`|`Array`): String array or comma-separated list of
+     *   entity types to retrieve.
      *
      * @throws {NGSI.BadRequestError}
      * @throws {NGSI.ConnectionError}
@@ -6213,12 +6262,12 @@
             parameters.options = optionsparams.join(',');
         }
 
-        parameters.attrs = Array.isArray(options.attrs) ? options.attrs.join(',') : options.attrs;
+        parameters.attrs = parse_list_option(options.attrs, true);
         parameters.csf = options.csf;
-        parameters.id = options.id;
+        parameters.id = parse_list_option(options.id, false, "id");
         parameters.idPattern = options.idPattern;
         parameters.q = options.q;
-        parameters.type = options.type;
+        parameters.type = parse_list_option(options.type, false, "type");
         parameters.geoproperty = options.geoproperty;
         parameters.georel = options.georel;
         parameters.geometry = options.geometry;
@@ -6446,10 +6495,11 @@
      * String with the id of the entity to query or an object with extra
      * options:
      *
-     * - `attrs` (`String`): Comma-separated list of attribute names whose data
-     *   are to be included in the response. The attributes are retrieved in the
-     *   order specified by this parameter. If this parameter is not included,
-     *   the attributes are retrieved in arbitrary order.
+     * - `attrs` (`String`|`Array`): String array or comma-separated list of
+     *   attribute names whose data are to be included in the response. The
+     *   attributes are retrieved in the order specified by this parameter. If
+     *   this parameter is not included, the attributes are retrieved in
+     *   arbitrary order.
      * - `@context` (`String`): URI pointing to the JSON-LD document which
      *   contains the `@context` to be used to expand the terms when retrieving
      *   entity details.
@@ -6506,7 +6556,7 @@
         const connection = privates.get(this);
         const url = new URL(interpolate(NGSI.endpoints.ld.ENTITY_ENTRY, {entityId: encodeURIComponent(options.id)}), connection.url);
         const parameters = {
-            attrs: options.attrs
+            attrs: parse_list_option(options.attrs)
         };
         if (options.keyValues === true) {
             parameters.options = "keyValues";
@@ -6794,15 +6844,17 @@
      *         "attributes": ["speed"],
      *         "format": "keyValues",
      *         "endpoint": {
-     *             "callback": (notification, headers, error) => {
+     *             "callback": (notification, headers, statechange, newstate) => {
      *                 // notification.attrsformat provides information about the format used by notification.data
      *                 // notification.data contains the modified entities
      *                 // notification.subscriptionId provides the associated subscription id
      *                 // etc...
      *
-     *                 // In case of disconnection from the ngsi-proxy, this method
-     *                 // will be called with error = true (the notification and
-     *                 // the header parameters will contain a null value)
+     *                 // In case of state change, statechange will be true and
+     *                 // newstate will provide details about the new state.
+     *                 // Supported states are: disconnected, connected and closed.
+     *                 // notification and header parameters will be null if
+     *                 // statechange is true
      *             },
      *             "accept": "application/json"
      *         }
@@ -6859,11 +6911,13 @@
 
             const callback = subscription.notification.endpoint.callback;
             const format = subscription.notification.format || "normalized";
-            const onNotify = (payload, headers) => {
-                const notification = JSON.parse(payload);
-                notification.format = format;
-                notification.contentType = headers['content-type'];
-                callback(notification);
+            const onNotify = (payload, headers, statechange, newstate) => {
+                if (payload != null) {
+                    payload = JSON.parse(payload);
+                    payload.format = format;
+                    payload.contentType = headers["content-type"];
+                }
+                callback(payload, headers, statechange, newstate);
             };
 
             p = connection.ngsi_proxy.requestCallback(onNotify).then(
@@ -7844,8 +7898,8 @@
      * - `csf` (`String`): Context Source filter.
      * - `endTimeAt` (`String`): DateTime to use as final date when `timerel` is
      *   `between`.
-     * - `id` (`String`): A comma-separated list of entity ids to retrieve.
-     *   Incompatible with the `idPattern` option.
+     * - `id` (`String`|`Array`): String array or comma-separated list of entity
+     *   ids to retrieve. Incompatible with the `idPattern` option.
      * - `idPattern` (`String`): A correctly formated regular expression.
      *   Retrieve entities whose ID matches the regular expression. Incompatible
      *   with the `id` option
@@ -7858,23 +7912,24 @@
      * - `orderBy` (`String`): Criteria for ordering results
      * - `q` (`String`): A query expression, composed of a list of statements
      *   separated by semicolons (`;`)
-     * - `georel` (`String`): Spatial relationship between matching entities and
-     *   a reference shape. See "Geographical Queries" section in NGSIv2 specification
-     *   for details.
-     * - `geometry` (`String`): Geographical area to which the query is restricted.
-     *   See "Geographical Queries" section in NGSIv2 specification for details.
+     * - `georel` (`String`): Geospatial relationship (use when making
+     *   geo-queries).
+     * - `geometry` (`String`): Type of reference geometry (used when making
+     *   geo-queries).
      * - `geoproperty` (`String`): The name of the Property that contains the
      *   geospatial data that will be used to resolve the geoquery.
      * - `temporalValues` (`Boolean'): Request information using the simplified
      *   temporal representation of entities.
      * - `timeAt` (`String`): DateTime representing the comparison point for the
-     *   before and after relation and the starting point for the between relation.
+     *   before and after relation and the starting point for the between
+     *   relation.
      * - `timerel` (`String`): Allowed values: "before", "after", "between".
      * - `timeproperty` (`String`): The name of the Property that contains the
-     *   temporal data that will be used to resolve the temporal query. By default,
-     *   will be `observedAt`.
+     *   temporal data that will be used to resolve the temporal query. By
+     *   default, will be `observedAt`.
      * - `tenant` (`String`): Tenant to use in this operation
-     * - `type` (`String`): A comma-separated list of entity types to retrieve.
+     * - `type` (`String`|`Array`): String array or comma-separated list of entity
+     *   types to retrieve.
      *
      * @throws {NGSI.BadRequestError}
      * @throws {NGSI.ConnectionError}
@@ -7913,10 +7968,6 @@
             options = {};
         }
 
-        if (Array.isArray(options.attrs) && options.attrs.length === 0) {
-            options.attrs = null;
-        }
-
         if (options.id != null && options.idPattern != null) {
             throw new TypeError("id and idPattern options cannot be used at the same time");
         }
@@ -7949,19 +8000,19 @@
             parameters.options = optionsparams.join(',');
         }
 
-        parameters.attrs = Array.isArray(options.attrs) ? options.attrs.join(',') : options.attrs;
+        parameters.attrs = parse_list_option(options.attrs, false, "attrs");
         parameters.endTimeAt = options.endTimeAt != null ? (
             typeof(options.endTimeAt.toISOString) === "function" ? options.endTimeAt.toISOString() : options.endTimeAt
         ) : undefined;
         parameters.csf = options.csf;
-        parameters.id = options.id;
+        parameters.id = parse_list_option(options.id, false, "id");
         parameters.idPattern = options.idPattern;
         parameters.lastN = options.lastN;
         parameters.q = options.q;
         parameters.timeAt = typeof(options.timeAt.toISOString) === "function" ? options.timeAt.toISOString() : options.timeAt;
         parameters.timerel = options.timerel;
         parameters.timeproperty = options.timeproperty;
-        parameters.type = options.type;
+        parameters.type = parse_list_option(options.type, false, "type");
         parameters.geoproperty = options.geoproperty;
         parameters.georel = options.georel;
         parameters.geometry = options.geometry;
