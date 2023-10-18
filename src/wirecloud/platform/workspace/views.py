@@ -483,12 +483,12 @@ class WorkspacePublisherEntry(Resource):
             extra_files.append(('DESCRIPTION.md', BytesIO(options['longdescription'].encode('utf-8'))))
             options['longdescription'] = 'DESCRIPTION.md'
 
-        description = build_xml_template_from_workspace(options, workspace, request.user)
+        description = build_json_template_from_workspace(options, workspace, request.user)
 
         # Build mashup wgt file
         f = BytesIO()
         zf = zipfile.ZipFile(f, 'w')
-        zf.writestr('config.xml', description.encode('utf-8'))
+        zf.writestr('config.json', json.dumps(description, indent = 4))
         for filename, extra_file in extra_files:
             zf.writestr(filename, extra_file.read())
         for resource_info in options['embedded']:
