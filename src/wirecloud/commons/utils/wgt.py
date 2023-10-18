@@ -49,6 +49,7 @@ class WgtFile(object):
                 raise ValueError('Invalid file name: %s', filename)
             if normalized_filename.startswith('/'):
                 raise ValueError('Invalid absolute file name: %s', filename)
+        self._set_template_filename()
 
     @property
     def namelist(self):
@@ -60,15 +61,18 @@ class WgtFile(object):
     def read(self, path):
         return self._zip.read(path)
 
-    def get_template(self):
+    def _set_template_filename(self):
         for possible_template_file in self._possible_template_filenames:
-            try:
-                template_file_content = self.read(possible_template_file)
+            if possible_template_file in self._zip.namelist():
                 self._template_filename = possible_template_file
-                return template_file_content
-            except KeyError:
-                pass # Try all files before raising an exception inmediately
-        raise InvalidContents('Missing config.xml or config.json at the root of the zipfile (wgt)')
+                return
+    
+    def get_template(self):
+        try:
+            template_file_content = self.read(self._template_filename)
+            return template_file_content
+        except KeyError:
+            raise InvalidContents('Missing config.xml or config.json at the root of the zipfile (wgt)')
 
     def extract_file(self, file_name, output_path, recreate_=False):
         contents = self.read(file_name)
@@ -151,13 +155,13 @@ class WgtFile(object):
         new_fp = BytesIO()
 
         # Copy every file from the original zipfile to the new one
-        # excluding the config.xml file, that will be replaced
+        # excluding the config file, that will be replaced
         filename = self._template_filename
         with zipfile.ZipFile(new_fp, 'w') as zout:
             zout.comment = self._zip.comment  # preserve the comment
 
             for item in self._zip.infolist():
-                # Copy new config.xml contents
+                # Copy new config contents
                 if item.filename == filename:
                     zout.writestr(item, contents)
                 # Copy original files
