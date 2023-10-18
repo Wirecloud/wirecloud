@@ -38,8 +38,8 @@ class InvalidContents(Exception):
 
 
 class WgtFile(object):
-
-    _template_filename = 'config.xml'
+    _possible_template_filenames = ['config.xml', 'config.json']
+    _template_filename = None
 
     def __init__(self, _file):
         self._zip = zipfile.ZipFile(_file)
@@ -61,10 +61,14 @@ class WgtFile(object):
         return self._zip.read(path)
 
     def get_template(self):
-        try:
-            return self.read(self._template_filename)
-        except KeyError:
-            raise InvalidContents('Missing config.xml at the root of the zipfile (wgt)')
+        for possible_template_file in self._possible_template_filenames:
+            try:
+                template_file_content = self.read(possible_template_file)
+                self._template_filename = possible_template_file
+                return template_file_content
+            except KeyError:
+                pass # Try all files before raising an exception inmediately
+        raise InvalidContents('Missing config.xml or config.json at the root of the zipfile (wgt)')
 
     def extract_file(self, file_name, output_path, recreate_=False):
         contents = self.read(file_name)
@@ -148,7 +152,7 @@ class WgtFile(object):
 
         # Copy every file from the original zipfile to the new one
         # excluding the config.xml file, that will be replaced
-        filename = 'config.xml'
+        filename = self._template_filename
         with zipfile.ZipFile(new_fp, 'w') as zout:
             zout.comment = self._zip.comment  # preserve the comment
 
