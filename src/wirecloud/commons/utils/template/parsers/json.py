@@ -192,6 +192,10 @@ class JSONTemplateParser(object):
 
         self._check_string_fields(('title', 'description', 'longdescription', 'email', 'homepage', 'doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'))
         self._check_contacts_fields(('authors', 'contributors'))
+        self._check_integer_fields(('macversion', ), default = 1)
+        # Extra check for the macversion field, as it currently only supports 1
+        if self._info['macversion'] != 1:
+            raise TemplateParseException('Invalid value for the macversion field (currently only 1 is supported)')
 
         # Normalize/check preferences and properties (only for widgets and operators)
         if self._info['type'] != 'mashup':

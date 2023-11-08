@@ -37,6 +37,7 @@ XMLSCHEMA = etree.XMLSchema(XMLSCHEMA_DOC)
 WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/macdescription/1'
 OLD_TEMPLATE_NAMESPACES = ('http://wirecloud.conwet.fi.upm.es/ns/template#', 'http://morfeo-project.org/2007/Template')
 
+MAC_VERSION_XPATH = 't:macversion'
 RESOURCE_DESCRIPTION_XPATH = 't:details'
 DISPLAY_NAME_XPATH = 't:title'
 DESCRIPTION_XPATH = 't:description'
@@ -191,6 +192,12 @@ class ApplicationMashupTemplateParser(object):
         self._info['vendor'] = str(self._doc.get('vendor', '').strip())
         self._info['name'] = str(self._doc.get('name', '').strip())
         self._info['version'] = str(self._doc.get('version', '').strip())
+
+        self._info['macversion'] = self._get_field(MAC_VERSION_XPATH, self._doc, required=False)
+        if len(self._info['macversion']) == 0:
+            self._info['macversion'] = 1
+        else:
+            self._info['macversion'] = int(self._info['macversion'])
 
         self._info['title'] = self._get_field(DISPLAY_NAME_XPATH, self._component_description, required=False)
         self._add_translation_index(self._info['title'], type='resource', field='title')

@@ -217,6 +217,14 @@ class RDFTemplateParser(object):
         elif self._info['type'] == 'operator':
             self._rootURI = next(self._graph.subjects(RDF['type'], WIRE['Operator']))
 
+        self._info['macversion'] = self._get_field(WIRE, 'macVersion', self._rootURI, required=False, default='1')
+        try:
+            self._info['macversion'] = int(self._info['macversion'])
+        except ValueError:
+            raise TemplateParseException(_('The format of the macversion is invalid. It must be an integer.'))
+        if self._info['macversion'] != 1:
+            raise TemplateParseException(_('The macversion is invalid. Currently only macversion 1 is supported.'))
+
         vendor = self._get_field(USDL, 'hasProvider', self._rootURI, id_=True)
         self._info['vendor'] = self._get_field(FOAF, 'name', vendor)
         if not is_valid_vendor(self._info['vendor']):

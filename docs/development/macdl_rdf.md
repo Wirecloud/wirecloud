@@ -34,8 +34,8 @@ This class represents a widget. This is, jointly with `wire:Operator`, one of th
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Widget`
 
--   **Properties include**: `dcterms:title`, `dcterms:description`, `dcterms:creator`, `usdl:hasProvider`,
-    `usdl:utilizedResource`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
+-   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`, 
+    `usdl:hasProvider`, `usdl:utilizedResource`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
     `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
     `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
@@ -47,8 +47,8 @@ This class represents a operator. This is, jointly with `wire:Widget`, one of th
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Operator`
 
--   **Properties include**: `dcterms:title`, `dcterms:description`, `dcterms:creator`, `usdl:hasProvider`,
-    `usdl:utilizedResource`, `foaf: page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
+-   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`, 
+    `usdl:hasProvider`, `usdl:utilizedResource`, `foaf: page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
     `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
     `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
@@ -129,6 +129,16 @@ This class represents an input endpoint.
 -   **Used with**: `wire:hasInputEndpoint`
 
 ### Properties
+
+#### The `wire:macVersion` property
+
+This property states the version of the MACDL used to describe the widget or operator. Currently, the only supported
+value is `1`. This property is NOT mandatory but SHOULD be used. In absence of this property, the version `1` is
+assumed.
+
+-   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#macVersion`
+-   **Domain**: `wire:Widget` and `wire:Operator`
+-   **Range**: `rdfs:Literal`
 
 #### The `wire:hasPlatformPreference` property
 

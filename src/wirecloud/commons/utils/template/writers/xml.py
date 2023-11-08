@@ -241,6 +241,8 @@ def build_xml_document(options):
     template.set('name', options.get('name'))
     template.set('version', options.get('version'))
 
+    addElement(options, template, 'macversion', default='1', type='string', ignore_default=False)
+
     desc = etree.SubElement(template, 'details')
     addElements(options, desc, ('title', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog', 'issuetracker'))
     addElements(options, desc, ('authors', 'contributors'), type='people')

@@ -38,6 +38,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="MacVersionType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="1" />
+            <xs:maxInclusive value="1" /> 
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="AbsoluteURL">
         <xs:restriction base="xs:anyURI">
             <xs:pattern value="\c+:.+"/>
@@ -958,6 +965,7 @@
             <xs:complexContent>
                 <xs:extension base="macd:Resource">
                     <xs:all minOccurs="1" maxOccurs="1">
+                        <xs:element name="macversion" type="macd:MacVersionType" minOccurs="0" maxOccurs="1" />
                         <xs:element name="details" type="macd:ResourceInfo" minOccurs="1" maxOccurs="1" />
                         <xs:element name="requirements" type="macd:Requirements" minOccurs="0" maxOccurs="1" />
                         <xs:element name="preferences" type="macd:Preferences" minOccurs="0" maxOccurs="1">
@@ -1024,6 +1032,7 @@
             <xs:complexContent>
                 <xs:extension base="macd:Resource">
                     <xs:all minOccurs="1" maxOccurs="1">
+                        <xs:element name="macversion" type="macd:MacVersionType" minOccurs="0" maxOccurs="1" />
                         <xs:element name="details" type="macd:ResourceInfo" minOccurs="1" maxOccurs="1" />
                         <xs:element name="requirements" type="macd:Requirements" minOccurs="0" maxOccurs="1" />
                         <xs:element name="preferences" type="macd:Preferences" minOccurs="0" maxOccurs="1">
@@ -1070,6 +1079,7 @@
             <xs:complexContent>
                 <xs:extension base="macd:Resource">
                     <xs:all minOccurs="1" maxOccurs="1">
+                        <xs:element name="macversion" type="macd:MacVersionType" minOccurs="0" maxOccurs="1" />
                         <xs:element name="details" type="macd:ResourceInfo" minOccurs="1" maxOccurs="1" />
                         <xs:element name="requirements" type="macd:Requirements" minOccurs="0" maxOccurs="1" />
                         <xs:element name="preferences" type="macd:MashupPreferences" minOccurs="0" maxOccurs="1">

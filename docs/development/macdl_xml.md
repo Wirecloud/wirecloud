@@ -26,6 +26,14 @@ operators, ...).
 
 ## Common metadata
 
+### macversion element
+
+The `macversion` element is used for declaring the version of the Application Mashup GE specification used by the
+mashable application component. This element is NOT required in order to be compatible with older versions of the
+Application Mashup GE specification, but it SHOULD be included in all new mashable application components.
+
+Currently, the only supported value for this element is `1`. In absence of this element, the value `1` is assumed.
+
 ### details element
 
 ![](../images/mac_description_details_element.png)
