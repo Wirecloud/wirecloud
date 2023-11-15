@@ -35,8 +35,8 @@ Application Mashup GE は、MAC 情報を RDF として表現する手段を提�
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Widget`
 
--   **Properties include**: `dcterms:title`, `dcterms:description`, `dcterms:creator`, `usdl:hasProvider`, 
-    `usdl:utilizedResource`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
+-   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`, 
+    `usdl:hasProvider`, `usdl:utilizedResource`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
     `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
     `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
@@ -49,8 +49,8 @@ Application Mashup GE は、MAC 情報を RDF として表現する手段を提�
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Operator`
 
--   **Properties include**: `dcterms:title`, `dcterms:description`, `dcterms:creator`, `usdl:hasProvider`,
-    `usdl:utilizedResource`, `foaf: page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
+-   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`,     
+    `usdl:hasProvider`, `usdl:utilizedResource`, `foaf: page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
     `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
     `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
@@ -140,6 +140,13 @@ Application Mashup GE は、MAC 情報を RDF として表現する手段を提�
 
 ### プロパティ
 
+#### `wire:macVersion` プロパティ
+
+このプロパティは、ウィジェットまたはオペレータを記述するために使用されるMACDLのバージョンを示す。 現在、サポートされているのはの値は`1`である。 このプロパティは必須ではないが、使用すべきである。 このプロパティがない場合、バージョン`1`はを想定している。
+
+-   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#macVersion`
+-   **Domain**: `wire:Widget` と `wire:Operator`
+-   **Range**: `rdfs:Literal`
 
 #### `wire:hasPlatformPreference` プロパティ
 
@@ -340,7 +347,7 @@ Application Mashup GE は、MAC 情報を RDF として表現する手段を提�
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/mashup#Mashup`
 
--   **Properties include**: `wire-m:hasMashupPreference`, `wire-m:hasMashupParam`, `wire-m:hasTab`,
+-   **Properties include**: `wire:macVersion`, `wire-m:hasMashupPreference`, `wire-m:hasMashupParam`, `wire-m:hasTab`,
     `wire-m:hasMashupWiring`, `wire:hasImageUri`, `wire:hasiPhoneImageUri`, `wire:version`
 
 -   **subClassOf**: `usdl:CompositeService`

@@ -314,7 +314,7 @@ This class represents a mashup. It will be implemented as a workspace.
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/mashup#Mashup`
 
--   **Properties include**: `wire-m:hasMashupPreference`, `wire-m:hasMashupParam`, `wire-m:hasTab`,
+-   **Properties include**: `wire:macVersion`, `wire-m:hasMashupPreference`, `wire-m:hasMashupParam`, `wire-m:hasTab`,
     `wire-m:hasMashupWiring`, `wire:hasImageUri`, `wire:hasiPhoneImageUri`, `wire:version`
 
 -   **subClassOf**: `usdl:CompositeService`

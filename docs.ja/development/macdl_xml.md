@@ -26,6 +26,12 @@
 
 ## 共通のメタデータ
 
+### `macversion` 要素
+
+`macversion`要素はMACが使用するApplication Mashup GE仕様のバージョンを宣言するために使用される。 この要素は、Application Mashup GE仕様の古いバージョンと互換性を保つために必須では ないが、すべての新しいMACsに含めるべきである。
+
+現在、この要素でサポートされている値は`1`だけである。 この要素がない場合、値`1`が仮定される。
+
 ### `details` 要素
 
 ![](../../docs/images/mac_description_details_element.png)
