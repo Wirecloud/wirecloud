@@ -380,6 +380,11 @@ def build_rdf_graph(template_info):
     else:
         raise Exception('Unsupported resource type: %s' % template_info['type'])
 
+    # Macversion
+    if not 'macversion' in template_info:
+        template_info['macversion'] = '1'
+    graph.add((resource_uri, WIRE['macVersion'], rdflib.Literal(template_info.get('macversion'))))
+
     # Create basic info
     provider = rdflib.BNode()
     graph.add((provider, rdflib.RDF.type, GR['BusinessEntity']))
