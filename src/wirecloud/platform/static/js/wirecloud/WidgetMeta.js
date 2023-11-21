@@ -44,6 +44,8 @@
             } else {
                 this.codeurl = desc.contents.src;
                 this.codecontenttype = desc.contents.contenttype || "application/xhtml+xml";
+                this.entrypoint = desc.entrypoint;
+                this.js_files = desc.js_files;
             }
             if (this.codeurl.indexOf('?') === -1) {
                 this.codeurl += '?';

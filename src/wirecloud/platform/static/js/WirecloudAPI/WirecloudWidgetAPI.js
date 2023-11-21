@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2021 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2023 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -22,103 +22,109 @@
 
 /* globals MashupPlatform */
 
-
-(function () {
-
+(function() {
     "use strict";
 
-    // Init resource entry (in this case a widget) so other API files can make
-    // use of it
-    const view = MashupPlatform.priv.workspaceview.findWidget(MashupPlatform.priv.id);
-    const model = view.model;
-    MashupPlatform.priv.view = view;
-    MashupPlatform.priv.resource = model;
+    var _WidgetAPI = function _WidgetAPI(parent) {
+        // Init resource entry (in this case a widget) so other API files can make
+        // use of it
+        const view = parent.MashupPlatform.priv.workspaceview.findWidget(parent.MashupPlatform.priv.id);
+        const model = view.model;
+        parent.MashupPlatform.priv.view = view;
+        parent.MashupPlatform.priv.resource = model;
 
-    class IWidgetVariable {
+        class IWidgetVariable {
 
-        constructor(variable) {
-            this.set = function set(value) {
-                variable.set(value);
-            };
+            constructor(variable) {
+                this.set = function set(value) {
+                    variable.set(value);
+                };
 
-            this.get = function get() {
-                return variable.get();
-            };
-            Object.freeze(this);
+                this.get = function get() {
+                    return variable.get();
+                };
+                Object.freeze(this);
+            }
+
         }
 
-    }
-
-    // Widget module
-    Object.defineProperty(window.MashupPlatform, 'widget', {value: {}});
-    Object.defineProperties(window.MashupPlatform.widget, {
-        id: {
-            value: MashupPlatform.priv.id
-        },
-        getVariable: {
-            value: function getVariable(name) {
-                const variable = model.properties[name];
-                if (variable != null) {
-                    return new IWidgetVariable(variable);
+        // Widget module
+        Object.defineProperty(parent.MashupPlatform, 'widget', {value: {}});
+        Object.defineProperties(parent.MashupPlatform.widget, {
+            id: {
+                value: parent.MashupPlatform.priv.id
+            },
+            getVariable: {
+                value: function getVariable(name) {
+                    const variable = model.properties[name];
+                    if (variable != null) {
+                        return new IWidgetVariable(variable);
+                    }
+                }
+            },
+            drawAttention: {
+                value: function drawAttention() {
+                    view.tab.workspace.drawAttention(model.id);
+                }
+            },
+            close: {
+                value: function close() {
+                    if (!model.volatile) {
+                        throw new TypeError('Only volatile widgets can be closed');
+                    }
+                    model.remove();
+                }
+            },
+            context: {
+                value: {}
+            },
+            log: {
+                value: function log(msg, level) {
+                    model.logManager.log(msg, level);
                 }
             }
-        },
-        drawAttention: {
-            value: function drawAttention() {
-                view.tab.workspace.drawAttention(model.id);
+        });
+
+        Object.defineProperty(parent.MashupPlatform.widget.context, 'getAvailableContext', {
+            value: function getAvailableContext() {
+                return model.contextManager.getAvailableContext();
             }
-        },
-        close: {
-            value: function close() {
-                if (!model.volatile) {
-                    throw new TypeError('Only volatile widgets can be closed');
+        });
+        Object.defineProperty(parent.MashupPlatform.widget.context, 'get', {
+            value: function get(name) {
+                return model.contextManager.get(name);
+            }
+        });
+        Object.defineProperty(parent.MashupPlatform.widget.context, 'registerCallback', {
+            value: function registerCallback(callback) {
+                if (typeof callback !== "function") {
+                    throw new TypeError('callback must be a function');
                 }
-                model.remove();
-            }
-        },
-        context: {
-            value: {}
-        },
-        log: {
-            value: function log(msg, level) {
-                model.logManager.log(msg, level);
-            }
-        }
-    });
 
-    Object.defineProperty(window.MashupPlatform.widget.context, 'getAvailableContext', {
-        value: function getAvailableContext() {
-            return model.contextManager.getAvailableContext();
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.widget.context, 'get', {
-        value: function get(name) {
-            return model.contextManager.get(name);
-        }
-    });
-    Object.defineProperty(window.MashupPlatform.widget.context, 'registerCallback', {
-        value: function registerCallback(callback) {
-            if (typeof callback !== "function") {
-                throw new TypeError('callback must be a function');
+                model.registerContextAPICallback('iwidget', callback);
             }
+        });
+        Object.preventExtensions(parent.MashupPlatform.widget.context);
 
-            model.registerContextAPICallback('iwidget', callback);
+        // Inputs
+        const inputs = {};
+        for (let endpoint_name in model.inputs) {
+            inputs[endpoint_name] = new parent.MashupPlatform.priv.InputEndpoint(model.inputs[endpoint_name], true);
         }
-    });
-    Object.preventExtensions(window.MashupPlatform.widget.context);
+        Object.defineProperty(parent.MashupPlatform.widget, 'inputs', {value: inputs});
 
-    // Inputs
-    const inputs = {};
-    for (let endpoint_name in model.inputs) {
-        inputs[endpoint_name] = new MashupPlatform.priv.InputEndpoint(model.inputs[endpoint_name], true);
+        // Outputs
+        const outputs = {};
+        for (let endpoint_name in model.outputs) {
+            outputs[endpoint_name] = new parent.MashupPlatform.priv.OutputEndpoint(model.outputs[endpoint_name], true);
+        }
+        Object.defineProperty(parent.MashupPlatform.widget, 'outputs', {value: outputs});
+    };
+
+    window._privs._WidgetAPI = _WidgetAPI;
+    
+    // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
+    if (window.parent !== window) {
+        _privs._WidgetAPI(window);
     }
-    Object.defineProperty(window.MashupPlatform.widget, 'inputs', {value: inputs});
-
-    // Outputs
-    const outputs = {};
-    for (let endpoint_name in model.outputs) {
-        outputs[endpoint_name] = new MashupPlatform.priv.OutputEndpoint(model.outputs[endpoint_name], true);
-    }
-    Object.defineProperty(window.MashupPlatform.widget, 'outputs', {value: outputs});
-
 })();

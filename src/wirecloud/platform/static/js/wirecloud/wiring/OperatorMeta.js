@@ -55,6 +55,8 @@
                 this.properties[property.name] = property;
                 this.propertyList.push(property);
             });
+            this.entrypoint = desc.entrypoint;
+            this.js_files = desc.js_files;
             Object.freeze(this.properties);
             Object.freeze(this.propertyList);
 

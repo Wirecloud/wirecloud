@@ -49,11 +49,11 @@
     };
 
     const on_workspace_createoperator = function on_workspace_createoperator(workspace_model, operator) {
-        this.layout.content.appendChild(operator.wrapperElement);
+        if (operator.wrapperElement) this.layout.content.appendChild(operator.wrapperElement);
     };
 
     const on_workspace_removeoperator = function on_workspace_removeoperator(workspace_model, operator) {
-        this.layout.content.removeChild(operator.wrapperElement);
+        if (operator.wrapperElement) this.layout.content.removeChild(operator.wrapperElement);
     };
 
     const on_workspace_change = function on_workspace_change(workspace) {
@@ -326,7 +326,7 @@
             this.model.addEventListener('removeoperator', this.on_workspace_removeoperator_bound);
 
             this.model.operators.forEach((operator) => {
-                this.layout.content.appendChild(operator.wrapperElement);
+                if (operator.wrapperElement) this.layout.content.appendChild(operator.wrapperElement);
             });
 
             let initialTab = null;

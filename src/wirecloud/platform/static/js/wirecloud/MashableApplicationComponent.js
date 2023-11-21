@@ -34,6 +34,20 @@
                 throw new TypeError("missing mashable application component description parameter");
             }
 
+            // Macversion
+            let macversion = undefined;
+
+            if (!desc.missing) {
+                if (!("macversion" in desc)) {
+                    throw new TypeError("missing macversion");
+                } else if (typeof desc.macversion !== "number") {
+                    throw new TypeError("invalid macversion: must be a number");
+                } else if (desc.macversion !== 1 && desc.macversion !== 2) {
+                    throw new TypeError("invalid macversion: must be 1 or 2");
+                }
+                macversion = desc.macversion;
+            }
+
             // Vendor
             if (!("vendor" in desc) || desc.vendor.trim() === "") {
                 throw new TypeError("missing vendor");
@@ -60,6 +74,7 @@
             // Basic info
             Object.defineProperties(this, {
                 missing: {value: !!desc.missing},
+                macversion: {value: macversion},
                 vendor: {value: vendor},
                 name: {value: name},
                 version: {value: version},

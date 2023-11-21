@@ -41,7 +41,7 @@
     <xs:simpleType name="MacVersionType">
         <xs:restriction base="xs:integer">
             <xs:minInclusive value="1" />
-            <xs:maxInclusive value="1" /> 
+            <xs:maxInclusive value="2" /> 
         </xs:restriction>
     </xs:simpleType>
 
@@ -1000,6 +1000,27 @@
                                 </xs:documentation>
                             </xs:annotation>
                         </xs:element>
+                        <xs:element name="scripts" type="macd:Scripts" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    List of scripts the widget is going to include.
+                                </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="entrypoint" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    The entry point class name of the widget.
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:attribute name="name" use="required">
+                                    <xs:simpleType>
+                                        <xs:restriction base="macd:NonEmpty" />
+                                    </xs:simpleType>
+                                </xs:attribute>
+                            </xs:complexType>
+                        </xs:element>
                         <xs:element name="rendering" minOccurs="1"
                             maxOccurs="1">
                             <xs:annotation>
@@ -1066,6 +1087,20 @@
                                     List of scripts the operator is going to use.
                                 </xs:documentation>
                             </xs:annotation>
+                        </xs:element>
+                        <xs:element name="entrypoint" minOccurs="0" maxOccurs="1">
+                            <xs:annotation>
+                                <xs:documentation>
+                                    The entry point class name of the widget.
+                                </xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:attribute name="name" use="required">
+                                    <xs:simpleType>
+                                        <xs:restriction base="macd:NonEmpty" />
+                                    </xs:simpleType>
+                                </xs:attribute>
+                            </xs:complexType>
                         </xs:element>
                         <xs:element name="translations" type="macd:Translations" minOccurs="0" maxOccurs="1" />
                     </xs:all>

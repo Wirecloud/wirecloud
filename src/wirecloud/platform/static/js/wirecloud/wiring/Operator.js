@@ -35,6 +35,36 @@
         RUNNING: 2
     };
 
+    const _loadScripts = function _loadScripts() {
+        // We need to wait for the scripts to be loaded before loading the widget
+        let promises = [];
+
+        this.meta.js_files.forEach((js_file) => {
+            const script = document.createElement('script');
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', js_file);
+            document.body.appendChild(script);
+            this.loaded_scripts.push(script);
+
+            const promise = new Promise((resolve, reject) => {
+                // Resolve the promise when the script is loaded or an error occurs
+                script.addEventListener('load', resolve);
+                script.addEventListener('error', resolve);
+            });
+
+            promises.push(promise);
+        });
+
+        return Promise.all(promises);
+    };
+
+    const _unloadScripts = function _unloadScripts() {
+        this.loaded_scripts.forEach((script) => {
+            document.body.removeChild(script);
+        });
+        this.loaded_scripts = [];
+    };
+
     const build_endpoints = function build_endpoints() {
         this.inputs = {};
         this.meta.inputList.forEach(function (endpoint) {
@@ -138,13 +168,25 @@
     // =========================================================================
 
     const on_load = function on_load() {
-
-        if (!this.wrapperElement.hasAttribute('src')) {
+        if (this.wrapperElement && !this.wrapperElement.hasAttribute('src')) {
             return;
         }
 
+        if (this.wrapperElement) {
+            this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
+        } else if (!this.meta.missing && this.meta.macversion > 1) {
+            // If this is a v2 or later operator, we need to instantiate it's entrypoint class
+            var entrypoint = eval("window." + this.meta.entrypoint);
+            if (entrypoint === undefined) { 
+                this.logManager.log("Operator entrypoint class not found!", {console: false});
+            } else {
+                this.operatorClass = Wirecloud.createAPIComponent("operator", this.meta.requirements, entrypoint, 
+                    undefined, this.id, 
+                    ('workspaceview' in this.wiring.workspace) ? this.wiring.workspace.workspaceview : undefined);
+            } 
+        }
+
         privates.get(this).status = STATUS.RUNNING;
-        this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
 
         if (this.missing) {
             this.logManager.log(utils.gettext("Failed to load operator."), {
@@ -167,6 +209,16 @@
 
         if (!this.loaded) {
             return;
+        }
+
+        if (!this.meta.missing && this.meta.macversion > 1) {
+            _unloadScripts.call(this);
+
+            if (this.operatorClass !== undefined) {
+                // If this is a v2 or later operator, we need to destroy it's entrypoint class
+                if ('destroy' in this.operatorClass) this.operatorClass.destroy();
+                delete this.operatorClass;
+            }
         }
 
         privates.get(this).status = STATUS.CREATED;
@@ -213,6 +265,7 @@
             }, data);
 
             this.pending_events = [];
+            this.loaded_scripts = [];
             this.prefCallback = null;
 
             this.permissions = utils.merge({
@@ -323,10 +376,13 @@
                 }
             });
 
-            this.wrapperElement = document.createElement('iframe');
-            this.wrapperElement.className = "wc-operator wc-operator-content";
-            this.wrapperElement.setAttribute('type', "application/xhtml+xml");
-            this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+            // macversion is undefined if missing
+            if (this.meta.macversion === undefined || this.meta.macversion === 1) {
+                this.wrapperElement = document.createElement('iframe');
+                this.wrapperElement.className = "wc-operator wc-operator-content";
+                this.wrapperElement.setAttribute('type', "application/xhtml+xml");
+                this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+            }
 
             build_endpoints.call(this);
             build_prefs.call(this, data.preferences);
@@ -394,7 +450,20 @@
             }
 
             privates.get(this).status = STATUS.LOADING;
-            this.wrapperElement.setAttribute('src', this.codeurl);
+            
+            if (this.meta.missing) {
+                on_load.call(this);
+                return this;
+            }
+
+            if (this.meta.macversion === 1) {
+                this.wrapperElement.setAttribute('src', this.codeurl);
+            } else {
+                _unloadScripts.call(this);
+                _loadScripts.call(this).then(() => {
+                    on_load.call(this);
+                });
+            }
 
             return this;
         }

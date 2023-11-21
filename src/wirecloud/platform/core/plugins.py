@@ -57,6 +57,17 @@ WIRING_EDITOR_FILES = (
     'js/wirecloud/ui/WiringEditor/KeywordSuggestion.js',
 )
 
+WIRECLOUD_API_FILES = (
+    'js/WirecloudAPI/WirecloudAPIBootstrap.js',
+    'js/WirecloudAPI/WirecloudWidgetAPI.js',
+    'js/WirecloudAPI/WirecloudOperatorAPI.js',
+    'js/WirecloudAPI/WirecloudAPICommon.js',
+    'js/WirecloudAPI/ComponentManagementAPI.js',
+    'js/WirecloudAPI/DashboardManagementAPI.js',
+    'js/WirecloudAPI/WirecloudAPIClosure.js',
+    'js/WirecloudAPI/WirecloudAPIV2Bootstrap.js'
+)
+
 TUTORIAL_FILES = (
     'js/wirecloud/ui/Tutorial.js',
     'js/wirecloud/ui/Tutorial/Utils.js',
@@ -488,6 +499,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/TabPreferences.js',
             'js/wirecloud/PropertyCommiter.js',
             'js/wirecloud/LogManager.js',
+            'js/wirecloud/WidgetElement.js',
             'js/wirecloud/Widget.js',
             'js/wirecloud/Wiring.js',
             'js/wirecloud/ui/MACField.js',
@@ -517,7 +529,7 @@ class WirecloudCorePlugin(WirecloudPlugin):
             'js/wirecloud/wiring/WidgetSourceEndpoint.js',
             'js/wirecloud/wiring/WidgetTargetEndpoint.js',
             'js/wirecloud/wiring/KeywordSuggestion.js',
-        )
+        ) + WIRECLOUD_API_FILES
 
         if view in ('classic', 'embedded', 'smartphone'):
             scripts = common + (

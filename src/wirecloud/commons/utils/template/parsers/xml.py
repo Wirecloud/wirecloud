@@ -69,6 +69,7 @@ INPUT_ENDPOINT_XPATH = 't:inputendpoint'
 OUTPUT_ENDPOINT_XPATH = 't:outputendpoint'
 SCRIPT_XPATH = 't:scripts/t:script'
 PLATFORM_RENDERING_XPATH = 't:rendering'
+ENTRYPOINT_XPATH = 't:entrypoint'
 
 INCLUDED_RESOURCES_XPATH = 't:structure'
 TAB_XPATH = 't:tab'
@@ -442,6 +443,17 @@ class ApplicationMashupTemplateParser(object):
         self._info['widget_width'] = rendering_element.get('width')
         self._info['widget_height'] = rendering_element.get('height')
 
+        js_files = self._xpath(SCRIPT_XPATH, self._doc)
+        if len(js_files) > 0 and self._info["macversion"] == 1:
+            raise TemplateParseException(_("The use of the script element is not allowed in version 1.0 widgets"))
+        
+        self._info['js_files'] = []
+        for script in js_files:
+            self._info['js_files'].append(str(script.get('src')))
+
+        if self._info["macversion"] > 1:
+            self._info["entrypoint"] = self.get_xpath(ENTRYPOINT_XPATH, self._doc, required=True).get('name')
+
     def _parse_operator_info(self):
 
         self._parse_component_preferences()
@@ -451,6 +463,9 @@ class ApplicationMashupTemplateParser(object):
         self._info['js_files'] = []
         for script in self._xpath(SCRIPT_XPATH, self._doc):
             self._info['js_files'].append(str(script.get('src')))
+
+        if self._info["macversion"] > 1:
+            self._info["entrypoint"] = self.get_xpath(ENTRYPOINT_XPATH, self._doc, required=True).get('name')
 
     def _parse_component_preferences(self):
 

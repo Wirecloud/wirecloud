@@ -222,8 +222,8 @@ class RDFTemplateParser(object):
             self._info['macversion'] = int(self._info['macversion'])
         except ValueError:
             raise TemplateParseException(_('The format of the macversion is invalid. It must be an integer.'))
-        if self._info['macversion'] != 1:
-            raise TemplateParseException(_('The macversion is invalid. Currently only macversion 1 is supported.'))
+        if self._info['macversion'] != 1 and self._info['macversion'] != 2:
+            raise TemplateParseException(_('The macversion is invalid. Currently only macversion 1 or 2 are supported.'))
 
         vendor = self._get_field(USDL, 'hasProvider', self._rootURI, id_=True)
         self._info['vendor'] = self._get_field(FOAF, 'name', vendor)
@@ -638,7 +638,7 @@ class RDFTemplateParser(object):
             self._info['widget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
             self._info['widget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
 
-        elif self._info['type'] == 'operator':
+        if self._info['type'] == 'widget' or self._info['type'] == 'operator':
             # The tamplate has 1-n javascript elements
 
             # Javascript files must be sorted
@@ -648,8 +648,11 @@ class RDFTemplateParser(object):
             for js_element in sorted_js_files:
                 self._info['js_files'].append(str(js_element))
 
-            if not len(self._info['js_files']) > 0:
+            # JS files are optional on v1 widgets
+            if (self._info['type'] == 'operator' or (self._info['type'] == 'widget' and self._info['macversion'] > 1)) and not len(self._info['js_files']) > 0:
                 raise TemplateParseException(_('Missing required field: Javascript files'))
+            
+            self._info['entrypoint'] = self._get_field(WIRE, 'entryPoint', self._rootURI, required=(self._info['macversion'] > 1))
 
     def _parse_translation_catalogue(self):
         self._info['default_lang'] = 'en'

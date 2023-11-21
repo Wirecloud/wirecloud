@@ -160,7 +160,7 @@ def get_widget_api_files(request):
     return list(widget_api_files)
 
 
-def fix_widget_code(widget_code, content_type, request, encoding, use_platform_style, requirements, mode, theme):
+def fix_widget_code(widget_code, content_type, request, encoding, use_platform_style, requirements, mode, theme, macversion):
 
     # This line is here for raising UnicodeDecodeError in case the widget_code is not encoded using the expecified encoding
     widget_code.decode(encoding)
@@ -194,25 +194,26 @@ def fix_widget_code(widget_code, content_type, request, encoding, use_platform_s
     else:
         head_element = head_elements[0]
 
-    # Fix base element
-    base_elements = xpath(xmltree, '/xhtml:html/xhtml:head/xhtml:base', xmlns)
-    for base_element in base_elements[1:]:
-        base_element.getparent().remove(base_element)
+    if macversion == 1:
+        # Fix base element
+        base_elements = xpath(xmltree, '/xhtml:html/xhtml:head/xhtml:base', xmlns)
+        for base_element in base_elements[1:]:
+            base_element.getparent().remove(base_element)
 
-    # Fix scripts
-    scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
-    for script in scripts:
+        # Fix scripts
+        scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
+        for script in scripts:
 
-        if 'src' in script.attrib:
-            script.text = ''
+            if 'src' in script.attrib:
+                script.text = ''
 
-    head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request, versioned=True)))
-    files = get_widget_api_extensions(mode, requirements)
-    files.reverse()
-    for file in files:
-        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request, versioned=True)))
-    for file in get_widget_api_files(request):
-        head_element.insert(0, etree.Element('script', type="text/javascript", src=file))
+        head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url('js/WirecloudAPI/WirecloudAPIClosure.js', request=request, versioned=True)))
+        files = get_widget_api_extensions(mode, requirements)
+        files.reverse()
+        for file in files:
+            head_element.insert(0, etree.Element('script', type="text/javascript", src=get_absolute_static_url(file, request=request, versioned=True)))
+        for file in get_widget_api_files(request):
+            head_element.insert(0, etree.Element('script', type="text/javascript", src=file))
 
     if use_platform_style:
         for file in get_widget_platform_style(theme):
