@@ -35,9 +35,7 @@ This class represents a widget. This is, jointly with `wire:Operator`, one of th
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Widget`
 
 -   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`, 
-    `usdl:hasProvider`, `usdl:utilizedResource`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
-    `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
-    `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
+    `usdl:hasProvider`, `usdl:utilizedResource`, `wire:entryPoint`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`, `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`, `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
 -   **Subclassof**: `usdl-core:Service`
 
@@ -48,9 +46,7 @@ This class represents a operator. This is, jointly with `wire:Widget`, one of th
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Operator`
 
 -   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`, 
-    `usdl:hasProvider`, `usdl:utilizedResource`, `foaf: page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
-    `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
-    `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
+    `usdl:hasProvider`, `usdl:utilizedResource`, `wire:entryPoint`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`, `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`, `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
 -   **Subclassof**: `usdl-core:Service`
 
@@ -293,6 +289,15 @@ This property states whether or not the widget code is cacheable.
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#codeCacheable`
 -   **Domain**: `usdl-core:Resource`
+-   **Range**: `rdfs:Literal`
+
+#### The `wire:entryPoint` property
+
+v2 widgets and operators need to define the entry point of the component. This property states the entry point of the
+widget or operator. The entrypoint is the name of a class that the MAC scripts will define in the `window` object that will be instantiated whenever the MAC is loaded, receiving as parameters the objects neccessary for the MAC to work correctly ([more info here](./widget_and_operators.md)). Therefore, it must be unique in the global scope.
+
+-   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#entryPoint`
+-   **Domain**: `wire:Widget` and `wire:Operator`
 -   **Range**: `rdfs:Literal`
 
 ## WIRE-M vocabulary
