@@ -638,7 +638,7 @@ class RDFTemplateParser(object):
             self._info['widget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
             self._info['widget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
 
-        if self._info['type'] == 'widget' or self._info['type'] == 'operator':
+        if (self._info['type'] == 'widget' and self._info['macversion'] > 1) or self._info['type'] == 'operator':
             # The tamplate has 1-n javascript elements
 
             # Javascript files must be sorted
@@ -652,7 +652,8 @@ class RDFTemplateParser(object):
             if (self._info['type'] == 'operator' or (self._info['type'] == 'widget' and self._info['macversion'] > 1)) and not len(self._info['js_files']) > 0:
                 raise TemplateParseException(_('Missing required field: Javascript files'))
             
-            self._info['entrypoint'] = self._get_field(WIRE, 'entryPoint', self._rootURI, required=(self._info['macversion'] > 1))
+            if self._info['macversion'] > 1:
+                self._info['entrypoint'] = self._get_field(WIRE, 'entryPoint', self._rootURI, required=True)
 
     def _parse_translation_catalogue(self):
         self._info['default_lang'] = 'en'

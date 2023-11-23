@@ -2106,6 +2106,9 @@ class OperatorCodeEntryTestCase(WirecloudTestCase, TestCase):
             expected_code = self.read_file('test-data/xhtml1-compressed-expected.xhtml')
         else:
             expected_code = self.read_file('test-data/xhtml1-expected.xhtml')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
+
         self.assertEqual(final_code, expected_code)
 
     @override_settings(COMPRESS_ENABLED=False)
