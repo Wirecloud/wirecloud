@@ -96,6 +96,10 @@
             throw new Error('Missing shadow DOM support');
         }
 
+        if (!('MutationObserver' in window)) {
+            throw new Error('Missing MutationObserver support');
+        }
+
         try {
             eval("var bar = (x) => x+1");
         } catch (e) {

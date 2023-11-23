@@ -78,6 +78,11 @@
         }
 
         _unload() {
+            if (this.observer != null) {
+                this.observer.disconnect();
+                this.observer = null;
+            }
+
             // Clean the shadow DOM
             this.shadowRoot.innerHTML = '';
 
@@ -101,7 +106,7 @@
             const ATTR_LIST = ["href", "src", "background", "action", "data", "formaction", "icon", "poster", "usemap"];
 
             // Walk the DOM tree and replace all relative URLs with absolute ones
-            const walk = (node) => {
+            const walk = (node, walkChildren = true) => {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     ATTR_LIST.forEach((attr) => {
                         if (node.hasAttribute(attr)) {
@@ -121,7 +126,9 @@
                     }
                 }
 
-                node.childNodes.forEach(walk);
+                if (walkChildren) {
+                    node.childNodes.forEach(walk);
+                }
             };
 
             walk(dom.body);
@@ -132,6 +139,43 @@
                 this.shadowRoot.appendChild(node);
             });
             this.shadowRoot.appendChild(dom.body);
+
+            // We use an observer so that, if any code causes changes in
+            // the shadow DOM, we can re-walk the DOM and replace relative
+            // URLs with absolute ones so that everything is relative to
+            // the widget code URL
+            this.observer = new MutationObserver((mutations) => {
+                // Disconnect the observer so that we don't get notified of
+                // changes we make ourselves
+                this.observer.disconnect();
+
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        mutation.addedNodes.forEach((node) => {
+                            walk(node);
+                        });
+                    } else if (mutation.type === 'attributes') {
+                        walk(mutation.target, false);
+                    } else if (mutation.type === 'characterData') {
+                        walk(mutation.target.parentNode, false);
+                    }
+                });
+
+                // Reconnect the observer
+                this.observer.observe(this.shadowRoot, {
+                    childList: true,
+                    subtree: true,
+                    attributes: true,
+                    characterData: true
+                });
+            });
+
+            this.observer.observe(this.shadowRoot, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                characterData: true
+            });
         }
     };
 
