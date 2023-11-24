@@ -63,6 +63,50 @@
                 }).toThrowError(TypeError);
             });
 
+            it("throws a TypeError exception when the entrypoint is missing for mac version 2", () => {
+                expect(() => {
+                    new Wirecloud.OperatorMeta({
+                        vendor: "Wirecloud",
+                        type: "operator",
+                        name: "TestOperator",
+                        preferences: [],
+                        properties: [],
+                        version: "1.0",
+                        macversion: 2,
+                        js_files: ["Test"]
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("throws a TypeError exception when the js_files is missing for mac version 2", () => {
+                expect(() => {
+                    new Wirecloud.OperatorMeta({
+                        vendor: "Wirecloud",
+                        type: "operator",
+                        name: "TestOperator",
+                        preferences: [],
+                        properties: [],
+                        version: "1.0",
+                        macversion: 2,
+                        entrypoint: "Test"
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("accepts missing js_files and entrypoint for mac version 1", () => {
+                expect(() => {
+                    new Wirecloud.OperatorMeta({
+                        vendor: "Wirecloud",
+                        type: "operator",
+                        name: "TestOperator",
+                        preferences: [],
+                        properties: [],
+                        version: "1.0",
+                        macversion: 1
+                    });
+                }).toThrowError(TypeError);
+            });
+
             it("provides some fallback values", () => {
                 const mac = new ns.OperatorMeta({
                     vendor: "Wirecloud",

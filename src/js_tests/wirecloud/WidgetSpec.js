@@ -81,7 +81,8 @@
         outputList: [],
         preferenceList: [],
         propertyList: [],
-        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 1
     };
     Object.freeze(EMPTY_WIDGET_META);
 
@@ -109,7 +110,8 @@
         outputList: [],
         preferenceList: [],
         propertyList: [],
-        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 1
     };
     Object.freeze(FULLSCREEN_WIDGET_META);
 
@@ -142,6 +144,36 @@
         macversion: 1
     };
     Object.freeze(WIDGET_META);
+
+    const WIDGETV2_META = {
+        uri: "Vendor/Widget/1.0",
+        title: "My Widget",
+        inputList: [
+            {name: "input", label: "input", friendcode: ""}
+        ],
+        missing: false,
+        requirements: [],
+        outputList: [
+            {name: "output", label: "output", friendcode: ""}
+        ],
+        preferences: {
+            "pref": PREF
+        },
+        preferenceList: [
+            PREF
+        ],
+        properties: {
+            "prop": PROP
+        },
+        propertyList: [
+            PROP
+        ],
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 2,
+        js_files: ['this/is/a/test.js'],
+        entrypoint: "Test"
+    };
+    Object.freeze(WIDGETV2_META);
 
     const PREF2 = new Wirecloud.UserPrefDef({name: "pref2", type: "text", default: "5"});
     const SPREF = new Wirecloud.UserPrefDef({name: "spref", type: "text", secure: true});
@@ -468,6 +500,26 @@
                 expect(widget.wrapperElement.contentDocument.defaultView.addEventListener).toHaveBeenCalled();
             });
 
+            it("loads unloaded v2 widgets", () => {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "1"
+                });
+                const element = widget.wrapperElement;
+
+                widget.wrapperElement.load = jasmine.createSpy("load").and.callFake((url) => {
+                    widget.wrapperElement.loadedURL = url;
+                    element.dispatchEvent(new Event("load"));
+                });
+
+                expect(widget.loaded).toBe(false);
+                expect(widget.load()).toBe(widget);
+                expect(widget.wrapperElement.load).toHaveBeenCalledWith(widget.codeurl);
+
+                // Now the widget should be fully loaded
+                expect(widget.loaded).toBe(true);
+                expect(widget.wrapperElement.loadedURL).toBe(widget.codeurl);
+            });
+
             it("loads missing widgets", () => {
                 const widget = new Wirecloud.Widget(WORKSPACE_TAB, MISSING_WIDGET_META, {
                     id: "1"
@@ -620,6 +672,34 @@
 
                 // Send unload event
                 widget.wrapperElement.contentDocument.defaultView.addEventListener.calls.argsFor(0)[1]();
+
+                expect(widget.callbacks.iwidget).toEqual([]);
+                expect(widget.callbacks.mashup).toEqual([]);
+                expect(widget.callbacks.platform).toEqual([]);
+            });
+
+            it("handles v2 widgets unload events", () => {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "1"
+                });
+                const listener = jasmine.createSpy();
+                widget.registerContextAPICallback("iwidget", listener);
+                widget.registerContextAPICallback("mashup", listener);
+                widget.registerContextAPICallback("platform", listener);
+                const element = widget.wrapperElement;
+
+                widget.wrapperElement.load = jasmine.createSpy("load").and.callFake((url) => {
+                    widget.wrapperElement.loadedURL = url;
+                    element.dispatchEvent(new Event("load"));
+                });
+
+                expect(widget.load()).toBe(widget);
+
+                // Now the widget should be fully loaded
+                expect(widget.loaded).toBe(true);
+
+                // Send unload event
+                element.dispatchEvent(new Event("unload"));
 
                 expect(widget.callbacks.iwidget).toEqual([]);
                 expect(widget.callbacks.mashup).toEqual([]);

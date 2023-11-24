@@ -517,16 +517,17 @@
 
             this.wrapperElement = document.createElement((this.meta.macversion > 1) ? 'wirecloud-widget' : 'iframe');
             this.wrapperElement.className = "wc-widget-content";
-            this.wrapperElement.setAttribute('frameBorder', "0");
             this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+            if (this.meta.macversion === 1) {
+                this.wrapperElement.setAttribute('frameBorder', "0");
 
-            this.meta.requirements.some(function (requirement) {
-                if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
-                    this.wrapperElement.setAttribute('allowfullscreen', 'true');
-                    return true;
-                }
-            }, this);
-
+                this.meta.requirements.some(function (requirement) {
+                    if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
+                        this.wrapperElement.setAttribute('allowfullscreen', 'true');
+                        return true;
+                    }
+                }, this);
+            }
 
             build_endpoints.call(this);
             build_prefs.call(this, data.preferences);
@@ -757,8 +758,8 @@
                 this.wrapperElement.load(this.codeurl);
             } else {
                 this.wrapperElement.contentWindow.location.replace(this.codeurl);
+                this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
             }
-            this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
 
             return this;
         }
@@ -769,11 +770,11 @@
         reload() {
             const priv = privates.get(this);
             priv.status = STATUS.UNLOADING;
-            this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
 
             if (this.meta.macversion > 1) {
                 this.wrapperElement.load(this.wrapperElement.loadedURL);
             } else {
+                this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
                 this.wrapperElement.contentWindow.location.reload();
             }
 

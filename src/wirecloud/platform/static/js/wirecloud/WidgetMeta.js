@@ -44,8 +44,18 @@
             } else {
                 this.codeurl = desc.contents.src;
                 this.codecontenttype = desc.contents.contenttype || "application/xhtml+xml";
-                this.entrypoint = desc.entrypoint;
-                this.js_files = desc.js_files;
+                if (this.macversion > 1) {
+                    this.entrypoint = desc.entrypoint;
+                    this.js_files = desc.js_files;
+
+                    if (!this.js_files) {
+                        throw new TypeError("missing js_files attribute in widget description");
+                    }
+
+                    if (!this.entrypoint) {
+                        throw new TypeError("missing entrypoint attribute in widget description");
+                    }
+                }
             }
             if (this.codeurl.indexOf('?') === -1) {
                 this.codeurl += '?';

@@ -41,7 +41,8 @@
                     new Wirecloud.MashableApplicationComponent({
                         name: "TestOperator",
                         version: "1.0",
-                        type: "operator"
+                        type: "operator",
+                        macversion: 1
                     });
                 }).toThrowError(TypeError);
             });
@@ -51,7 +52,8 @@
                     new Wirecloud.MashableApplicationComponent({
                         vendor: "Wirecloud",
                         version: "1.0",
-                        type: "operator"
+                        type: "operator",
+                        macversion: 1
                     });
                 }).toThrowError(TypeError);
             });
@@ -61,7 +63,8 @@
                     new Wirecloud.MashableApplicationComponent({
                         vendor: "Wirecloud",
                         name: "TestOperator",
-                        type: "operator"
+                        type: "operator",
+                        macversion: 1
                     });
                 }).toThrowError(TypeError);
             });
@@ -71,9 +74,34 @@
                     new Wirecloud.MashableApplicationComponent({
                         vendor: "Wirecloud",
                         name: "TestOperator",
-                        version: "1.0"
+                        version: "1.0",
+                        macversion: 1
                     });
                 }).toThrowError(TypeError);
+            });
+
+            it("throws a TypeError exception when not providing a macversion", () => {
+                expect(() => {
+                    new Wirecloud.MashableApplicationComponent({
+                        vendor: "Wirecloud",
+                        name: "TestOperator",
+                        version: "1.0",
+                        type: "operator",
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("accepts a missing macversion if the mac is missing", () => {
+                expect(() => {
+                    new Wirecloud.MashableApplicationComponent({
+                        vendor: "Wirecloud",
+                        name: "TestOperator",
+                        version: "1.0",
+                        type: "operator",
+                        preferences: [],
+                        missing: true
+                    });
+                }).not.toThrow();
             });
 
             it("provides some fallback values", () => {
@@ -116,7 +144,8 @@
                     doc: "doc/userguide.md",
                     changelog: "doc/changelog.md",
                     title: "My Operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 2
                 });
 
                 expect(mac.vendor).toBe("Wirecloud");
@@ -134,7 +163,7 @@
                 expect(mac.base_url).toEqual(jasmine.any(String));
                 expect(mac.preferences).toEqual(jasmine.any(Object));
                 expect(mac.preferenceList).toEqual(jasmine.any(Array));
-                expect(mac.macversion).toBe(undefined);
+                expect(mac.macversion).toBe(undefined); // The operator is missing
             });
 
         });
