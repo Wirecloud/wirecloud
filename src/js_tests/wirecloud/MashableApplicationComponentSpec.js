@@ -82,7 +82,8 @@
                     name: "TestOperator ",
                     preferences: [],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac.vendor).toBe("Wirecloud");
@@ -100,6 +101,7 @@
                 expect(mac.base_url).toEqual(jasmine.any(String));
                 expect(mac.preferences).toEqual(jasmine.any(Object));
                 expect(mac.preferenceList).toEqual(jasmine.any(Array));
+                expect(mac.macversion).toBe(1);
             });
 
             it("supports providing all the details thrugh the desc parameter", () => {
@@ -132,6 +134,7 @@
                 expect(mac.base_url).toEqual(jasmine.any(String));
                 expect(mac.preferences).toEqual(jasmine.any(Object));
                 expect(mac.preferenceList).toEqual(jasmine.any(Array));
+                expect(mac.macversion).toBe(undefined);
             });
 
         });
@@ -144,7 +147,8 @@
                     name: "TestOperator ",
                     preferences: [],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac.hasEndpoints()).toBe(false);
@@ -157,6 +161,7 @@
                     preferences: [],
                     type: "operator",
                     version: "1.0",
+                    macversion: 1,
                     wiring: {
                         inputs: [
                             {name: "input1"}
@@ -174,6 +179,7 @@
                     preferences: [],
                     type: "operator",
                     version: "1.0",
+                    macversion: 1,
                     wiring: {
                         outputs: [
                             {name: "output1"}
@@ -194,7 +200,8 @@
                     name: "TestOperator ",
                     preferences: [],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac.hasPreferences()).toBe(false);
@@ -208,7 +215,8 @@
                         {name: "pref1"}
                     ],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac.hasPreferences()).toBe(true);
@@ -224,7 +232,8 @@
                     name: "TestOperator",
                     preferences: [],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 const mac2 = new Wirecloud.MashableApplicationComponent({
@@ -232,7 +241,8 @@
                     name: "TestWidget ",
                     preferences: [],
                     type: "operator",
-                    version: "1.1"
+                    version: "1.1",
+                    macversion: 1
                 });
 
                 expect(mac1.is(mac2)).toBe(false);
@@ -244,7 +254,8 @@
                     name: "TestOperator ",
                     preferences: [],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 const mac2 = new Wirecloud.MashableApplicationComponent({
@@ -252,7 +263,8 @@
                     name: "TestWidget ",
                     preferences: [],
                     type: "widget",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac1.is(mac2)).toBe(false);
@@ -264,7 +276,8 @@
                     name: "TestOperator ",
                     preferences: [],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac.is(mac)).toBe(true);
@@ -278,7 +291,8 @@
                         {name: "pref1"}
                     ],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 const mac2 = new Wirecloud.MashableApplicationComponent({
@@ -286,7 +300,8 @@
                     name: "TestOperator",
                     preferences: [],
                     type: "operator",
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac1.is(mac2)).toBe(true);

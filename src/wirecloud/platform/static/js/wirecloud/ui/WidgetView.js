@@ -380,7 +380,7 @@
 
                 this.wrapperElement.classList.add('in');
 
-                var containerToListen = (model.meta.macversion > 1) ? model.wrapperElement : model.wrapperElement.contentDocument.defaultView;
+                const containerToListen = (model.meta.macversion > 1) ? model.wrapperElement : model.wrapperElement.contentDocument.defaultView;
 
                 containerToListen.addEventListener('keydown', (event) => {
                     if (event.keyCode === 27) { // escape

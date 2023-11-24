@@ -170,7 +170,7 @@
 
     const _loadScripts = function _loadScripts() {
         // We need to wait for the scripts to be loaded before loading the widget
-        let promises = [];
+        const promises = [];
 
         this.meta.js_files.forEach((js_file) => {
             const script = document.createElement('script');
@@ -260,19 +260,19 @@
             (this.meta.macversion === 1 && this.wrapperElement.contentWindow.location.href !== this.codeurl)) {
             return;
         }
-        
+
         if (this.meta.macversion > 1) {
             // If this is a v2 or later widget, we need to instantiate it's entrypoint class
             _unloadScripts.call(this);
             _loadScripts.call(this).then(() => {
-                var entrypoint = eval("window." + this.meta.entrypoint);
-                if (entrypoint === undefined) { 
+                const entrypoint = eval("window." + this.meta.entrypoint);
+                if (entrypoint === undefined) {
                     this.logManager.log("Widget entrypoint class not found!", {console: false});
                 } else {
-                    this.widgetClass = Wirecloud.createAPIComponent("widget", this.meta.requirements, entrypoint, 
-                        this.wrapperElement.shadowRoot, this.id, 
+                    this.widgetClass = Wirecloud.createAPIComponent("widget", this.meta.requirements, entrypoint,
+                        this.wrapperElement.shadowRoot, this.id,
                         ('workspaceview' in this.tab.workspace.view) ? this.tab.workspace.view.workspaceview : undefined);
-                } 
+                }
             });
         }
 
@@ -313,7 +313,9 @@
 
             if (this.widgetClass !== undefined) {
                 // If this is a v2 or later widget, we need to destroy it's entrypoint class
-                if ('destroy' in this.widgetClass) this.widgetClass.destroy();
+                if ('destroy' in this.widgetClass) {
+                    this.widgetClass.destroy();
+                }
                 delete this.widgetClass;
             }
         }

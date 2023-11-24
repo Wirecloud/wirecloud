@@ -138,7 +138,8 @@
         propertyList: [
             PROP
         ],
-        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 1
     };
     Object.freeze(WIDGET_META);
 

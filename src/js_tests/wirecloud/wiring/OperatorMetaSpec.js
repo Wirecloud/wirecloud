@@ -69,7 +69,8 @@
                     name: "TestOperator",
                     preferences: [],
                     properties: [],
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac.codeurl).toEqual(jasmine.any(String));
@@ -84,7 +85,8 @@
                     missing: true,
                     preferences: [],
                     properties: [],
-                    version: "1.0"
+                    version: "1.0",
+                    macversion: 1
                 });
 
                 expect(mac.codeurl).toEqual("/api/widget/missing_widget?v=36a984d7d95e028705ca9030c18f6dd295bedaca");
@@ -99,7 +101,8 @@
                         {name: "prop1"}
                     ],
                     type: "operator",
-                    version: "1.1"
+                    version: "1.1",
+                    macversion: 1
                 });
 
                 expect(mac.properties).toEqual({

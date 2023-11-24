@@ -74,6 +74,7 @@
                     preferences: [],
                     properties: [],
                     version: "1.0",
+                    macversion: 1,
                     contents: {
                         src: "index.html"
                     }
@@ -93,6 +94,7 @@
                     preferences: [],
                     properties: [],
                     version: "1.0",
+                    macversion: 1,
                     contents: {
                         src: "index.html",
                         contenttype: "application/html"
@@ -113,6 +115,7 @@
                     ],
                     type: "widget",
                     version: "1.1",
+                    macversion: 1,
                     contents: {
                         src: "index.html",
                         contenttype: "application/html"
@@ -137,6 +140,7 @@
                     preferences: [],
                     properties: [],
                     version: "1.0",
+                    macversion: 1,
                     contents: {
                         src: "index.html"
                     }

@@ -37,7 +37,7 @@
 
     const _loadScripts = function _loadScripts() {
         // We need to wait for the scripts to be loaded before loading the widget
-        let promises = [];
+        const promises = [];
 
         this.meta.js_files.forEach((js_file) => {
             const script = document.createElement('script');
@@ -176,14 +176,14 @@
             this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
         } else if (!this.meta.missing && this.meta.macversion > 1) {
             // If this is a v2 or later operator, we need to instantiate it's entrypoint class
-            var entrypoint = eval("window." + this.meta.entrypoint);
-            if (entrypoint === undefined) { 
+            const entrypoint = eval("window." + this.meta.entrypoint);
+            if (entrypoint === undefined) {
                 this.logManager.log("Operator entrypoint class not found!", {console: false});
             } else {
-                this.operatorClass = Wirecloud.createAPIComponent("operator", this.meta.requirements, entrypoint, 
-                    undefined, this.id, 
+                this.operatorClass = Wirecloud.createAPIComponent("operator", this.meta.requirements, entrypoint,
+                    undefined, this.id,
                     ('workspaceview' in this.wiring.workspace) ? this.wiring.workspace.workspaceview : undefined);
-            } 
+            }
         }
 
         privates.get(this).status = STATUS.RUNNING;
@@ -216,7 +216,9 @@
 
             if (this.operatorClass !== undefined) {
                 // If this is a v2 or later operator, we need to destroy it's entrypoint class
-                if ('destroy' in this.operatorClass) this.operatorClass.destroy();
+                if ('destroy' in this.operatorClass) {
+                    this.operatorClass.destroy();
+                }
                 delete this.operatorClass;
             }
         }
@@ -450,7 +452,7 @@
             }
 
             privates.get(this).status = STATUS.LOADING;
-            
+
             if (this.meta.missing) {
                 on_load.call(this);
                 return this;
