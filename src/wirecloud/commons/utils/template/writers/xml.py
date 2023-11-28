@@ -313,11 +313,15 @@ def build_xml_document(options):
 
         # Widget rendering
         etree.SubElement(template, 'rendering', width=options['widget_width'], height=options['widget_height'])
-    else:
-        # Operator
+
+    if options['type'] == 'operator' or (options['type'] == 'widget' and options['macversion'] > 1):
         scripts = etree.SubElement(template, 'scripts')
         for script in options['js_files']:
             etree.SubElement(scripts, 'script', src=script)
+
+    if (options['type'] == 'operator' or options['type'] == 'widget') and options['macversion'] > 1:
+        # Add entrypoint
+        etree.SubElement(template, 'entrypoint', name=options['entrypoint'])
 
     # Translations
     if len(options['translations']) > 0:

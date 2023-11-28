@@ -171,13 +171,18 @@
     const _loadScripts = function _loadScripts() {
         // We need to wait for the scripts to be loaded before loading the widget
         const promises = [];
-
         this.meta.js_files.forEach((js_file) => {
+            if (js_file in Wirecloud.loadedScripts) {
+                Wirecloud.loadedScripts[js_file].push(this);
+                return; // Already loaded (most likely by another widget instance)
+            }
+
             const script = document.createElement('script');
             script.setAttribute('type', 'text/javascript');
             script.setAttribute('src', js_file);
             document.body.appendChild(script);
             this.loaded_scripts.push(script);
+            Wirecloud.loadedScripts[js_file] = [this];
 
             const promise = new Promise((resolve, reject) => {
                 // Resolve the promise when the script is loaded or an error occurs
@@ -193,7 +198,15 @@
 
     const _unloadScripts = function _unloadScripts() {
         this.loaded_scripts.forEach((script) => {
-            document.body.removeChild(script);
+            if (script.src in Wirecloud.loadedScripts && Wirecloud.loadedScripts[script.src].length === 1) {
+                delete Wirecloud.loadedScripts[script.src];
+                document.body.removeChild(script);
+            } else {
+                const index = Wirecloud.loadedScripts[script.src].indexOf(this);
+                if (index !== -1) {
+                    Wirecloud.loadedScripts[script.src].splice(index, 1);
+                }
+            }
         });
         this.loaded_scripts = [];
     };
@@ -265,7 +278,7 @@
             // If this is a v2 or later widget, we need to instantiate it's entrypoint class
             _unloadScripts.call(this);
             _loadScripts.call(this).then(() => {
-                const entrypoint = eval("window." + this.meta.entrypoint);
+                const entrypoint = eval("window[\"" + this.meta.entrypoint + "\"]");
                 if (entrypoint === undefined) {
                     this.logManager.log("Widget entrypoint class not found!", {console: false});
                 } else {

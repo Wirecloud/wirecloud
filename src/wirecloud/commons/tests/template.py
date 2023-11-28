@@ -95,6 +95,42 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+        cls.basic_operator_v2_info = {
+            'type': 'operator',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTestOperator',
+            'version': '1.0',
+            'title': '',
+            'description': '',
+            'longdescription': '',
+            'macversion': 2,
+            'authors': [],
+            'contributors': [],
+            'email': '',
+            'image': '',
+            'smartphoneimage': '',
+            'homepage': '',
+            'doc': '',
+            'license': '',
+            'licenseurl': '',
+            'issuetracker': '',
+            'changelog': '',
+            'requirements': [],
+            'preferences': [],
+            'properties': [],
+            'wiring': {
+                'inputs': [],
+                'outputs': [],
+            },
+            'js_files': [
+                'js/example.js',
+            ],
+            'entrypoint': 'Test',
+            'default_lang': 'en',
+            'translations': {},
+            'translation_index_usage': {},
+        }
+
         cls.operator_info = {
             'type': 'operator',
             'vendor': 'Wirecloud',
@@ -1169,6 +1205,52 @@ class TemplateUtilsTestCase(TestCase):
             'translation_index_usage': {},
         }
 
+        cls.basic_widget_v2_info = {
+            'type': 'widget',
+            'vendor': 'Wirecloud',
+            'name': 'TemplateTest',
+            'version': '1.0',
+            'title': '',
+            'description': '',
+            'longdescription': '',
+            'macversion': 2,
+            'authors': [],
+            'contributors': [],
+            'email': '',
+            'image': '',
+            'smartphoneimage': '',
+            'homepage': '',
+            'doc': '',
+            'license': '',
+            'licenseurl': '',
+            'issuetracker': '',
+            'changelog': '',
+            'requirements': [],
+            'preferences': [],
+            'properties': [],
+            'wiring': {
+                'inputs': [],
+                'outputs': [],
+            },
+            'contents': {
+                'src': 'http://example.com/code.html',
+                'charset': 'utf-8',
+                'contenttype': 'text/html',
+                'cacheable': True,
+                'useplatformstyle': False
+            },
+            'altcontents': [],
+            'default_lang': 'en',
+            'widget_width': '8',
+            'widget_height': '30',
+            'translations': {},
+            'translation_index_usage': {},
+            'entrypoint': 'Test',
+            'js_files': [
+                'js/test.js'
+            ]
+        }
+
         cls.widget_info = {
             'type': 'widget',
             'vendor': 'Wirecloud',
@@ -1525,6 +1607,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.basic_operator_info)
 
+    def test_json_parser_writer_basic_operator_v2(self):
+
+        json_description = write_json_description(self.basic_operator_v2_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_operator_v2_info)
+
     def test_json_parser_writer_operator(self):
 
         json_description = write_json_description(self.operator_info)
@@ -1587,6 +1677,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.basic_widget_info)
 
+    def test_json_parser_writer_basic_widget_v2(self):
+
+        json_description = write_json_description(self.basic_widget_v2_info)
+        template = TemplateParser(json_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_widget_v2_info)
+
     def test_json_parser_writer_widget(self):
 
         json_description = write_json_description(self.widget_info)
@@ -1629,6 +1727,14 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_operator_info)
+
+    def test_rdf_parser_writer_basic_operator_v2(self):
+
+        rdf_description = write_rdf_description(self.basic_operator_v2_info)
+        template = TemplateParser(rdf_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_operator_v2_info)
 
     def test_rdf_parser_writer_operator(self):
 
@@ -1716,6 +1822,14 @@ class TemplateUtilsTestCase(TestCase):
 
         self.assertEqual(processed_info, self.basic_widget_info)
 
+    def test_rdf_parser_writer_basic_widget_v2(self):
+
+        rdf_description = write_rdf_description(self.basic_widget_v2_info)
+        template = TemplateParser(rdf_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_widget_v2_info)
+
     def test_rdf_parser_writer_widget(self):
 
         rdf_description = write_rdf_description(self.widget_info)
@@ -1755,6 +1869,14 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_operator_info)
+
+    def test_xml_parser_writer_basic_operator_v2(self):
+
+        xml_description = write_xml_description(self.basic_operator_v2_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_operator_v2_info)
 
     def test_xml_parser_writer_operator(self):
 
@@ -1823,6 +1945,14 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.assertEqual(processed_info, self.basic_widget_info)
+
+    def test_xml_parser_writer_basic_widget_v2(self):
+
+        xml_description = write_xml_description(self.basic_widget_v2_info)
+        template = TemplateParser(xml_description)
+        processed_info = template.get_resource_info()
+
+        self.assertEqual(processed_info, self.basic_widget_v2_info)
 
     def test_xml_parser_writer_widget(self):
 
