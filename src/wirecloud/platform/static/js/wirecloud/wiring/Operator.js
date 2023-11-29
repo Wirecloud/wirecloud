@@ -41,8 +41,15 @@
 
         this.meta.js_files.forEach((js_file) => {
             if (js_file in Wirecloud.loadedScripts) {
-                Wirecloud.loadedScripts[js_file].push(this);
-                return; // Already loaded (most likely by another widget instance)
+                Wirecloud.loadedScripts[js_file].users.push(this);
+                this.loaded_scripts.push(Wirecloud.loadedScripts[js_file].elem);
+                if (!Wirecloud.loadedScripts[js_file].loaded) {
+                    promises.push(new Promise((resolve, reject) => {
+                        Wirecloud.loadedScripts[js_file].elem.addEventListener('load', resolve);
+                        Wirecloud.loadedScripts[js_file].elem.addEventListener('error', resolve);
+                    }));
+                }
+                return; // Already added to the DOM by another widget
             }
 
             const script = document.createElement('script');
@@ -50,12 +57,17 @@
             script.setAttribute('src', js_file);
             document.body.appendChild(script);
             this.loaded_scripts.push(script);
-            Wirecloud.loadedScripts[js_file] = [this];
+            Wirecloud.loadedScripts[js_file] = {loaded: false, elem: script, users: [this]};
 
             const promise = new Promise((resolve, reject) => {
+                let on_resolve = () => {
+                    Wirecloud.loadedScripts[js_file].loaded = true;
+                    resolve();
+                }
+
                 // Resolve the promise when the script is loaded or an error occurs
-                script.addEventListener('load', resolve);
-                script.addEventListener('error', resolve);
+                script.addEventListener('load', on_resolve.bind(this));
+                script.addEventListener('error', on_resolve.bind(this));
             });
 
             promises.push(promise);
@@ -66,13 +78,13 @@
 
     const _unloadScripts = function _unloadScripts() {
         this.loaded_scripts.forEach((script) => {
-            if (script.src in Wirecloud.loadedScripts && Wirecloud.loadedScripts[script.src].length === 1) {
+            if (script.src in Wirecloud.loadedScripts && Wirecloud.loadedScripts[script.src].users.length === 1) {
                 delete Wirecloud.loadedScripts[script.src];
                 document.body.removeChild(script);
             } else {
-                const index = Wirecloud.loadedScripts[script.src].indexOf(this);
+                const index = Wirecloud.loadedScripts[script.src].users.indexOf(this);
                 if (index !== -1) {
-                    Wirecloud.loadedScripts[script.src].splice(index, 1);
+                    Wirecloud.loadedScripts[script.src].users.splice(index, 1);
                 }
             }
         });
