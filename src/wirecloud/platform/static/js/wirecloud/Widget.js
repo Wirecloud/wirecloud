@@ -136,6 +136,8 @@
         }
 
         return sync_values.then((values) => {
+            _createWrapper.call(this);
+
             build_endpoints.call(this);
             build_prefs.call(this, values[0]);
             build_props.call(this, values[1]);
@@ -147,6 +149,26 @@
 
             this.dispatchEvent('change', ['meta'], {meta: old_value});;
         });
+    };
+
+    const _createWrapper = function _createWrapper() {
+        let wrapperElement = document.createElement((this.meta.macversion > 1) ? 'wirecloud-widget' : 'iframe');
+        if (this.wrapperElement) {
+            this.wrapperElement.parentNode.replaceChild(wrapperElement, this.wrapperElement);
+        }
+        this.wrapperElement = wrapperElement;
+        this.wrapperElement.className = "wc-widget-content";
+        this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+        if (this.meta.macversion === 1) {
+            this.wrapperElement.setAttribute('frameBorder', "0");
+
+            this.meta.requirements.some(function (requirement) {
+                if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
+                    this.wrapperElement.setAttribute('allowfullscreen', 'true');
+                    return true;
+                }
+            }, this);
+        }
     };
 
     const _rename = function _rename(title) {
@@ -540,19 +562,7 @@
             });
             this.fulldragboard = data.fulldragboard;
 
-            this.wrapperElement = document.createElement((this.meta.macversion > 1) ? 'wirecloud-widget' : 'iframe');
-            this.wrapperElement.className = "wc-widget-content";
-            this.wrapperElement.addEventListener('load', on_load.bind(this), true);
-            if (this.meta.macversion === 1) {
-                this.wrapperElement.setAttribute('frameBorder', "0");
-
-                this.meta.requirements.some(function (requirement) {
-                    if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
-                        this.wrapperElement.setAttribute('allowfullscreen', 'true');
-                        return true;
-                    }
-                }, this);
-            }
+            _createWrapper.call(this);
 
             build_endpoints.call(this);
             build_prefs.call(this, data.preferences);
