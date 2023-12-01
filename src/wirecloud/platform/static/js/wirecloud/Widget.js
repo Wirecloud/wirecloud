@@ -209,6 +209,7 @@
             const script = document.createElement('script');
             script.setAttribute('type', 'text/javascript');
             script.setAttribute('src', js_file);
+            script.async = false;
             document.body.appendChild(script);
             this.loaded_scripts.push(script);
             Wirecloud.loadedScripts[js_file] = {loaded: false, elem: script, users: [this]};
