@@ -39,13 +39,9 @@
         }
         privates._APICommon(container, window, shadowRoot);
 
-        // StyledElements is not required, as the object is available in the window object
         requirements.forEach(function (requirement) {
             if (requirement.name in Wirecloud.APIRequirements) {
                 Wirecloud.APIRequirements[requirement.name](container, window, shadowRoot);
-            } else if (requirement.name === "StyledElements") {
-                // But we still include it in the container to be consistent
-                container.StyledElements = window.StyledElements;
             }
         });
 
@@ -68,6 +64,7 @@
 
     // Plugins can register new requirements
     Wirecloud.APIRequirements = {
+        StyledElements: privates._StyledElements,
         DashboardManagement: privates._DashboardManagementAPI,
         ComponentManagement: privates._ComponentManagementAPI
     };

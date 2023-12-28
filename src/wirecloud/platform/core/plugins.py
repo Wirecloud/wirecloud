@@ -62,6 +62,7 @@ WIRECLOUD_API_FILES = (
     'js/WirecloudAPI/WirecloudWidgetAPI.js',
     'js/WirecloudAPI/WirecloudOperatorAPI.js',
     'js/WirecloudAPI/WirecloudAPICommon.js',
+    'js/WirecloudAPI/StyledElements.js',
     'js/WirecloudAPI/ComponentManagementAPI.js',
     'js/WirecloudAPI/DashboardManagementAPI.js',
     'js/WirecloudAPI/WirecloudAPIClosure.js',
