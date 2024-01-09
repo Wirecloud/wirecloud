@@ -61,7 +61,7 @@
             Wirecloud.loadedScripts[js_file] = {loaded: false, elem: script, users: [this]};
 
             const promise = new Promise((resolve, reject) => {
-                let on_resolve = () => {
+                const on_resolve = () => {
                     Wirecloud.loadedScripts[js_file].loaded = true;
                     resolve();
                 }

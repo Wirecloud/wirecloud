@@ -151,7 +151,7 @@
     };
 
     const _createWrapper = function _createWrapper() {
-        let wrapperElement = document.createElement((this.meta.macversion > 1) ? 'wirecloud-widget' : 'iframe');
+        const wrapperElement = document.createElement((this.meta.macversion > 1) ? 'wirecloud-widget' : 'iframe');
         if (this.wrapperElement) {
             this.wrapperElement.parentNode.replaceChild(wrapperElement, this.wrapperElement);
         }
@@ -214,7 +214,7 @@
             Wirecloud.loadedScripts[js_file] = {loaded: false, elem: script, users: [this]};
 
             const promise = new Promise((resolve, reject) => {
-                let on_resolve = () => {
+                const on_resolve = () => {
                     Wirecloud.loadedScripts[js_file].loaded = true;
                     resolve();
                 }
@@ -353,7 +353,7 @@
         if (priv.status !== STATUS.RUNNING && priv.status !== STATUS.UNLOADING) {
             return;
         }
-        
+
         if (this.loaded_scripts.length !== 0) {
             _unloadScripts.call(this);
         }
