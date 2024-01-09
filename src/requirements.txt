@@ -13,7 +13,7 @@ markdown
 django-haystack>=2.8.0,<2.9.0
 whoosh>=2.7.2
 pycryptodome
-pyScss>=1.3.4,<2.0
+git+https://github.com/Kronuz/pyScss@73559d04 # newest PyScss version, not yet released
 Pygments
 pillow
 jsonpatch
