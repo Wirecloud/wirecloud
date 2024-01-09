@@ -134,7 +134,7 @@ def create_box(widg, offs=3):
 
 
 def get_by_condition(driver, css, f):
-    for d in driver.find_elements_by_css_selector(css):
+    for d in driver.find_elements(By.CSS_SELECTOR, css):
         if f(d):
             return d
     return None
@@ -267,7 +267,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.open_menu().click_entry('Workspace')
         self.wait_wirecloud_ready()
 
-        menu_widg = self.driver.find_element_by_css_selector(
+        menu_widg = self.driver.find_element(By.CSS_SELECTOR, 
             '.wirecloud_header_nav .fa-bars')
 
         # Empty workspace screenshot
@@ -302,7 +302,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         self.wait_wirecloud_ready()
         imgp = take_capture(self.driver, 'new_workspace')
         crop_down(
-            imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
+            imgp, self.driver.find_element(By.CSS_SELECTOR, '.wc-initial-message'))
 
         # Workspace Settings
         self.open_menu().click_entry('Settings')
@@ -383,7 +383,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             marketplace.switch_to('origin')
             marketplace.delete()
             marketplace.switch_to('FIWARE Lab')
-            select = self.driver.find_element_by_css_selector(
+            select = self.driver.find_element(By.CSS_SELECTOR, 
                 '.se-select select')
 
             # Where are my resources
@@ -439,11 +439,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Publish dialog
             btn.click()
-            dialog = self.driver.find_element_by_css_selector(
+            dialog = self.driver.find_element(By.CSS_SELECTOR, 
                 '.window_menu.publish_resource')
-            dialog.find_element_by_css_selector(
+            dialog.find_element(By.CSS_SELECTOR, 
                 'input[value="admin/FIWARE Lab"]').click()
-            select = dialog.find_element_by_css_selector('.se-select select')
+            select = dialog.find_element(By.CSS_SELECTOR, '.se-select select')
             imgp = take_capture(
                 self.driver, 'publish_resource_store_select')
             add_image(imgp, get_position(select, 0.0, 1.0), 'store_list.png')
@@ -451,7 +451,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_image(imgp, *create_box(dialog))
 
             get_by_text(dialog, 'button', 'Cancel').click()
-            self.driver.find_element_by_css_selector(
+            self.driver.find_element(By.CSS_SELECTOR, 
                 '.wirecloud_header_nav .wc-back-button').click()
     test_browsing_marketplace.tags = tags + ('wirecloud-guide-browsing-marketplace',)
 
@@ -472,7 +472,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, "get_more_components")
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
         crop_down(
-            imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
+            imgp, self.driver.find_element(By.CSS_SELECTOR, '.wc-initial-message'))
 
         # Open widget wallet
         add_widget_button = self.find_navbar_button('wc-show-component-sidebar-button')
@@ -480,7 +480,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, "add_widget_button")
         add_pointer(imgp, get_position(add_widget_button, 0.8, 0.5))
-        crop_down(imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
+        crop_down(imgp, self.driver.find_element(By.CSS_SELECTOR, '.wc-initial-message'))
 
         # Add to workspace
         with self.resource_sidebar as sidebar:
@@ -519,8 +519,8 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         imgp = take_capture(self.driver, "final_layout")
 
         # Widget menu button
-        widg_menu = map_viewer_widget.element.find_element_by_css_selector('.wc-widget-heading')
-        setts_btn = widg_menu.find_element_by_css_selector('.wc-menu-button')
+        widg_menu = map_viewer_widget.element.find_element(By.CSS_SELECTOR, '.wc-widget-heading')
+        setts_btn = widg_menu.find_element(By.CSS_SELECTOR, '.wc-menu-button')
         ActionChains(self.driver).move_to_element(setts_btn).perform()
         time.sleep(0.3)  # Wait menu button hover effect
         imgp = take_capture(self.driver, "widget_menu_button")
@@ -593,7 +593,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             time.sleep(0.2)
             imgp = take_capture(self.driver, 'empty_wiring')
             crop_down(
-                imgp, self.driver.find_element_by_css_selector(".wc-workspace-view .se-alert-static-top"), 40)
+                imgp, self.driver.find_element(By.CSS_SELECTOR, ".wc-workspace-view .se-alert-static-top"), 40)
 
             # Click in Find Components
             btn = self.find_navbar_button('we-show-component-sidebar-button')
@@ -804,17 +804,17 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, mapservcw, 50)
             # Captura reshape_arrow_pre
             cprefs.click_entry("Customize")
-            _, ball_handler = mycon.element.find_elements_by_css_selector(".we-connection-handle-ball")
+            _, ball_handler = mycon.element.find_elements(By.CSS_SELECTOR, ".we-connection-handle-ball")
 
             move_elem(self.driver, ball_handler, 30, -30)
-            _, ball_handler = mycon.element.find_elements_by_css_selector(".we-connection-handle-ball")
+            _, ball_handler = mycon.element.find_elements(By.CSS_SELECTOR, ".we-connection-handle-ball")
             imgp = take_capture(self.driver, 'reshape_arrow2')
             add_pointer(imgp, get_position(ball_handler, 0.3, 0.3))
             crop_down(imgp, mapservcw, 10)
 
             move_elem(self.driver, ball_handler, -30, 30)
 
-            _, ball_handler = mycon.element.find_elements_by_css_selector(".we-connection-handle-ball")
+            _, ball_handler = mycon.element.find_elements(By.CSS_SELECTOR, ".we-connection-handle-ball")
             imgp = take_capture(self.driver, 'reshape_arrow1')
             add_pointer(imgp, get_position(ball_handler, 0.3, 0.3))
             crop_down(imgp, mapservcw, 10)
@@ -901,7 +901,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         take_capture(self.driver, 'final_mashup')
 
         with linear_graph_widget:
-            ActionChains(self.driver).move_to_element_with_offset(self.driver.find_element_by_css_selector('canvas'), 150, 0).click_and_hold().move_by_offset(40, 0).perform()
+            ActionChains(self.driver).move_to_element_with_offset(self.driver.find_element(By.CSS_SELECTOR, 'canvas'), 150, 0).click_and_hold().move_by_offset(40, 0).perform()
 
         lg_path = take_capture(self.driver, 'linear_graph_zoom1')
         add_pointer(lg_path, get_position(linear_graph_widget, 0.37, 0.5), False)
@@ -924,7 +924,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         # Share workspace dialog
         dialog = FormModalTester(self, self.wait_element_visible(".wc-dashboard-share-modal"))
         time.sleep(0.2)
-        public_b = dialog.element.find_element_by_css_selector('input[value="public"]')
+        public_b = dialog.element.find_element(By.CSS_SELECTOR, 'input[value="public"]')
         public_b.click()
         imgp = take_capture(self.driver, 'share_workspace_dialog')
         add_pointer(imgp, get_position(public_b, 0.5, 0.5))
@@ -967,7 +967,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             crop_down(imgp, btnbehav, 30)
 
             self.driver.execute_script("document.querySelector('.wc-workspace-view .wiring-diagram').style.cssText = 'box-shadow: none; border: none;'")
-            wc = self.driver.find_element_by_css_selector(".we-connections-layer")
+            wc = self.driver.find_element(By.CSS_SELECTOR, ".we-connections-layer")
 
             with wiring.behaviour_sidebar as sidebar:
                 sidebar.find_behaviour(title="Show lampposts on map").activate()
@@ -983,11 +983,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 self.driver.execute_script("arguments[0].style.cssText = ''", wiring.body)
 
                 # Lock
-                panelhead = sidebar.panel.find_element_by_css_selector('.panel-heading')
+                panelhead = sidebar.panel.find_element(By.CSS_SELECTOR, '.panel-heading')
 
                 ActionChains(self.driver).move_to_element(sidebar.btn_enable.element).perform()
                 time.sleep(0.2)
-                tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
+                tooltip = self.driver.find_element(By.CSS_SELECTOR, ".tooltip.fade.bottom.in")
                 imgp = take_capture(self.driver, "disable_behaviours_button")
                 add_pointer(imgp, get_position(sidebar.btn_enable, 0.5, 0.5))
                 panelheads = create_box(panelhead, 7)
@@ -1050,7 +1050,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 # Enable behaviour list order mode button
                 ActionChains(self.driver).move_to_element(sidebar.btn_order.element).perform()
                 time.sleep(0.2)
-                tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
+                tooltip = self.driver.find_element(By.CSS_SELECTOR, ".tooltip.fade.bottom.in")
                 imgp = take_capture(self.driver, "order_behaviours_button")
                 add_pointer(imgp, get_position(sidebar.btn_order, 0.5, 0.5))
                 panelheads = create_box(panelhead, 7)
@@ -1066,7 +1066,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
                 # Reorder the behaviours
                 sidebar.btn_order.click()
-                pos = get_position(behaviour3.element.find_element_by_css_selector('.panel-heading'), 0.5, 0.6)
+                pos = get_position(behaviour3.element.find_element(By.CSS_SELECTOR, '.panel-heading'), 0.5, 0.6)
                 ActionChains(self.driver).click_and_hold(behaviour3.element).move_by_offset(0, -50).perform()
                 time.sleep(0.2)
                 imgp = take_capture(self.driver, "ordering_behaviours")
@@ -1080,7 +1080,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
                 # Exit from the behaviour ordering mode
                 ActionChains(self.driver).move_to_element(sidebar.btn_order.element).perform()
                 time.sleep(0.2)
-                tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
+                tooltip = self.driver.find_element(By.CSS_SELECTOR, ".tooltip.fade.bottom.in")
                 imgp = take_capture(self.driver, "exit_order_behaviours_mode")
                 add_pointer(imgp, get_position(sidebar.btn_order, 0.5, 0.5))
                 panelheads = create_box(panelhead, 7)
@@ -1110,11 +1110,11 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         with self.wiring_view as wiring:
             with wiring.behaviour_sidebar as sidebar:
                 # UnLock
-                panelhead = sidebar.panel.find_element_by_css_selector('.panel-heading')
+                panelhead = sidebar.panel.find_element(By.CSS_SELECTOR, '.panel-heading')
 
                 ActionChains(self.driver).move_to_element(sidebar.btn_enable.element).perform()
                 time.sleep(0.2)
-                tooltip = self.driver.find_element_by_css_selector(".tooltip.fade.bottom.in")
+                tooltip = self.driver.find_element(By.CSS_SELECTOR, ".tooltip.fade.bottom.in")
                 imgp = take_capture(self.driver, "enable_behaviours_button")
                 add_pointer(imgp, get_position(sidebar.btn_enable, 0.5, 0.5))
                 panelheads = create_box(panelhead, 7)
@@ -1138,7 +1138,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
         time.sleep(0.3)
         imgp = take_capture(self.driver, "login")
-        crop_down(imgp, self.driver.find_element_by_css_selector('body'), 80)
+        crop_down(imgp, self.driver.find_element(By.CSS_SELECTOR, 'body'), 80)
 
         # Log into WireCloud
         self.login(next="/?theme=wirecloud.defaulttheme")
@@ -1149,7 +1149,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         time.sleep(0.3)  # wait tooltip animation
         imgp = take_capture(self.driver, "my_resources_button")
         add_pointer(imgp, get_position(btn, 0.8, 0.5))
-        crop_down(imgp, self.driver.find_element_by_css_selector('.wc-initial-message'))
+        crop_down(imgp, self.driver.find_element(By.CSS_SELECTOR, '.wc-initial-message'))
 
         with self.myresources_view as myresources:
 
@@ -1159,7 +1159,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "upload_button")
             add_pointer(imgp, get_position(btn, 0.5, 0.5))
-            crop_down(imgp, self.driver.find_element_by_css_selector('.catalogueEmptyBox'))
+            crop_down(imgp, self.driver.find_element(By.CSS_SELECTOR, '.catalogueEmptyBox'))
 
             myresources.upload_resource('CoNWeT_weather-mashup-example_1.0.2.wgt', 'Weather Mashup Example')
 
@@ -1171,12 +1171,12 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
 
             # Back button
             catalogue_base_element = myresources.wait_catalogue_ready()
-            btn = self.driver.find_element_by_css_selector('.wirecloud_header_nav .wc-back-button')
+            btn = self.driver.find_element(By.CSS_SELECTOR, '.wirecloud_header_nav .wc-back-button')
             ActionChains(self.driver).move_to_element(btn).perform()
             time.sleep(0.3)  # wait tooltip animation
             imgp = take_capture(self.driver, "back_button")
             add_pointer(imgp, get_position(btn, 0.5, 0.5))
-            crop_down(imgp, catalogue_base_element.find_element_by_css_selector('.simple_search_text'), 80)
+            crop_down(imgp, catalogue_base_element.find_element(By.CSS_SELECTOR, '.simple_search_text'), 80)
 
         # Capture new workspace entry
         menu = self.open_menu()
@@ -1191,7 +1191,7 @@ class BasicSeleniumGuideTests(WirecloudSeleniumTestCase):
         newworkspace_menu.click()
         form = FormModalTester(self, self.wait_element_visible('.wc-new-workspace-modal'))
 
-        with MACFieldTester(self, form.element.find_element_by_css_selector('.se-mac-field')) as select_dialog:
+        with MACFieldTester(self, form.element.find_element(By.CSS_SELECTOR, '.se-mac-field')) as select_dialog:
             resource = select_dialog.search_in_results('Weather Mashup Example')
             resource.select()
 

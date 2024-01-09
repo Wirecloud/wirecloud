@@ -46,7 +46,7 @@ class element_be_clickable(object):
         try:
             wrapper_element = element
             if self.check_parent is True:
-                wrapper_element = element.find_element_by_xpath('..')
+                wrapper_element = element.find_element(By.XPATH, '..')
 
             if 'disabled' in wrapper_element.get_attribute('class'):
                 return False
@@ -70,7 +70,7 @@ class element_be_clickable(object):
                     ActionChains(driver).move_to_element(element).perform()
                     return False
 
-                top_element = top_element.find_element_by_xpath('..')
+                top_element = top_element.find_element(By.XPATH, '..')
 
             return False
         except (NoSuchElementException, StaleElementReferenceException):
@@ -162,12 +162,12 @@ class workspace(object):
                 return False
 
             if self.expected_owner is not None:
-                workspace_owner = self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .first_level').text
+                workspace_owner = self.testcase.driver.find_element(By.CSS_SELECTOR, '#wirecloud_breadcrum .first_level').text
                 if workspace_owner != self.expected_owner:
                     return False
 
             if self.expected_name is not None:
-                workspace_name = self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+                workspace_name = self.testcase.driver.find_element(By.CSS_SELECTOR, '#wirecloud_breadcrum .second_level').text
                 if workspace_name != self.expected_name:
                     return False
 

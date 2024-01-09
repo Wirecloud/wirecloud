@@ -32,6 +32,7 @@ import time
 from unittest import mock
 from urllib.error import URLError, HTTPError
 from urllib.parse import unquote, urlparse
+from selenium.webdriver.common.by import By
 
 from django.apps import apps
 from django.contrib.auth.models import Group, User
@@ -582,6 +583,7 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
         settings.LANGUAGES = (('en', 'English'),)
         settings.LANGUAGE_CODE = 'en'
         settings.DEFAULT_LANGUAGE = 'en'
+        settings.DEBUG = True # Needed to run tests that depend on static files
 
         # Mock network requests
         cls.network = FakeNetwork(getattr(cls, 'servers', {
@@ -692,9 +694,9 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     def send_basic_event(self, widget, event="hello world!!"):
         with widget:
-            field = FieldTester(self, self.driver.find_element_by_css_selector("#send input"))
+            field = FieldTester(self, self.driver.find_element(By.CSS_SELECTOR, "#send input"))
             field.set_value(event)
-            self.driver.find_element_by_css_selector("#send button").click()
+            self.driver.find_element(By.CSS_SELECTOR, "#send button").click()
 
 
 DEFAULT_BROWSER_CONF = {

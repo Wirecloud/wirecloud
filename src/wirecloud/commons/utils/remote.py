@@ -36,7 +36,7 @@ from wirecloud.commons.utils import expected_conditions as WEC
 
 def marketplace_loaded(driver):
     try:
-        return driver.find_element_by_css_selector('#wirecloud_breadcrum').text != 'loading marketplace view...'
+        return driver.find_element(By.CSS_SELECTOR, '#wirecloud_breadcrum').text != 'loading marketplace view...'
     except WebDriverException:
         return False
 
@@ -51,10 +51,10 @@ class PopupMenuTester(object):
 
     def get_entry(self, name):
 
-        items = self.element.find_elements_by_css_selector('.se-popup-menu-item')
+        items = self.element.find_elements(By.CSS_SELECTOR, '.se-popup-menu-item')
 
         for item in items:
-            span = item.find_element_by_css_selector('.se-popup-menu-item-title')
+            span = item.find_element(By.CSS_SELECTOR, '.se-popup-menu-item-title')
             if span and span.text == name:
                 return item
 
@@ -66,12 +66,12 @@ class PopupMenuTester(object):
             item_name = (item_name,)
 
         tester = self
-        prev_popups = self.testcase.driver.find_elements_by_css_selector('.se-popup-menu')
+        prev_popups = self.testcase.driver.find_elements(By.CSS_SELECTOR, '.se-popup-menu')
         for i, entry in enumerate(item_name[:-1]):
             current_element = tester.get_entry(entry)
             ActionChains(self.testcase.driver).move_to_element(current_element).perform()
-            WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements_by_css_selector('.se-popup-menu')) > len(prev_popups))
-            next_popups = self.testcase.driver.find_elements_by_css_selector('.se-popup-menu')
+            WebDriverWait(self.testcase.driver, 5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, '.se-popup-menu')) > len(prev_popups))
+            next_popups = self.testcase.driver.find_elements(By.CSS_SELECTOR, '.se-popup-menu')
             next_popup = next_popups[-1]
             tester = PopupMenuTester(self.testcase, next_popup)
             prev_popups = next_popups
@@ -117,7 +117,7 @@ class CatalogueEntryTester(object):
         self.testcase.scroll_and_click(self.element)
         details_ready = WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element)
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: details_ready(driver) and self.catalogue.get_current_resource() == self.name)
-        self.details = catalogue_base_element.find_element_by_css_selector('.details_interface')
+        self.details = catalogue_base_element.find_element(By.CSS_SELECTOR, '.details_interface')
 
         return self
 
@@ -131,7 +131,7 @@ class CatalogueEntryTester(object):
 
     @property
     def version_select(self):
-        return Select(self.details.find_element_by_css_selector('.versions select'))
+        return Select(self.details.find_element(By.CSS_SELECTOR, '.versions select'))
 
     def get_version_list(self):
 
@@ -145,7 +145,7 @@ class CatalogueEntryTester(object):
 
     def switch_tab(self, tab_label):
 
-        tabs = self.details.find_elements_by_css_selector('.se-notebook-tab')
+        tabs = self.details.find_elements(By.CSS_SELECTOR, '.se-notebook-tab')
         for tab in tabs:
             if tab.text == tab_label:
                 tab.click()
@@ -155,7 +155,7 @@ class CatalogueEntryTester(object):
 
     def advanced_operation(self, action):
 
-        for operation in self.details.find_elements_by_css_selector('.advanced_operations .se-btn'):
+        for operation in self.details.find_elements(By.CSS_SELECTOR, '.advanced_operations .se-btn'):
             if operation.text == action:
                 operation.click()
                 return
@@ -170,7 +170,7 @@ class SelectableMACTester(object):
         self.element = element
 
     def select(self):
-        self.testcase.scroll_and_click(self.element.find_element_by_css_selector('.mainbutton'))
+        self.testcase.scroll_and_click(self.element.find_element(By.CSS_SELECTOR, '.mainbutton'))
         WebDriverWait(self.testcase.driver, 10).until(EC.invisibility_of_element_located((By.CSS_SELECTOR, '.window_menu.mac_selection_dialog')))
 
 
@@ -195,7 +195,7 @@ class MACFieldTester(object):
             self.element = None
 
         if self.element is not None:
-            self.element.find_element_by_css_selector('.window_bottom .se-btn').click()
+            self.element.find_element(By.CSS_SELECTOR, '.window_bottom .se-btn').click()
             WebDriverWait(self.testcase.driver, 5).until(EC.staleness_of(self.element))
             self.element = None
 
@@ -203,13 +203,13 @@ class MACFieldTester(object):
 
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'in' in self.element.get_attribute('class'))
 
-        list_element = self.element.find_element_by_css_selector('.wc-macsearch-list')
+        list_element = self.element.find_element(By.CSS_SELECTOR, '.wc-macsearch-list')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in list_element.get_attribute('class'))
         time.sleep(0.1)
 
     def search(self, keywords):
 
-        search_input = FieldTester(self.testcase, self.element.find_element_by_css_selector('.se-text-field'))
+        search_input = FieldTester(self.testcase, self.element.find_element(By.CSS_SELECTOR, '.se-text-field'))
         search_input.set_value(keywords)
         search_input.enter()
 
@@ -219,9 +219,9 @@ class MACFieldTester(object):
 
         self.wait_ready()
 
-        resources = self.element.find_elements_by_css_selector('.wc-macsearch-list > .resource')
+        resources = self.element.find_elements(By.CSS_SELECTOR, '.wc-macsearch-list > .resource')
         for resource in resources:
-            resource_name = resource.find_element_by_css_selector('.resource_name')
+            resource_name = resource.find_element(By.CSS_SELECTOR, '.resource_name')
             if resource_name.text == widget_name:
                 return SelectableMACTester(self.testcase, resource)
 
@@ -256,13 +256,13 @@ class WebElementTester(object):
 
     def find_element(self, css_selector):
         try:
-            return self.element.find_element_by_css_selector(css_selector)
+            return self.element.find_element(By.CSS_SELECTOR, css_selector)
         except NoSuchElementException:
             return None
 
     def find_elements(self, css_selector):
         try:
-            elements = self.element.find_elements_by_css_selector(css_selector)
+            elements = self.element.find_elements(By.CSS_SELECTOR, css_selector)
         except WebDriverException:
             return []
 
@@ -398,7 +398,7 @@ class AlertModalTester(ModalTester):
 
     def find_alerts(self, title=None, state=None):
         css_selector = ".alert" if state is None else ".alert.alert-%s" % (state,)
-        elements = [AlertTester(self.testcase, e) for e in self.body.find_elements_by_css_selector(css_selector)]
+        elements = [AlertTester(self.testcase, e) for e in self.body.find_elements(By.CSS_SELECTOR, css_selector)]
         return elements if title is None else [e for e in elements if e.title == title]
 
 
@@ -425,7 +425,7 @@ class FormModalTester(ModalTester):
         return self.find_element("div.alert-error")
 
     def get_field(self, name):
-        field = self.body.find_element_by_css_selector("[name='%s']" % (name,))
+        field = self.body.find_element(By.CSS_SELECTOR, "[name='%s']" % (name,))
         if field.tag_name == 'select':
             return ChoiceFieldTester(self.testcase, field)
         return FieldTester(self.testcase, field)
@@ -451,15 +451,15 @@ class WorkspaceMixinTester(object):
 
     @property
     def tabs(self):
-        return [WorkspaceTabTester(self, e) for e in self.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab")]
+        return [WorkspaceTabTester(self, e) for e in self.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-workspace-tab")]
 
     @property
     def widgets(self):
-        return [WidgetTester(self, e) for e in self.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
+        return [WidgetTester(self, e) for e in self.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-widget")]
 
     @property
     def create_tab_button(self):
-        return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-workspace .wc-create-workspace-tab"))
+        return ButtonTester(self, self.driver.find_element(By.CSS_SELECTOR, ".wc-workspace .wc-create-workspace-tab"))
 
     def create_tab(self):
         tab_ids = [tab.id for tab in self.tabs]
@@ -535,7 +535,7 @@ class WorkspaceComponentSidebarTester(object):
 
     def __enter__(self):
         button = self.testcase.find_navbar_button("wc-show-component-sidebar-button")
-        self.element = self.testcase.driver.find_element_by_css_selector(".wc-workspace .wc-resource-list")
+        self.element = self.testcase.driver.find_element(By.CSS_SELECTOR, ".wc-workspace .wc-resource-list")
         if not button.is_active:
             button.click()
             WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
@@ -549,11 +549,11 @@ class WorkspaceComponentSidebarTester(object):
 
     @property
     def component_list(self):
-        return self.element.find_element_by_css_selector('.wc-macsearch-list')
+        return self.element.find_element(By.CSS_SELECTOR, '.wc-macsearch-list')
 
     @property
     def components(self):
-        return [WorkspaceComponentTester(self.testcase, e) for e in self.component_list.find_elements_by_css_selector(".we-component-group")]
+        return [WorkspaceComponentTester(self.testcase, e) for e in self.component_list.find_elements(By.CSS_SELECTOR, ".we-component-group")]
 
     def search_in_results(self, title):
         self.wait_ready()
@@ -564,12 +564,12 @@ class WorkspaceComponentSidebarTester(object):
         return None
 
     def search(self, type, query):
-        button = ButtonTester(self.testcase, self.element.find_element_by_css_selector(".wc-filter-type-%s" % (type,)))
+        button = ButtonTester(self.testcase, self.element.find_element(By.CSS_SELECTOR, ".wc-filter-type-%s" % (type,)))
 
         if not button.is_active:
             button.click()
 
-        field = FieldTester(self.testcase, self.element.find_element_by_css_selector(".se-field-search"))
+        field = FieldTester(self.testcase, self.element.find_element(By.CSS_SELECTOR, ".se-field-search"))
         field.set_value(query)
         field.enter()
         return self
@@ -594,7 +594,7 @@ class WorkspaceComponentTester(WebElementTester):
 
     @property
     def version_select(self):
-        return Select(self.element.find_element_by_css_selector('.se-select select'))
+        return Select(self.element.find_element(By.CSS_SELECTOR, '.se-select select'))
 
     def switch_to(self, version):
         self.version_select.select_by_value(version)
@@ -603,11 +603,11 @@ class WorkspaceComponentTester(WebElementTester):
         if version is not None:
             self.switch_to(version)
 
-        ids = [WidgetTester(self.testcase, e).id for e in self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
+        ids = [WidgetTester(self.testcase, e).id for e in self.testcase.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-widget")]
         self.testcase.scroll_and_click(self.find_element(".wc-create-resource-component"))
 
         def widget_created(driver):
-            widgets = [WidgetTester(self.testcase, e) for e in self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget")]
+            widgets = [WidgetTester(self.testcase, e) for e in self.testcase.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-widget")]
 
             if len(widgets) == len(ids) + 1:
                 for widget in widgets:
@@ -632,7 +632,7 @@ class WorkspaceTabTester(WebElementTester):
 
     @property
     def content(self):
-        return WebElementTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wc-workspace .wc-workspace-tab-content[data-id='%s']" % self.id))
+        return WebElementTester(self.testcase, self.testcase.driver.find_element(By.CSS_SELECTOR, ".wc-workspace .wc-workspace-tab-content[data-id='%s']" % self.id))
 
     @property
     def id(self):
@@ -663,16 +663,16 @@ class WorkspaceTabTester(WebElementTester):
         return PopupMenuTester(self.testcase, element, button)
 
     def remove(self, timeout=10):
-        old_tab_count = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab"))
+        old_tab_count = len(self.testcase.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-workspace-tab"))
         empty = len(self.widgets) == 0
 
         self.show_preferences().click_entry('Remove')
 
         if not empty:
-            self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+            self.testcase.driver.find_element(By.XPATH, "//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
 
         def tab_removed(driver):
-            new_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-workspace-tab"))
+            new_length = len(self.testcase.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-workspace-tab"))
             return new_length == old_tab_count - 1
 
         WebDriverWait(self.testcase.driver, timeout).until(tab_removed)
@@ -809,7 +809,7 @@ class WidgetTester(WebElementTester):
     def rename(self, new_title, timeout=30):
 
         self.open_menu().click_entry('Rename')
-        name_input = self.element.find_element_by_css_selector('.wc-widget-heading span')
+        name_input = self.element.find_element(By.CSS_SELECTOR, '.wc-widget-heading span')
         WebDriverWait(self.testcase.driver, 5).until(lambda driver: name_input.get_attribute('contenteditable') == 'true')
         # We cannot use send_keys due to http://code.google.com/p/chromedriver/issues/detail?id=35
         self.testcase.driver.execute_script('arguments[0].textContent = arguments[1]', name_input, new_title)
@@ -859,11 +859,11 @@ class WidgetTester(WebElementTester):
         return self
 
     def remove(self, timeout=10):
-        old_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget"))
+        old_length = len(self.testcase.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-widget"))
         self.remove_button.click()
 
         def widget_removed(driver):
-            new_length = len(self.testcase.driver.find_elements_by_css_selector(".wc-workspace .wc-widget"))
+            new_length = len(self.testcase.driver.find_elements(By.CSS_SELECTOR, ".wc-workspace .wc-widget"))
             return old_length == new_length + 1
 
         WebDriverWait(self.testcase.driver, timeout).until(widget_removed)
@@ -1045,19 +1045,19 @@ class WiringConnectionTester(WebElementTester):
 
     @property
     def btn_add(self):
-        return ButtonTester(self.testcase, self.options.find_element_by_css_selector(".btn-add"))
+        return ButtonTester(self.testcase, self.options.find_element(By.CSS_SELECTOR, ".btn-add"))
 
     @property
     def btn_logs(self):
-        return ButtonTester(self.testcase, self.options.find_element_by_css_selector(".btn-show-logs"))
+        return ButtonTester(self.testcase, self.options.find_element(By.CSS_SELECTOR, ".btn-show-logs"))
 
     @property
     def btn_preferences(self):
-        return ButtonTester(self.testcase, self.options.find_element_by_css_selector(".we-prefs-btn"))
+        return ButtonTester(self.testcase, self.options.find_element(By.CSS_SELECTOR, ".we-prefs-btn"))
 
     @property
     def btn_remove(self):
-        return ButtonTester(self.testcase, self.options.find_element_by_css_selector(".btn-remove"))
+        return ButtonTester(self.testcase, self.options.find_element(By.CSS_SELECTOR, ".btn-remove"))
 
     @property
     def distance(self):
@@ -1065,7 +1065,7 @@ class WiringConnectionTester(WebElementTester):
 
     @property
     def options(self):
-        return self.testcase.driver.find_element_by_css_selector(".connection-options[data-sourceid='%s'][data-targetid='%s']" % (self.source_id, self.target_id))
+        return self.testcase.driver.find_element(By.CSS_SELECTOR, ".connection-options[data-sourceid='%s'][data-targetid='%s']" % (self.source_id, self.target_id))
 
     @property
     def source_id(self):
@@ -1162,7 +1162,7 @@ class WiringEndpointTester(WebElementTester):
         return None
 
     def find_connections(self):
-        return [WiringConnectionTester(self.testcase, e) for e in self.testcase.driver.find_elements_by_css_selector(".connection[data-%sid='%s']" % (self.type, self.id))]
+        return [WiringConnectionTester(self.testcase, e) for e in self.testcase.driver.find_elements(By.CSS_SELECTOR, ".connection[data-%sid='%s']" % (self.type, self.id))]
 
     def mouse_over(self, must_recommend=()):
         ActionChains(self.testcase.driver).move_to_element(self.element).perform()
@@ -1262,7 +1262,7 @@ class ComponentEditableViewTester(object):
 
     def __enter__(self):
         self.component.show_preferences().click_entry("Order endpoints")
-        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: len(driver.find_elements_by_css_selector('.endpoints.orderable')) > 0)
+        WebDriverWait(self.testcase.driver, timeout=5).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, '.endpoints.orderable')) > 0)
         return self
 
     def __exit__(self, type, value, traceback):
@@ -1304,10 +1304,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             webdriver_args = {}
         cls.driver = getattr(module, klass_name)(**webdriver_args)
         cls.driver.set_window_size(1024, 800)
-        cls._driver_needs_unload = (
-            cls.driver.capabilities['browserName'] == 'firefox'
-            and cls.driver.capabilities.get('browserVersion', '0').split('.') > ['52', '3']
-        )
+        cls._driver_needs_unload = (cls.driver.capabilities['browserName'] == 'firefox')
 
     @classmethod
     def tearDownClass(cls):
@@ -1333,7 +1330,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             return ButtonTester(self, self.wait_element_visible(".wc-toolbar .%s" % classname))
         else:
             try:
-                return ButtonTester(self, self.driver.find_element_by_css_selector(".wc-toolbar .%s" % classname))
+                return ButtonTester(self, self.driver.find_element(By.CSS_SELECTOR, ".wc-toolbar .%s" % classname))
             except NoSuchElementException:
                 return None
 
@@ -1383,7 +1380,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
         else:
             WebDriverWait(self.driver, timeout).until(wait_loading_window_fadding)
 
-            loading_message = loading_window.find_element_by_id('loading-message')
+            loading_message = loading_window.find_element(By.ID, 'loading-message')
             try:
                 self.driver.execute_script("arguments[0].click();", loading_message)
             except WebDriverException:
@@ -1440,7 +1437,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             form.get_field('title').set_value(title)
 
         if mashup:
-            with MACFieldTester(self, form.element.find_element_by_css_selector('.se-mac-field')) as select_dialog:
+            with MACFieldTester(self, form.element.find_element(By.CSS_SELECTOR, '.se-mac-field')) as select_dialog:
                 select_dialog.search(mashup)
                 resource = select_dialog.search_in_results(mashup)
                 resource.select()
@@ -1451,7 +1448,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
 
             form = FormModalTester(self, self.wait_element_visible('.wc-missing-dependencies-modal'))
 
-            missing_dependency_elements = form.body.find_elements_by_tag_name('li')
+            missing_dependency_elements = form.body.find_elements(By.TAG_NAME, 'li')
             missing_dependencies = [missing_dependency_element.text for missing_dependency_element in missing_dependency_elements]
 
             self.assertEqual(set(missing_dependencies), set(expect_missing_dependencies))
@@ -1490,7 +1487,7 @@ class WirecloudRemoteTestCase(RemoteTestCase):
     def get_current_workspace_title(self):
 
         try:
-            return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+            return self.driver.find_element(By.CSS_SELECTOR, '#wirecloud_breadcrum .second_level').text
         except StaleElementReferenceException:
             return self.get_current_workspace_name()
 
@@ -1534,9 +1531,9 @@ class WirecloudRemoteTestCase(RemoteTestCase):
             form.get_field('email').set_value(info['email'])
 
         if info.get('readOnlyWidgets', False) is True or info.get('readOnlyConnectables', False) is True:
-            tabs = self.driver.find_elements_by_css_selector('.styled_form .se-notebook-tab')
+            tabs = self.driver.find_elements(By.CSS_SELECTOR, '.styled_form .se-notebook-tab')
             for tab in tabs:
-                span = tab.find_element_by_css_selector('span')
+                span = tab.find_element(By.CSS_SELECTOR, 'span')
                 if span.text == 'Advanced':
                     tab.click()
 
@@ -1547,11 +1544,11 @@ class WirecloudRemoteTestCase(RemoteTestCase):
                 form.get_field("readOnlyConnectables").click()
 
         form.accept()
-        WebDriverWait(self.driver, timeout=10).until(lambda driver: len(driver.find_elements_by_css_selector('.window_menu')) == 1)
+        WebDriverWait(self.driver, timeout=10).until(lambda driver: len(driver.find_elements(By.CSS_SELECTOR, '.window_menu')) == 1)
 
         # Check that there are not windows showing errors
         # (the loading indicator has the window_menu class so always there is one window_menu)
-        window_menus = self.driver.find_elements_by_css_selector('.window_menu')
+        window_menus = self.driver.find_elements(By.CSS_SELECTOR, '.window_menu')
         self.assertEqual(len(window_menus), 1, 'Error publishing workspace')
 
     def check_wiring_badge(self, error_count):
@@ -1577,7 +1574,7 @@ class MarketplaceViewTester(object):
 
     def get_current_catalogue_base_element(self):
 
-        catalogues = self.testcase.driver.find_elements_by_css_selector('#marketplace > .se-alternatives > .catalogue')
+        catalogues = self.testcase.driver.find_elements(By.CSS_SELECTOR, '#marketplace > .se-alternatives > .catalogue')
         for catalogue_element in catalogues:
             if 'hidden' not in catalogue_element.get_attribute('class'):
                 return catalogue_element
@@ -1587,7 +1584,7 @@ class MarketplaceViewTester(object):
     def wait_catalogue_ready(self, timeout=10):
         time.sleep(0.1)
         catalogue_element = self.get_current_catalogue_base_element()
-        search_view = catalogue_element.find_element_by_class_name('search_interface')
+        search_view = catalogue_element.find_element(By.CLASS_NAME, 'search_interface')
         WebDriverWait(self.testcase.driver, timeout).until(lambda driver: 'disabled' not in search_view.get_attribute('class'))
 
         return catalogue_element
@@ -1599,7 +1596,7 @@ class MarketplaceViewTester(object):
         return PopupMenuTester(self.testcase, popup_menu_element, button)
 
     def get_current_marketplace_name(self):
-        breadcrum = self.testcase.driver.find_element_by_id('wirecloud_breadcrum').text
+        breadcrum = self.testcase.driver.find_element(By.ID, 'wirecloud_breadcrum').text
         if breadcrum.startswith('marketplace/'):
             return breadcrum.split('/')[-1]
         else:
@@ -1616,7 +1613,7 @@ class MarketplaceViewTester(object):
 
         if self.get_subview() == 'details':
             try:
-                return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .resource_title').text
+                return self.testcase.driver.find_element(By.CSS_SELECTOR, '#wirecloud_breadcrum .resource_title').text
             except StaleElementReferenceException:
                 return ""
 
@@ -1663,10 +1660,10 @@ class MarketplaceViewTester(object):
         market = self.get_current_marketplace_name()
 
         self.open_menu().click_entry("Delete marketplace")
-        self.testcase.driver.find_element_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
+        self.testcase.driver.find_element(By.XPATH, "//*[contains(@class, 'window_menu')]//*[text()='Yes']").click()
         self.testcase.wait_wirecloud_ready()
 
-        window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
+        window_menus = len(self.testcase.driver.find_elements(By.CSS_SELECTOR, '.window_menu'))
         if expect_error:
             if window_menus == 1:
                 self.testcase.fail('Error: marketplace shouldn\'t be deleted')
@@ -1681,7 +1678,7 @@ class MarketplaceViewTester(object):
     def search(self, keyword):
         catalogue_base_element = self.wait_catalogue_ready()
 
-        search_input = FieldTester(self.testcase, catalogue_base_element.find_element_by_css_selector('.simple_search_text'))
+        search_input = FieldTester(self.testcase, catalogue_base_element.find_element(By.CSS_SELECTOR, '.simple_search_text'))
         search_input.set_value(keyword)
         search_input.enter()
 
@@ -1693,9 +1690,9 @@ class MarketplaceViewTester(object):
 
         catalogue_base_element = self.wait_catalogue_ready()
 
-        resources = catalogue_base_element.find_elements_by_css_selector('.resource_list .resource')
+        resources = catalogue_base_element.find_elements(By.CSS_SELECTOR, '.resource_list .resource')
         for resource in resources:
-            c_resource_name = resource.find_element_by_css_selector('.resource_name').text
+            c_resource_name = resource.find_element(By.CSS_SELECTOR, '.resource_name').text
             if c_resource_name == resource_name:
                 return CatalogueEntryTester(self.testcase, resource, self, resource_name)
 
@@ -1729,7 +1726,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
             WebDriverWait(self.testcase.driver, 5).until(lambda driver: self.testcase.get_current_view() == 'marketplace')
 
     def get_current_catalogue_base_element(self):
-        return self.testcase.driver.find_element_by_css_selector('.catalogue.myresources')
+        return self.testcase.driver.find_element(By.CSS_SELECTOR, '.catalogue.myresources')
 
     def get_subview(self):
 
@@ -1742,7 +1739,7 @@ class MyResourcesViewTester(MarketplaceViewTester):
 
         if self.get_subview() == 'details':
             try:
-                return self.testcase.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+                return self.testcase.driver.find_element(By.CSS_SELECTOR, '#wirecloud_breadcrum .second_level').text
             except StaleElementReferenceException:
                 return ""
 
@@ -1759,19 +1756,19 @@ class MyResourcesViewTester(MarketplaceViewTester):
         self.testcase.find_navbar_button('wc-upload-mac-button').click()
 
         dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.wc-upload-mac-modal')))
-        dialog.find_element_by_css_selector('input[type="file"]').send_keys(wgt_path)
+        dialog.find_element(By.CSS_SELECTOR, 'input[type="file"]').send_keys(wgt_path)
         WebDriverWait(self.testcase.driver, 5).until(WEC.element_be_clickable((By.CSS_SELECTOR, '.btn-primary'), base_element=dialog))
         self.testcase.wait_wirecloud_ready()
 
-        window_menus = len(self.testcase.driver.find_elements_by_css_selector('.window_menu'))
+        window_menus = len(self.testcase.driver.find_elements(By.CSS_SELECTOR, '.window_menu'))
         if expect_error:
             if window_menus == 1:
                 self.testcase.fail('Error: resource shouldn\'t be added')
 
             dialog = WebDriverWait(self.testcase.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.window_menu.message')))
-            error_msg = dialog.find_element_by_css_selector('.window_content li').text
+            error_msg = dialog.find_element(By.CSS_SELECTOR, '.window_content li').text
             self.testcase.assertEqual(error_msg, os.path.basename(wgt_file) + ": " + expect_error)
-            dialog.find_element_by_css_selector(".btn-primary").click()
+            dialog.find_element(By.CSS_SELECTOR, ".btn-primary").click()
 
             return None
         else:
@@ -1862,11 +1859,11 @@ class BaseWiringViewTester(object):
 
     @property
     def body(self):
-        return self.testcase.driver.find_element_by_css_selector(".wiring-diagram")
+        return self.testcase.driver.find_element(By.CSS_SELECTOR, ".wiring-diagram")
 
     @property
     def btn_back(self):
-        return ButtonTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".wirecloud_header_nav .wc-back-button"))
+        return ButtonTester(self.testcase, self.testcase.driver.find_element(By.CSS_SELECTOR, ".wirecloud_header_nav .wc-back-button"))
 
     @property
     def btn_behaviours(self):
@@ -1884,7 +1881,7 @@ class BaseWiringViewTester(object):
 
     def find_connections(self, extra_class=None):
         if extra_class is None:
-            return [WiringConnectionTester(self.testcase, e) for e in self.testcase.driver.find_elements_by_css_selector(".connection")]
+            return [WiringConnectionTester(self.testcase, e) for e in self.testcase.driver.find_elements(By.CSS_SELECTOR, ".connection")]
         return [c for c in self.find_connections() if c.has_class(extra_class)]
 
     def find_draggable_component(self, type, id=None, title=None):
@@ -1899,7 +1896,7 @@ class BaseWiringViewTester(object):
     def find_draggable_components(self, type=None, extra_class=None):
         if type is None:
             return self.find_draggable_components('operator', extra_class=extra_class) + self.find_draggable_components('widget', extra_class=extra_class)
-        components = [WiringComponentDraggableTester(self.testcase, e, type) for e in self.testcase.driver.find_elements_by_css_selector(".component-draggable.component-%s[data-id]" % (type,))]
+        components = [WiringComponentDraggableTester(self.testcase, e, type) for e in self.testcase.driver.find_elements(By.CSS_SELECTOR, ".component-draggable.component-%s[data-id]" % (type,))]
 
         if extra_class is None:
             return components
@@ -1910,7 +1907,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     def __enter__(self):
         self.btn_behaviours.click()
-        self.panel = self.testcase.driver.find_element_by_css_selector(".we-panel-behaviours")
+        self.panel = self.testcase.driver.find_element(By.CSS_SELECTOR, ".we-panel-behaviours")
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.panel))
         return self
 
@@ -1928,15 +1925,15 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
 
     @property
     def btn_create(self):
-        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-create"))
+        return ButtonTester(self.testcase, self.panel.find_element(By.CSS_SELECTOR, ".btn-create"))
 
     @property
     def btn_enable(self):
-        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-enable"))
+        return ButtonTester(self.testcase, self.panel.find_element(By.CSS_SELECTOR, ".btn-enable"))
 
     @property
     def btn_order(self):
-        return ButtonTester(self.testcase, self.panel.find_element_by_css_selector(".btn-order"))
+        return ButtonTester(self.testcase, self.panel.find_element(By.CSS_SELECTOR, ".btn-order"))
 
     @property
     def disabled(self):
@@ -1946,7 +1943,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
         new_length = len(self.find_behaviours()) + 1
         self.btn_create.click()
 
-        modal = FormModalTester(self.testcase, self.testcase.driver.find_element_by_css_selector(".we-new-behaviour-modal"))
+        modal = FormModalTester(self.testcase, self.testcase.driver.find_element(By.CSS_SELECTOR, ".we-new-behaviour-modal"))
 
         if title is not None:
             modal.get_field('title').set_value(title)
@@ -1970,7 +1967,7 @@ class WiringBehaviourSidebarTester(BaseWiringViewTester):
         return None
 
     def find_behaviours(self):
-        return [WiringBehaviourTester(self.testcase, e) for e in self.panel.find_elements_by_css_selector(".behaviour")]
+        return [WiringBehaviourTester(self.testcase, e) for e in self.panel.find_elements(By.CSS_SELECTOR, ".behaviour")]
 
     def has_behaviours(self):
         return len(self.find_behaviours()) != 0
@@ -1980,7 +1977,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     def __enter__(self):
         self.btn_components.click()
-        self.element = self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring .we-panel-components")
+        self.element = self.testcase.driver.find_element(By.CSS_SELECTOR, ".wc-workspace-wiring .we-panel-components")
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
         return self
 
@@ -1990,15 +1987,15 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     @property
     def search_field(self):
-        return FieldTester(self.testcase, self.element.find_element_by_css_selector(".se-text-field"))
+        return FieldTester(self.testcase, self.element.find_element(By.CSS_SELECTOR, ".se-text-field"))
 
     @property
     def alert(self):
-        return WebElementTester(self.testcase, self.component_list.find_element_by_css_selector(".alert"))
+        return WebElementTester(self.testcase, self.component_list.find_element(By.CSS_SELECTOR, ".alert"))
 
     @property
     def component_list(self):
-        return self.element.find_element_by_css_selector('.wc-macsearch-list')
+        return self.element.find_element(By.CSS_SELECTOR, '.wc-macsearch-list')
 
     def add_component(self, type, group_id, id=None, title=None, x=0, y=0):
         component_group = self.find_component_group(type, group_id)
@@ -2044,7 +2041,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
         self.show_component_groups(type)
         self.wait_ready()
-        return [WiringComponentGroupTester(self.testcase, e, type) for e in self.component_list.find_elements_by_css_selector(".we-component-group")]
+        return [WiringComponentGroupTester(self.testcase, e, type) for e in self.component_list.find_elements(By.CSS_SELECTOR, ".we-component-group")]
 
     def has_components(self, type=None):
         if type is None:
@@ -2056,7 +2053,7 @@ class WiringComponentSidebarTester(BaseWiringViewTester):
 
     def show_component_groups(self, type):
         WebDriverWait(self.testcase.driver, timeout=5).until(WEC.element_be_still(self.element))
-        ButtonTester(self.testcase, self.element.find_element_by_css_selector(".btn-list-%s-group" % (type,))).click()
+        ButtonTester(self.testcase, self.element.find_element(By.CSS_SELECTOR, ".btn-list-%s-group" % (type,))).click()
         return self
 
     def wait_ready(self, timeout=10):
@@ -2089,7 +2086,7 @@ class WiringViewTester(BaseWiringViewTester):
 
     @property
     def disabled(self):
-        return 'disabled' in self.testcase.driver.find_element_by_css_selector(".wc-workspace-wiring").get_attribute('class').split()
+        return 'disabled' in self.testcase.driver.find_element(By.CSS_SELECTOR, ".wc-workspace-wiring").get_attribute('class').split()
 
     def select(self, components=(), key=Keys.CONTROL):
         actions = ActionChains(self.testcase.driver)
@@ -2097,4 +2094,8 @@ class WiringViewTester(BaseWiringViewTester):
             actions.key_down(key).click(component.element)
         actions.perform()
         ActionChains(self.testcase.driver).key_up(key).perform()
+        return self
+    
+    def send_delete_key(self):
+        ActionChains(self.testcase.driver).send_keys(Keys.DELETE).perform()
         return self
