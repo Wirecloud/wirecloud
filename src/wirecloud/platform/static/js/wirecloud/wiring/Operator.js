@@ -480,14 +480,17 @@
 
             privates.get(this).status = STATUS.LOADING;
 
+            if (this.wrapperElement) {
+                this.wrapperElement.setAttribute('src', this.codeurl);
+                return this;
+            }
+
             if (this.meta.missing) {
                 on_load.call(this);
                 return this;
             }
 
-            if (this.meta.macversion === 1) {
-                this.wrapperElement.setAttribute('src', this.codeurl);
-            } else {
+            if (this.meta.macversion > 1) {
                 _unloadScripts.call(this);
                 _loadScripts.call(this).then(() => {
                     on_load.call(this);

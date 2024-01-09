@@ -136,14 +136,13 @@
         }
 
         return sync_values.then((values) => {
-            _createWrapper.call(this);
-
             build_endpoints.call(this);
             build_prefs.call(this, values[0]);
             build_props.call(this, values[1]);
 
             if (this.loaded) {
                 on_unload.call(this);
+                _createWrapper.call(this);
                 this.load();
             }
 
@@ -159,7 +158,7 @@
         this.wrapperElement = wrapperElement;
         this.wrapperElement.className = "wc-widget-content";
         this.wrapperElement.addEventListener('load', on_load.bind(this), true);
-        if (this.meta.macversion === 1) {
+        if (this.meta.missing || this.meta.macversion === 1) {
             this.wrapperElement.setAttribute('frameBorder', "0");
 
             this.meta.requirements.some(function (requirement) {
@@ -305,7 +304,7 @@
     const on_load = function on_load() {
 
         if ((this.meta.macversion > 1 && this.wrapperElement.loadedURL !== this.codeurl) ||
-            (this.meta.macversion === 1 && this.wrapperElement.contentWindow.location.href !== this.codeurl)) {
+            ((this.meta.missing || this.meta.macversion === 1) && this.wrapperElement.contentWindow.location.href !== this.codeurl)) {
             return;
         }
 
@@ -349,23 +348,22 @@
     };
 
     const on_unload = function on_unload() {
-
         const priv = privates.get(this);
 
         if (priv.status !== STATUS.RUNNING && priv.status !== STATUS.UNLOADING) {
             return;
         }
-
-        if (this.meta.macversion > 1) {
+        
+        if (this.loaded_scripts.length !== 0) {
             _unloadScripts.call(this);
+        }
 
-            if (this.widgetClass !== undefined) {
-                // If this is a v2 or later widget, we need to destroy it's entrypoint class
-                if ('destroy' in this.widgetClass) {
-                    this.widgetClass.destroy();
-                }
-                delete this.widgetClass;
+        if (this.widgetClass !== undefined) {
+            // If this is a v2 or later widget, we need to destroy it's entrypoint class
+            if ('destroy' in this.widgetClass) {
+                this.widgetClass.destroy();
             }
+            delete this.widgetClass;
         }
 
         // Currently, the only scenario where current status can be "unloading"
