@@ -1997,8 +1997,22 @@
                             replace: jasmine.createSpy("replace")
                         }
                     },
-                    setAttribute: jasmine.createSpy("setAttribute")
+                    setAttribute: jasmine.createSpy("setAttribute"),
+                    parentNode: {
+                        replaceChild: jasmine.createSpy("replaceChild")
+                    },
+                    addEventListener: jasmine.createSpy("addEventListener")
                 };
+
+                const real_createElement = document.createElement;
+                document.createElement = jasmine.createSpy("createElement").and.callFake(function (tagName) {
+                    if (tagName === "iframe") {
+                        return widget.wrapperElement;
+                    } else {
+                        return real_createElement(tagName);
+                    }
+                });
+
                 widget.load();
                 element.dispatchEvent(new Event("load"));
 
@@ -2012,10 +2026,13 @@
                         expect(widget.preferences.npref).toEqual(jasmine.any(Wirecloud.UserPref));
                         expect(widget.preferences.npref.value).toBe("upgraded value");
                         expect(widget.preferences.pref).toBe(undefined);
+                        expect(widget.wrapperElement.parentNode.replaceChild).toHaveBeenCalled();
+                        document.createElement = real_createElement;
                         done();
                     },
                     (error) => {
-                        fail("error callback called");
+                        document.createElement = real_createElement;
+                        fail("error callback called " + error);
                     }
                 );
 

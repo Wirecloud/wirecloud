@@ -229,10 +229,6 @@
             };
             privates.set(this, priv);
 
-            if (!('loadedScripts' in Wirecloud)) {
-                Wirecloud.loadedScripts = {};
-            }
-
             Object.defineProperties(this, {
                 /**
                  * @memberOf Wirecloud.Workspace#
@@ -690,6 +686,8 @@
         }
 
     }
+
+    ns.loadedScripts = {};
 
     // =========================================================================
     // PRIVATE MEMBERS

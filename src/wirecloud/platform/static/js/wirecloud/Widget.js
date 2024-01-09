@@ -235,7 +235,7 @@
             if (script.src in Wirecloud.loadedScripts && Wirecloud.loadedScripts[script.src].users.length === 1) {
                 delete Wirecloud.loadedScripts[script.src];
                 document.body.removeChild(script);
-            } else {
+            } else if (script.src in Wirecloud.loadedScripts) {
                 const index = Wirecloud.loadedScripts[script.src].users.indexOf(this);
                 if (index !== -1) {
                     Wirecloud.loadedScripts[script.src].users.splice(index, 1);
