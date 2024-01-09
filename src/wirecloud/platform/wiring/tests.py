@@ -2751,13 +2751,14 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
                 wiring.select(components=(widget1, widget2, operator), key=Keys.COMMAND)
 
                 # Remove the selection using the backspace key
-                wiring.send_delete_key()
+                wiring.send_backspace_key()
 
                 modal = FormModalTester(self, self.wait_element_visible(".wc-alert-modal"))
                 self.assertIn('Test 2', modal.body.text)
                 self.assertNotIn('Test 1', modal.body.text)
                 self.assertNotIn('TestOperator', modal.body.text)
                 modal.accept()
+                modal.wait_close()
 
                 # Wait until the browser reacts
                 time.sleep(0.4)

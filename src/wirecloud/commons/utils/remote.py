@@ -2096,6 +2096,6 @@ class WiringViewTester(BaseWiringViewTester):
         ActionChains(self.testcase.driver).key_up(key).perform()
         return self
     
-    def send_delete_key(self):
-        ActionChains(self.testcase.driver).send_keys(Keys.DELETE).perform()
+    def send_backspace_key(self):
+        ActionChains(self.testcase.driver).send_keys(Keys.BACKSPACE).perform()
         return self
