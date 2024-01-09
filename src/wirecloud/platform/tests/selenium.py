@@ -24,11 +24,12 @@ from urllib.parse import urljoin
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.touch_actions import TouchActions
+#from selenium.webdriver.common.touch_actions import TouchActions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from wirecloud.catalogue.models import CatalogueResource
+from selenium.webdriver.support import expected_conditions as EC
 from wirecloud.commons.utils import expected_conditions as WEC
 from wirecloud.commons.utils.remote import ButtonTester, FieldTester, FormModalTester, FormTester, PopupMenuTester
 from wirecloud.commons.utils.testcases import uses_extra_resources, uses_extra_workspace, WirecloudSeleniumTestCase, wirecloud_selenium_test_case
@@ -40,11 +41,11 @@ __test__ = False
 
 def check_default_settings_values(test):
 
-    test.assertEqual(test.driver.find_element_by_id('listPref').text, 'default')
-    test.assertEqual(test.driver.find_element_by_id('textPref').text, 'initial text')
-    test.assertEqual(test.driver.find_element_by_id('booleanPref').text, 'false')
-    test.assertEqual(test.driver.find_element_by_id('numberPref').text, '2')
-    test.assertEqual(test.driver.find_element_by_id('passwordPref').text, 'default')
+    test.assertEqual(test.driver.find_element(By.ID, 'listPref').text, 'default')
+    test.assertEqual(test.driver.find_element(By.ID, 'textPref').text, 'initial text')
+    test.assertEqual(test.driver.find_element(By.ID, 'booleanPref').text, 'false')
+    test.assertEqual(test.driver.find_element(By.ID, 'numberPref').text, '2')
+    test.assertEqual(test.driver.find_element(By.ID, 'passwordPref').text, 'default')
 
 
 @wirecloud_selenium_test_case
@@ -144,7 +145,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.edit_mode:
             tab_widget = self.find_widget(title="Test 1")
             with tab_widget:
-                last_received_event_field = self.driver.find_element_by_id('wiringOut')
+                last_received_event_field = self.driver.find_element(By.ID, 'wiringOut')
                 self.driver.execute_script('arguments[0].textContent = "hello world!!";', last_received_event_field)
 
             tab_widget.reload().wait_loaded()
@@ -181,13 +182,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             modal.get_field('password').set_value("password")
 
             modal.accept()
+            modal.wait_close()
 
             with iwidget:
-                self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
-                self.assertEqual(self.driver.find_element_by_id('textPref').text, 'test')
-                self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
-                self.assertEqual(self.driver.find_element_by_id('numberPref').text, '0')
-                self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'password')
+                self.assertEqual(self.driver.find_element(By.ID, 'listPref').text, '1')
+                self.assertEqual(self.driver.find_element(By.ID, 'textPref').text, 'test')
+                self.assertEqual(self.driver.find_element(By.ID, 'booleanPref').text, 'true')
+                self.assertEqual(self.driver.find_element(By.ID, 'numberPref').text, '0')
+                self.assertEqual(self.driver.find_element(By.ID, 'passwordPref').text, 'password')
 
             # Open widget settings again
             modal = iwidget.show_settings()
@@ -215,18 +217,20 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             modal.get_field('password').set_value("")
 
             modal.accept()
+            modal.wait_close()
 
             with iwidget:
-                self.assertEqual(self.driver.find_element_by_id('listPref').text, '1')
-                self.assertEqual(self.driver.find_element_by_id('textPref').text, '')
-                self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'true')
-                self.assertEqual(self.driver.find_element_by_id('numberPref').text, '0')
-                self.assertEqual(self.driver.find_element_by_id('passwordPref').text, '')
+                self.assertEqual(self.driver.find_element(By.ID, 'listPref').text, '1')
+                self.assertEqual(self.driver.find_element(By.ID, 'textPref').text, '')
+                self.assertEqual(self.driver.find_element(By.ID, 'booleanPref').text, 'true')
+                self.assertEqual(self.driver.find_element(By.ID, 'numberPref').text, '0')
+                self.assertEqual(self.driver.find_element(By.ID, 'passwordPref').text, '')
 
             # Restore default widget settings
             modal = iwidget.show_settings()
             modal.find_button("Set Defaults").click()
             modal.accept()
+            modal.wait_close()
 
             with iwidget:
                 check_default_settings_values(self)
@@ -240,58 +244,61 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             modal = api_test_iwidget.show_settings()
             modal.get_field('text').set_value("Success!!")
             modal.accept()
+            modal.wait_close()
 
         expected_value = 'new value'
 
         with api_test_iwidget:
             # Check the widget can make local requests
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('makerequest_local_test').text, 'Success!!')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.ID, 'makerequest_local_test').text, 'Success!!')
             # Check the widget can make external requests
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('makerequest_test').text, 'Success!!')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.ID, 'makerequest_test').text, 'Success!!')
             # Check MashupPlatform.wiring.registerCallback works as expected
-            self.assertEqual(self.driver.find_element_by_id('pref_registercallback_test').text, 'Success!!')
+            self.assertEqual(self.driver.find_element(By.ID, 'pref_registercallback_test').text, 'Success!!')
             # Check the property API works
-            prop_input = FieldTester(self, self.driver.find_element_by_css_selector('#update_prop_input'))
+            prop_input = FieldTester(self, self.driver.find_element(By.CSS_SELECTOR, '#update_prop_input'))
             prop_input.set_value(expected_value)
             # Work around Firefox driver bugs
             self.driver.execute_script(
                 'arguments[0].click()',
-                self.driver.find_element_by_css_selector('#update_prop_button')
+                self.driver.find_element(By.CSS_SELECTOR, '#update_prop_button')
             )
 
         # TODO manual wait until the property value is stored in the server
         time.sleep(1)
 
         self.reload()
+        self.wait_wirecloud_ready(login=True)
         WebDriverWait(self.driver, timeout=15).until(lambda driver: self.active_tab is not None)
         # Refresh api_test_iwidget as we have reloaded the browser
+        time.sleep(5)
         api_test_iwidget = self.find_widget(id=api_test_iwidget_id)
 
         with api_test_iwidget:
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('#update_prop_input').get_attribute('value') == expected_value)
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '#update_prop_input').get_attribute('value') == expected_value)
 
             self.assertEqual(api_test_iwidget.error_count, 0)
             old_log_entries = len(api_test_iwidget.log_entries)
             # Work around some firefox driver bugs
-            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_logs_button'))
-            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('widget_log_test').text == 'Success!!')
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element(By.CSS_SELECTOR, '#check_logs_button'))
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element(By.ID, 'widget_log_test').text == 'Success!!')
             self.assertEqual(api_test_iwidget.error_count, 2)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 4)
 
             # Check wiring api exceptions
             # Work around some firefox driver bugs
-            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_endpoint_exceptions_button'))
-            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('endpoint_exceptions_test').text == 'Success!!')
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element(By.CSS_SELECTOR, '#check_endpoint_exceptions_button'))
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element(By.ID, 'endpoint_exceptions_test').text == 'Success!!')
 
             # Check preference api exceptions
             # Work around some firefox driver bugs
-            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_preference_exceptions_button'))
-            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('preference_exceptions_test').text == 'Success!!')
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element(By.CSS_SELECTOR, '#check_preference_exceptions_button'))
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element(By.ID, 'preference_exceptions_test').text == 'Success!!')
 
             # Check context api exceptions
             # Work around some firefox driver bugs
-            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_context_exceptions_button'))
-            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element_by_id('context_exceptions_test').text == 'Success!!')
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element(By.CSS_SELECTOR, '#check_context_exceptions_button'))
+            WebDriverWait(self.driver, timeout=2).until(lambda driver: driver.find_element(By.ID, 'context_exceptions_test').text == 'Success!!')
 
             # API exceptions are chatched by the api-test widget, check they have not affected the logged entries
             self.assertEqual(api_test_iwidget.error_count, 2)
@@ -299,7 +306,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             # Check uncatched exceptions are logged
             # Work around some firefox driver bugs
-            self.driver.execute_script('arguments[0].click()', self.driver.find_element_by_css_selector('#check_general_exceptions_button'))
+            self.driver.execute_script('arguments[0].click()', self.driver.find_element(By.CSS_SELECTOR, '#check_general_exceptions_button'))
             self.assertEqual(api_test_iwidget.error_count, 3)
             self.assertEqual(len(api_test_iwidget.log_entries), old_log_entries + 5)
 
@@ -347,8 +354,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.get_current_view() == 'myresources')
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
-        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v1.0')
-        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        self.assertEqual(self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-select.versions .se-select-text').text, 'v1.0')
+        current_tab = self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-notebook-tab.selected').text
         self.assertEqual(current_tab, 'Documentation')
 
         self.driver.back()
@@ -385,7 +392,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab.click()
 
         with target_iwidget:
-            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world!!')
 
     def test_http_cache(self):
 
@@ -503,11 +510,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         tab2.element.click()
         with iwidgets[1]:
             try:
-                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+                WebDriverWait(self.driver, timeout=30).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world!!')
             except Exception:
                 pass
 
-            text_div = self.driver.find_element_by_id('wiringOut')
+            text_div = self.driver.find_element(By.ID, 'wiringOut')
             self.assertEqual(text_div.text, 'hello world!!')
 
     @uses_extra_resources(('Wirecloud_ParameterizedMashup_1.0.zip',), shared=True)
@@ -534,10 +541,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             form.cancel()
 
             with iwidget:
-                self.assertEqual(self.driver.find_element_by_id('listPref').text, 'default')
-                self.assertEqual(self.driver.find_element_by_id('textPref').text, 'parameterized value')
-                self.assertEqual(self.driver.find_element_by_id('booleanPref').text, 'false')
-                self.assertEqual(self.driver.find_element_by_id('passwordPref').text, 'parameterized password')
+                self.assertEqual(self.driver.find_element(By.ID, 'listPref').text, 'default')
+                self.assertEqual(self.driver.find_element(By.ID, 'textPref').text, 'parameterized value')
+                self.assertEqual(self.driver.find_element(By.ID, 'booleanPref').text, 'false')
+                self.assertEqual(self.driver.find_element(By.ID, 'passwordPref').text, 'parameterized password')
 
             with edit_session.wiring_view as wiring:
                 operator = wiring.find_draggable_component('operator', title="TestOperator")
@@ -635,7 +642,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.create_workspace(mashup='Published Workspace')
         with self.edit_mode as edit_session:
             iwidget = self.widgets[0]
-            close_button = ButtonTester(self, iwidget.element.find_element_by_css_selector('.wc-remove'))
+            close_button = ButtonTester(self, iwidget.element.find_element(By.CSS_SELECTOR, '.wc-remove'))
             self.assertFalse(close_button.is_displayed)
 
             with edit_session.wiring_view as wiring:
@@ -710,7 +717,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.driver.execute_script("document.getElementById('iframe').src = arguments[0]", mashup_url)
 
         # Swicth to Wirecloud's iframe
-        iframe = self.driver.find_element_by_id('iframe')
+        iframe = self.driver.find_element(By.ID, 'iframe')
         self.driver.switch_to.frame(iframe)
         self.wait_wirecloud_ready(embedded=True)
         self.check_public_workspace(frame_id='iframe')
@@ -727,18 +734,18 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         self.assertFalse(target_iwidget.btn_preferences.is_displayed)
 
         tab = self.tabs[0]
-        self.assertRaises(NoSuchElementException, tab.element.find_element_by_css_selector, '.icon-tab-menu')
-        self.assertRaises(NoSuchElementException, self.driver.find_element_by_css_selector, '.icon-add-tab')
+        self.assertRaises(NoSuchElementException, tab.element.find_element, By.CSS_SELECTOR, '.icon-tab-menu')
+        self.assertRaises(NoSuchElementException, self.driver.find_element, By.CSS_SELECTOR, '.icon-add-tab')
 
         # Check wiring works
         self.send_basic_event(source_iwidget)
 
         # Work around selenium not being able to go to the parent frame
         if frame_id is not None:
-            self.driver.switch_to.frame(self.driver.find_element_by_id(frame_id))
+            self.driver.switch_to.frame(self.driver.find_element(By.ID, frame_id))
 
         with target_iwidget:
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world!!')
 
     def test_browser_navigation_history_management(self):
 
@@ -922,14 +929,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Workaround webkit problem with xhtml and retreiving element with focus
         if self.driver.capabilities['browserName'] == 'chrome':
             return
-        focused_element = self.driver.switch_to.active_element.find_element_by_tag_name('span')
+        focused_element = self.driver.switch_to.active_element.find_element(By.TAG_NAME, 'span')
         self.assertEqual(element, focused_element)
 
     def test_gui_tutorials(self):
 
         self.login(username='emptyuser')
 
-        self.driver.find_element_by_css_selector('#wc-user-menu .se-btn').click()
+        self.driver.find_element(By.CSS_SELECTOR, '#wc-user-menu .se-btn').click()
         popup_menu_element = self.wait_element_visible('.se-popup-menu')
         popup_menu = PopupMenuTester(self, popup_menu_element)
         popup_menu.click_entry(('Tutorials', 'Basic concepts'))
@@ -964,7 +971,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             # cancel current tutorial
             self.wait_element_visible_by_xpath("//*[contains(@class, 'window_menu')]//*[text()='Cancel']").click()
 
-        window_menues = self.driver.find_elements_by_css_selector('.window_menu')
+        window_menues = self.driver.find_elements(By.CSS_SELECTOR, '.window_menu')
         self.assertEqual(len(window_menues), 1)
 
     def test_move_widget_and_restore(self):
@@ -1001,12 +1008,17 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             iwidgets[0].wait_loaded()
 
-            title_location = iwidgets[0].title_element.location
-            TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(330, title_location['y'] + 10).release(990, 300).perform()
+            title_element = iwidgets[0].title_element
+            title_location = title_element.location
+            actions = ActionChains(self.driver)
+            #TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(330, title_location['y'] + 10).release(990, 300).perform()
+            actions.drag_and_drop_by_offset(title_element, 330, 0).perform()
+
             WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (6, 0) and iwidgets[1].layout_position == (6, 24))
 
             title_location = iwidgets[0].title_element.location
-            TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(0, 300).release(0, 300).perform()
+            #TouchActions(self.driver).tap_and_hold(title_location['x'] + 10, title_location['y'] + 10).move(0, 300).release(0, 300).perform()
+            actions.drag_and_drop_by_offset(title_element, -330, 300).perform()
             WebDriverWait(self.driver, timeout=5).until(lambda driver: iwidgets[0].layout_position == (0, 0) and iwidgets[1].layout_position == (6, 0))
 
     test_move_widget_and_restore_touch.tags = tags + ('wirecloud-dragboard',)
@@ -1025,18 +1037,18 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             initial_widget1_position = widget1.layout_position
             with widget1:
                 position_from_context = (
-                    int(self.driver.find_element_by_css_selector('[data-name="xPosition"] .content').text),
-                    int(self.driver.find_element_by_css_selector('[data-name="yPosition"] .content').text),
+                    int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="xPosition"] .content').text),
+                    int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="yPosition"] .content').text),
                 )
                 self.assertEqual(position_from_context, initial_widget1_position)
-                initial_widget1_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
-                initial_widget1_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                initial_widget1_xPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="xPosition"] .badge').text
+                initial_widget1_yPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="yPosition"] .badge').text
 
             with widget2:
-                initial_widget2_xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                initial_widget2_xPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="xPosition"] .badge').text
                 self.assertEqual(initial_widget2_xPosition_changes, '0')
 
-                initial_widget2_yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                initial_widget2_yPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="yPosition"] .badge').text
                 self.assertEqual(initial_widget2_yPosition_changes, '0')
 
             # Move widget2 moving widget1 as side effect
@@ -1055,29 +1067,29 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(widget2.layout_position, (3, 0))
 
             with widget1:
-                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                xPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="xPosition"] .badge').text
                 self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
 
-                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                yPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="yPosition"] .badge').text
                 self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
 
-                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                height_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="heightInPixels"] .badge').text
                 self.assertEqual(height_changes, "0")
 
-                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                width_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="widthInPixels"] .badge').text
                 self.assertEqual(width_changes, "0")
 
             with widget2:
-                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                xPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="xPosition"] .badge').text
                 self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 1))
 
-                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                yPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="yPosition"] .badge').text
                 self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
 
-                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                height_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="heightInPixels"] .badge').text
                 self.assertEqual(height_changes, "0")
 
-                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                width_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="widthInPixels"] .badge').text
                 self.assertEqual(width_changes, "0")
 
             # Move widget2 again without affecting widget1
@@ -1096,29 +1108,29 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             self.assertEqual(widget2.layout_position, (0, 0))
 
             with widget1:
-                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                xPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="xPosition"] .badge').text
                 self.assertEqual(xPosition_changes, initial_widget1_xPosition_changes)
 
-                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                yPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="yPosition"] .badge').text
                 self.assertEqual(yPosition_changes, str(int(initial_widget1_yPosition_changes) + 1))
 
-                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                height_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="heightInPixels"] .badge').text
                 self.assertEqual(height_changes, "0")
 
-                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                width_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="widthInPixels"] .badge').text
                 self.assertEqual(width_changes, "0")
 
             with widget2:
-                xPosition_changes = self.driver.find_element_by_css_selector('[data-name="xPosition"] .badge').text
+                xPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="xPosition"] .badge').text
                 self.assertEqual(xPosition_changes, str(int(initial_widget2_xPosition_changes) + 2))
 
-                yPosition_changes = self.driver.find_element_by_css_selector('[data-name="yPosition"] .badge').text
+                yPosition_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="yPosition"] .badge').text
                 self.assertEqual(yPosition_changes, initial_widget2_yPosition_changes)
 
-                height_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+                height_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="heightInPixels"] .badge').text
                 self.assertEqual(height_changes, "0")
 
-                width_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+                width_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="widthInPixels"] .badge').text
                 self.assertEqual(width_changes, "0")
     test_basic_add_and_move_widget.tags = tags + ('wirecloud-dragboard',)
 
@@ -1216,8 +1228,8 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         with self.edit_mode:
             # Check initial sizes
             with widget:
-                old_width_from_context = int(self.driver.find_element_by_css_selector('[data-name="width"] .content').text)
-                old_height_in_pixels_changes = int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text)
+                old_width_from_context = int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="width"] .content').text)
+                old_height_in_pixels_changes = int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="heightInPixels"] .badge').text)
                 self.assertEqual(old_width_from_context, 6)
 
             # Change columns to 10
@@ -1230,20 +1242,21 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             layout_form.accept()
 
             workspace_preferences_dialog.accept()
+            workspace_preferences_dialog.wait_close()
 
         # Check new sizes
         with widget:
-            width_changes = self.driver.find_element_by_css_selector('[data-name="width"] .badge').text
+            width_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="width"] .badge').text
             self.assertEqual(width_changes, '1')
-            height_changes = self.driver.find_element_by_css_selector('[data-name="height"] .badge').text
+            height_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="height"] .badge').text
             self.assertEqual(height_changes, '0')
 
-            new_width_from_context = self.driver.find_element_by_css_selector('[data-name="width"] .content').text
+            new_width_from_context = self.driver.find_element(By.CSS_SELECTOR, '[data-name="width"] .content').text
             self.assertEqual(new_width_from_context, '3')
 
-            width_in_pixels_changes = self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .badge').text
+            width_in_pixels_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="widthInPixels"] .badge').text
             self.assertEqual(width_in_pixels_changes, '0')
-            height_in_pixels_changes = self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .badge').text
+            height_in_pixels_changes = self.driver.find_element(By.CSS_SELECTOR, '[data-name="heightInPixels"] .badge').text
             self.assertEqual(height_in_pixels_changes, "%s" % (old_height_in_pixels_changes + 1))
 
     test_basic_layout_parameter_change.tags = tags + ('wirecloud-dragboard',)
@@ -1252,12 +1265,12 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # Check initial sizes
         with widget:
             size_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="width"] .content').get_attribute('textContent')),
-                int(self.driver.find_element_by_css_selector('[data-name="height"] .content').get_attribute('textContent')),
+                int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="width"] .content').get_attribute('textContent')),
+                int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="height"] .content').get_attribute('textContent')),
             )
             size_in_pixels_from_context = (
-                int(self.driver.find_element_by_css_selector('[data-name="widthInPixels"] .content').get_attribute('textContent')),
-                int(self.driver.find_element_by_css_selector('[data-name="heightInPixels"] .content').get_attribute('textContent')),
+                int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="widthInPixels"] .content').get_attribute('textContent')),
+                int(self.driver.find_element(By.CSS_SELECTOR, '[data-name="heightInPixels"] .content').get_attribute('textContent')),
             )
 
         return size_from_context, size_in_pixels_from_context
@@ -1368,7 +1381,7 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
             # and directly clickable without scrolling the view
             self.driver.execute_script("document.getElementById('dashboard_management_button').click();")
             # Wait until the test finish with a success message
-            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_id('dashboard_management_test').text == 'Success!!')
+            WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.ID, 'dashboard_management_test').text == 'Success!!')
 
         # Two widgets are created when clicking the dashboard management button
         # one of them is connected directly, the other is connected through and
@@ -1379,11 +1392,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # An event is sent from the widget using the pushEvent method
         iwidgets = self.widgets
         with iwidgets[3]:
-            text_div = self.driver.find_element_by_id('registercallback_test')
+            text_div = self.driver.find_element(By.ID, 'registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
 
         with iwidgets[4]:
-            text_div = self.driver.find_element_by_id('registercallback_test')
+            text_div = self.driver.find_element(By.ID, 'registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
 
     @uses_extra_resources(('Wirecloud_api-test_0.9.wgt',), shared=True)
@@ -1405,11 +1418,11 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         iwidgets = self.widgets
         with iwidgets[3]:
-            text_div = self.driver.find_element_by_id('registercallback_test')
+            text_div = self.driver.find_element(By.ID, 'registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
 
         with iwidgets[4]:
-            text_div = self.driver.find_element_by_id('registercallback_test')
+            text_div = self.driver.find_element(By.ID, 'registercallback_test')
             self.assertEqual(text_div.text, 'Success!!')
 
         self.assertIsNone(self.find_navbar_button("wc-show-wiring-button").badge)
@@ -1444,14 +1457,14 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
             # This should work as the outputendpoint is still available on version 3.0
             with other_widget:
-                WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world!!')
+                WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world!!')
 
             self.send_basic_event(other_widget)
             time.sleep(3)
 
             # Instead inputendpoint has been replaced by inputendpoint2
             with widget:
-                text_div = self.driver.find_element_by_id('wiringOut')
+                text_div = self.driver.find_element(By.ID, 'wiringOut')
                 self.assertEqual(text_div.text, '')
 
             # Downgrade to version 1.0
@@ -1473,10 +1486,10 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # This should still be working
         with other_widget:
-            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world 2!!')
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world 2!!')
 
         self.send_basic_event(other_widget, 'hello world 2!!')
 
         # And this connection should be restored
         with widget:
-            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element_by_id('wiringOut').text == 'hello world 2!!')
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world 2!!')
