@@ -58,7 +58,7 @@ jobs:
 
   django-unit-tests:
 
-    runs-on: ubuntu-20.04 #Allows to run 3.6 tests (https://github.com/actions/setup-python/issues/544)
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
@@ -106,8 +106,8 @@ jobs:
 
   django-search-indexes-tests:
 
-    runs-on: ubuntu-20.04 #Allows to run 3.6 tests (https://github.com/actions/setup-python/issues/544)
-
+    runs-on: ubuntu-20.04
+    
     strategy:
       matrix:
         engine:
@@ -170,7 +170,7 @@ jobs:
 
   django-selenium-tests:
 
-    runs-on: ubuntu-20.04 #Allows to run 3.6 tests (https://github.com/actions/setup-python/issues/544)
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Setup PostgreSQL
@@ -218,7 +218,7 @@ jobs:
       - django-selenium-tests
       - js-unit-tests
     
-    runs-on: ubuntu-20.04 #Allows to run 3.6 tests (https://github.com/actions/setup-python/issues/544)
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Coveralls Finished
