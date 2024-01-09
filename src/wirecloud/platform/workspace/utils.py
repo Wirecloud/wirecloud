@@ -93,14 +93,14 @@ def setVisibleTab(user, workspace_id, tab):
 
 
 def encrypt_value(value):
-    cipher = AES.new(settings.SECRET_KEY[:32])
+    cipher = AES.new(settings.SECRET_KEY[:32].encode("utf-8"), mode=AES.MODE_ECB)
     json_value = json.dumps(value, ensure_ascii=False).encode('utf8')
     padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * b' '
     return base64.b64encode(cipher.encrypt(padded_value)).decode('utf-8')
 
 
 def decrypt_value(value):
-    cipher = AES.new(settings.SECRET_KEY[:32])
+    cipher = AES.new(settings.SECRET_KEY[:32].encode("utf-8"), mode=AES.MODE_ECB)
     try:
         value = cipher.decrypt(base64.b64decode(value))
         return json.loads(value.decode('utf8'))
