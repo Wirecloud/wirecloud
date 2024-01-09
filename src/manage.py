@@ -2,6 +2,12 @@
 import os
 import sys
 
+if sys.version_info.major == 3 and sys.version_info.minor >= 10:
+    import collections
+    from collections.abc import Callable as collectionsCallable
+    collections.Callable = collectionsCallable
+
+
 if __name__ == "__main__":
 
     # Browsers doesn't use content negotiation using ETags with HTTP 1.0 servers
