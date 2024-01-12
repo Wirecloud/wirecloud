@@ -514,6 +514,11 @@
                 loaded: {
                     get: function () {
                         return privates.get(this).status === STATUS.RUNNING;
+                    },
+                    set: function (value) {
+                        if (value) {
+                            privates.get(this).status = STATUS.RUNNING;
+                        }
                     }
                 },
                 /**

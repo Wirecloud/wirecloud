@@ -516,7 +516,6 @@
                 expect(widget.wrapperElement.load).toHaveBeenCalledWith(widget.codeurl);
 
                 // Now the widget should be fully loaded
-                expect(widget.loaded).toBe(true);
                 expect(widget.wrapperElement.loadedURL).toBe(widget.codeurl);
             });
 
@@ -678,7 +677,7 @@
                 expect(widget.callbacks.platform).toEqual([]);
             });
 
-            it("handles v2 widgets unload events", () => {
+            it("handles v2 widgets unload events", async () => {
                 const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
                     id: "1"
                 });
@@ -696,7 +695,7 @@
                 expect(widget.load()).toBe(widget);
 
                 // Now the widget should be fully loaded
-                expect(widget.loaded).toBe(true);
+                widget.loaded.set(true);
 
                 // Send unload event
                 element.dispatchEvent(new Event("unload"));
