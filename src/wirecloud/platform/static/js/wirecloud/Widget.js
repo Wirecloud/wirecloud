@@ -312,7 +312,7 @@
             // If this is a v2 or later widget, we need to instantiate it's entrypoint class
             _unloadScripts.call(this);
             _loadScripts.call(this).then(() => {
-                const entrypoint = eval("window[\"" + this.meta.entrypoint + "\"]");
+                const entrypoint = window[this.meta.entrypoint];
                 if (entrypoint === undefined) {
                     this.logManager.log("Widget entrypoint class not found!", {console: false});
                 } else {
@@ -320,10 +320,23 @@
                         this.wrapperElement.shadowRoot, this.id,
                         ('workspaceview' in this.tab.workspace.view) ? this.tab.workspace.view.workspaceview : undefined);
                 }
+
+                privates.get(this).status = STATUS.RUNNING;
+
+                this.dispatchEvent('load');
+
+                this.pending_events.forEach(send_pending_event, this);
+                this.pending_events = [];
             });
+        } else {
+            privates.get(this).status = STATUS.RUNNING;
+
+            this.dispatchEvent('load');
+
+            this.pending_events.forEach(send_pending_event, this);
+            this.pending_events = [];
         }
 
-        privates.get(this).status = STATUS.RUNNING;
         if (this.meta.macversion > 1) {
             this.wrapperElement.addEventListener('unload', on_unload.bind(this), true);
         } else {
@@ -340,11 +353,6 @@
                 level: Wirecloud.constants.LOGGING.INFO_MSG
             });
         }
-
-        this.dispatchEvent('load');
-
-        this.pending_events.forEach(send_pending_event, this);
-        this.pending_events = [];
     };
 
     const on_unload = function on_unload() {

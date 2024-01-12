@@ -203,7 +203,7 @@
             this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
         } else if (!this.meta.missing && this.meta.macversion > 1) {
             // If this is a v2 or later operator, we need to instantiate it's entrypoint class
-            const entrypoint = eval("window[\"" + this.meta.entrypoint + "\"]");
+            const entrypoint = window[this.meta.entrypoint];
             if (entrypoint === undefined) {
                 this.logManager.log("Operator entrypoint class not found!", {console: false});
             } else {
