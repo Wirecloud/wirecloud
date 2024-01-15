@@ -21,6 +21,7 @@
 import os
 
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
 
 from wirecloud.platform.models import Market
 from wirecloud.commons.utils.remote import ModalTester
@@ -45,7 +46,7 @@ class MarketManagementSeleniumTestCase(WirecloudSeleniumTestCase):
         for resource_name in resources:
             resource = marketplace.search_in_results(resource_name)
             self.assertIsNotNone(resource)
-            button = resource.element.find_element_by_css_selector('.mainbutton')
+            button = resource.element.find_element(By.CSS_SELECTOR, '.mainbutton')
             self.assertEqual(button.text, button_text)
 
     def test_no_marketplaces(self):

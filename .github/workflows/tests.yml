@@ -14,7 +14,7 @@ jobs:
 
   js-unit-tests:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
@@ -38,12 +38,14 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
       - name: Build
         working-directory: ./src
         run: ./setup.py bdist_wheel
@@ -56,7 +58,7 @@ jobs:
 
   django-unit-tests:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
@@ -65,15 +67,16 @@ jobs:
           - "2.1"
           - "2.2"
         python-version:
-          - "3.6"
+          #- "3.6"
           - "3.7"
           - "3.8"
           - "3.9"
+          - "3.10"
 
     steps:
       - name: Setup PostgreSQL
         run: |
-          docker run -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 postgres:latest
+          docker run --rm -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 --name postgres-wirecloud postgres:latest
       - uses: actions/checkout@v2
       - name: Use Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -102,7 +105,7 @@ jobs:
 
   django-search-indexes-tests:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     strategy:
       matrix:
@@ -113,19 +116,21 @@ jobs:
     steps:
       - name: Setup PostgreSQL
         run: |
-          docker run -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 postgres:latest
+          docker run --rm -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 --name postgres-wirecloud postgres:latest
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
       - name: Use Elasticsearch
         working-directory: ./src
         run: |
-          docker run -p 9200:9200 --rm -d elasticsearch:2.4
+          docker run -p 9200:9200 --rm -d --name elasticsearch-wirecloud elasticsearch:2.4
         if: ${{ matrix.engine == 'Elasticsearch' }}
       - name: Use Solr
         working-directory: ./src
         run: |
-          docker run -p 8983:8983 --rm --name solr -d solr:6
+          docker run -p 8983:8983 --rm --name solr-wirecloud -d solr:6
         if: ${{ matrix.engine == 'Solr' }}
       - name: Setup and run tests
         working-directory: ./src
@@ -143,10 +148,10 @@ jobs:
             cat ci_scripts/templates/solr-conf.template >> settings.py
             mkdir solr_conf
             python manage.py build_solr_schema --configure-directory solr_conf
-            docker exec --user=solr solr bin/solr create -c tester -n basic_config
-            docker exec solr rm -f /opt/solr/server/solr/tester/conf/managed-schema.xml
-            docker cp solr_conf/schema.xml solr:/opt/solr/server/solr/tester/conf/
-            docker cp solr_conf/solrconfig.xml solr:/opt/solr/server/solr/tester/conf/
+            docker exec --user=solr solr-wirecloud bin/solr create -c tester -n basic_config
+            docker exec solr-wirecloud rm -f /opt/solr/server/solr/tester/conf/managed-schema.xml
+            docker cp solr_conf/schema.xml solr-wirecloud:/opt/solr/server/solr/tester/conf/
+            docker cp solr_conf/solrconfig.xml solr-wirecloud:/opt/solr/server/solr/tester/conf/
 
             # Reload the Solr core
             curl "http://localhost:8983/solr/admin/cores?action=RELOAD&core=tester"
@@ -164,21 +169,23 @@ jobs:
 
   django-selenium-tests:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Setup PostgreSQL
         run: |
-          docker run -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 postgres:latest
+          docker run --rm -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=wirecloud -d -p 5432:5432 --name postgres-wirecloud postgres:latest
       - name: Use Geckodriver
         uses: browser-actions/setup-geckodriver@latest
       - uses: actions/checkout@v2
       - name: Use Python
         uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
       - name: Use Elasticsearch
         working-directory: ./src
         run: |
-          docker run -p 9200:9200 --rm -d elasticsearch:2.4
+          docker run -p 9200:9200 --rm -d --name elasticsearch-wirecloud elasticsearch:2.4
       - name: Setup and run tests
         working-directory: ./src
         env:
@@ -210,7 +217,7 @@ jobs:
       - django-selenium-tests
       - js-unit-tests
     
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Coveralls Finished

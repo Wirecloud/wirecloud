@@ -591,13 +591,13 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
                 tab = resource.switch_tab('Change Log')
                 self.assertIsNotNone(tab, 'Missing change log tab')
                 changelog_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.changelog'), base_element=resource.details))
-                headings = changelog_contents.find_elements_by_css_selector('h1')
+                headings = changelog_contents.find_elements(By.CSS_SELECTOR, 'h1')
                 self.assertEqual(len(headings), 1)
 
                 tab = resource.switch_tab('Documentation')
                 self.assertIsNotNone(tab, 'Missing documentation tab')
                 documentation_contents = WebDriverWait(self.driver, 5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.se-notebook-tab-content.documentation'), base_element=resource.details))
-                headings = documentation_contents.find_elements_by_css_selector('h1, h2')
+                headings = documentation_contents.find_elements(By.CSS_SELECTOR, 'h1, h2')
                 self.assertEqual(len(headings), 2)
 
             # But cannot be uninstalled by normal users
@@ -684,7 +684,7 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         with self.myresources_view as myresources:
             with myresources.search_in_results('Test') as test_widget:
 
-                operations = [operation.text for operation in test_widget.details.find_elements_by_css_selector('.advanced_operations .se-btn')]
+                operations = [operation.text for operation in test_widget.details.find_elements(By.CSS_SELECTOR, '.advanced_operations .se-btn')]
                 if admin:
                     self.assertIn('Delete all versions', operations)
                 else:
@@ -828,17 +828,17 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
         WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
-        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        current_tab = self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-notebook-tab.selected').text
         self.assertEqual(current_tab, 'Documentation')
-        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v1.0')
+        self.assertEqual(self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-select.versions .se-select-text').text, 'v1.0')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text == 'Main Info')
-        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v1.0')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.details_interface .se-notebook-tab.selected').text == 'Main Info')
+        self.assertEqual(self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-select.versions .se-select-text').text, 'v1.0')
 
         self.driver.back()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text == 'v2.0')
-        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.details_interface .se-select.versions .se-select-text').text == 'v2.0')
+        current_tab = self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-notebook-tab.selected').text
         self.assertEqual(current_tab, 'Main Info')
 
         self.driver.back()
@@ -856,16 +856,16 @@ class LocalCatalogueSeleniumTests(WirecloudSeleniumTestCase):
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'details')
         WebDriverWait(self.driver, timeout=5).until(WEC.element_be_enabled((By.CSS_SELECTOR, '.details_interface'), base_element=catalogue_base_element))
         self.assertEqual(self.myresources_view.get_current_resource(), 'Test')
-        current_tab = self.driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text
+        current_tab = self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-notebook-tab.selected').text
         self.assertEqual(current_tab, 'Main Info')
-        self.assertEqual(self.driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text, 'v2.0')
+        self.assertEqual(self.driver.find_element(By.CSS_SELECTOR, '.details_interface .se-select.versions .se-select-text').text, 'v2.0')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-select.versions .se-select-text').text == 'v1.0')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.details_interface .se-select.versions .se-select-text').text == 'v1.0')
         self.assertEqual(current_tab, 'Main Info')
 
         self.driver.forward()
-        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element_by_css_selector('.details_interface .se-notebook-tab.selected').text == 'Documentation')
+        WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.CSS_SELECTOR, '.details_interface .se-notebook-tab.selected').text == 'Documentation')
 
         self.driver.forward()
         WebDriverWait(self.driver, timeout=5).until(lambda driver: self.myresources_view.get_subview() == 'search')
