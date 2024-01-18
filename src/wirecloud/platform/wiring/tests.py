@@ -2183,6 +2183,34 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
                 connection = wiring.find_connections(extra_class="missing")[0]
                 self.assertEqual(connection.source_id, source.id)
 
+    @uses_extra_resources(('Wirecloud_TestOperator_3.0.zip',), shared=True)
+    def test_upgrade_operator_to_v2(self):
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
+
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+                with wiring.component_sidebar as sidebar:
+                    operator = sidebar.find_component('operator', "Wirecloud/TestOperator", id=0)
+                    operator.change_version("3.0")
+                    modal = operator.show_logs()
+                    WebDriverWait(self.driver, timeout=5).until(lambda driver: len(modal.find_alerts(title="The operator was upgraded to v3.0 successfully.")) == 1)
+                    modal.accept()
+                draggable_operator = wiring.find_draggable_component('operator', id=operator.id)
+
+                self.assertEqual(len(draggable_operator.find_endpoints('target')), 2)
+                target = draggable_operator.find_endpoint('target', "input")
+                self.assertFalse(target.has_class('missing'))
+                self.assertTrue(len(target.find_connections()), 1)
+
+                self.assertEqual(len(draggable_operator.find_endpoints('source')), 2)
+                source = draggable_operator.find_endpoint('source', "output")
+                self.assertTrue(source.has_class('missing'))
+                self.assertTrue(len(source.find_connections()), 1)
+
+                self.assertEqual(len(wiring.find_connections(extra_class="missing")), 1)
+                connection = wiring.find_connections(extra_class="missing")[0]
+                self.assertEqual(connection.source_id, source.id)
+
     @uses_extra_resources(('Wirecloud_Test_3.0.wgt',), shared=True)
     def test_upgrade_and_downgrade_widget(self):
         self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
@@ -2337,6 +2365,25 @@ class WiringEditorSearchSeleniumTestCase(WirecloudSeleniumTestCase):
 
                 # Upgrade it to version 2.0 and check it leaves the missing status
                 operator.change_version("2.0")
+                WebDriverWait(self.driver, timeout=5).until(lambda driver: not operator.has_class('missing'))
+
+    @uses_extra_resources(('Wirecloud_TestOperator_3.0.zip',), shared=True)
+    def test_upgrade_missing_operator_to_v2(self):
+
+        # Make operator with id 0 missing by uninstalling TestOperator
+        CatalogueResource.objects.get(vendor="Wirecloud", short_name="TestOperator", version="1.0").delete()
+
+        self.login(username='user_with_workspaces', next="/user_with_workspaces/Workspace")
+
+        with self.edit_mode as edit_session:
+            with edit_session.wiring_view as wiring:
+
+                # Check operator is marked as missing
+                operator = wiring.find_draggable_component('operator', id=0)
+                self.assertTrue(operator.has_class('missing'))
+
+                # Upgrade it to version 3.0 and check it leaves the missing status
+                operator.change_version("3.0")
                 WebDriverWait(self.driver, timeout=5).until(lambda driver: not operator.has_class('missing'))
 
     def test_operator_install_uninstall(self):

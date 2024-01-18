@@ -694,9 +694,16 @@ class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
 
     def send_basic_event(self, widget, event="hello world!!"):
         with widget:
-            field = FieldTester(self, self.driver.find_element(By.CSS_SELECTOR, "#send input"))
+            if widget.is_iframe:
+                field = FieldTester(self, self.driver.find_element(By.CSS_SELECTOR, "#send input"))
+            else:
+                field = FieldTester(self, widget.inner_contents.find_element(By.CSS_SELECTOR, "#send input"))
             field.set_value(event)
-            self.driver.find_element(By.CSS_SELECTOR, "#send button").click()
+
+            if widget.is_iframe:
+                self.driver.find_element(By.CSS_SELECTOR, "#send button").click()
+            else:
+                widget.inner_contents.find_element(By.CSS_SELECTOR, "#send button").click()
 
 
 DEFAULT_BROWSER_CONF = {

@@ -1488,3 +1488,70 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # And this connection should be restored
         with widget:
             WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world 2!!')
+
+    @uses_extra_resources(('Wirecloud_Test_4.0.wgt',), shared=True)
+    def test_upgrade_widget_to_v2(self):
+
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/Workspace")
+
+        widget, other_widget = self.widgets
+
+        with self.edit_mode:
+            # Upgrade to version 4.0
+            widget.open_menu().click_entry('Upgrade/Downgrade')
+            form = FormModalTester(self, self.wait_element_visible(".wc-upgrade-component-modal"))
+            form.accept()
+
+            # Check settings
+            widget.open_menu().click_entry('Settings')
+
+            form = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
+            self.assertRaises(NoSuchElementException, form.get_field, 'list')
+            self.assertEqual(form.get_field('text').value, 'initial text')
+            self.assertRaises(NoSuchElementException, form.get_field, 'boolean')
+            self.assertRaises(NoSuchElementException, form.get_field, 'number')
+            self.assertRaises(NoSuchElementException, form.get_field, 'password')
+            self.assertEqual(form.get_field('new').value, 'initial value')
+            form.accept()
+
+            # Check wiring
+            self.send_basic_event(widget)
+
+            # This should work as the outputendpoint is still available on version 4.0
+            with other_widget:
+                WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world!!')
+
+            self.send_basic_event(other_widget)
+            time.sleep(3)
+
+            # Instead inputendpoint has been replaced by inputendpoint2
+            with widget:
+                text_div = widget.inner_contents.find_element(By.ID, 'wiringOut')
+                self.assertEqual(text_div.text, '')
+
+            # Downgrade to version 1.0
+            widget.open_menu().click_entry('Upgrade/Downgrade')
+            form = FormModalTester(self, self.wait_element_visible(".wc-upgrade-component-modal"))
+            form.accept()
+
+            # Check settings
+            widget.open_menu().click_entry('Settings')
+
+            form = FormModalTester(self, self.wait_element_visible(".wc-component-preferences-modal"))
+            self.assertEqual(form.get_field('list').value, 'default')
+            self.assertEqual(form.get_field('text').value, 'initial text')
+            self.assertRaises(NoSuchElementException, form.get_field, 'new')
+            form.accept()
+
+        # Check wiring
+        self.send_basic_event(widget, 'hello world 2!!')
+
+        # This should still be working
+        with other_widget:
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world 2!!')
+
+        self.send_basic_event(other_widget, 'hello world 2!!')
+
+        # And this connection should be restored
+        with widget:
+            WebDriverWait(self.driver, timeout=3).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world 2!!')
