@@ -713,16 +713,15 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         iframe_test_url = urljoin(self.live_server_url, settings.STATIC_URL) + 'tests/embedded_iframe.html'
         self.driver.get(iframe_test_url)
 
-        # Load Wirecloud using the iframe element
-        self.driver.execute_script("document.getElementById('iframe').src = arguments[0]", mashup_url)
-
         # Swicth to Wirecloud's iframe
         iframe = self.driver.find_element(By.ID, 'iframe')
         self.driver.switch_to.frame(iframe)
-        self.wait_wirecloud_ready(embedded=True, timeout=40)
-        self.check_public_workspace(frame_id='iframe')
+        self.driver.get(mashup_url)
 
-    def check_public_workspace(self, frame_id=None):
+        self.wait_wirecloud_ready(embedded=True)
+        self.check_public_workspace()
+
+    def check_public_workspace(self):
         # Check iwidget are loaded correctly
         iwidgets = self.widgets
         self.assertEqual(len(iwidgets), 2)
@@ -739,10 +738,6 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
 
         # Check wiring works
         self.send_basic_event(source_iwidget)
-
-        # Work around selenium not being able to go to the parent frame
-        if frame_id is not None:
-            self.driver.switch_to.frame(self.driver.find_element(By.ID, frame_id))
 
         with target_iwidget:
             WebDriverWait(self.driver, timeout=5).until(lambda driver: driver.find_element(By.ID, 'wiringOut').text == 'hello world!!')
