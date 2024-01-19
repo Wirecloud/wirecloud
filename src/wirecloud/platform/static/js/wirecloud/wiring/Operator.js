@@ -195,7 +195,7 @@
     // =========================================================================
 
     const on_load = function on_load() {
-        if (this.wrapperElement && this.wrapperElement.contentWindow.location.href !== this.codeurl) {
+        if (this.wrapperElement && !this.wrapperElement.hasAttribute('src')) {
             return;
         }
 
@@ -486,7 +486,7 @@
             privates.get(this).status = STATUS.LOADING;
 
             if (this.wrapperElement) {
-                this.wrapperElement.contentWindow.location.replace(this.codeurl);
+                this.wrapperElement.setAttribute('src', this.codeurl);
                 return this;
             }
 

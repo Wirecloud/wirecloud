@@ -238,18 +238,15 @@
                             replace: jasmine.createSpy("replace")
                         }
                     },
-                    setAttribute: jasmine.createSpy("setAttribute")
+                    setAttribute: jasmine.createSpy("setAttribute"),
+                    hasAttribute: jasmine.createSpy("hasAttribute").and.returnValue(true)
                 };
 
                 expect(operator.loaded).toBe(false);
                 expect(operator.load()).toBe(operator);
 
-                expect(operator.wrapperElement.contentWindow.location.replace).toHaveBeenCalledWith(operator.codeurl);
+                expect(operator.wrapperElement.setAttribute).toHaveBeenCalledWith("src", operator.codeurl);
 
-                element.dispatchEvent(new Event("load"));
-                expect(operator.wrapperElement.contentDocument.defaultView.addEventListener).not.toHaveBeenCalled();
-
-                operator.wrapperElement.contentWindow.location.href = operator.codeurl;
                 element.dispatchEvent(new Event("load"));
 
                 // Now the widget should be fully loaded
