@@ -65,7 +65,7 @@
 
             it("throws a TypeError exception when the entrypoint is missing for mac version 2", () => {
                 expect(() => {
-                    new Wirecloud.OperatorMeta({
+                    new ns.OperatorMeta({
                         vendor: "Wirecloud",
                         type: "operator",
                         name: "TestOperator",
@@ -80,7 +80,7 @@
 
             it("throws a TypeError exception when the js_files is missing for mac version 2", () => {
                 expect(() => {
-                    new Wirecloud.OperatorMeta({
+                    new ns.OperatorMeta({
                         vendor: "Wirecloud",
                         type: "operator",
                         name: "TestOperator",
@@ -93,9 +93,9 @@
                 }).toThrowError(TypeError);
             });
 
-            it("accepts missing js_files and entrypoint for mac version 1", () => {
+            it("accepts missing entrypoint for mac version 1", () => {
                 expect(() => {
-                    new Wirecloud.OperatorMeta({
+                    new ns.OperatorMeta({
                         vendor: "Wirecloud",
                         type: "operator",
                         name: "TestOperator",
@@ -104,7 +104,23 @@
                         version: "1.0",
                         macversion: 1
                     });
-                }).toThrowError(TypeError);
+                }).not.toThrow();
+            });
+
+            it("accepts mac version 2", () => {
+                expect(() => {
+                    new ns.OperatorMeta({
+                        vendor: "Wirecloud",
+                        type: "operator",
+                        name: "TestOperator",
+                        preferences: [],
+                        properties: [],
+                        version: "1.0",
+                        macversion: 2,
+                        entrypoint: "Test",
+                        js_files: ["Test"]
+                    });
+                }).not.toThrow();
             });
 
             it("provides some fallback values", () => {

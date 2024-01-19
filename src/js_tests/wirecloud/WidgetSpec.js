@@ -170,7 +170,7 @@
         ],
         codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
         macversion: 2,
-        js_files: ['this/is/a/test.js'],
+        js_files: ['http://thiswebsitedoesnotexist.com/test2.js'],
         entrypoint: "Test"
     };
     Object.freeze(WIDGETV2_META);
@@ -694,8 +694,11 @@
 
                 expect(widget.load()).toBe(widget);
 
+                let loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test2.js"]');
+                expect(loadedScripts.length).toBe(1);
+
                 // Now the widget should be fully loaded
-                widget.loaded.set(true);
+                widget.loaded = true;
 
                 // Send unload event
                 element.dispatchEvent(new Event("unload"));
@@ -703,6 +706,26 @@
                 expect(widget.callbacks.iwidget).toEqual([]);
                 expect(widget.callbacks.mashup).toEqual([]);
                 expect(widget.callbacks.platform).toEqual([]);
+
+                const new_widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "2"
+                });
+
+                expect(new_widget.load()).toBe(new_widget);
+
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test2.js"]');
+                expect(loadedScripts.length).toBe(1);
+
+                Wirecloud.loadedScripts["http://thiswebsitedoesnotexist.com/test2.js"].loaded = true;
+
+                const another_widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "3"
+                });
+
+                expect(another_widget.load()).toBe(another_widget);
+
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test2.js"]');
+                expect(loadedScripts.length).toBe(1);
             });
 
             it("ignores unload events when unloaded", () => {

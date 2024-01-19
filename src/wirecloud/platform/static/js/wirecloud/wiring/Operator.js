@@ -195,7 +195,7 @@
     // =========================================================================
 
     const on_load = function on_load() {
-        if (this.wrapperElement && !this.wrapperElement.hasAttribute('src')) {
+        if (this.wrapperElement && this.wrapperElement.contentWindow.location.href !== this.codeurl) {
             return;
         }
 
@@ -343,6 +343,11 @@
                 loaded: {
                     get: function () {
                         return privates.get(this).status === STATUS.RUNNING;
+                    },
+                    set: function (value) {
+                        if (value) {
+                            privates.get(this).status = STATUS.RUNNING;
+                        }
                     }
                 },
                 /**
@@ -481,7 +486,7 @@
             privates.get(this).status = STATUS.LOADING;
 
             if (this.wrapperElement) {
-                this.wrapperElement.setAttribute('src', this.codeurl);
+                this.wrapperElement.contentWindow.location.replace(this.codeurl);
                 return this;
             }
 

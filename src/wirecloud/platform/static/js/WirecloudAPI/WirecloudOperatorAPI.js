@@ -20,17 +20,12 @@
  *
  */
 
-/* globals MashupPlatform */
-
-
 (function () {
 
     "use strict";
 
-    var _OperatorAPI = function _OperatorAPI(parent) {
-        var ioperator, endpoint_name, inputs, outputs, IOperatorVariable;
-
-        IOperatorVariable = function IOperatorVariable(variable) {
+    const _OperatorAPI = function _OperatorAPI(parent) {
+        const IOperatorVariable = function IOperatorVariable(variable) {
             this.set = function set(value) {
                 variable.set(value);
             };
@@ -44,7 +39,7 @@
 
         // Init resource entry (in this case an operator) so other API files can make
         // use of it
-        ioperator = parent.MashupPlatform.priv.workspaceview.model.findOperator(parent.MashupPlatform.priv.id);
+        const ioperator = parent.MashupPlatform.priv.workspaceview.model.findOperator(parent.MashupPlatform.priv.id);
         parent.MashupPlatform.priv.resource = ioperator;
 
         // Operator Module
@@ -58,7 +53,7 @@
 
         Object.defineProperty(parent.MashupPlatform.operator, 'getVariable', {
             value: function getVariable(name) {
-                var variable = ioperator.properties[name];
+                const variable = ioperator.properties[name];
                 if (variable != null) {
                     return new IOperatorVariable(variable);
                 }
@@ -66,25 +61,25 @@
         });
 
         // Inputs
-        inputs = {};
-        for (endpoint_name in ioperator.inputs) {
+        const inputs = {};
+        for (const endpoint_name in ioperator.inputs) {
             inputs[endpoint_name] = new parent.MashupPlatform.priv.InputEndpoint(ioperator.inputs[endpoint_name], true);
         }
         Object.defineProperty(parent.MashupPlatform.operator, 'inputs', {value: inputs});
 
         // Outputs
-        outputs = {};
-        for (endpoint_name in ioperator.outputs) {
+        const outputs = {};
+        for (const endpoint_name in ioperator.outputs) {
             outputs[endpoint_name] = new parent.MashupPlatform.priv.OutputEndpoint(ioperator.outputs[endpoint_name], true);
         }
         Object.defineProperty(parent.MashupPlatform.operator, 'outputs', {value: outputs});
     };
 
     window._privs._OperatorAPI = _OperatorAPI;
-    
+
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        _privs._OperatorAPI(window);
+        window. _privs._OperatorAPI(window);
     }
 
 })();

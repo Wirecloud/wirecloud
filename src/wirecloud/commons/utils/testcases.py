@@ -557,7 +557,7 @@ def uses_extra_workspace(owner, file_name, shared=False, public=False, users=(),
     return wrap
 
 
-class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase):
+class WirecloudSeleniumTestCase(LiveServerTestCase, WirecloudRemoteTestCase): # pragma: no cover
 
     fixtures = ('selenium_test_data',)
     base_resources = ('Wirecloud_TestOperator_1.0.zip', 'Wirecloud_Test_1.0.wgt', 'Wirecloud_test-mashup_1.0.wgt')

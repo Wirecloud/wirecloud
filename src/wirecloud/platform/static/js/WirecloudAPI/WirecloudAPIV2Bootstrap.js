@@ -22,14 +22,14 @@
 (function (Wirecloud) {
     "use strict";
 
-    var privates = window._privs;
+    const privates = window._privs;
     delete window._privs; // Remove privates from global scope
 
-    var createAPIComponent = function createAPIComponent(type, requirements, componentClass, shadowRoot, id, viewid) {
+    const createAPIComponent = function createAPIComponent(type, requirements, ComponentClass, shadowRoot, id, viewid) {
         // We create an object that will contain the MashupPlatform object
         // tailored for the specific component, as well as any other object
         // created by the different APIs
-        var container = {};
+        const container = {};
 
         privates._APIBootstrap(Wirecloud, Wirecloud.Utils, container, id, viewid);
         if (type === "widget") {
@@ -48,13 +48,13 @@
         privates._APIClosure(container);
 
         // We instantiate the actual component
-        let MashupPlatform = container.MashupPlatform;
+        const MashupPlatform = container.MashupPlatform;
 
-        var component = undefined;
+        let component = undefined;
         if (type === "widget") {
-            component = new componentClass(MashupPlatform, shadowRoot, container);
+            component = new ComponentClass(MashupPlatform, shadowRoot, container);
         } else if (type === "operator") {
-            component = new componentClass(MashupPlatform, container);
+            component = new ComponentClass(MashupPlatform, container);
         }
 
         return component;

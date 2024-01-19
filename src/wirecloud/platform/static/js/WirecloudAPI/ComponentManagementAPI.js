@@ -20,15 +20,13 @@
  *
  */
 
-/* globals MashupPlatform */
-
 
 (function () {
 
     "use strict";
 
-    var _ComponentManagementAPI = function _ComponentManagementAPI(parent, platform, _) {
-        var Wirecloud = platform.Wirecloud;
+    const _ComponentManagementAPI = function _ComponentManagementAPI(parent, platform, _) {
+        const Wirecloud = platform.Wirecloud;
 
         /**
          * Installs a component
@@ -40,7 +38,7 @@
          *
          * @returns {Wirecloud.Task}
          */
-        var install = function install(options) {
+        const install = function install(options) {
             return Wirecloud.LocalCatalogue.addComponent(options);
         };
 
@@ -58,7 +56,7 @@
          *
          * @returns {Promise}
          */
-        var uninstall = function uninstall(vendor, name, version) {
+        const uninstall = function uninstall(vendor, name, version) {
             if (vendor == null) {
                 throw new TypeError("missing vendor parameter");
             }
@@ -68,7 +66,8 @@
             }
 
             return new Promise(function (resolve, reject) {
-                var component, options = {};
+                let component;
+                const options = {};
 
                 if (version) {
                     component = Wirecloud.LocalCatalogue.getResource(vendor, name, version);
@@ -103,11 +102,11 @@
          * @returns {boolean}
          *      `true` if the component is installed
          */
-        var isInstalled = function isInstalled(vendor, name, version) {
+        const isInstalled = function isInstalled(vendor, name, version) {
             if (version !== null) {
                 return Wirecloud.LocalCatalogue.resourceExistsId([vendor, name, version].join('/'));
             } else {
-                var mac = [vendor, name].join('/');
+                const mac = [vendor, name].join('/');
                 return Wirecloud.LocalCatalogue.resourceVersions[mac].length > 0;
             }
         };
@@ -124,7 +123,7 @@
 
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        _privs._ComponentManagementAPI(window, window.parent);
+        window._privs._ComponentManagementAPI(window, window.parent);
     }
 
 })();

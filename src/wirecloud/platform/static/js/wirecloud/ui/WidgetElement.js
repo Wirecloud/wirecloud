@@ -34,7 +34,7 @@
             this.style.width = '100%';
             this.style.height = '100%';
             this.style.display = 'block';
-            
+
             if (!this.hasShadowDOM) {
                 this.attachShadow({mode: 'open'});
                 this.hasShadowDOM = true;
@@ -51,7 +51,7 @@
             this.codeurl = codeurl;
 
             // Load the widget code
-            var xmlhttp = new XMLHttpRequest();
+            const xmlhttp = new XMLHttpRequest();
             xmlhttp.onreadystatechange = () => {
                 if (xmlhttp.readyState === XMLHttpRequest.DONE) {
                     if (xmlhttp.status === 200) {
@@ -91,8 +91,8 @@
         }
 
         _handleHTMLResponse(text) {
-            let dom = new DOMParser().parseFromString(text, 'text/html');
-            let headElements = [];
+            const dom = new DOMParser().parseFromString(text, 'text/html');
+            const headElements = [];
 
             // Add all stylesheets to the headElements array (which will be in the shadow root), as the DOMParser
             // always puts them in the head
@@ -132,7 +132,7 @@
             };
 
             walk(dom.body);
-            
+
             // Add the widget code to the shadow DOM
             headElements.forEach((node) => {
                 walk(node);

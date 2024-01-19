@@ -138,6 +138,7 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/ui/WidgetViewDraggable.js',
     'wirecloud/platform/static/js/wirecloud/ui/WidgetViewResizeHandle.js',
     'wirecloud/platform/static/js/wirecloud/ui/WidgetView.js',
+    'wirecloud/platform/static/js/wirecloud/ui/WidgetElement.js',
     'wirecloud/platform/static/js/wirecloud/ui/WidgetViewMenuItems.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor.js',
     'wirecloud/platform/static/js/wirecloud/ui/WiringEditor/Behaviour.js',
@@ -171,6 +172,18 @@ var WirecloudFiles = [
     'wirecloud/platform/static/js/wirecloud/wiring/Connection.js'
 ];
 
+var WirecloudAPIFiles = [
+    'wirecloud/platform/static/js/WirecloudAPI/WirecloudAPIBootstrap.js',
+    'wirecloud/platform/static/js/WirecloudAPI/WirecloudWidgetAPI.js',
+    'wirecloud/platform/static/js/WirecloudAPI/WirecloudOperatorAPI.js',
+    'wirecloud/platform/static/js/WirecloudAPI/WirecloudAPICommon.js',
+    'wirecloud/platform/static/js/WirecloudAPI/StyledElements.js',
+    'wirecloud/platform/static/js/WirecloudAPI/ComponentManagementAPI.js',
+    'wirecloud/platform/static/js/WirecloudAPI/DashboardManagementAPI.js',
+    'wirecloud/platform/static/js/WirecloudAPI/WirecloudAPIClosure.js',
+    'wirecloud/platform/static/js/WirecloudAPI/WirecloudAPIV2Bootstrap.js'
+];
+
 module.exports = function (grunt) {
 
     'use strict';
@@ -182,7 +195,7 @@ module.exports = function (grunt) {
                 src: styledElementsFiles
             },
             wirecloud: {
-                src: WirecloudFiles
+                src: WirecloudFiles.concat(WirecloudAPIFiles)
             },
             specs: {
                 options: {

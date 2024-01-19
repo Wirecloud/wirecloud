@@ -93,7 +93,7 @@ jobs:
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
           python manage.py collectstatic -v 0 -c --noinput
-          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-noselenium'
+          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py,*/wirecloud/commons/utils/remote.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-noselenium'
       - name: Coveralls Parallel
         uses: AndreMiras/coveralls-python-action@develop
         with:
@@ -170,7 +170,7 @@ jobs:
   django-selenium-tests:
 
     runs-on: ubuntu-20.04
-    
+
     steps:
       - name: Setup PostgreSQL
         run: |
@@ -216,9 +216,9 @@ jobs:
       - django-search-indexes-tests
       - django-selenium-tests
       - js-unit-tests
-    
+
     runs-on: ubuntu-20.04
-    
+
     steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@master

@@ -20,23 +20,21 @@
  *
  */
 
-/* globals MashupPlatform, WeakMap */
-
 
 (function () {
 
     "use strict";
 
-    var _DashboardManagementAPI = function _DashboardManagementAPI(parent, platform, _) {
-        var Wirecloud, resource, InputEndpoint, OutputEndpoint, resource_workspace, resource_element, counter, workspaceview, privates;
+    const _DashboardManagementAPI = function _DashboardManagementAPI(parent, platform, _) {
+        let resource_workspace, resource_element, counter;
 
-        Wirecloud = platform.Wirecloud;
-        resource = parent.MashupPlatform.priv.resource;
-        workspaceview = parent.MashupPlatform.priv.workspaceview;
-        InputEndpoint = parent.MashupPlatform.priv.InputEndpoint;
-        OutputEndpoint = parent.MashupPlatform.priv.OutputEndpoint;
+        const Wirecloud = platform.Wirecloud;
+        const resource = parent.MashupPlatform.priv.resource;
+        const workspaceview = parent.MashupPlatform.priv.workspaceview;
+        const InputEndpoint = parent.MashupPlatform.priv.InputEndpoint;
+        const OutputEndpoint = parent.MashupPlatform.priv.OutputEndpoint;
         counter = 1;
-        privates = new WeakMap();
+        const privates = new WeakMap();
 
         if ('widget' in parent.MashupPlatform) {
             resource_workspace = resource.tab.workspace;
@@ -47,16 +45,14 @@
 
 
         // Widget facade
-        var Widget = function Widget(real_widget) {
-            var endpoint_name;
-
-            var inputs = {};
-            for (endpoint_name in real_widget.inputs) {
+        const Widget = function Widget(real_widget) {
+            const inputs = {};
+            for (const endpoint_name in real_widget.inputs) {
                 inputs[endpoint_name] = new InputEndpoint(real_widget.inputs[endpoint_name], false);
             }
 
-            var outputs = {};
-            for (endpoint_name in real_widget.outputs) {
+            const outputs = {};
+            for (const endpoint_name in real_widget.outputs) {
                 outputs[endpoint_name] = new OutputEndpoint(real_widget.outputs[endpoint_name], false);
             }
 
@@ -69,7 +65,7 @@
         };
 
         Widget.prototype.addEventListener = function addEventListener() {
-            var real_widget = privates.get(this);
+            const real_widget = privates.get(this);
             real_widget.addEventListener.apply(real_widget, arguments);
         };
 
@@ -78,16 +74,14 @@
         };
 
         // Operator facade
-        var Operator = function Operator(real_operator) {
-            var endpoint_name;
-
-            var inputs = {};
-            for (endpoint_name in real_operator.inputs) {
+        const Operator = function Operator(real_operator) {
+            const inputs = {};
+            for (const endpoint_name in real_operator.inputs) {
                 inputs[endpoint_name] = new InputEndpoint(real_operator.inputs[endpoint_name], false);
             }
 
-            var outputs = {};
-            for (endpoint_name in real_operator.outputs) {
+            const outputs = {};
+            for (const endpoint_name in real_operator.outputs) {
                 outputs[endpoint_name] = new OutputEndpoint(real_operator.outputs[endpoint_name], false);
             }
 
@@ -100,7 +94,7 @@
         };
 
         Operator.prototype.addEventListener = function addEventListener() {
-            var real_operator = privates.get(this);
+            const real_operator = privates.get(this);
             real_operator.addEventListener.apply(real_operator, arguments);
         };
 
@@ -109,7 +103,7 @@
         };
 
         // Workspace facade
-        var Workspace = function Workspace(workspace) {
+        const Workspace = function Workspace(workspace) {
             Object.defineProperties(this, {
                 'id': {value: workspace.id},
                 'owner': {value: workspace.owner},
@@ -133,24 +127,24 @@
             return removeWorkspace(this, options);
         };
 
-        var openWorkspace = function openWorkspace(workspace, options) {
+        const openWorkspace = function openWorkspace(workspace, options) {
             if (options == null) {
                 options = {};
             }
             // force history to push
             options.history = "push";
 
-            var task = Wirecloud.changeActiveWorkspace(workspace, options);
+            const task = Wirecloud.changeActiveWorkspace(workspace, options);
             // support deprecated onSuccess and onFailure callbacks
             task.then(options.onSuccess, options.onFailure);
             return task;
         };
 
-        var removeWorkspace = function removeWorkspace(workspace, options) {
+        const removeWorkspace = function removeWorkspace(workspace, options) {
             if (options == null) {
                 options = {};
             }
-            var dialog = new Wirecloud.ui.AlertWindowMenu(
+            const dialog = new Wirecloud.ui.AlertWindowMenu(
                 Wirecloud.Utils.interpolate(Wirecloud.Utils.gettext('Do you really want to remove the "%(name)s" workspace?'), {
                     name: workspace.owner + '/' + workspace.name
                 })
@@ -160,13 +154,13 @@
             }).show();
         };
 
-        var addWidget = function addWidget(ref, options) {
+        const addWidget = function addWidget(ref, options) {
 
             if (ref == null) {
                 throw new TypeError('missing widget_ref parameter');
             }
 
-            var widget_def = Wirecloud.LocalCatalogue.getResourceId(ref);
+            const widget_def = Wirecloud.LocalCatalogue.getResourceId(ref);
             if (widget_def == null || widget_def.type !== 'widget') {
                 throw new TypeError('invalid widget ref');
             }
@@ -181,8 +175,7 @@
             };
             options.permissions.editor = options.permissions.viewer;
 
-            var tab = workspaceview.activeTab;
-            var layout = tab.dragboard.freeLayout;
+            const tab = workspaceview.activeTab;
 
             options = Wirecloud.Utils.merge(options, {
                 id: resource.id + '/' + counter++,
@@ -192,14 +185,14 @@
                 refiframe: resource_element
             });
 
-            var widget = tab.createWidget(widget_def, options);
+            const widget = tab.createWidget(widget_def, options);
             resource.addEventListener('unload', widget.remove.bind(widget));
 
             return new Widget(widget.model);
         };
 
-        var addOperator = function addOperator(ref, options) {
-            var operator_def = Wirecloud.LocalCatalogue.getResourceId(ref);
+        const addOperator = function addOperator(ref, options) {
+            const operator_def = Wirecloud.LocalCatalogue.getResourceId(ref);
             if (operator_def == null || operator_def.type !== 'operator') {
                 throw new TypeError('invalid operator ref');
             }
@@ -223,12 +216,12 @@
                 properties: options.properties,
                 preferences: options.preferences
             };
-            var operator = resource_workspace.wiring.createOperator(operator_def, options);
+            const operator = resource_workspace.wiring.createOperator(operator_def, options);
             resource.addEventListener('unload', operator.destroy.bind(operator));
             return (new Operator(operator));
         };
 
-        var createWorkspace = function createWorkspace(options) {
+        const createWorkspace = function createWorkspace(options) {
             Wirecloud.createWorkspace(options).then((workspace) => {
                 if (options != null && typeof options.onSuccess === 'function') {
                     try {
@@ -247,7 +240,7 @@
         if ('widget' in parent.MashupPlatform) {
             Object.defineProperties(parent.MashupPlatform.widget, {
                 createInputEndpoint: {value: function createInputEndpoint(callback) {
-                    var endpoint = new Wirecloud.wiring.WidgetTargetEndpoint(resource);
+                    const endpoint = new Wirecloud.wiring.WidgetTargetEndpoint(resource);
                     endpoint.callback = callback;
                     return new InputEndpoint(endpoint, true);
                 }},
@@ -258,7 +251,7 @@
         } else {
             Object.defineProperties(parent.MashupPlatform.operator, {
                 createInputEndpoint: {value: function createInputEndpoint(callback) {
-                    var endpoint = new Wirecloud.wiring.OperatorTargetEndpoint(resource);
+                    const endpoint = new Wirecloud.wiring.OperatorTargetEndpoint(resource);
                     endpoint.callback = callback;
                     return new InputEndpoint(endpoint, true);
                 }},
@@ -281,7 +274,7 @@
 
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        _privs._DashboardManagementAPI(window, window.parent);
+        window._privs._DashboardManagementAPI(window, window.parent);
     }
 
 })();

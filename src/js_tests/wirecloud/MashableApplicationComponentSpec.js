@@ -336,6 +336,32 @@
                 expect(mac1.is(mac2)).toBe(true);
             });
 
+            it("rejects macversion not being a number", () => {
+                expect(() => {
+                    new Wirecloud.MashableApplicationComponent({
+                        vendor: "Wirecloud",
+                        name: "TestOperator",
+                        preferences: [],
+                        type: "operator",
+                        version: "1.0",
+                        macversion: "1"
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("rejects macversion not being a correct version", () => {
+                expect(() => {
+                    new Wirecloud.MashableApplicationComponent({
+                        vendor: "Wirecloud",
+                        name: "TestOperator",
+                        preferences: [],
+                        type: "operator",
+                        version: "1.0",
+                        macversion: -1
+                    });
+                }).toThrowError(TypeError);
+            });
+
         });
 
     });

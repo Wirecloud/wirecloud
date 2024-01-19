@@ -20,12 +20,10 @@
  *
  */
 
-/* globals MashupPlatform */
-
-(function() {
+(function () {
     "use strict";
 
-    var _WidgetAPI = function _WidgetAPI(parent) {
+    const _WidgetAPI = function _WidgetAPI(parent) {
         // Init resource entry (in this case a widget) so other API files can make
         // use of it
         const view = parent.MashupPlatform.priv.workspaceview.findWidget(parent.MashupPlatform.priv.id);
@@ -108,23 +106,23 @@
 
         // Inputs
         const inputs = {};
-        for (let endpoint_name in model.inputs) {
+        for (const endpoint_name in model.inputs) {
             inputs[endpoint_name] = new parent.MashupPlatform.priv.InputEndpoint(model.inputs[endpoint_name], true);
         }
         Object.defineProperty(parent.MashupPlatform.widget, 'inputs', {value: inputs});
 
         // Outputs
         const outputs = {};
-        for (let endpoint_name in model.outputs) {
+        for (const endpoint_name in model.outputs) {
             outputs[endpoint_name] = new parent.MashupPlatform.priv.OutputEndpoint(model.outputs[endpoint_name], true);
         }
         Object.defineProperty(parent.MashupPlatform.widget, 'outputs', {value: outputs});
     };
 
     window._privs._WidgetAPI = _WidgetAPI;
-    
+
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        _privs._WidgetAPI(window);
+        window._privs._WidgetAPI(window);
     }
 })();

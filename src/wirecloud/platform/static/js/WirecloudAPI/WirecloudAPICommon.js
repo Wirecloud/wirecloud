@@ -20,14 +20,11 @@
  *
  */
 
-/* globals MashupPlatform */
-
-
 (function () {
 
     "use strict";
 
-    var _APICommon = function _APICommon(parent, platform, DOMElement) {
+    const _APICommon = function _APICommon(parent, platform, DOMElement) {
         const Wirecloud = platform.Wirecloud;
         const workspaceview = parent.MashupPlatform.priv.workspaceview;
         const component = parent.MashupPlatform.priv.resource;
@@ -230,9 +227,9 @@
         if (DOMElement) {
             DOMElement.addEventListener('error', function (event) {
                 event.stopPropagation();
-    
+
                 let details;
-    
+
                 if (event.error) {
                     details = platform.gettext("<ul><li><b>File:</b> <t:file/></li><li><b>Line: </b><t:line/></li></ul><p>See the <a href=\"http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers\" target=\"_blank\">browser console</a> for more details</p>");
                     details = guibuilder.parse(guibuilder.DEFAULT_OPENING + details + guibuilder.DEFAULT_CLOSING, {file: event.filename.replace(component.meta.base_url, ''), line: event.lineno});
@@ -241,12 +238,12 @@
             });
         }
     };
-    
+
     window._privs._APICommon = _APICommon;
-    
+
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        _privs._APICommon(window, window.parent, window);
+        window._privs._APICommon(window, window.parent, window);
     }
 
 })();

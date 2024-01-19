@@ -20,14 +20,11 @@
  *
  */
 
-/* globals MashupPlatform */
-
-
 (function () {
 
     "use strict";
 
-    var _APIClosure = function _APIClosure(parent) {
+    const _APIClosure = function _APIClosure(parent) {
         // Remove reference to the private dict, removing also the reference to the
         // internal wirecloud resource
         delete parent.MashupPlatform.priv;
@@ -39,14 +36,14 @@
             Object.preventExtensions(parent.MashupPlatform.widget);
         } else {
             Object.preventExtensions(parent.MashupPlatform.operator);
-        }  
+        }
     };
 
     window._privs._APIClosure = _APIClosure;
-    
+
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        _privs._APIClosure(window);
+        window._privs._APIClosure(window);
 
         // Remove references to the internal setup functions of the API
         delete window._privs;

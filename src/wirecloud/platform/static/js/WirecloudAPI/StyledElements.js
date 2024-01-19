@@ -20,14 +20,12 @@
  *
  */
 
-/* globals MashupPlatform, StyledElements */
-
 
 (function () {
 
     "use strict";
 
-    var _StyledElements = function _StyledElements(parent, platform, _) {
+    const _StyledElements = function _StyledElements(parent, platform, _) {
         // StyledElements
         const RealStyledElements = platform.StyledElements;
         const iwidget = parent.MashupPlatform.priv.resource;
@@ -392,7 +390,7 @@
 
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        _privs._StyledElements(window, window.parent);
+        window._privs._StyledElements(window, window.parent);
     }
 
 })();

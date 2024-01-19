@@ -71,11 +71,16 @@
             it("throws a TypeError exception when the entrypoint is missing for mac version 2", () => {
                 expect(() => {
                     new Wirecloud.WidgetMeta({
+                        vendor: "Wirecloud",
                         name: "TestWidget",
                         version: "1.0",
                         type: "widget",
                         js_files: [],
-                        macversion: 2
+                        macversion: 2,
+                        preferences: [],
+                        contents: {
+                            src: "index.html"
+                        }
                     });
                 }).toThrowError(TypeError);
             });
@@ -83,11 +88,16 @@
             it("throws a TypeError exception when the js_files is missing for mac version 2", () => {
                 expect(() => {
                     new Wirecloud.WidgetMeta({
+                        vendor: "Wirecloud",
                         name: "TestWidget",
                         version: "1.0",
                         type: "widget",
                         macversion: 2,
-                        entrypoint: "index.html"
+                        entrypoint: "Test",
+                        preferences: [],
+                        contents: {
+                            src: "index.html"
+                        }
                     });
                 }).toThrowError(TypeError);
             });
@@ -101,6 +111,24 @@
                         properties: [],
                         version: "1.0",
                         macversion: 1,
+                        contents: {
+                            src: "index.html"
+                        }
+                    });
+                }).not.toThrow();
+            });
+
+            it("accepts js_files and entrypoint for mac version 2", () => {
+                expect(() => {
+                    new Wirecloud.WidgetMeta({
+                        vendor: "Wirecloud",
+                        name: "TestWidget",
+                        preferences: [],
+                        properties: [],
+                        version: "1.0",
+                        macversion: 2,
+                        entrypoint: "Test",
+                        js_files: [],
                         contents: {
                             src: "index.html"
                         }
