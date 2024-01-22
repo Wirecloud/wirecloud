@@ -171,9 +171,39 @@
         codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
         macversion: 2,
         js_files: ['http://thiswebsitedoesnotexist.com/test2.js'],
-        entrypoint: "Test"
+        entrypoint: "TestingEntrypoint"
     };
     Object.freeze(WIDGETV2_META);
+
+    const WIDGETV2_META_NO_SCRIPTS = {
+        uri: "Vendor/Widget/1.0",
+        title: "My Widget",
+        inputList: [
+            {name: "input", label: "input", friendcode: ""}
+        ],
+        missing: false,
+        requirements: [],
+        outputList: [
+            {name: "output", label: "output", friendcode: ""}
+        ],
+        preferences: {
+            "pref": PREF
+        },
+        preferenceList: [
+            PREF
+        ],
+        properties: {
+            "prop": PROP
+        },
+        propertyList: [
+            PROP
+        ],
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 2,
+        js_files: [],
+        entrypoint: "TestingEntrypoint"
+    };
+    Object.freeze(WIDGETV2_META_NO_SCRIPTS);
 
     const PREF2 = new Wirecloud.UserPrefDef({name: "pref2", type: "text", default: "5"});
     const SPREF = new Wirecloud.UserPrefDef({name: "spref", type: "text", secure: true});
@@ -726,6 +756,30 @@
 
                 loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test2.js"]');
                 expect(loadedScripts.length).toBe(1);
+            });
+
+            it("handles v2 widgets reload", () => {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "1"
+                });
+
+                const element = widget.wrapperElement;
+
+                widget.wrapperElement.load = jasmine.createSpy("load").and.callFake((url) => {
+                    widget.wrapperElement.loadedURL = url;
+                    element.dispatchEvent(new Event("load"));
+                });
+
+                expect(widget.loaded).toBe(false);
+                expect(widget.load()).toBe(widget);
+                expect(widget.wrapperElement.load).toHaveBeenCalledWith(widget.codeurl);
+
+                // Now the widget should be fully loaded
+                expect(widget.wrapperElement.loadedURL).toBe(widget.codeurl);
+
+                widget.wrapperElement.load.calls.reset();
+                expect(widget.reload()).toBe(widget);
+                expect(widget.wrapperElement.load).toHaveBeenCalledWith(widget.codeurl);
             });
 
             it("ignores unload events when unloaded", () => {
