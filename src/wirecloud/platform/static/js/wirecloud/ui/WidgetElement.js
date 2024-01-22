@@ -46,6 +46,10 @@
         }
 
         load(codeurl) {
+            if (!this.hasShadowDOM) {
+                throw new Error('Cannot load widget: widget is not attached to the DOM');
+            }
+
             this._unload();
 
             this.codeurl = codeurl;
@@ -78,9 +82,8 @@
         }
 
         _unload() {
-            if (this.observer != null) {
-                this.observer.disconnect();
-                this.observer = null;
+            if (!this.hasShadowDOM) {
+                return;
             }
 
             // Clean the shadow DOM
@@ -97,9 +100,7 @@
             // Add all stylesheets to the headElements array (which will be in the shadow root), as the DOMParser
             // always puts them in the head
             Array.from(dom.head.querySelectorAll('link, script, style')).forEach((node) => {
-                if (node.tagName === 'LINK' || node.tagName === 'STYLE' || node.tagName === 'SCRIPT') {
-                    headElements.push(node);
-                }
+                headElements.push(node);
             });
 
             // List of attributes that can contain relative URLs
@@ -139,43 +140,6 @@
                 this.shadowRoot.appendChild(node);
             });
             this.shadowRoot.appendChild(dom.body);
-
-            // We use an observer so that, if any code causes changes in
-            // the shadow DOM, we can re-walk the DOM and replace relative
-            // URLs with absolute ones so that everything is relative to
-            // the widget code URL
-            this.observer = new MutationObserver((mutations) => {
-                // Disconnect the observer so that we don't get notified of
-                // changes we make ourselves
-                this.observer.disconnect();
-
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach((node) => {
-                            walk(node);
-                        });
-                    } else if (mutation.type === 'attributes') {
-                        walk(mutation.target, false);
-                    } else if (mutation.type === 'characterData') {
-                        walk(mutation.target.parentNode, false);
-                    }
-                });
-
-                // Reconnect the observer
-                this.observer.observe(this.shadowRoot, {
-                    childList: true,
-                    subtree: true,
-                    attributes: true,
-                    characterData: true
-                });
-            });
-
-            this.observer.observe(this.shadowRoot, {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                characterData: true
-            });
         }
     };
 
