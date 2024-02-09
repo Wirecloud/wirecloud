@@ -317,7 +317,7 @@
                     this.logManager.log("Widget entrypoint class not found!", {console: false});
                 } else {
                     this.widgetClass = Wirecloud.createAPIComponent("widget", this.meta.requirements, entrypoint,
-                        this.wrapperElement.shadowRoot, this.id,
+                        this.wrapperElement, this.id,
                         ('workspaceview' in this.tab.workspace.view) ? this.tab.workspace.view.workspaceview : undefined);
                 }
 

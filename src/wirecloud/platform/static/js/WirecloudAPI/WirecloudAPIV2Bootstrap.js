@@ -25,7 +25,7 @@
     const privates = window._privs;
     delete window._privs; // Remove privates from global scope
 
-    const createAPIComponent = function createAPIComponent(type, requirements, ComponentClass, shadowRoot, id, viewid) {
+    const createAPIComponent = function createAPIComponent(type, requirements, ComponentClass, wrapperElement, id, viewid) {
         // We create an object that will contain the MashupPlatform object
         // tailored for the specific component, as well as any other object
         // created by the different APIs
@@ -37,11 +37,11 @@
         } else if (type === "operator") {
             privates._OperatorAPI(container);
         }
-        privates._APICommon(container, window, shadowRoot);
+        privates._APICommon(container, window, wrapperElement);
 
         requirements.forEach(function (requirement) {
             if (requirement.name in Wirecloud.APIRequirements) {
-                Wirecloud.APIRequirements[requirement.name](container, window, shadowRoot);
+                Wirecloud.APIRequirements[requirement.name](container, window, wrapperElement);
             }
         });
 

@@ -237,6 +237,9 @@
                 }
             });
         }
+
+        // Location
+        Object.defineProperty(parent.MashupPlatform, 'location', {value: ("location" in DOMElement) ? DOMElement.location.href : DOMElement.loadedURL});
     };
 
     window._privs._APICommon = _APICommon;
