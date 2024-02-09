@@ -57,6 +57,10 @@ This specification is licensed under the
 
 ## Widget API
 
+### MashupPlatform.location
+
+Allows to retrieve the current loaded location of the widget/operator.
+
 ### MashupPlatform.http
 
 This module provides some methods for handling HTTP requests including support for using the cross domain proxy.
