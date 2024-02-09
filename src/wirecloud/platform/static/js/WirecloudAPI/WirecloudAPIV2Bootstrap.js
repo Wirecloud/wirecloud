@@ -52,7 +52,7 @@
 
         let component = undefined;
         if (type === "widget") {
-            component = new ComponentClass(MashupPlatform, shadowRoot, container);
+            component = new ComponentClass(MashupPlatform, wrapperElement.shadowRoot, container);
         } else if (type === "operator") {
             component = new ComponentClass(MashupPlatform, container);
         }
