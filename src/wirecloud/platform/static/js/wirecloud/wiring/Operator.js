@@ -209,7 +209,8 @@
             } else {
                 this.operatorClass = Wirecloud.createAPIComponent("operator", this.meta.requirements, entrypoint,
                     undefined, this.id,
-                    ('workspaceview' in this.wiring.workspace) ? this.wiring.workspace.workspaceview : undefined);
+                    ('workspaceview' in this.wiring.workspace) ? this.wiring.workspace.workspaceview : undefined,
+                    this.meta.base_url);
             }
         }
 

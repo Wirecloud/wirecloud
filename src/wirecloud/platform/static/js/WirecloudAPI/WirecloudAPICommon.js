@@ -24,7 +24,7 @@
 
     "use strict";
 
-    const _APICommon = function _APICommon(parent, platform, DOMElement) {
+    const _APICommon = function _APICommon(parent, platform, DOMElement, baseURL) {
         const Wirecloud = platform.Wirecloud;
         const workspaceview = parent.MashupPlatform.priv.workspaceview;
         const component = parent.MashupPlatform.priv.resource;
@@ -239,14 +239,15 @@
         }
 
         // Location
-        Object.defineProperty(parent.MashupPlatform, 'location', {value: ("location" in DOMElement) ? DOMElement.location.href : DOMElement.loadedURL});
+        Object.defineProperty(parent.MashupPlatform, 'location', {value: baseURL});
     };
 
     window._privs._APICommon = _APICommon;
 
     // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
     if (window.parent !== window) {
-        window._privs._APICommon(window, window.parent, window);
+        // We keep just the first 8 parts of the URL, which is the base URL of the operator / widget
+        window._privs._APICommon(window, window.parent, window, window.location.href.split("/").slice(0, 8).join("/"));
     }
 
 })();

@@ -318,7 +318,8 @@
                 } else {
                     this.widgetClass = Wirecloud.createAPIComponent("widget", this.meta.requirements, entrypoint,
                         this.wrapperElement, this.id,
-                        ('workspaceview' in this.tab.workspace.view) ? this.tab.workspace.view.workspaceview : undefined);
+                        ('workspaceview' in this.tab.workspace.view) ? this.tab.workspace.view.workspaceview : undefined,
+                        this.meta.base_url);
                 }
 
                 privates.get(this).status = STATUS.RUNNING;
