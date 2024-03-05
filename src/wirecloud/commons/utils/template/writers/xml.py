@@ -86,7 +86,7 @@ def write_mashup_tree(doc, resources, options):
         preferences = etree.SubElement(doc, 'preferences')
         for pref in options['params']:
             pref_element = etree.SubElement(preferences, 'preference', name=pref['name'])
-            addAttributes(pref, pref_element, ('type', 'label', 'description', 'default'))
+            addAttributes(pref, pref_element, ('type', 'label', 'description', 'default', 'language'))
             addAttribute(pref, pref_element, 'readonly', default='false', type='boolean')
             addAttribute(pref, pref_element, 'required', default='true', type='boolean')
 

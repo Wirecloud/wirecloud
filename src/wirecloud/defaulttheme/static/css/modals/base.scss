@@ -27,7 +27,8 @@
     z-index: 101112;
     overflow: hidden;
     font-weight: normal;
-    width: 560px;
+    min-width: 560px;
+    width: 75%;
     box-sizing: border-box;
 }
 

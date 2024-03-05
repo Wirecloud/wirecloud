@@ -30,6 +30,7 @@ const dependencies = [
     'wirecloud/commons/static/js/lib/urlify.js',
     'wirecloud/commons/static/js/lib/moment-with-locales.min.js',
     'wirecloud/commons/static/js/lib/moment-timezone-with-data.min.js',
+    'wirecloud/commons/static/js/lib/monaco-editor/*.js'
 ];
 
 const styledElementsFiles = [
@@ -63,6 +64,7 @@ const styledElementsFiles = [
     'wirecloud/commons/static/js/StyledElements/NumericField.js',
     'wirecloud/commons/static/js/StyledElements/TextField.js',
     'wirecloud/commons/static/js/StyledElements/TextArea.js',
+    'wirecloud/commons/static/js/StyledElements/CodeArea.js',
     'wirecloud/commons/static/js/StyledElements/List.js',
     'wirecloud/commons/static/js/StyledElements/PasswordField.js',
     'wirecloud/commons/static/js/StyledElements/Select.js',

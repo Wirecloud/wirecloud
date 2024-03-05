@@ -445,7 +445,7 @@ class ApplicationMashupTemplateParser(object):
 
         if self._info["macversion"] > 1:
             js_files = self._xpath(SCRIPT_XPATH, self._doc)
-            
+
             self._info['js_files'] = []
             for script in js_files:
                 self._info['js_files'].append(str(script.get('src')))
@@ -486,6 +486,7 @@ class ApplicationMashupTemplateParser(object):
                 'secure': preference.get('secure', 'false').lower() == 'true',
                 'multiuser': False,
                 'required': preference.get('required', 'false').lower() == 'true',
+                'language': str(preference.get('language', 'plaintext'))
             }
 
             if preference_info['type'] == 'list':

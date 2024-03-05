@@ -565,6 +565,7 @@ class RDFTemplateParser(object):
                 'secure': self._get_field(WIRE, 'secure', preference, required=False).lower() == 'true',
                 'multiuser': False,
                 'required': self._get_field(WIRE, 'required', preference, required=False).lower() == 'true',
+                'language': self._get_field(WIRE, 'language', preference, required=False)
             }
             if preference_info['type'] == 'list':
                 preference_info['options'] = []

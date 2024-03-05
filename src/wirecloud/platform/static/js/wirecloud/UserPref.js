@@ -59,7 +59,8 @@
             defaultValue: this.meta.default,
             initiallyDisabled: this.readonly,
             initialValue: this.value,
-            required: this.meta.required
+            required: this.meta.required,
+            language: this.meta.language || 'plaintext'
         };
 
         if (type === 'select') {
