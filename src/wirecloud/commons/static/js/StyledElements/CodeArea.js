@@ -19,7 +19,7 @@
  *
  */
 
-/* globals StyledElements, monaco */
+/* globals StyledElements */
 
 (function(se, utils, monaco) {
 
@@ -40,111 +40,116 @@
     /**
      * Styled Code Area
      */
-    se.CodeArea = class CodeArea extends se.InputElement {
+    if (!monaco) {
+        // If monaco is not available, use the TextArea class
+        se.CodeArea = se.TextArea;
+    } else {
+        se.CodeArea = class CodeArea extends se.InputElement {
 
-        constructor(options) {
-            const defaultOptions = {
-                'initialValue': '',
-                'class': '',
-                'language': ''
-            };
+            constructor(options) {
+                const defaultOptions = {
+                    'initialValue': '',
+                    'class': '',
+                    'language': ''
+                };
 
-            options = utils.merge(defaultOptions, options);
+                options = utils.merge(defaultOptions, options);
 
-            super(options.initialValue, ['blur', 'change', 'focus']);
+                super(options.initialValue, ['blur', 'change', 'focus']);
 
-            this.wrapperElement = document.createElement("div");
-            this.editor = monaco.editor.create(this.wrapperElement, {
-                value: options.initialValue,
-                language: options.language,
-                minimap: { enabled: false },
-                automaticLayout: true
-            });
+                this.wrapperElement = document.createElement("div");
+                this.editor = monaco.editor.create(this.wrapperElement, {
+                    value: options.initialValue,
+                    language: options.language,
+                    minimap: { enabled: false },
+                    automaticLayout: true
+                });
 
-            this.wrapperElement.className = "se-code-area";
-            if (options.class !== "") {
-                this.wrapperElement.className += " " + options.class;
+                this.wrapperElement.className = "se-code-area";
+                if (options.class !== "") {
+                    this.wrapperElement.className += " " + options.class;
+                }
+
+                if (options.name) {
+                    this.wrapperElement.setAttribute("name", options.name);
+                }
+
+                if (options.id != null) {
+                    this.wrapperElement.setAttribute("id", options.id);
+                }
+
+                /* Internal events */
+                this._oninput = oninput.bind(this);
+                this._onfocus = onfocus.bind(this);
+                this._onblur = onblur.bind(this);
+
+                this.editor.onMouseDown((e) => utils.stopPropagationListener(e.event.browserEvent));
+                this.editor.getModel().onDidChangeContent(this._oninput);
+                this.editor.onDidFocusEditorWidget(this._onfocus);
+                this.editor.onDidBlurEditorWidget(this._onblur);
             }
 
-            if (options.name) {
-                this.wrapperElement.setAttribute("name", options.name);
+            getValue() {
+                return this.editor.getValue();
             }
 
-            if (options.id != null) {
-                this.wrapperElement.setAttribute("id", options.id);
+            setValue(newValue) {
+                const oldValue = this.editor.getValue();
+
+                this.editor.setValue(newValue);
+
+                if ('change' in this.events && newValue !== oldValue) {
+                    this.dispatchEvent('change');
+                }
+
+                return this;
             }
 
-            /* Internal events */
-            this._oninput = oninput.bind(this);
-            this._onfocus = onfocus.bind(this);
-            this._onblur = onblur.bind(this);
+            enable() {
+                this.editor.updateOptions({ readOnly: false });
 
-            this.editor.onMouseDown((e) => utils.stopPropagationListener(e.event.browserEvent));
-            this.editor.getModel().onDidChangeContent(this._oninput);
-            this.editor.onDidFocusEditorWidget(this._onfocus);
-            this.editor.onDidBlurEditorWidget(this._onblur);
-        }
-
-        getValue() {
-            return this.editor.getValue();
-        }
-
-        setValue(newValue) {
-            const oldValue = this.editor.getValue();
-
-            this.editor.setValue(newValue);
-
-            if ('change' in this.events && newValue !== oldValue) {
-                this.dispatchEvent('change');
+                return this;
             }
 
-            return this;
-        }
+            disable() {
+                this.editor.updateOptions({ readOnly: true });
 
-        enable() {
-            this.editor.updateOptions({ readOnly: false });
-
-            return this;
-        }
-
-        disable() {
-            this.editor.updateOptions({ readOnly: true });
-
-            return this;
-        }
-
-        blur() {
-            if (this.editor.hasWidgetFocus) {
-                this.document.activeElement.blur();
+                return this;
             }
-            this._onblur();
 
-            return this;
-        }
+            blur() {
+                if (this.editor.hasWidgetFocus) {
+                    this.document.activeElement.blur();
+                }
+                this._onblur();
 
-        focus() {
-            this.editor.focus();
-            this._onfocus();
+                return this;
+            }
 
-            return this;
-        }
+            focus() {
+                this.editor.focus();
+                this._onfocus();
 
-        select() {
-            this.editor.setSelection(this.editor.getModel().getFullModelRange());
-        }
+                return this;
+            }
 
-        destroy() {
-            this.editor.dispose();
+            select() {
+                this.editor.setSelection(this.editor.getModel().getFullModelRange());
+            }
 
-            this.wrapperElement.removeEventListener('click', utils.stopPropagationListener, true);
+            destroy() {
+                this.editor.dispose();
 
-            delete this._oninput;
-            delete this._onfocus;
-            delete this._onblur;
+                this.wrapperElement.removeEventListener('click', utils.stopPropagationListener, true);
 
-            super.destroy();
-        }
+                delete this._oninput;
+                delete this._onfocus;
+                delete this._onblur;
 
+                super.destroy();
+            }
+
+        };
     }
 
-})(StyledElements, StyledElements.Utils, monaco);
+})(StyledElements, StyledElements.Utils, window.monaco);
