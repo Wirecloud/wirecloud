@@ -84,9 +84,38 @@
         propertyList: [
             PROP
         ],
+        macversion: 1,
         codeurl: "https://wirecloud.example.com/operators/MyOperator/index.html"
     };
     Object.freeze(OPERATOR_META);
+
+    const OPERATOR_V2_META = {
+        uri: "Vendor/Operator/1.0",
+        title: "My Operator",
+        inputList: [
+            {name: "input", label: "input", friendcode: ""}
+        ],
+        missing: false,
+        requirements: [],
+        outputList: [
+            {name: "output", label: "output", friendcode: ""}
+        ],
+        preferences: {
+            "pref": PREF
+        },
+        preferenceList: [
+            PREF
+        ],
+        properties: {
+            "prop": PROP
+        },
+        propertyList: [
+            PROP
+        ],
+        macversion: 2,
+        js_files: ["http://thiswebsitedoesnotexist.com/test.js"],
+        entrypoint: "Test",
+    }
 
 
     describe("Wirecloud.wiring.Operator", function () {
@@ -184,6 +213,96 @@
                 expect(Object.keys(operator.properties)).toEqual(["prop"]);
                 expect(operator.properties.prop).toEqual(jasmine.any(Wirecloud.PersistentVariable));
                 expect(operator.properties.prop.value).toEqual("data");
+            });
+
+        });
+
+        describe("load()", () => {
+
+            it("loads unloaded operators", () => {
+                const operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_META, {
+                    id: "2",
+                    preferences: {},
+                    propeties: {}
+                });
+                const element = operator.wrapperElement;
+
+                operator.wrapperElement = {
+                    contentDocument: {
+                        defaultView: {
+                            addEventListener: jasmine.createSpy("addEventListener")
+                        }
+                    },
+                    contentWindow: {
+                        location: {
+                            replace: jasmine.createSpy("replace")
+                        }
+                    },
+                    setAttribute: jasmine.createSpy("setAttribute"),
+                    hasAttribute: jasmine.createSpy("hasAttribute").and.returnValue(true)
+                };
+
+                expect(operator.loaded).toBe(false);
+                expect(operator.load()).toBe(operator);
+
+                expect(operator.wrapperElement.setAttribute).toHaveBeenCalledWith("src", operator.codeurl);
+
+                element.dispatchEvent(new Event("load"));
+
+                // Now the widget should be fully loaded
+                expect(operator.loaded).toBe(true);
+                expect(operator.wrapperElement.contentDocument.defaultView.addEventListener).toHaveBeenCalled();
+            });
+
+            it("loads unloaded v2 operators", () => {
+                const operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_V2_META, {
+                    id: "2",
+                    preferences: {},
+                    propeties: {}
+                });
+
+                expect(operator.loaded).toBe(false);
+                operator.loaded = false;
+                expect(operator.load()).toBe(operator);
+
+                let loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test.js"]');
+                expect(loadedScripts.length).toBe(1);
+
+                operator.load();
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test.js"]');
+                expect(loadedScripts.length).toBe(1);
+
+                operator.loaded = true;
+
+                operator.remove();
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test.js"]');
+                expect(loadedScripts.length).toBe(0);
+
+                expect(operator.load()).toBe(operator); // Should still work and not reload the scripts
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test.js"]');
+                expect(loadedScripts.length).toBe(1);
+
+                const new_operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_V2_META, {
+                    id: "3",
+                    preferences: {},
+                    propeties: {}
+                });
+
+                expect(new_operator.load()).toBe(new_operator); // Should still work and not reload the scripts
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test.js"]');
+                expect(loadedScripts.length).toBe(1);
+
+                Wirecloud.loadedScripts["http://thiswebsitedoesnotexist.com/test.js"].loaded = true;
+
+                const another_operator = new Wirecloud.wiring.Operator(WIRING, OPERATOR_V2_META, {
+                    id: "4",
+                    preferences: {},
+                    propeties: {}
+                });
+
+                expect(another_operator.load()).toBe(another_operator);
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test.js"]');
+                expect(loadedScripts.length).toBe(1);
             });
 
         });

@@ -118,7 +118,13 @@ class CatalogueResource(models.Model):
             lang = None
 
         parser = self.get_template(request, url_pattern_name=url_pattern_name)
-        return parser.get_resource_processed_info(lang=lang, process_urls=process_urls, translate=True, process_variables=process_variables)
+        processed_info = parser.get_resource_processed_info(lang=lang, process_urls=process_urls, translate=True, process_variables=process_variables)
+
+        # Fix for already imported widgets that don't have the macversion
+        if 'macversion' not in processed_info:
+            processed_info['macversion'] = 1
+
+        return processed_info
 
     def resource_type(self):
         return self.RESOURCE_TYPES[self.type]

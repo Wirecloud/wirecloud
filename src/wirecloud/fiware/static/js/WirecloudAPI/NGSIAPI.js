@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2023 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -23,20 +24,30 @@
 
     "use strict";
 
-    var key, manager = window.parent.NGSIManager, NGSIAPI = {};
-    var component = MashupPlatform.priv.resource;
+    var _NGSIAPI = function _NGSIAPI(parent, platform, _) {
+        var key, manager = platform.NGSIManager, NGSIAPI = {};
+        var component = parent.MashupPlatform.priv.resource;
 
-    NGSIAPI.Connection = function Connection(url, options) {
-        manager.Connection.call(this, component, url, options);
+        NGSIAPI.Connection = function Connection(url, options) {
+            manager.Connection.call(this, component, url, options);
+        };
+        NGSIAPI.Connection.prototype = platform.NGSIManager.Connection.prototype;
+
+        NGSIAPI.ProxyConnectionError = platform.NGSIManager.NGSI.ProxyConnectionError;
+        NGSIAPI.InvalidResponseError = platform.NGSIManager.NGSI.InvalidResponseError;
+        NGSIAPI.InvalidRequestError = platform.NGSIManager.NGSI.InvalidRequestError;
+        NGSIAPI.ConnectionError = platform.NGSIManager.NGSI.ConnectionError;
+
+        Object.freeze(NGSIAPI);
+
+        parent.NGSI = NGSIAPI;
     };
-    NGSIAPI.Connection.prototype = window.parent.NGSIManager.Connection.prototype;
 
-    NGSIAPI.ProxyConnectionError = window.parent.NGSIManager.NGSI.ProxyConnectionError;
-    NGSIAPI.InvalidResponseError = window.parent.NGSIManager.NGSI.InvalidResponseError;
-    NGSIAPI.InvalidRequestError = window.parent.NGSIManager.NGSI.InvalidRequestError;
-    NGSIAPI.ConnectionError = window.parent.NGSIManager.NGSI.ConnectionError;
+    // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
+    if (window.parent !== window) {
+        _NGSIAPI(window, window.parent);
+    } else {
+        Wirecloud.APIRequirements.NGSI = _NGSIAPI;
+    }
 
-    Object.freeze(NGSIAPI);
-
-    window.NGSI = NGSIAPI;
 })();

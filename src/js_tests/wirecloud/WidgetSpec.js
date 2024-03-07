@@ -81,7 +81,8 @@
         outputList: [],
         preferenceList: [],
         propertyList: [],
-        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 1
     };
     Object.freeze(EMPTY_WIDGET_META);
 
@@ -109,7 +110,8 @@
         outputList: [],
         preferenceList: [],
         propertyList: [],
-        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 1
     };
     Object.freeze(FULLSCREEN_WIDGET_META);
 
@@ -138,9 +140,70 @@
         propertyList: [
             PROP
         ],
-        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html"
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 1
     };
     Object.freeze(WIDGET_META);
+
+    const WIDGETV2_META = {
+        uri: "Vendor/Widget/1.0",
+        title: "My Widget",
+        inputList: [
+            {name: "input", label: "input", friendcode: ""}
+        ],
+        missing: false,
+        requirements: [],
+        outputList: [
+            {name: "output", label: "output", friendcode: ""}
+        ],
+        preferences: {
+            "pref": PREF
+        },
+        preferenceList: [
+            PREF
+        ],
+        properties: {
+            "prop": PROP
+        },
+        propertyList: [
+            PROP
+        ],
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 2,
+        js_files: ['http://thiswebsitedoesnotexist.com/test2.js'],
+        entrypoint: "TestingEntrypoint"
+    };
+    Object.freeze(WIDGETV2_META);
+
+    const WIDGETV2_META_NO_SCRIPTS = {
+        uri: "Vendor/Widget/1.0",
+        title: "My Widget",
+        inputList: [
+            {name: "input", label: "input", friendcode: ""}
+        ],
+        missing: false,
+        requirements: [],
+        outputList: [
+            {name: "output", label: "output", friendcode: ""}
+        ],
+        preferences: {
+            "pref": PREF
+        },
+        preferenceList: [
+            PREF
+        ],
+        properties: {
+            "prop": PROP
+        },
+        propertyList: [
+            PROP
+        ],
+        codeurl: "https://wirecloud.example.com/widgets/MyWidget/index.html",
+        macversion: 2,
+        js_files: [],
+        entrypoint: "TestingEntrypoint"
+    };
+    Object.freeze(WIDGETV2_META_NO_SCRIPTS);
 
     const PREF2 = new Wirecloud.UserPrefDef({name: "pref2", type: "text", default: "5"});
     const SPREF = new Wirecloud.UserPrefDef({name: "spref", type: "text", secure: true});
@@ -467,6 +530,25 @@
                 expect(widget.wrapperElement.contentDocument.defaultView.addEventListener).toHaveBeenCalled();
             });
 
+            it("loads unloaded v2 widgets", () => {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "1"
+                });
+                const element = widget.wrapperElement;
+
+                widget.wrapperElement.load = jasmine.createSpy("load").and.callFake((url) => {
+                    widget.wrapperElement.loadedURL = url;
+                    element.dispatchEvent(new Event("load"));
+                });
+
+                expect(widget.loaded).toBe(false);
+                expect(widget.load()).toBe(widget);
+                expect(widget.wrapperElement.load).toHaveBeenCalledWith(widget.codeurl);
+
+                // Now the widget should be fully loaded
+                expect(widget.wrapperElement.loadedURL).toBe(widget.codeurl);
+            });
+
             it("loads missing widgets", () => {
                 const widget = new Wirecloud.Widget(WORKSPACE_TAB, MISSING_WIDGET_META, {
                     id: "1"
@@ -623,6 +705,81 @@
                 expect(widget.callbacks.iwidget).toEqual([]);
                 expect(widget.callbacks.mashup).toEqual([]);
                 expect(widget.callbacks.platform).toEqual([]);
+            });
+
+            it("handles v2 widgets unload events", async () => {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "1"
+                });
+                const listener = jasmine.createSpy();
+                widget.registerContextAPICallback("iwidget", listener);
+                widget.registerContextAPICallback("mashup", listener);
+                widget.registerContextAPICallback("platform", listener);
+                const element = widget.wrapperElement;
+
+                widget.wrapperElement.load = jasmine.createSpy("load").and.callFake((url) => {
+                    widget.wrapperElement.loadedURL = url;
+                    element.dispatchEvent(new Event("load"));
+                });
+
+                expect(widget.load()).toBe(widget);
+
+                let loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test2.js"]');
+                expect(loadedScripts.length).toBe(1);
+
+                // Now the widget should be fully loaded
+                widget.loaded = true;
+
+                // Send unload event
+                element.dispatchEvent(new Event("unload"));
+
+                expect(widget.callbacks.iwidget).toEqual([]);
+                expect(widget.callbacks.mashup).toEqual([]);
+                expect(widget.callbacks.platform).toEqual([]);
+
+                const new_widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "2"
+                });
+
+                expect(new_widget.load()).toBe(new_widget);
+
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test2.js"]');
+                expect(loadedScripts.length).toBe(1);
+
+                Wirecloud.loadedScripts["http://thiswebsitedoesnotexist.com/test2.js"].loaded = true;
+
+                const another_widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "3"
+                });
+
+                expect(another_widget.load()).toBe(another_widget);
+
+                loadedScripts = document.querySelectorAll('script[src="http://thiswebsitedoesnotexist.com/test2.js"]');
+                expect(loadedScripts.length).toBe(1);
+            });
+
+            it("handles v2 widgets reload", () => {
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, WIDGETV2_META, {
+                    id: "1"
+                });
+
+                const element = widget.wrapperElement;
+
+                widget.wrapperElement.load = jasmine.createSpy("load").and.callFake((url) => {
+                    widget.wrapperElement.loadedURL = url;
+                    element.dispatchEvent(new Event("load"));
+                });
+
+                expect(widget.loaded).toBe(false);
+                expect(widget.load()).toBe(widget);
+                expect(widget.wrapperElement.load).toHaveBeenCalledWith(widget.codeurl);
+
+                // Now the widget should be fully loaded
+                expect(widget.wrapperElement.loadedURL).toBe(widget.codeurl);
+
+                widget.wrapperElement.load.calls.reset();
+                expect(widget.reload()).toBe(widget);
+                expect(widget.wrapperElement.load).toHaveBeenCalledWith(widget.codeurl);
             });
 
             it("ignores unload events when unloaded", () => {
@@ -1916,8 +2073,22 @@
                             replace: jasmine.createSpy("replace")
                         }
                     },
-                    setAttribute: jasmine.createSpy("setAttribute")
+                    setAttribute: jasmine.createSpy("setAttribute"),
+                    parentNode: {
+                        replaceChild: jasmine.createSpy("replaceChild")
+                    },
+                    addEventListener: jasmine.createSpy("addEventListener")
                 };
+
+                const real_createElement = document.createElement;
+                document.createElement = jasmine.createSpy("createElement").and.callFake(function (tagName) {
+                    if (tagName === "iframe") {
+                        return widget.wrapperElement;
+                    } else {
+                        return real_createElement(tagName);
+                    }
+                });
+
                 widget.load();
                 element.dispatchEvent(new Event("load"));
 
@@ -1931,10 +2102,13 @@
                         expect(widget.preferences.npref).toEqual(jasmine.any(Wirecloud.UserPref));
                         expect(widget.preferences.npref.value).toBe("upgraded value");
                         expect(widget.preferences.pref).toBe(undefined);
+                        expect(widget.wrapperElement.parentNode.replaceChild).toHaveBeenCalled();
+                        document.createElement = real_createElement;
                         done();
                     },
                     (error) => {
-                        fail("error callback called");
+                        document.createElement = real_createElement;
+                        fail("error callback called " + error);
                     }
                 );
 

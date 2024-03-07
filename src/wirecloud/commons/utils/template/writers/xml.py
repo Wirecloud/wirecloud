@@ -241,6 +241,8 @@ def build_xml_document(options):
     template.set('name', options.get('name'))
     template.set('version', options.get('version'))
 
+    addElement(options, template, 'macversion', default='1', type='string', ignore_default=False)
+
     desc = etree.SubElement(template, 'details')
     addElements(options, desc, ('title', 'email', 'image', 'smartphoneimage', 'description', 'longdescription', 'homepage', 'doc', 'license', 'licenseurl', 'changelog', 'issuetracker'))
     addElements(options, desc, ('authors', 'contributors'), type='people')
@@ -311,11 +313,15 @@ def build_xml_document(options):
 
         # Widget rendering
         etree.SubElement(template, 'rendering', width=options['widget_width'], height=options['widget_height'])
-    else:
-        # Operator
+
+    if options['type'] == 'operator' or (options['type'] == 'widget' and options['macversion'] > 1):
         scripts = etree.SubElement(template, 'scripts')
         for script in options['js_files']:
             etree.SubElement(scripts, 'script', src=script)
+
+    if (options['type'] == 'operator' or options['type'] == 'widget') and options['macversion'] > 1:
+        # Add entrypoint
+        etree.SubElement(template, 'entrypoint', name=options['entrypoint'])
 
     # Translations
     if len(options['translations']) > 0:

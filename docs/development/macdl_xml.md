@@ -26,6 +26,14 @@ operators, ...).
 
 ## Common metadata
 
+### macversion element
+
+The `macversion` element is used for declaring the version of the Application Mashup GE specification used by the
+mashable application component. This element is NOT required in order to be compatible with older versions of the
+Application Mashup GE specification, but it SHOULD be included in all new mashable application components.
+
+Currently, the only supported values for this element are `1` and `2`. In absence of this element, the value `1` is assumed.
+
 ### details element
 
 ![](../images/mac_description_details_element.png)
@@ -234,12 +242,16 @@ operator descriptions):
 
 ### The `scripts` element
 
-While in widgets define it code entry point, in general, through an HTML file, operators, as they do not provide an user
-interface, need to declare directly the list of javascript files to use. This script list is declared using the
-`scripts` element that is composed of one or more `script` sub-elements. `script` elements supports the following
+Widgets (v2 onwards) and operators need to define the list of scripts they need to use, so that they are included when loading the MAC. This script list is declared using the `scripts` element that is composed of one or more `script` sub-elements. `script` elements supports the following
 attributes:
 
 -   `src`: description-file-relative URL of the JavaScript file.
+
+### The `entrypoint` element
+
+v2 widgets and operators need to define the entry point of the component. This is done using the `entrypoint` element.
+The entrypoint is the name of a class that the MAC scripts will define in the `window` object that will be instantiated whenever the MAC is loaded, receiving as parameters the objects neccessary for the MAC to work correctly ([more info here](./widget_and_operators.md)). Therefore, it must be unique in the global scope. The `entrypoint` element supports the following attributes:
+-  `name`: name of the entrypoint class.
 
 ## Specific Mashup metadata
 

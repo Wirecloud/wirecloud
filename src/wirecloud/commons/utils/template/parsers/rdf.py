@@ -217,6 +217,14 @@ class RDFTemplateParser(object):
         elif self._info['type'] == 'operator':
             self._rootURI = next(self._graph.subjects(RDF['type'], WIRE['Operator']))
 
+        self._info['macversion'] = self._get_field(WIRE, 'macVersion', self._rootURI, required=False, default='1')
+        try:
+            self._info['macversion'] = int(self._info['macversion'])
+        except ValueError:
+            raise TemplateParseException(_('The format of the macversion is invalid. It must be an integer.'))
+        if self._info['macversion'] != 1 and self._info['macversion'] != 2:
+            raise TemplateParseException(_('The macversion is invalid. Currently only macversion 1 or 2 are supported.'))
+
         vendor = self._get_field(USDL, 'hasProvider', self._rootURI, id_=True)
         self._info['vendor'] = self._get_field(FOAF, 'name', vendor)
         if not is_valid_vendor(self._info['vendor']):
@@ -591,7 +599,8 @@ class RDFTemplateParser(object):
         if self._info['type'] == 'widget':
             # It contains the widget code
             self._info['altcontents'] = []
-            sorted_contents = sorted(self._graph.objects(self._rootURI, USDL['utilizedResource']), key=lambda contents: possible_int(self._get_field(WIRE, 'index', contents, required=False)))
+            filtered_contents = [file for file in self._graph.objects(self._rootURI, USDL['utilizedResource']) if not str(file).endswith('.js')]
+            sorted_contents = sorted(filtered_contents, key=lambda contents: possible_int(self._get_field(WIRE, 'index', contents, required=False)))
 
             for contents_node in sorted_contents:
                 contents_info = {
@@ -630,18 +639,23 @@ class RDFTemplateParser(object):
             self._info['widget_width'] = self._get_field(WIRE, 'renderingWidth', rendering_element, required=False)
             self._info['widget_height'] = self._get_field(WIRE, 'renderingHeight', rendering_element, required=False)
 
-        elif self._info['type'] == 'operator':
+        if (self._info['type'] == 'widget' and self._info['macversion'] > 1) or self._info['type'] == 'operator':
             # The tamplate has 1-n javascript elements
 
             # Javascript files must be sorted
-            sorted_js_files = sorted(self._graph.objects(self._rootURI, USDL['utilizedResource']), key=lambda js_file: possible_int(self._get_field(WIRE, 'index', js_file, required=True)))
+            filtered_files = [file for file in self._graph.objects(self._rootURI, USDL['utilizedResource']) if str(file).endswith('.js')]
+            sorted_js_files = sorted(filtered_files, key=lambda js_file: possible_int(self._get_field(WIRE, 'index', js_file, required=True)))
 
             self._info['js_files'] = []
             for js_element in sorted_js_files:
                 self._info['js_files'].append(str(js_element))
 
-            if not len(self._info['js_files']) > 0:
+            # JS files are optional on v1 widgets
+            if (self._info['type'] == 'operator' or (self._info['type'] == 'widget' and self._info['macversion'] > 1)) and not len(self._info['js_files']) > 0:
                 raise TemplateParseException(_('Missing required field: Javascript files'))
+
+            if self._info['macversion'] > 1:
+                self._info['entrypoint'] = self._get_field(WIRE, 'entryPoint', self._rootURI, required=True)
 
     def _parse_translation_catalogue(self):
         self._info['default_lang'] = 'en'

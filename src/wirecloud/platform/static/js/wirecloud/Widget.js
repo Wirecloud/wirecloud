@@ -1,6 +1,6 @@
 /*
  *     Copyright (c) 2013-2017 CoNWeT Lab., Universidad Politécnica de Madrid
- *     Copyright (c) 2019-2021 Future Internet Consulting and Development Solutions S.L.
+ *     Copyright (c) 2019-2023 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -142,11 +142,32 @@
 
             if (this.loaded) {
                 on_unload.call(this);
+                _createWrapper.call(this);
                 this.load();
             }
 
             this.dispatchEvent('change', ['meta'], {meta: old_value});;
         });
+    };
+
+    const _createWrapper = function _createWrapper() {
+        const wrapperElement = document.createElement((this.meta.macversion > 1) ? 'wirecloud-widget' : 'iframe');
+        if (this.wrapperElement) {
+            this.wrapperElement.parentNode.replaceChild(wrapperElement, this.wrapperElement);
+        }
+        this.wrapperElement = wrapperElement;
+        this.wrapperElement.className = "wc-widget-content";
+        this.wrapperElement.addEventListener('load', on_load.bind(this), true);
+        if (this.meta.missing || this.meta.macversion === 1) {
+            this.wrapperElement.setAttribute('frameBorder', "0");
+
+            this.meta.requirements.some(function (requirement) {
+                if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
+                    this.wrapperElement.setAttribute('allowfullscreen', 'true');
+                    return true;
+                }
+            }, this);
+        }
     };
 
     const _rename = function _rename(title) {
@@ -166,6 +187,62 @@
         privates.get(widget).titlevisible = visibility;
         widget.dispatchEvent('change', ['titlevisible']);
         return Promise.resolve(widget);
+    };
+
+    const _loadScripts = function _loadScripts() {
+        // We need to wait for the scripts to be loaded before loading the widget
+        const promises = [];
+        this.meta.js_files.forEach((js_file) => {
+            if (js_file in Wirecloud.loadedScripts) {
+                Wirecloud.loadedScripts[js_file].users.push(this);
+                this.loaded_scripts.push(Wirecloud.loadedScripts[js_file].elem);
+                if (!Wirecloud.loadedScripts[js_file].loaded) {
+                    promises.push(new Promise((resolve, reject) => {
+                        Wirecloud.loadedScripts[js_file].elem.addEventListener('load', resolve);
+                        Wirecloud.loadedScripts[js_file].elem.addEventListener('error', resolve);
+                    }));
+                }
+                return; // Already added to the DOM by another widget
+            }
+
+            const script = document.createElement('script');
+            script.setAttribute('type', 'text/javascript');
+            script.setAttribute('src', js_file);
+            script.async = false;
+            document.body.appendChild(script);
+            this.loaded_scripts.push(script);
+            Wirecloud.loadedScripts[js_file] = {loaded: false, elem: script, users: [this]};
+
+            const promise = new Promise((resolve, reject) => {
+                const on_resolve = () => {
+                    Wirecloud.loadedScripts[js_file].loaded = true;
+                    resolve();
+                }
+
+                // Resolve the promise when the script is loaded or an error occurs
+                script.addEventListener('load', on_resolve.bind(this));
+                script.addEventListener('error', on_resolve.bind(this));
+            });
+
+            promises.push(promise);
+        });
+
+        return Promise.all(promises);
+    };
+
+    const _unloadScripts = function _unloadScripts() {
+        this.loaded_scripts.forEach((script) => {
+            if (script.src in Wirecloud.loadedScripts && Wirecloud.loadedScripts[script.src].users.length === 1) {
+                delete Wirecloud.loadedScripts[script.src];
+                document.body.removeChild(script);
+            } else if (script.src in Wirecloud.loadedScripts) {
+                const index = Wirecloud.loadedScripts[script.src].users.indexOf(this);
+                if (index !== -1) {
+                    Wirecloud.loadedScripts[script.src].users.splice(index, 1);
+                }
+            }
+        });
+        this.loaded_scripts = [];
     };
 
     const clean_title = function clean_title(title) {
@@ -226,12 +303,46 @@
 
     const on_load = function on_load() {
 
-        if (this.wrapperElement.contentWindow.location.href !== this.codeurl) {
+        if ((this.meta.macversion > 1 && this.wrapperElement.loadedURL !== this.codeurl) ||
+            ((this.meta.missing || this.meta.macversion === 1) && this.wrapperElement.contentWindow.location.href !== this.codeurl)) {
             return;
         }
 
-        privates.get(this).status = STATUS.RUNNING;
-        this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
+        if (this.meta.macversion > 1) {
+            // If this is a v2 or later widget, we need to instantiate it's entrypoint class
+            _unloadScripts.call(this);
+            _loadScripts.call(this).then(() => {
+                const entrypoint = window[this.meta.entrypoint];
+                if (entrypoint === undefined) {
+                    this.logManager.log("Widget entrypoint class not found!", {console: false});
+                } else {
+                    this.widgetClass = Wirecloud.createAPIComponent("widget", this.meta.requirements, entrypoint,
+                        this.wrapperElement, this.id,
+                        ('workspaceview' in this.tab.workspace.view) ? this.tab.workspace.view.workspaceview : undefined,
+                        this.meta.base_url);
+                }
+
+                privates.get(this).status = STATUS.RUNNING;
+
+                this.dispatchEvent('load');
+
+                this.pending_events.forEach(send_pending_event, this);
+                this.pending_events = [];
+            });
+        } else {
+            privates.get(this).status = STATUS.RUNNING;
+
+            this.dispatchEvent('load');
+
+            this.pending_events.forEach(send_pending_event, this);
+            this.pending_events = [];
+        }
+
+        if (this.meta.macversion > 1) {
+            this.wrapperElement.addEventListener('unload', on_unload.bind(this), true);
+        } else {
+            this.wrapperElement.contentDocument.defaultView.addEventListener('unload', on_unload.bind(this), true);
+        }
 
         if (this.missing) {
             this.logManager.log(utils.gettext("Failed to load widget."), {
@@ -243,19 +354,25 @@
                 level: Wirecloud.constants.LOGGING.INFO_MSG
             });
         }
-
-        this.dispatchEvent('load');
-
-        this.pending_events.forEach(send_pending_event, this);
-        this.pending_events = [];
     };
 
     const on_unload = function on_unload() {
-
         const priv = privates.get(this);
 
         if (priv.status !== STATUS.RUNNING && priv.status !== STATUS.UNLOADING) {
             return;
+        }
+
+        if (this.loaded_scripts.length !== 0) {
+            _unloadScripts.call(this);
+        }
+
+        if (this.widgetClass !== undefined) {
+            // If this is a v2 or later widget, we need to destroy it's entrypoint class
+            if ('destroy' in this.widgetClass) {
+                this.widgetClass.destroy();
+            }
+            delete this.widgetClass;
         }
 
         // Currently, the only scenario where current status can be "unloading"
@@ -310,6 +427,7 @@
             }, data);
 
             this.pending_events = [];
+            this.loaded_scripts = [];
             this.prefCallback = null;
 
             if (data.permissions == null) {
@@ -397,6 +515,9 @@
                 loaded: {
                     get: function () {
                         return privates.get(this).status === STATUS.RUNNING;
+                    },
+                    set: function (value) { // Just for testing purposes
+                        privates.get(this).status = STATUS.RUNNING;
                     }
                 },
                 /**
@@ -452,18 +573,7 @@
             });
             this.fulldragboard = data.fulldragboard;
 
-            this.wrapperElement = document.createElement('iframe');
-            this.wrapperElement.className = "wc-widget-content";
-            this.wrapperElement.setAttribute('frameBorder', "0");
-            this.wrapperElement.addEventListener('load', on_load.bind(this), true);
-
-            this.meta.requirements.some(function (requirement) {
-                if (requirement.type === 'feature' && requirement.name === 'FullscreenWidget') {
-                    this.wrapperElement.setAttribute('allowfullscreen', 'true');
-                    return true;
-                }
-            }, this);
-
+            _createWrapper.call(this);
 
             build_endpoints.call(this);
             build_prefs.call(this, data.preferences);
@@ -690,8 +800,12 @@
             }
 
             privates.get(this).status = STATUS.LOADING;
-            this.wrapperElement.contentWindow.location.replace(this.codeurl);
-            this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
+            if (this.meta.macversion > 1) {
+                this.wrapperElement.load(this.codeurl);
+            } else {
+                this.wrapperElement.contentWindow.location.replace(this.codeurl);
+                this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
+            }
 
             return this;
         }
@@ -702,8 +816,13 @@
         reload() {
             const priv = privates.get(this);
             priv.status = STATUS.UNLOADING;
-            this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
-            this.wrapperElement.contentWindow.location.reload();
+
+            if (this.meta.macversion > 1) {
+                this.wrapperElement.load(this.wrapperElement.loadedURL);
+            } else {
+                this.wrapperElement.setAttribute('type', this.meta.codecontenttype);
+                this.wrapperElement.contentWindow.location.reload();
+            }
 
             return this;
         }

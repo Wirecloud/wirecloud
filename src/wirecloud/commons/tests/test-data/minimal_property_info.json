@@ -2,6 +2,7 @@
     "vendor": "Wirecloud",
     "name": "TemplateTest",
     "version": "1.0",
+    "macversion": 1,
     "contents": {
         "src": "http://example.com/code.html"
     },

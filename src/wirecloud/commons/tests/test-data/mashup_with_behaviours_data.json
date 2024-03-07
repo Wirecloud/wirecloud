@@ -6,6 +6,7 @@
     "title": "Template Test Mashup",
     "description": "test",
     "longdescription": "README.md",
+    "macversion": 1,
     "authors": [{"name": "author_test"}],
     "contributors": [],
     "email": "",

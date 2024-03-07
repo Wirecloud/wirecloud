@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2016 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2023 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,64 +20,66 @@
  *
  */
 
-/* globals MashupPlatform */
-
-
 (function () {
 
     "use strict";
 
-    var platform, ioperator, endpoint_name, inputs, outputs, IOperatorVariable;
+    const _OperatorAPI = function _OperatorAPI(parent) {
+        const IOperatorVariable = function IOperatorVariable(variable) {
+            this.set = function set(value) {
+                variable.set(value);
+            };
 
-    platform = window.parent;
-
-    IOperatorVariable = function IOperatorVariable(variable) {
-        this.set = function set(value) {
-            variable.set(value);
+            this.get = function get() {
+                return variable.get();
+            };
+            Object.freeze(this);
         };
 
-        this.get = function get() {
-            return variable.get();
-        };
-        Object.freeze(this);
+
+        // Init resource entry (in this case an operator) so other API files can make
+        // use of it
+        const ioperator = parent.MashupPlatform.priv.workspaceview.model.findOperator(parent.MashupPlatform.priv.id);
+        parent.MashupPlatform.priv.resource = ioperator;
+
+        // Operator Module
+        Object.defineProperty(parent.MashupPlatform, 'operator', {value: {}});
+        Object.defineProperty(parent.MashupPlatform.operator, 'id', {value: parent.MashupPlatform.priv.id});
+        Object.defineProperty(parent.MashupPlatform.operator, 'log', {
+            value: function log(msg, level) {
+                ioperator.logManager.log(msg, level);
+            }
+        });
+
+        Object.defineProperty(parent.MashupPlatform.operator, 'getVariable', {
+            value: function getVariable(name) {
+                const variable = ioperator.properties[name];
+                if (variable != null) {
+                    return new IOperatorVariable(variable);
+                }
+            }
+        });
+
+        // Inputs
+        const inputs = {};
+        for (const endpoint_name in ioperator.inputs) {
+            inputs[endpoint_name] = new parent.MashupPlatform.priv.InputEndpoint(ioperator.inputs[endpoint_name], true);
+        }
+        Object.defineProperty(parent.MashupPlatform.operator, 'inputs', {value: inputs});
+
+        // Outputs
+        const outputs = {};
+        for (const endpoint_name in ioperator.outputs) {
+            outputs[endpoint_name] = new parent.MashupPlatform.priv.OutputEndpoint(ioperator.outputs[endpoint_name], true);
+        }
+        Object.defineProperty(parent.MashupPlatform.operator, 'outputs', {value: outputs});
     };
 
+    window._privs._OperatorAPI = _OperatorAPI;
 
-    // Init resource entry (in this case an operator) so other API files can make
-    // use of it
-    ioperator = MashupPlatform.priv.workspaceview.model.findOperator(MashupPlatform.priv.id);
-    MashupPlatform.priv.resource = ioperator;
-
-    // Operator Module
-    Object.defineProperty(window.MashupPlatform, 'operator', {value: {}});
-    Object.defineProperty(window.MashupPlatform.operator, 'id', {value: MashupPlatform.priv.id});
-    Object.defineProperty(window.MashupPlatform.operator, 'log', {
-        value: function log(msg, level) {
-            ioperator.logManager.log(msg, level);
-        }
-    });
-
-    Object.defineProperty(window.MashupPlatform.operator, 'getVariable', {
-        value: function getVariable(name) {
-            var variable = ioperator.properties[name];
-            if (variable != null) {
-                return new IOperatorVariable(variable);
-            }
-        }
-    });
-
-    // Inputs
-    inputs = {};
-    for (endpoint_name in ioperator.inputs) {
-        inputs[endpoint_name] = new MashupPlatform.priv.InputEndpoint(ioperator.inputs[endpoint_name], true);
+    // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
+    if (window.parent !== window) {
+        window. _privs._OperatorAPI(window);
     }
-    Object.defineProperty(window.MashupPlatform.operator, 'inputs', {value: inputs});
-
-    // Outputs
-    outputs = {};
-    for (endpoint_name in ioperator.outputs) {
-        outputs[endpoint_name] = new MashupPlatform.priv.OutputEndpoint(ioperator.outputs[endpoint_name], true);
-    }
-    Object.defineProperty(window.MashupPlatform.operator, 'outputs', {value: outputs});
 
 })();

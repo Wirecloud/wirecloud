@@ -90,7 +90,7 @@ def process_widget_code(request, resource):
         xhtml.save()
 
     try:
-        code = fix_widget_code(code, content_type, request, charset, xhtml.use_platform_style, process_requirements(widget_info['requirements']), mode, theme)
+        code = fix_widget_code(code, content_type, request, charset, xhtml.use_platform_style, process_requirements(widget_info['requirements']), mode, theme, resource.get_processed_info()["macversion"])
     except UnicodeDecodeError:
         msg = _('Widget code was not encoded using the specified charset (%(charset)s as stated in the widget description file).') % {'charset': charset}
         return build_response(request, 502, {'error_msg': msg}, WIDGET_ERROR_FORMATTERS)

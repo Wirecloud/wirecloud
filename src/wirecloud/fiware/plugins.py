@@ -104,7 +104,9 @@ class FiWarePlugin(WirecloudPlugin):
         common = (
             'js/NGSI/NGSI.min.js',
             'js/NGSI/NGSIManager.js',
+            'js/WirecloudAPI/NGSIAPI.js',
             'js/ObjectStorage/OpenStackManager.js',
+            'js/ObjectStorage/ObjectStorageAPI.js'
         )
 
         if view == 'classic':

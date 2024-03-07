@@ -697,7 +697,9 @@ class WidgetTester(WebElementTester):
 
     def __enter__(self):
         self.wait_loaded()
-        self.testcase.driver.switch_to.frame(self.content)
+        # Only enter the frame if it's an iframe
+        if self.is_iframe:
+            self.testcase.driver.switch_to.frame(self.content)
         return self
 
     def __exit__(self, type, value, traceback):
@@ -723,7 +725,18 @@ class WidgetTester(WebElementTester):
     @property
     def id(self):
         return self.get_attribute('data-id')
-
+    
+    @property
+    def is_iframe(self):
+        return self.testcase.driver.execute_script('return arguments[0].tagName.toLowerCase()', self.content) == 'iframe'
+    
+    @property
+    def inner_contents(self):
+        if self.is_iframe:
+            raise Exception('Cannot access inner contents of an iframe widget')
+        
+        return self.testcase.driver.execute_script('return arguments[0].shadowRoot', self.content)
+        
     @property
     def loaded(self):
         return self.testcase.driver.execute_script("""

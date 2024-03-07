@@ -34,10 +34,8 @@ This class represents a widget. This is, jointly with `wire:Operator`, one of th
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Widget`
 
--   **Properties include**: `dcterms:title`, `dcterms:description`, `dcterms:creator`, `usdl:hasProvider`,
-    `usdl:utilizedResource`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
-    `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
-    `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
+-   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`, 
+    `usdl:hasProvider`, `usdl:utilizedResource`, `wire:entryPoint`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`, `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`, `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
 -   **Subclassof**: `usdl-core:Service`
 
@@ -47,10 +45,8 @@ This class represents a operator. This is, jointly with `wire:Widget`, one of th
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/widget#Operator`
 
--   **Properties include**: `dcterms:title`, `dcterms:description`, `dcterms:creator`, `usdl:hasProvider`,
-    `usdl:utilizedResource`, `foaf: page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`,
-    `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`,
-    `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
+-   **Properties include**: `wire:macVersion`, `dcterms:title`, `dcterms:description`, `dcterms:creator`, 
+    `usdl:hasProvider`, `usdl:utilizedResource`, `wire:entryPoint`, `foaf:page`, `wire:hasPlatformPreference`, `wire:hasPlatformWiring`, `wire:hasPlatformRendering`, `wire:hasPlatformStateProperty`, `usdl:versionInfo`, `wire:hasImageUri`, `wire.hasiPhoneImageUri`, `wire:displayName`, `vcard:addr`
 
 -   **Subclassof**: `usdl-core:Service`
 
@@ -129,6 +125,16 @@ This class represents an input endpoint.
 -   **Used with**: `wire:hasInputEndpoint`
 
 ### Properties
+
+#### The `wire:macVersion` property
+
+This property states the version of the MACDL used to describe the widget or operator. Currently, the only supported
+value is `1`. This property is NOT mandatory but SHOULD be used. In absence of this property, the version `1` is
+assumed.
+
+-   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#macVersion`
+-   **Domain**: `wire:Widget` and `wire:Operator`
+-   **Range**: `rdfs:Literal`
 
 #### The `wire:hasPlatformPreference` property
 
@@ -285,6 +291,15 @@ This property states whether or not the widget code is cacheable.
 -   **Domain**: `usdl-core:Resource`
 -   **Range**: `rdfs:Literal`
 
+#### The `wire:entryPoint` property
+
+v2 widgets and operators need to define the entry point of the component. This property states the entry point of the
+widget or operator. The entrypoint is the name of a class that the MAC scripts will define in the `window` object that will be instantiated whenever the MAC is loaded, receiving as parameters the objects neccessary for the MAC to work correctly ([more info here](./widget_and_operators.md)). Therefore, it must be unique in the global scope.
+
+-   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/Widget#entryPoint`
+-   **Domain**: `wire:Widget` and `wire:Operator`
+-   **Range**: `rdfs:Literal`
+
 ## WIRE-M vocabulary
 
 The diagram below shows the WIRE-M vocabulary.
@@ -304,7 +319,7 @@ This class represents a mashup. It will be implemented as a workspace.
 
 -   **URI**: `http://wirecloud.conwet.fi.upm.es/ns/mashup#Mashup`
 
--   **Properties include**: `wire-m:hasMashupPreference`, `wire-m:hasMashupParam`, `wire-m:hasTab`,
+-   **Properties include**: `wire:macVersion`, `wire-m:hasMashupPreference`, `wire-m:hasMashupParam`, `wire-m:hasTab`,
     `wire-m:hasMashupWiring`, `wire:hasImageUri`, `wire:hasiPhoneImageUri`, `wire:version`
 
 -   **subClassOf**: `usdl:CompositeService`

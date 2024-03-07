@@ -192,6 +192,10 @@ class JSONTemplateParser(object):
 
         self._check_string_fields(('title', 'description', 'longdescription', 'email', 'homepage', 'doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'))
         self._check_contacts_fields(('authors', 'contributors'))
+        self._check_integer_fields(('macversion', ), default = 1)
+        # Extra check for the macversion field, as it currently only supports 1 and 2
+        if self._info['macversion'] != 1 and self._info['macversion'] != 2:
+            raise TemplateParseException('Invalid value for the macversion field (currently only 1 or 2 are supported)')
 
         # Normalize/check preferences and properties (only for widgets and operators)
         if self._info['type'] != 'mashup':
@@ -212,6 +216,8 @@ class JSONTemplateParser(object):
                 self._check_boolean_fields(('multiuser',), place=prop, default=False)
 
         if self._info['type'] == 'widget':
+            if self._info['macversion'] > 1:
+                self._check_string_fields(('entrypoint', ), required=True)
 
             self._check_array_fields(('altcontents',))
             if self._info.get('contents', None) is None:
@@ -222,6 +228,10 @@ class JSONTemplateParser(object):
             self._check_contents_field(self._info['contents'], alternative=False)
             for altcontent in self._info['altcontents']:
                 self._check_contents_field(altcontent)
+
+        elif self._info['type'] == 'operator':
+            if self._info['macversion'] > 1:
+                self._check_string_fields(('entrypoint', ), required=True)
 
         elif self._info['type'] == 'mashup':
 

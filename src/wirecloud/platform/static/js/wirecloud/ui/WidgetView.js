@@ -380,13 +380,15 @@
 
                 this.wrapperElement.classList.add('in');
 
-                model.wrapperElement.contentDocument.defaultView.addEventListener('keydown', (event) => {
+                const containerToListen = (model.meta.macversion > 1) ? model.wrapperElement : model.wrapperElement.contentDocument.defaultView;
+
+                containerToListen.addEventListener('keydown', (event) => {
                     if (event.keyCode === 27) { // escape
                         Wirecloud.UserInterfaceManager.handleEscapeEvent();
                     }
                 }, true);
 
-                model.wrapperElement.contentDocument.defaultView.addEventListener('click', () => {
+                containerToListen.addEventListener('click', () => {
                     Wirecloud.UserInterfaceManager.handleEscapeEvent(true);
                     this.unhighlight();
                 }, true);

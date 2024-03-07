@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2016-2017 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2023 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,103 +20,110 @@
  *
  */
 
-/* globals MashupPlatform */
-
 
 (function () {
 
     "use strict";
 
-    var platform = window.parent;
-    var Wirecloud = platform.Wirecloud;
+    const _ComponentManagementAPI = function _ComponentManagementAPI(parent, platform, _) {
+        const Wirecloud = platform.Wirecloud;
 
-    /**
-     * Installs a component
-     *
-     * @since 1.0
-     *
-     * @param {String} url
-     *      The URL where the component is located.
-     *
-     * @returns {Wirecloud.Task}
-     */
-    var install = function install(options) {
-        return Wirecloud.LocalCatalogue.addComponent(options);
-    };
+        /**
+         * Installs a component
+         *
+         * @since 1.0
+         *
+         * @param {String} url
+         *      The URL where the component is located.
+         *
+         * @returns {Wirecloud.Task}
+         */
+        const install = function install(options) {
+            return Wirecloud.LocalCatalogue.addComponent(options);
+        };
 
-    /**
-     * Uninstalls a component.
-     *
-     * @since 1.0
-     *
-     * @param {String} vendor
-     *      The vendor of the component
-     * @param {String} name
-     *      The  name of the component
-     * @param {String} [version]
-     *      The version of the component. If undefined all versions will be uninstalled.
-     *
-     * @returns {Promise}
-     */
-    var uninstall = function uninstall(vendor, name, version) {
-        if (vendor == null) {
-            throw new TypeError("missing vendor parameter");
-        }
-
-        if (name == null) {
-            throw new TypeError("missing name parameter");
-        }
-
-        return new Promise(function (resolve, reject) {
-            var component, options = {};
-
-            if (version) {
-                component = Wirecloud.LocalCatalogue.getResource(vendor, name, version);
-            } else {
-                component = Wirecloud.LocalCatalogue.resourceVersions[[vendor, name].join('/')][0];
-                options.allVersions = true;
+        /**
+         * Uninstalls a component.
+         *
+         * @since 1.0
+         *
+         * @param {String} vendor
+         *      The vendor of the component
+         * @param {String} name
+         *      The  name of the component
+         * @param {String} [version]
+         *      The version of the component. If undefined all versions will be uninstalled.
+         *
+         * @returns {Promise}
+         */
+        const uninstall = function uninstall(vendor, name, version) {
+            if (vendor == null) {
+                throw new TypeError("missing vendor parameter");
             }
-            if (component) {
-                Wirecloud.LocalCatalogue.deleteResource(component, options).then(
-                    resolve.bind(null, undefined),
-                    reject
-                );
-            } else {
-                // Do nothing if the component is already uninstalled
-                resolve();
+
+            if (name == null) {
+                throw new TypeError("missing name parameter");
             }
+
+            return new Promise(function (resolve, reject) {
+                let component;
+                const options = {};
+
+                if (version) {
+                    component = Wirecloud.LocalCatalogue.getResource(vendor, name, version);
+                } else {
+                    component = Wirecloud.LocalCatalogue.resourceVersions[[vendor, name].join('/')][0];
+                    options.allVersions = true;
+                }
+                if (component) {
+                    Wirecloud.LocalCatalogue.deleteResource(component, options).then(
+                        resolve.bind(null, undefined),
+                        reject
+                    );
+                } else {
+                    // Do nothing if the component is already uninstalled
+                    resolve();
+                }
+            });
+        };
+
+        /**
+         * Checks if the component is currently installed.
+         *
+         * @since 1.0
+         *
+         * @param {String} vendor
+         *      The vendor of the component
+         * @param {String} name
+         *      The  name of the component
+         * @param {String} [version]
+         *      Version of the component to check
+         *
+         * @returns {boolean}
+         *      `true` if the component is installed
+         */
+        const isInstalled = function isInstalled(vendor, name, version) {
+            if (version !== null) {
+                return Wirecloud.LocalCatalogue.resourceExistsId([vendor, name, version].join('/'));
+            } else {
+                const mac = [vendor, name].join('/');
+                return Wirecloud.LocalCatalogue.resourceVersions[mac].length > 0;
+            }
+        };
+
+        parent.MashupPlatform.components = {};
+        Object.defineProperties(parent.MashupPlatform.components, {
+            install: {value: install},
+            uninstall: {value: uninstall},
+            isInstalled: {value: isInstalled}
         });
     };
 
-    /**
-     * Checks if the component is currently installed.
-     *
-     * @since 1.0
-     *
-     * @param {String} vendor
-     *      The vendor of the component
-     * @param {String} name
-     *      The  name of the component
-     * @param {String} [version]
-     *      Version of the component to check
-     *
-     * @returns {boolean}
-     *      `true` if the component is installed
-     */
-    var isInstalled = function isInstalled(vendor, name, version) {
-        if (version !== null) {
-            return Wirecloud.LocalCatalogue.resourceExistsId([vendor, name, version].join('/'));
-        } else {
-            var mac = [vendor, name].join('/');
-            return Wirecloud.LocalCatalogue.resourceVersions[mac].length > 0;
-        }
-    };
+    window._privs._ComponentManagementAPI = _ComponentManagementAPI;
 
-    MashupPlatform.components = {};
-    Object.defineProperties(MashupPlatform.components, {
-        install: {value: install},
-        uninstall: {value: uninstall},
-        isInstalled: {value: isInstalled}
-    });
+    // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
+    if (window.parent !== window) {
+        window._privs._ComponentManagementAPI(window, window.parent);
+    }
 
 })();

@@ -173,6 +173,7 @@ def build_json_template_from_workspace(options, workspace, user):
     options['embedded'] = set()
     options['translations'] = {}
     options['translation_index_usage'] = {}
+    options['macversion'] = 1
 
     description = options.get('description', '').strip()
     if description == '':

@@ -71,83 +71,105 @@ class CodeTransformationTestCase(TestCase):
     def test_unhandled_content_type(self):
 
         initial_code = b'plain text'
-        final_code = fix_widget_code(initial_code, 'text/plain', None, 'utf-8', False, {}, 'classic', 'wirecloud.defaulttheme')
+        final_code = fix_widget_code(initial_code, 'text/plain', None, 'utf-8', False, {}, 'classic', 'wirecloud.defaulttheme', 1)
         self.assertEqual(final_code, initial_code)
 
     def test_empty_html(self):
 
         initial_code = b''
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/html-empty-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_html_unclosed_tags(self):
 
         initial_code = self.read_file('test-data/html-unclosed-tags-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/html-unclosed-tags-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_html(self):
         initial_code = self.read_file('test-data/xhtml1-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml1-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_html_iso8859_15(self):
         initial_code = self.read_file('test-data/xhtml1-iso8859-15-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'iso-8859-15', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'iso-8859-15', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml1-iso8859-15-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_html_with_one_base_element(self):
         initial_code = self.read_file('test-data/xhtml4-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml4-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_html_with_more_than_one_base_element(self):
         initial_code = self.read_file('test-data/xhtml4-extra-base-elements-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'text/html', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml4-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_empty_xhtml(self):
 
         initial_code = b''
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml-empty-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_xhtml_unclosed_tags(self):
 
         initial_code = self.read_file('test-data/xhtml-unclosed-tags-initial.html')
-        self.assertRaises(Exception, fix_widget_code, initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')
+        self.assertRaises(Exception, fix_widget_code, initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)
 
     def test_basic_xhtml(self):
         initial_code = self.read_file('test-data/xhtml2-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml2-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     @override_settings(COMPRESS_ENABLED=True)
     def test_basic_xhtml_compressed(self):
         initial_code = self.read_file('test-data/xhtml2-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         final_code = self.COMPRESS_HASH_RE.sub(b'/widgetapi.js', final_code)
         expected_code = self.read_file('test-data/xhtml2-compressed-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_basic_xhtml_iso8859_15(self):
         initial_code = self.read_file('test-data/xhtml2-iso8859-15-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'iso-8859-15', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'iso-8859-15', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml2-iso8859-15-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
     def test_xhtml_without_head_element(self):
         initial_code = self.read_file('test-data/xhtml3-initial.html')
-        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme')) + b'\n'
+        final_code = self.XML_NORMALIZATION_RE.sub(b'><', fix_widget_code(initial_code, 'application/xhtml+xml', None, 'utf-8', False, {}, 'classic', 'wirecloud_defaulttheme', 1)) + b'\n'
         expected_code = self.read_file('test-data/xhtml3-expected.html')
+        final_code = final_code.replace(b'\r\n', b'\n')
+        expected_code = expected_code.replace(b'\r\n', b'\n')
         self.assertEqual(final_code, expected_code)
 
 

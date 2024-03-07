@@ -62,9 +62,78 @@
                     new Wirecloud.WidgetMeta({
                         name: "TestOperator",
                         version: "1.0",
-                        type: "operator"
+                        type: "operator",
+                        macversion: 1
                     });
                 }).toThrowError(TypeError);
+            });
+
+            it("throws a TypeError exception when the entrypoint is missing for mac version 2", () => {
+                expect(() => {
+                    new Wirecloud.WidgetMeta({
+                        vendor: "Wirecloud",
+                        name: "TestWidget",
+                        version: "1.0",
+                        type: "widget",
+                        js_files: [],
+                        macversion: 2,
+                        preferences: [],
+                        contents: {
+                            src: "index.html"
+                        }
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("throws a TypeError exception when the js_files is missing for mac version 2", () => {
+                expect(() => {
+                    new Wirecloud.WidgetMeta({
+                        vendor: "Wirecloud",
+                        name: "TestWidget",
+                        version: "1.0",
+                        type: "widget",
+                        macversion: 2,
+                        entrypoint: "Test",
+                        preferences: [],
+                        contents: {
+                            src: "index.html"
+                        }
+                    });
+                }).toThrowError(TypeError);
+            });
+
+            it("accepts missing js_files and entrypoint for mac version 1", () => {
+                expect(() => {
+                    new Wirecloud.WidgetMeta({
+                        vendor: "Wirecloud",
+                        name: "TestWidget",
+                        preferences: [],
+                        properties: [],
+                        version: "1.0",
+                        macversion: 1,
+                        contents: {
+                            src: "index.html"
+                        }
+                    });
+                }).not.toThrow();
+            });
+
+            it("accepts js_files and entrypoint for mac version 2", () => {
+                expect(() => {
+                    new Wirecloud.WidgetMeta({
+                        vendor: "Wirecloud",
+                        name: "TestWidget",
+                        preferences: [],
+                        properties: [],
+                        version: "1.0",
+                        macversion: 2,
+                        entrypoint: "Test",
+                        js_files: [],
+                        contents: {
+                            src: "index.html"
+                        }
+                    });
+                }).not.toThrow();
             });
 
             it("provides some fallback values", () => {
@@ -74,6 +143,7 @@
                     preferences: [],
                     properties: [],
                     version: "1.0",
+                    macversion: 1,
                     contents: {
                         src: "index.html"
                     }
@@ -93,6 +163,7 @@
                     preferences: [],
                     properties: [],
                     version: "1.0",
+                    macversion: 1,
                     contents: {
                         src: "index.html",
                         contenttype: "application/html"
@@ -113,6 +184,7 @@
                     ],
                     type: "widget",
                     version: "1.1",
+                    macversion: 1,
                     contents: {
                         src: "index.html",
                         contenttype: "application/html"
@@ -137,6 +209,7 @@
                     preferences: [],
                     properties: [],
                     version: "1.0",
+                    macversion: 1,
                     contents: {
                         src: "index.html"
                     }

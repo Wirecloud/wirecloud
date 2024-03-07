@@ -88,6 +88,18 @@
             throw new Error('Missing EventSource support');
         }
 
+        if (!('customElements') in window) {
+            throw new Error('Missing web components support');
+        }
+
+        if (!('attachShadow' in HTMLElement.prototype)) {
+            throw new Error('Missing shadow DOM support');
+        }
+
+        if (!('MutationObserver' in window)) {
+            throw new Error('Missing MutationObserver support');
+        }
+
         try {
             eval("var bar = (x) => x+1");
         } catch (e) {

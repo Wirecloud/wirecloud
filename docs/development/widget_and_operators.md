@@ -46,8 +46,15 @@ figure shows one possible structure of files for a widget:
 > `config.xml` file MUST be at the root of the zip file.
 
 Operators are created in the same way as widgets, the only difference is that the descriptor file (`config.xml`) does
-not link to an initial HTML document (as operators doesn't have a visual component). Instead, you will have to link the
-list of used JavaScript files from the `config.xml` file.
+not link to an initial HTML document (as operators don't have a visual component).
+
+Both widgets and operators need to specify a list of scripts that will be executed when the widget/operator is loaded.
+These scripts must define a class in the window object that will be instantiated by the WireCloud platform. This class
+receives 3 parameters in the case of widgets and 2 in the case of operators:
+    -  The first parameter is the MashupPlatform object.
+    -  The second parameter is a reference to a shadowDOM that contains the widget code (not present on operators).
+    -  The third parameter is an object containing any extra objects as defined by the descriptor file (such as
+       the NGSI API, the ContextManager API...).
 
 Operators can be classified using three types:
 

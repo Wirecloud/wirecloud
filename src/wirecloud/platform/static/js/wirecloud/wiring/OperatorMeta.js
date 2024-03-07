@@ -50,6 +50,20 @@
             // Properties
             this.properties = {};
             this.propertyList = [];
+
+            if (this.macversion > 1 && !this.missing) {
+                this.entrypoint = desc.entrypoint;
+                this.js_files = desc.js_files;
+
+                if (!this.js_files) {
+                    throw new TypeError("missing js_files attribute in operator description");
+                }
+
+                if (!this.entrypoint) {
+                    throw new TypeError("missing entrypoint attribute in operator description");
+                }
+            }
+
             desc.properties.forEach((property_info) => {
                 const property = new Wirecloud.PersistentVariableDef(property_info);
                 this.properties[property.name] = property;

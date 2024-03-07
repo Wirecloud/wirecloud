@@ -1,5 +1,6 @@
 /*
  *     Copyright (c) 2012-2015 CoNWeT Lab., Universidad Politécnica de Madrid
+ *     Copyright (c) 2023 Future Internet Consulting and Development Solutions S.L.
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,27 +20,36 @@
  *
  */
 
-/* globals MashupPlatform */
-
-
 (function () {
 
     "use strict";
 
-    // Remove reference to the private dict, removing also the reference to the
-    // internal wirecloud resource
-    delete MashupPlatform.priv;
+    const _APIClosure = function _APIClosure(parent) {
+        // Remove reference to the private dict, removing also the reference to the
+        // internal wirecloud resource
+        delete parent.MashupPlatform.priv;
 
-    Object.preventExtensions(MashupPlatform.mashup);
-    Object.preventExtensions(MashupPlatform);
+        Object.preventExtensions(parent.MashupPlatform.mashup);
+        Object.preventExtensions(parent.MashupPlatform);
 
-    if ('widget' in MashupPlatform) {
-        Object.preventExtensions(MashupPlatform.widget);
-    } else {
-        Object.preventExtensions(MashupPlatform.operator);
+        if ('widget' in parent.MashupPlatform) {
+            Object.preventExtensions(parent.MashupPlatform.widget);
+        } else {
+            Object.preventExtensions(parent.MashupPlatform.operator);
+        }
+    };
+
+    window._privs._APIClosure = _APIClosure;
+
+    // Detects if this is inside an iframe (will use version v1, which defines the MashupPlatform in the window)
+    if (window.parent !== window) {
+        window._privs._APIClosure(window);
+
+        // Remove references to the internal setup functions of the API
+        delete window._privs;
+
+        // Remove link to wirecloud
+        window.parent = window;
     }
-
-    // Remove link to wirecloud
-    window.parent = window;
 
 })();

@@ -37,6 +37,7 @@ XMLSCHEMA = etree.XMLSchema(XMLSCHEMA_DOC)
 WIRECLOUD_TEMPLATE_NS = 'http://wirecloud.conwet.fi.upm.es/ns/macdescription/1'
 OLD_TEMPLATE_NAMESPACES = ('http://wirecloud.conwet.fi.upm.es/ns/template#', 'http://morfeo-project.org/2007/Template')
 
+MAC_VERSION_XPATH = 't:macversion'
 RESOURCE_DESCRIPTION_XPATH = 't:details'
 DISPLAY_NAME_XPATH = 't:title'
 DESCRIPTION_XPATH = 't:description'
@@ -68,6 +69,7 @@ INPUT_ENDPOINT_XPATH = 't:inputendpoint'
 OUTPUT_ENDPOINT_XPATH = 't:outputendpoint'
 SCRIPT_XPATH = 't:scripts/t:script'
 PLATFORM_RENDERING_XPATH = 't:rendering'
+ENTRYPOINT_XPATH = 't:entrypoint'
 
 INCLUDED_RESOURCES_XPATH = 't:structure'
 TAB_XPATH = 't:tab'
@@ -191,6 +193,12 @@ class ApplicationMashupTemplateParser(object):
         self._info['vendor'] = str(self._doc.get('vendor', '').strip())
         self._info['name'] = str(self._doc.get('name', '').strip())
         self._info['version'] = str(self._doc.get('version', '').strip())
+
+        self._info['macversion'] = self._get_field(MAC_VERSION_XPATH, self._doc, required=False)
+        if len(self._info['macversion']) == 0:
+            self._info['macversion'] = 1
+        else:
+            self._info['macversion'] = int(self._info['macversion'])
 
         self._info['title'] = self._get_field(DISPLAY_NAME_XPATH, self._component_description, required=False)
         self._add_translation_index(self._info['title'], type='resource', field='title')
@@ -435,6 +443,19 @@ class ApplicationMashupTemplateParser(object):
         self._info['widget_width'] = rendering_element.get('width')
         self._info['widget_height'] = rendering_element.get('height')
 
+        if self._info["macversion"] > 1:
+            js_files = self._xpath(SCRIPT_XPATH, self._doc)
+            
+            self._info['js_files'] = []
+            for script in js_files:
+                self._info['js_files'].append(str(script.get('src')))
+
+            self._info["entrypoint"] = self.get_xpath(ENTRYPOINT_XPATH, self._doc, required=True).get('name')
+        else:
+            js_files = self._xpath(SCRIPT_XPATH, self._doc)
+            if len(js_files) > 0:
+                raise TemplateParseException(_("The use of the script element is not allowed in version 1.0 widgets"))
+
     def _parse_operator_info(self):
 
         self._parse_component_preferences()
@@ -444,6 +465,9 @@ class ApplicationMashupTemplateParser(object):
         self._info['js_files'] = []
         for script in self._xpath(SCRIPT_XPATH, self._doc):
             self._info['js_files'].append(str(script.get('src')))
+
+        if self._info["macversion"] > 1:
+            self._info["entrypoint"] = self.get_xpath(ENTRYPOINT_XPATH, self._doc, required=True).get('name')
 
     def _parse_component_preferences(self):
 

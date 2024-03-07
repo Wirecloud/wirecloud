@@ -380,6 +380,11 @@ def build_rdf_graph(template_info):
     else:
         raise Exception('Unsupported resource type: %s' % template_info['type'])
 
+    # Macversion
+    if not 'macversion' in template_info:
+        template_info['macversion'] = '1'
+    graph.add((resource_uri, WIRE['macVersion'], rdflib.Literal(template_info.get('macversion'))))
+
     # Create basic info
     provider = rdflib.BNode()
     graph.add((provider, rdflib.RDF.type, GR['BusinessEntity']))
@@ -576,12 +581,16 @@ def build_rdf_graph(template_info):
         for altcontents in template_info['altcontents']:
             write_contents_node(graph, resource_uri, altcontents)
 
-    elif template_info['type'] == 'operator':
+    if template_info['type'] == 'operator' or (template_info['type'] == 'widget' and template_info['macversion'] > 1):
         for index, js_file in enumerate(template_info['js_files']):
             js_node = rdflib.URIRef(js_file)
             graph.add((js_node, rdflib.RDF.type, USDL['Resource']))
             graph.add((js_node, WIRE['index'], rdflib.Literal(str(index))))
             graph.add((resource_uri, USDL['utilizedResource'], js_node))
+
+    if (template_info['type'] == 'operator' or template_info['type'] == 'widget') and template_info['macversion'] > 1:
+        # Add entryPoint
+        graph.add((resource_uri, WIRE['entryPoint'], rdflib.Literal(template_info.get('entrypoint'))))
 
     # Rendering
     if template_info['type'] == 'widget':
