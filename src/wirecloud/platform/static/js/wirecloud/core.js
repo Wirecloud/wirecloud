@@ -27,6 +27,8 @@
 
     "use strict";
 
+    window.parent = window; // Avoid problems with embedded Wirecloud instances
+
     const preferencesChanged = function preferencesChanged(preferences, modifiedValues) {
         /* istanbul ignore if */
         if ('language' in modifiedValues) {
