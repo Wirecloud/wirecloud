@@ -8,7 +8,7 @@
 
 [![](https://nexus.lab.fiware.org/repository/raw/public/badges/chapters/visualization.svg)](https://www.fiware.org/developers/catalogue/)
 [![License: AGPLv3+ with classpath-like exception](https://img.shields.io/badge/License-AGPLv3+%20with%20classpath--like%20exception-blue.svg)](./LICENSE)
-[![Docker Status](https://img.shields.io/docker/pulls/fiware/wirecloud.svg)](https://hub.docker.com/r/fiware/wirecloud/)
+[![Docker badge](https://img.shields.io/badge/quay.io-fiware%2Fwirecloud-grey?logo=red%20hat&labelColor=EE0000)](https://quay.io/repository/fiware/wirecloud)
 [![Support badge](https://img.shields.io/badge/tag-fiware--wirecloud-orange.svg?logo=stackoverflow)](https://stackoverflow.com/questions/tagged/fiware-wirecloud)
 [![Current stable version](https://img.shields.io/pypi/v/wirecloud.svg)](https://pypi.python.org/pypi/wirecloud)
 <br/>
@@ -41,7 +41,7 @@ This project is part of [FIWARE](https://www.fiware.org/). For more information
 check the FIWARE Catalogue entry for
 [Context Processing, Analysis and Visualization](https://github.com/Fiware/catalogue/tree/master/processing).
 
-| :books: [Documentation](https://wirecloud.rtfd.io/) | :page_facing_up: [Site](https://conwet.fi.upm.es/wirecloud) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud) | :whale: [Docker Hub](https://hub.docker.com/r/fiware/wirecloud/) | :dart: [Roadmap](roadmap.md) |
+| :books: [Documentation](https://wirecloud.rtfd.io/) | :page_facing_up: [Site](https://conwet.fi.upm.es/wirecloud) | :mortar_board: [Academy](https://fiware-academy.readthedocs.io/en/latest/processing/wirecloud) |  <img style="height:1em" src="https://quay.io/static/img/quay_favicon.png"/> [quay.io](https://quay.io/repository/fiware/wirecloud) | :dart: [Roadmap](roadmap.md) |
 |---|---|---|---|---|
 
 ## Contents
