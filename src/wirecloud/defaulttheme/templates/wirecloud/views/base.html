@@ -21,8 +21,8 @@
 
     <!-- Theme css -->
     {% block css %}
-    <link rel="stylesheet" data-name="vs/editor/editor.main" href="{% static "js/lib/monaco-editor/min/vs/editor/editor.main.css" %}" />
     {% compress css %}
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="{% static "js/lib/monaco-editor/min/vs/editor/editor.main.css" %}" />
     {% platform_css VIEW_MODE %}
     {% endcompress %}
     {% endblock %}
@@ -76,12 +76,6 @@
 <script type="text/javascript" src="{% static "js/lib/moment-timezone-with-data.min.js" %}"></script>
 <script type="text/javascript" src="{% static "js/lib/urlify.js" %}"></script>
 {% endcompress %}
-<script>
-  var require = { paths: { vs: '{% static "js/lib/monaco-editor/min/vs" %}' } };
-</script>
-<script type="text/javascript" src="{% static "js/lib/monaco-editor/min/vs/loader.js" %}"></script>
-<script type="text/javascript" src="{% static "js/lib/monaco-editor/min/vs/editor/editor.main.nls.js" %}"></script>
-<script type="text/javascript" src="{% static "js/lib/monaco-editor/min/vs/editor/editor.main.js" %}"></script>
 
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
 
@@ -91,6 +85,12 @@
 {% extra_javascripts "classic" %}
 {% endblock %}
 {% endcompress %}
+<script>
+  var require = { paths: { vs: '{% static "js/lib/monaco-editor/min/vs" %}' } };
+</script>
+<script type="text/javascript" src="{% static "js/lib/monaco-editor/min/vs/loader.js" %}"></script>
+<script type="text/javascript" src="{% static "js/lib/monaco-editor/min/vs/editor/editor.main.nls.js" %}"></script>
+<script type="text/javascript" src="{% static "js/lib/monaco-editor/min/vs/editor/editor.main.js" %}"></script>
 
 {% block extra_scripts %}{% endblock %}
 
