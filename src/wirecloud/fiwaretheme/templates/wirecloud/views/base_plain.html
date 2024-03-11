@@ -22,8 +22,8 @@
     {% endblock %}
 
     {% block basejs %}
-    {% compress js %}
     <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
+    {% compress js %}
     <script type="text/javascript" src="{% static "js/lib/moment-with-locales.min.js" %}"></script>
     <script type="text/javascript" src="{% static "js/lib/moment-timezone-with-data.min.js" %}"></script>
     {% endcompress %}

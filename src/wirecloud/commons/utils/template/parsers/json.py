@@ -203,7 +203,7 @@ class JSONTemplateParser(object):
             self._check_array_fields(('preferences', 'properties'))
             for preference in self._info['preferences']:
                 self._check_string_fields(('name', 'type'), place=preference, required=True)
-                self._check_string_fields(('label', 'description', 'default'), place=preference)
+                self._check_string_fields(('label', 'description', 'default', 'language'), place=preference)
                 self._check_boolean_fields(('readonly', 'secure'), place=preference, default=False)
                 self._check_string_fields(('value',), place=preference, null=True, default=None)
                 preference['multiuser'] = False

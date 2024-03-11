@@ -170,6 +170,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': None,
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 },
                 {
                     'name': 'pref2',
@@ -182,6 +183,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': '5',
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 }
             ],
             'properties': [
@@ -304,6 +306,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': None,
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 },
                 {
                     'name': 'pref2',
@@ -316,6 +319,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': '5',
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 }
             ],
             'properties': [
@@ -1290,6 +1294,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': None,
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 },
                 {
                     'name': 'pref2',
@@ -1302,6 +1307,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': '5',
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 }
             ],
             'properties': [
@@ -1499,6 +1505,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': None,
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 },
                 {
                     'name': 'pref2',
@@ -1511,6 +1518,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': None,
                     'multiuser': False,
                     'required': False,
+                    'language': ''
                 },
             ],
             'properties': [],

@@ -486,7 +486,7 @@ class ApplicationMashupTemplateParser(object):
                 'secure': preference.get('secure', 'false').lower() == 'true',
                 'multiuser': False,
                 'required': preference.get('required', 'false').lower() == 'true',
-                'language': str(preference.get('language', 'plaintext'))
+                'language': str(preference.get('language', ''))
             }
 
             if preference_info['type'] == 'list':

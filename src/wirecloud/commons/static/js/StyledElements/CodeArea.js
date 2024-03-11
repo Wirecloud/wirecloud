@@ -21,7 +21,7 @@
 
 /* globals StyledElements */
 
-(function(se, utils, monaco) {
+(function (se, utils, monaco) {
 
     "use strict";
 
