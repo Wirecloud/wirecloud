@@ -7,3 +7,7 @@
     height: 25em;
     width: 100%;
 }
+
+.se-code-area.focused {
+    @include input-focus();
+}

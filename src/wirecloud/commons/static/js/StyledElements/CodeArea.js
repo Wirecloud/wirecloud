@@ -31,10 +31,14 @@
 
     const onfocus = function onfocus() {
         this.dispatchEvent('focus');
+
+        this.wrapperElement.classList.add('focused');
     };
 
     const onblur = function onblur() {
         this.dispatchEvent('blur');
+
+        this.wrapperElement.classList.remove('focused');
     };
 
     /**

@@ -37,6 +37,7 @@
             'BorderLayout': platform.StyledElements.BorderLayout,
             'ButtonsGroup': platform.StyledElements.ButtonsGroup,
             'CheckBox': platform.StyledElements.CheckBox,
+            'CodeArea': platform.StyledElements.CodeArea,
             'Container': platform.StyledElements.Container,
             'DynamicMenuItems': platform.StyledElements.DynamicMenuItems,
             'Event': platform.StyledElements.Event,
