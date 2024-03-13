@@ -21,7 +21,7 @@
 
 /* globals StyledElements */
 
-(function (se, utils, monaco) {
+(function (se, utils) {
 
     "use strict";
 
@@ -41,119 +41,116 @@
         this.wrapperElement.classList.remove('focused');
     };
 
+    const CodeAreaClass = class CodeArea extends se.InputElement {
+
+        constructor(options) {
+            const defaultOptions = {
+                'initialValue': '',
+                'class': '',
+                'language': ''
+            };
+
+            options = utils.merge(defaultOptions, options);
+
+            super(options.initialValue, ['blur', 'change', 'focus']);
+
+            this.wrapperElement = document.createElement("div");
+            this.editor = window.monaco.editor.create(this.wrapperElement, {
+                value: options.initialValue,
+                language: options.language,
+                minimap: { enabled: false },
+                automaticLayout: true
+            });
+
+            this.wrapperElement.className = "se-code-area";
+            if (options.class !== "") {
+                this.wrapperElement.className += " " + options.class;
+            }
+
+            if (options.name) {
+                this.wrapperElement.setAttribute("name", options.name);
+            }
+
+            if (options.id != null) {
+                this.wrapperElement.setAttribute("id", options.id);
+            }
+
+            /* Internal events */
+            this._oninput = oninput.bind(this);
+            this._onfocus = onfocus.bind(this);
+            this._onblur = onblur.bind(this);
+
+            this.editor.onMouseDown((e) => utils.stopPropagationListener(e.event.browserEvent));
+            this.editor.getModel().onDidChangeContent(this._oninput);
+            this.editor.onDidFocusEditorWidget(this._onfocus);
+            this.editor.onDidBlurEditorWidget(this._onblur);
+
+            window.test_editor = this;
+        }
+
+        getValue() {
+            return this.editor.getValue();
+        }
+
+        setValue(newValue) {
+            this.editor.setValue(newValue);
+
+            return this;
+        }
+
+        enable() {
+            this.editor.updateOptions({ readOnly: false });
+
+            return this;
+        }
+
+        disable() {
+            this.editor.updateOptions({ readOnly: true });
+
+            return this;
+        }
+
+        blur() {
+            if (this.editor.hasWidgetFocus) {
+                window.document.activeElement.blur();
+            }
+
+            return this;
+        }
+
+        focus() {
+            this.editor.focus();
+
+            return this;
+        }
+
+        select() {
+            this.editor.setSelection(this.editor.getModel().getFullModelRange());
+        }
+
+        destroy() {
+            this.editor.dispose();
+
+            this.wrapperElement.removeEventListener('click', utils.stopPropagationListener, true);
+
+            delete this._oninput;
+            delete this._onfocus;
+            delete this._onblur;
+
+            super.destroy();
+        }
+
+    };
+
     /**
      * Styled Code Area
      */
-    if (!monaco) {
+    if (!window.monaco) {
         // If monaco is not available, use the TextArea class
         se.CodeArea = se.TextArea;
+        se.__Testing__CodeArea = CodeAreaClass; // For testing purposes
     } else {
-        se.CodeArea = class CodeArea extends se.InputElement {
-
-            constructor(options) {
-                const defaultOptions = {
-                    'initialValue': '',
-                    'class': '',
-                    'language': ''
-                };
-
-                options = utils.merge(defaultOptions, options);
-
-                super(options.initialValue, ['blur', 'change', 'focus']);
-
-                this.wrapperElement = document.createElement("div");
-                this.editor = monaco.editor.create(this.wrapperElement, {
-                    value: options.initialValue,
-                    language: options.language,
-                    minimap: { enabled: false },
-                    automaticLayout: true
-                });
-
-                this.wrapperElement.className = "se-code-area";
-                if (options.class !== "") {
-                    this.wrapperElement.className += " " + options.class;
-                }
-
-                if (options.name) {
-                    this.wrapperElement.setAttribute("name", options.name);
-                }
-
-                if (options.id != null) {
-                    this.wrapperElement.setAttribute("id", options.id);
-                }
-
-                /* Internal events */
-                this._oninput = oninput.bind(this);
-                this._onfocus = onfocus.bind(this);
-                this._onblur = onblur.bind(this);
-
-                this.editor.onMouseDown((e) => utils.stopPropagationListener(e.event.browserEvent));
-                this.editor.getModel().onDidChangeContent(this._oninput);
-                this.editor.onDidFocusEditorWidget(this._onfocus);
-                this.editor.onDidBlurEditorWidget(this._onblur);
-            }
-
-            getValue() {
-                return this.editor.getValue();
-            }
-
-            setValue(newValue) {
-                const oldValue = this.editor.getValue();
-
-                this.editor.setValue(newValue);
-
-                if ('change' in this.events && newValue !== oldValue) {
-                    this.dispatchEvent('change');
-                }
-
-                return this;
-            }
-
-            enable() {
-                this.editor.updateOptions({ readOnly: false });
-
-                return this;
-            }
-
-            disable() {
-                this.editor.updateOptions({ readOnly: true });
-
-                return this;
-            }
-
-            blur() {
-                if (this.editor.hasWidgetFocus) {
-                    this.document.activeElement.blur();
-                }
-                this._onblur();
-
-                return this;
-            }
-
-            focus() {
-                this.editor.focus();
-                this._onfocus();
-
-                return this;
-            }
-
-            select() {
-                this.editor.setSelection(this.editor.getModel().getFullModelRange());
-            }
-
-            destroy() {
-                this.editor.dispose();
-
-                this.wrapperElement.removeEventListener('click', utils.stopPropagationListener, true);
-
-                delete this._oninput;
-                delete this._onfocus;
-                delete this._onblur;
-
-                super.destroy();
-            }
-
-        };
+        se.CodeArea = CodeAreaClass;
     }
 
-})(StyledElements, StyledElements.Utils, window.monaco);
+})(StyledElements, StyledElements.Utils);
