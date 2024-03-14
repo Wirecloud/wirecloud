@@ -21,7 +21,7 @@
 
 /* globals StyledElements */
 
-(function (se, utils) {
+(function (se, utils, window) {
 
     "use strict";
 
@@ -153,4 +153,4 @@
         se.CodeArea = CodeAreaClass;
     }
 
-})(StyledElements, StyledElements.Utils);
+})(StyledElements, StyledElements.Utils, window);
