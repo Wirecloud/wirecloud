@@ -29,6 +29,12 @@
 
         describe("new CodeArea([options])", () => {
 
+            afterEach(() => {
+                if (window.monaco != null) {
+                    delete window.monaco;
+                }
+            });
+
             it("is a class constructor", () => {
                 expect(() => {
                     se.CodeArea();  // eslint-disable-line new-cap
