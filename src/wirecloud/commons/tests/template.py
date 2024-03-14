@@ -174,7 +174,7 @@ class TemplateUtilsTestCase(TestCase):
                 },
                 {
                     'name': 'pref2',
-                    'type': 'text',
+                    'type': 'code',
                     'secure': True,
                     'readonly': True,
                     'label': 'Preference label',
@@ -183,7 +183,7 @@ class TemplateUtilsTestCase(TestCase):
                     'value': '5',
                     'multiuser': False,
                     'required': False,
-                    'language': ''
+                    'language': 'javascript'
                 }
             ],
             'properties': [
