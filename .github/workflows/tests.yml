@@ -157,7 +157,7 @@ jobs:
             curl "http://localhost:8983/solr/admin/cores?action=RELOAD&core=tester"
           fi
           python manage.py collectstatic -v 0 -c --noinput
-          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-search-api'
+          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py,*/wirecloud/commons/utils/template/*" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-search-api'
       - name: Coveralls Parallel
         uses: AndreMiras/coveralls-python-action@develop
         with:
@@ -199,7 +199,7 @@ jobs:
           pip install elasticsearch==2.4.1
           cat ci_scripts/templates/elasticsearch-conf.template >> settings.py
           python manage.py collectstatic -v 0 -c --noinput
-          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-selenium'
+          coverage run -a --branch --source wirecloud --omit="*/wirecloud/semanticwiring/*,*/wirecloud/guidebuilder/*,*/tests/*,*/tests.py,*/wirecloud/commons/utils/template/*" manage.py test --noinput --nologcapture -v 2 -a tags='wirecloud-selenium'
       - name: Coveralls Parallel
         uses: AndreMiras/coveralls-python-action@develop
         with:

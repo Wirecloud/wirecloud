@@ -53,7 +53,7 @@
 
     /* Detect Node.js */
     /* istanbul ignore if */
-    if ((typeof require === 'function') && typeof exports != null) {
+    if ((typeof require === 'function') && (typeof exports !== 'undefined')) {
         NGSI = exports;
         var URL = require('whatwg-url').URL;
     } else {

@@ -263,7 +263,7 @@ def build_xml_document(options):
             preferences_element = etree.SubElement(template, 'preferences')
             for pref in options['preferences']:
                 pref_element = etree.SubElement(preferences_element, 'preference', name=pref['name'])
-                addAttributes(pref, pref_element, ('type', 'label', 'description', 'default'))
+                addAttributes(pref, pref_element, ('type', 'label', 'description', 'default', 'language'))
                 addAttributes(pref, pref_element, ('readonly', 'secure'), default='false', type='boolean')
 
                 if pref['type'] == 'list':

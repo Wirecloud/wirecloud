@@ -41,7 +41,7 @@
     <xs:simpleType name="MacVersionType">
         <xs:restriction base="xs:integer">
             <xs:minInclusive value="1" />
-            <xs:maxInclusive value="2" /> 
+            <xs:maxInclusive value="2" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -215,6 +215,8 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="text"/>
+                    <xs:enumeration value="longtext"/>
+                    <xs:enumeration value="code"/>
                     <xs:enumeration value="number"/>
                     <xs:enumeration value="boolean"/>
                     <xs:enumeration value="password"/>
@@ -271,6 +273,13 @@
             <xs:annotation>
                 <xs:documentation>
                     If false, this field is allowed to be empty/blank. Default is true.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="language" use="optional" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>
+                    Language used in the code editor of the preference (only for code type).
                 </xs:documentation>
             </xs:annotation>
         </xs:attribute>

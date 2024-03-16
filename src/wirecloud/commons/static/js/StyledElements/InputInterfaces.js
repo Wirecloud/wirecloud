@@ -502,4 +502,25 @@
 
     }
 
+    /**
+     *
+     */
+    se.CodeInputInterface = class CodeInputInterface extends se.InputInterface {
+
+        constructor(fieldId, fieldDesc) {
+            super(fieldId, fieldDesc);
+
+            this.inputElement = new StyledElements.CodeArea(fieldDesc);
+        }
+
+        static parse(value) {
+            return value;
+        }
+
+        static stringify(value) {
+            return value;
+        }
+
+    }
+
 })(StyledElements, StyledElements.Utils);

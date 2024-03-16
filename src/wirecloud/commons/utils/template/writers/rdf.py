@@ -538,6 +538,9 @@ def build_rdf_graph(template_info):
             if pref.get('value'):
                 graph.add((pref_node, WIRE['value'], rdflib.Literal(pref['value'])))
 
+            if pref.get('language'):
+                graph.add((pref_node, WIRE['language'], rdflib.Literal(pref.get('language'))))
+
             if pref.get('secure'):
                 graph.add((pref_node, WIRE['secure'], rdflib.Literal(pref.get('secure'))))
 

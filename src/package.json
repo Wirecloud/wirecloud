@@ -13,6 +13,17 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.2",
     "karma-firefox-launcher": "^2.1.0",
-    "karma-jasmine": "^1.0.2"
+    "karma-jasmine": "^1.0.2",
+    "webpack": "^5.76.0",
+    "webpack-cli": "^4.9.2",
+    "style-loader": "^3.3.1",
+    "css-loader": "^5.2.7",
+    "file-loader": "^6.2.0",
+    "monaco-editor": "^0.32.1"
+  },
+
+  "scripts": {
+    "build-monaco": "node ./node_modules/webpack/bin/webpack.js --config ./monaco-scripts/webpack.config.js --progress",
+    "postinstall": "npm run build-monaco"
   }
 }

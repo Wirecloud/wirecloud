@@ -41,7 +41,8 @@
         buttons: StyledElements.ButtonGroupInputInterface,
         file: StyledElements.FileInputInterface,
         fieldset: StyledElements.FieldSetInterface,
-        multivalued: StyledElements.MultivaluedInputInterface
+        multivalued: StyledElements.MultivaluedInputInterface,
+        code: StyledElements.CodeInputInterface
     };
 
     const InputInterfaceFactory = function InputInterfaceFactory() {

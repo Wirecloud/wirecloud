@@ -77,7 +77,7 @@ class build(distutils_build):
 
     """Customized setuptools build command - compile po files before creating the distribution package."""
 
-    sub_commands = [('compiletranslations', None)] + distutils_build.sub_commands
+    sub_commands = [('compiletranslations', None), ('compilemonaco', None)] + distutils_build.sub_commands
 
 
 class sdist(setuptools_sdist):
@@ -131,6 +131,24 @@ class compiletranslations(Command):
 
         os.chdir(oldwd)
 
+class compilemonaco(Command):
+
+    description = 'compile monaco editor'
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import subprocess
+
+        try:
+            subprocess.check_call(['npm', 'install'])
+        except subprocess.CalledProcessError as e:
+            raise Exception('Error compiling monaco editor: %s' % e)
 
 class install(setuptools_install):
 
@@ -200,6 +218,7 @@ setup(
         'build_py': build_wirecloud,
         'install': install,
         'sdist': sdist,
-        'compiletranslations': compiletranslations
+        'compiletranslations': compiletranslations,
+        'compilemonaco': compilemonaco,
     },
 )

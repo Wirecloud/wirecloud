@@ -1,0 +1,13 @@
+@import 'variables';
+@import 'styledelements/input_mixins';
+@import 'compass/css3';
+
+.se-code-area {
+    @include input-base();
+    height: 25em;
+    width: 100%;
+}
+
+.se-code-area.focused {
+    @include input-focus();
+}

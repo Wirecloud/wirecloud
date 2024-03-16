@@ -75,6 +75,8 @@
 <script type="text/javascript" src="{% static "js/lib/moment-timezone-with-data.min.js" %}"></script>
 <script type="text/javascript" src="{% static "js/lib/urlify.js" %}"></script>
 {% endcompress %}
+<script>window.MonacoEnvironment = {basePath: '{% static "js/lib/monaco-editor/" %}'};</script>
+<script type="text/javascript" src="{% static "js/lib/monaco-editor/monaco-main.bundle.js" %}"></script>
 
 <script type="text/javascript" src="{% url "wirecloud.javascript_translation_catalogue" %}?language={{ LANGUAGE_CODE }}&amp;v={{ WIRECLOUD_VERSION_HASH }}"></script>
 

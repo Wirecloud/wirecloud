@@ -51,7 +51,8 @@
             description: {value: options.description},
             required: {value: options.required},
             secure: {value: options.secure},
-            options: {value: options.options}
+            options: {value: options.options},
+            language: {value: options.language}
         });
 
         let default_value = '';
