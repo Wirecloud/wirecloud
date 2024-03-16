@@ -148,7 +148,7 @@ class compilemonaco(Command):
         try:
             subprocess.check_call(['npm', 'install'])
         except subprocess.CalledProcessError as e:
-            print('Error compiling monaco editor: %s' % e)
+            raise Exception('Error compiling monaco editor: %s' % e)
 
 class install(setuptools_install):
 
