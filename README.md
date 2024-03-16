@@ -149,7 +149,7 @@ Wirecloud uses the Monaco Editor as its code editor. The Monaco Editor is the co
 In order to use the Monaco Editor, install the npm dependencies and build the editor:
 
     $ npm install
-    $ npm run build-monaco
+    $ npm run build-monaco (optional, already done by npm install)
 
 This will download the Monaco Editor and build it for Wirecloud.
 

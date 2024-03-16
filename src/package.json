@@ -23,6 +23,7 @@
   },
 
   "scripts": {
-    "build-monaco": "node ./node_modules/webpack/bin/webpack.js --config ./monaco-scripts/webpack.config.js --progress"
+    "build-monaco": "node ./node_modules/webpack/bin/webpack.js --config ./monaco-scripts/webpack.config.js --progress",
+    "postinstall": "npm run build-monaco"
   }
 }
