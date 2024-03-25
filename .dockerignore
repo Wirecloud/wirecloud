@@ -1,0 +1,4 @@
+src/wirecloud/**/tests/
+src/wirecloud/**/test-data/
+src/wirecloud/**/tests.py
+src/js_tests/
