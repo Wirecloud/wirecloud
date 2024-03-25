@@ -1,0 +1,1218 @@
+{
+    "$id": "https://example.com",
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "title": "WireCloud Mashable Application Component Descriptions",
+    "type": "object",
+    "required": [
+        "vendor",
+        "name",
+        "version"
+    ],
+    "properties": {
+        "authors": {
+            "description": "Main developers of this mashable application component",
+            "type": [
+                "array",
+                "string"
+            ],
+            "items": {
+                "$ref": "#/$defs/contact"
+            }
+        },
+        "changelog": {
+            "description": "Relative path to a markdown file detailing the changes made to the mashable application component in each version",
+            "type": "string"
+        },
+        "contributors": {
+            "description": "Contributors of this mashable application component",
+            "type": [
+                "array",
+                "string"
+            ],
+            "items": {
+                "$ref": "#/$defs/contact"
+            }
+        },
+        "description": {
+            "description": "A brief textual description of the mashable application component",
+            "type": "string"
+        },
+        "doc": {
+            "description": "Absolute or template-relative URL of the widget documentation",
+            "type": "string"
+        },
+        "email": {
+            "description": "E-mail address to get in touch with the developer(s)",
+            "type": "string"
+        },
+        "homepage": {
+            "description": "The url to the project homepage",
+            "type": "string"
+        },
+        "image": {
+            "description": "Absolute or template-relative URL of the resource image for the catalog",
+            "type": "string"
+        },
+        "issuetracker": {
+            "description": "Absolute URL of the issue tracker for the mashable application component",
+            "type": "string"
+        },
+        "license": {
+            "description": "Name of the license associated to the mashable application component",
+            "type": "string"
+        },
+        "licenseurl": {
+            "description": "Absolute or template-relative URL of the full license document associated to the mashable application component",
+            "type": "string"
+        },
+        "longDescription": {
+            "description": "A detailed  description of the mashable application component (using Markdown syntax by default)",
+            "type": "string"
+        },
+        "macversion": {
+            "description": "Version of the MACD specification used to describe the mashable application component",
+            "default": 1,
+            "enum": [
+                1,
+                2
+            ],
+            "type": "integer"
+        },
+        "name": {
+            "description": "Name of the mashable application component",
+            "type": "string"
+        },
+        "requirements": {
+            "description": "List of requirements for the mashable application component",
+            "required": [
+                "name"
+            ],
+            "type": "array",
+            "items": {
+                "properties": {
+                    "name": {
+                        "description": "Name of the requirement",
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "smartphoneimage": {
+            "description": "Absolute or template-relative URL of the resource image for the catalog to be used on phones",
+            "type": "string"
+        },
+        "title": {
+            "default": "",
+            "description": "Name used in the user interface for the widget. This field can be translated, therefore this fieldis not used to uniquely identify the widget",
+            "type": "string"
+        },
+        "type": {
+            "description": "Type of the mashable application component",
+            "enum": [
+                "mashup",
+                "operator",
+                "widget"
+            ],
+            "type": "string"
+        },
+        "vendor": {
+            "description": "Name of the vendor of the mashable application component",
+            "type": "string"
+        },
+        "version": {
+            "description": "Version of the mashable application component",
+            "$ref": "#/$defs/version"
+        }
+    },
+    "allOf": [
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "enum": [
+                            "widget",
+                            "operator"
+                        ]
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "preferences": {
+                        "description": "The user preferences, which may be changed through the platform interface",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/component_preference"
+                        }
+                    },
+                    "properties": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/component_property"
+                        }
+                    },
+                    "wiring": {
+                        "default": {},
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/wiring"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "widget"
+                    },
+                    "macversion": {
+                        "const": 1
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "contents": {
+                        "description": "The contents of the widget",
+                        "type": "object",
+                        "required": [
+                            "src"
+                        ],
+                        "properties": {
+                            "src": {
+                                "type": "string"
+                            },
+                            "contenttype": {
+                                "type": "string",
+                                "default": "text/html"
+                            },
+                            "charset": {
+                                "type": "string",
+                                "default": "utf-8"
+                            },
+                            "useplatformstyle": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "cacheable": {
+                                "type": "boolean",
+                                "default": true
+                            },
+                            "altcontents": {
+                                "description": "Alternative contents of the widget",
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "src",
+                                        "scope"
+                                    ],
+                                    "properties": {
+                                        "src": {
+                                            "type": "string"
+                                        },
+                                        "scope": {
+                                            "type": "string",
+                                            "enum": [
+                                                "local",
+                                                "global"
+                                            ]
+                                        },
+                                        "contenttype": {
+                                            "type": "string",
+                                            "default": "text/html"
+                                        },
+                                        "charset": {
+                                            "type": "string",
+                                            "default": "utf-8"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "widget"
+                    }
+                }
+            },
+            "then": {
+                "required": [
+                    "widget_width",
+                    "widget_height"
+                ],
+                "properties": {
+                    "widget_width": {
+                        "$ref": "#/$defs/size"
+                    },
+                    "widget_height": {
+                        "$ref": "#/$defs/size"
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "oneOf": [
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "widget"
+                            },
+                            "macversion": {
+                                "minimum": 2
+                            }
+                        }
+                    },
+                    {
+                        "properties": {
+                            "type": {
+                                "const": "operator"
+                            }
+                        }
+                    }
+                ]
+            },
+            "then": {
+                "properties": {
+                    "js_files": {
+                        "description": "List of scripts the operator is going to use",
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/js_files"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "mashup"
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "preferences": {
+                        "description": "The user preferences",
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": {
+                                "type": "string",
+                                "description": "A user preference"
+                            }
+                        }
+                    },
+                    "tabs": {
+                        "description": "List of mashup tabs",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/mashup_tab"
+                        }
+                    },
+                    "params": {
+                        "description": "Mashup parameters",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/mashup_param"
+                        }
+                    },
+                    "embedded": {
+                        "type": "array",
+                        "required": [
+                            "vendor",
+                            "name",
+                            "version",
+                            "src"
+                        ],
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "vendor": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "version": {
+                                    "$ref": "#/$defs/version"
+                                },
+                                "src": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": "The list of embedded resources for this mashup"
+                    },
+                    "wiring": {
+                        "default": {
+                            "version": "2.0",
+                            "connections": [],
+                            "operators": {},
+                            "visualdescription": {
+                                "behaviours": [],
+                                "components": {
+                                    "operator": {},
+                                    "widget": {}
+                                },
+                                "connections": []
+                            }
+                        },
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/wiring"
+                            },
+                            {
+                                "$ref": "#/$defs/wiring_mashup"
+                            }
+                        ],
+                        "description": "Mashup wiring"
+                    }
+                }
+            }
+        },
+        {
+            "if": {
+                "properties": {
+                    "type": {
+                        "enum": [
+                            "widget",
+                            "operator"
+                        ]
+                    },
+                    "macversion": {
+                        "minimum": 2
+                    }
+                }
+            },
+            "then": {
+                "properties": {
+                    "entrypoint": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    ],
+    "$defs": {
+        "component_preference": {
+            "description": "The user preferences, which may be changed through the platform interface. This element consisting of one, several or even none preference sub-elements",
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "name": {
+                    "description": "Name of the preference",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type of the preference",
+                    "type": "string",
+                    "enum": [
+                        "text",
+                        "boolean",
+                        "number",
+                        "password",
+                        "list"
+                    ]
+                },
+                "label": {
+                    "description": "Label of the preference",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description of the preference",
+                    "type": "string"
+                },
+                "default": {
+                    "description": "Default value of the preference",
+                    "type": [
+                        "string",
+                        "boolean",
+                        "number"
+                    ]
+                },
+                "readOnly": {
+                    "description": "Whether the preference is read-only",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "secure": {
+                    "description": "Direct access from the javascript code of the application mashup component to this variable is disallowed if the value of this attribute is true",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "required": {
+                    "description": "Whether the preference is required",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "multiuser": {
+                    "description": "Whether to store a different value for each user",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "if": {
+                    "properties": {
+                        "type": {
+                            "enum": [
+                                "list"
+                            ]
+                        }
+                    }
+                },
+                "then": {
+                    "required": [
+                        "options"
+                    ],
+                    "properties": {
+                        "options": {
+                            "description": "List of options for the preference",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "required": [
+                                    "value"
+                                ],
+                                "properties": {
+                                    "value": {
+                                        "description": "Value of the preference",
+                                        "type": [
+                                            "string",
+                                            "boolean",
+                                            "number"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "else": {
+                    "description": "The value of the preference",
+                    "required": [
+                        "value"
+                    ],
+                    "properties": {
+                        "value": {
+                            "type": [
+                                "string",
+                                "boolean",
+                                "number"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "component_property": {
+            "description": "The properties, that save persistent information about the component",
+            "type": "object",
+            "required": [
+                "name",
+                "type"
+            ],
+            "properties": {
+                "name": {
+                    "description": "Name of the property",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type of the property",
+                    "type": "string",
+                    "enum": [
+                        "text",
+                        "boolean",
+                        "number",
+                        "password",
+                        "list"
+                    ]
+                },
+                "label": {
+                    "description": "Label of the property",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description of the property",
+                    "type": "string"
+                },
+                "default": {
+                    "description": "Default value of the property",
+                    "type": [
+                        "string",
+                        "boolean",
+                        "number"
+                    ]
+                },
+                "secure": {
+                    "description": "Direct access from the javascript code of the application mashup component to this variable is disallowed if the value of this attribute is true",
+                    "type": "boolean",
+                    "default": false
+                },
+                "multiuser": {
+                    "description": "Whether to store a different value for each user",
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "mashup_tab": {
+            "description": "A mashup tab",
+            "type": "object",
+            "required": [
+                "name",
+                "preferences",
+                "resources"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "resources": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "id",
+                            "name",
+                            "vendor",
+                            "version",
+                            "title",
+                            "position",
+                            "rendering"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "vendor": {
+                                "type": "string"
+                            },
+                            "version": {
+                                "$ref": "#/$defs/version"
+                            },
+                            "title": {
+                                "type": "string"
+                            },
+                            "readOnly": {
+                                "type": "boolean",
+                                "default": false
+                            },
+                            "properties": {
+                                "type": "object",
+                                "default": {},
+                                "patternProperties": {
+                                    ".*": {
+                                        "type": "object",
+                                        "required": [
+                                            "value"
+                                        ],
+                                        "properties": {
+                                            "readonly": {
+                                                "type": "boolean",
+                                                "default": false
+                                            },
+                                            "hidden": {
+                                                "type": "boolean",
+                                                "default": false
+                                            },
+                                            "value": {
+                                                "type": [
+                                                    "string",
+                                                    "boolean",
+                                                    "number",
+                                                    "null"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "preferences": {
+                                "type": "object",
+                                "default": {},
+                                "patternProperties": {
+                                    ".*": {
+                                        "type": "object",
+                                        "required": [
+                                            "value"
+                                        ],
+                                        "properties": {
+                                            "readonly": {
+                                                "type": "boolean",
+                                                "default": false
+                                            },
+                                            "value": {
+                                                "type": [
+                                                    "string",
+                                                    "boolean",
+                                                    "number",
+                                                    "null"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "rendering": {
+                                "type": "object",
+                                "required": [
+                                    "width",
+                                    "height",
+                                    "layout"
+                                ],
+                                "properties": {
+                                    "fulldragboard": {
+                                        "type": "boolean"
+                                    },
+                                    "minimized": {
+                                        "type": "boolean"
+                                    },
+                                    "width": {
+                                        "$ref": "#/$defs/size"
+                                    },
+                                    "height": {
+                                        "$ref": "#/$defs/size"
+                                    },
+                                    "layout": {
+                                        "type": [
+                                            "string",
+                                            "integer"
+                                        ]
+                                    },
+                                    "relwidth": {
+                                        "type": "boolean"
+                                    },
+                                    "relheight": {
+                                        "type": "boolean"
+                                    },
+                                    "titlevisible": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            },
+                            "position": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/Position2D"
+                                    }
+                                ],
+                                "type": "object",
+                                "required": [
+                                    "z"
+                                ],
+                                "properties": {
+                                    "anchor": {
+                                        "type": "string"
+                                    },
+                                    "relx": {
+                                        "type": "boolean"
+                                    },
+                                    "rely": {
+                                        "type": "boolean"
+                                    },
+                                    "z": {
+                                        "type": [
+                                            "number",
+                                            "string"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "mashup_param": {
+            "type": "object",
+            "required": [
+                "name",
+                "type",
+                "value"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "readonly": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "default": {
+                    "type": [
+                        "string",
+                        "boolean",
+                        "number"
+                    ]
+                },
+                "value": {
+                    "type": [
+                        "string",
+                        "boolean",
+                        "number",
+                        "null"
+                    ]
+                },
+                "required": {
+                    "type": "boolean",
+                    "default": false
+                }
+            }
+        },
+        "Position2D": {
+            "type": "object",
+            "required": [
+                "x",
+                "y"
+            ],
+            "properties": {
+                "x": {
+                    "type": [
+                        "number",
+                        "string"
+                    ]
+                },
+                "y": {
+                    "type": [
+                        "number",
+                        "string"
+                    ]
+                }
+            }
+        },
+        "js_files": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "contact": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "wiring": {
+            "type": "object",
+            "required": [],
+            "properties": {
+                "version": {
+                    "type": "string",
+                    "default": "1.0"
+                },
+                "inputs": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "type"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            },
+                            "label": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "actionlabel": {
+                                "type": "string"
+                            },
+                            "friendcode": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "outputs": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "name",
+                            "type"
+                        ],
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "type": {
+                                "type": "string"
+                            },
+                            "label": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "friendcode": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "wiring_mashup": {
+            "$comment": "extra wiring properties of mashups",
+            "type": "object",
+            "required": [],
+            "properties": {
+                "connections": {
+                    "type": "array",
+                    "default": [],
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "source",
+                            "target"
+                        ],
+                        "properties": {
+                            "source": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/endpoint"
+                                    }
+                                ]
+                            },
+                            "target": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/$defs/endpoint"
+                                    }
+                                ]
+                            },
+                            "readonly": {
+                                "type": "boolean",
+                                "default": false
+                            }
+                        }
+                    }
+                },
+                "operators": {
+                    "type": "object",
+                    "default": {},
+                    "patternProperties": {
+                        ".*": {
+                            "type": "object",
+                            "required": [
+                                "id",
+                                "name",
+                                "preferences"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "preferences": {
+                                    "type": "object",
+                                    "default": {},
+                                    "patternProperties": {
+                                        ".*": {
+                                            "type": "object",
+                                            "required": [
+                                                "value"
+                                            ],
+                                            "properties": {
+                                                "readonly": {
+                                                    "type": "boolean",
+                                                    "default": false
+                                                },
+                                                "hidden": {
+                                                    "type": "boolean",
+                                                    "default": false
+                                                },
+                                                "value": {
+                                                    "type": [
+                                                        "string",
+                                                        "boolean",
+                                                        "number",
+                                                        "null"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "wiring_visualdescription": {
+            "type": "object",
+            "required": [],
+            "properties": {
+                "behaviours": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/visualdescription_behabiours"
+                        }
+                    ]
+                },
+                "components": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/visualdescription_components"
+                        }
+                    ]
+                },
+                "connections": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/visualdescription_connections"
+                        }
+                    ]
+                }
+            }
+        },
+        "visualdescription_components": {
+            "type": "array",
+            "enum": [
+                "operator",
+                "widget"
+            ],
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                        "collapsed": {
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "endpoints": {
+                            "type": "object",
+                            "default": {},
+                            "properties": {
+                                "source": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "target": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "position": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/Position2D"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "visualdescription_connections": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "sourcename",
+                    "targetname",
+                    "sourcehandle",
+                    "targethandle"
+                ],
+                "properties": {
+                    "sourcename": {
+                        "type": "string"
+                    },
+                    "targetname": {
+                        "type": "string"
+                    },
+                    "sourcehandle": {
+                        "type": [
+                            "string",
+                            "object"
+                        ],
+                        "if": {
+                            "type": "object"
+                        },
+                        "then": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/Position2D"
+                                }
+                            ]
+                        },
+                        "else": {
+                            "enum": [
+                                "auto"
+                            ]
+                        }
+                    },
+                    "targethandle": {
+                        "type": [
+                            "string",
+                            "object"
+                        ],
+                        "if": {
+                            "type": "object"
+                        },
+                        "then": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/$defs/Position2D"
+                                }
+                            ]
+                        },
+                        "else": {
+                            "enum": [
+                                "auto"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "visualdescription_behabiours": {
+            "default": {
+                "title": null,
+                "description": null,
+                "components": {
+                    "operator": {},
+                    "widget": {}
+                },
+                "connections": []
+            },
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "description"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "components": {
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/visualdescription_components"
+                            }
+                        ]
+                    },
+                    "connections": {
+                        "allOf": [
+                            {
+                                "$ref": "#/$defs/visualdescription_connections"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "translations": {
+            "type": "object",
+            "default": {},
+            "patternProperties": {
+                ".*": {
+                    "type": "string"
+                }
+            }
+        },
+        "endpoint": {
+            "type": "object",
+            "required": [
+                "type",
+                "endpoint",
+                "id"
+            ],
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "endpoint": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": [
+                        "string",
+                        "integer"
+                    ]
+                }
+            }
+        },
+        "size": {
+            "type": "string",
+            "pattern": "\\d+(\\.\\d+)?\\s*(px|%)?"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "([1-9]\\d*\\.|0\\.)*([1-9]\\d*|0)((a|b|rc)[1-9]\\d*)?(-dev.*)?"
+        },
+        "name": {
+            "type": "string",
+            "pattern": "[^/]+"
+        }
+    }
+}
