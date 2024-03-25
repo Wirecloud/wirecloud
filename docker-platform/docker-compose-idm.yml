@@ -1,0 +1,83 @@
+version: "3"
+
+services:
+
+    nginx:
+        restart: always
+        image: nginx:latest
+        ports:
+            - 80:80
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+            - wirecloud-static:/var/www/static:ro
+        depends_on:
+            - wirecloud
+
+
+    postgres:
+        restart: always
+        image: postgres:latest
+        environment:
+            - POSTGRES_PASSWORD=wirepass   # Change this password!
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+
+
+    elasticsearch:
+        restart: always
+        image: elasticsearch:2.4
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        command: elasticsearch -Des.index.max_result_window=50000
+
+
+    memcached:
+        restart: always
+        image: memcached:1
+        command: memcached -m 2048m
+
+
+    mysql:
+        restart: always
+        image: mysql/mysql-server:5.7.21
+        environment:
+            - MYSQL_ROOT_PASSWORD=idm
+            - MYSQL_ROOT_HOST=%
+
+
+    keyrock:
+        restart: always
+        image: fiware/idm:7.0.2
+        ports:
+            - 3000:3000
+        environment:
+            - DATABASE_HOST=mysql
+
+
+    wirecloud:
+        restart: always
+        image: fiware/wirecloud:dev
+        depends_on:
+            - postgres
+            - elasticsearch
+            - memcached
+        environment:
+            - DEBUG=False
+            # - DEFAULT_THEME=wirecloud.defaulttheme
+            - DB_HOST=postgres
+            - DB_PASSWORD=wirepass   # Change this password!
+            - FORWARDED_ALLOW_IPS=*
+            - ELASTICSEARCH2_URL=http://elasticsearch:9200/
+            - MEMCACHED_LOCATION=memcached:11211
+            - FIWARE_IDM_SERVER=${FIWARE_IDM_SERVER}
+            - SOCIAL_AUTH_FIWARE_KEY=${SOCIAL_AUTH_FIWARE_KEY}
+            - SOCIAL_AUTH_FIWARE_SECRET=${SOCIAL_AUTH_FIWARE_SECRET}
+        volumes:
+            - wirecloud-data:/opt/wirecloud_instance/data
+            - wirecloud-static:/var/www/static
+
+volumes:
+    elasticsearch-data:
+    postgres-data:
+    wirecloud-data:
+    wirecloud-static:
