@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+
+    nginx:
+        restart: always
+        image: nginx:latest
+        ports:
+            - 80:80
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+            - wirecloud-static:/var/www/static:ro
+        depends_on:
+            - wirecloud
+
+
+    postgres:
+        restart: always
+        image: postgres:latest
+        environment:
+            - POSTGRES_PASSWORD=wirepass   # Change this password!
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+
+
+    elasticsearch:
+        restart: always
+        image: elasticsearch:2.4
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        command: elasticsearch -Des.index.max_result_window=50000
+
+
+    memcached:
+        restart: always
+        image: memcached:1
+        command: memcached -m 2048m
+
+
+    wirecloud:
+        restart: always
+        image: fiware/wirecloud:dev
+        depends_on:
+            - postgres
+            - elasticsearch
+            - memcached
+        environment:
+            - DEBUG=False
+            # - DEFAULT_THEME=wirecloud.defaulttheme
+            - DB_HOST=postgres
+            - DB_PASSWORD=wirepass   # Change this password!
+            - FORWARDED_ALLOW_IPS=*
+            - ELASTICSEARCH2_URL=http://elasticsearch:9200/
+            - MEMCACHED_LOCATION=memcached:11211
+            # Uncomment the following environment variables to enable IDM integration
+            #- FIWARE_IDM_SERVER=${FIWARE_IDM_SERVER}
+            #- SOCIAL_AUTH_FIWARE_KEY=${SOCIAL_AUTH_FIWARE_KEY}
+            #- SOCIAL_AUTH_FIWARE_SECRET=${SOCIAL_AUTH_FIWARE_SECRET}
+        volumes:
+            - wirecloud-data:/opt/wirecloud_instance/data
+            - wirecloud-static:/var/www/static
+            - ./settings.py:/opt/wirecloud_instance/wirecloud_instance/settings.py:ro
+
+volumes:
+    elasticsearch-data:
+    postgres-data:
+    wirecloud-data:
+    wirecloud-static:
