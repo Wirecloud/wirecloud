@@ -180,12 +180,7 @@ def get_default_view(request):
 
     if 'default_mode' not in request.session:
         user_agent = ua_parse(request.META.get('HTTP_USER_AGENT', ''))
-        if user_agent.is_mobile:
-            mode = 'smartphone'
-        else:
-            mode = 'classic'
-
-        request.session['default_mode'] = mode
+        request.session['default_mode'] = 'smartphone' if user_agent.is_mobile else 'classic'
 
     return request.session['default_mode']
 

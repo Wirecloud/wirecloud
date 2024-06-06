@@ -8,6 +8,9 @@
 /build/
 /htmlcov/
 /dist/
+/coverage/
+/solr_conf/
+/whoosh_index/
 *.pyc
 *.mo
 *.db
@@ -18,3 +21,5 @@
 nosetests.xml
 *.swp
 *.swo
+*.log
+*.bak

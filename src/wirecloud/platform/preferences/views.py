@@ -320,10 +320,12 @@ class WorkspacePreferencesCollection(Resource):
                 workspace.requireauth = preferences_json['requireauth']['value'].strip().lower() == 'true'
             del preferences_json['requireauth']
 
-        if save_workspace:
-            workspace.save()
+        update_workspace_preferences(workspace, preferences_json, not save_workspace)
 
-        update_workspace_preferences(workspace, preferences_json)
+        if save_workspace:
+            cache_key = make_workspace_preferences_cache_key(workspace)
+            cache.delete(cache_key)
+            workspace.save()
 
         return HttpResponse(status=204)
 
