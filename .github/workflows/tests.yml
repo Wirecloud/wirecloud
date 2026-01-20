@@ -24,7 +24,6 @@ jobs:
         working-directory: ./src
         run: |
           npm ci
-          npm install grunt-cli -g
           grunt ci
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@release/v2

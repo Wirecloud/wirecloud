@@ -20,6 +20,9 @@ permissions:
 
 jobs:
   build:
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
     runs-on: ubuntu-latest
     steps:
       # Get the repository's code
@@ -31,7 +34,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: fiware/wirecloud, quay.io/fiware/wirecloud
+          images: |
+            ${{ env.DOCKERHUB_USERNAME && 'fiware/wirecloud' || '' }}
+            ${{ env.QUAY_USERNAME && 'quay.io/fiware/wirecloud' || '' }}
+            ghcr.io/${{ github.repository }}
 
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
@@ -58,15 +64,21 @@ jobs:
               "var-cache-apt": "/var/cache/apt",
               "root-cache-pip": "/root/.cache/pip"
             }
-  
-      - name: Login to DockerHub
+      - name: Login to GHCR
         if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request' && env.DOCKERHUB_USERNAME
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Login to Quay.io
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && env.QUAY_USERNAME
         uses: docker/login-action@v3
         with:
           registry: quay.io
