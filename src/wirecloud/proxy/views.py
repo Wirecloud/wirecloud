@@ -141,7 +141,9 @@ class Proxy():
     socket.setdefaulttimeout(60)
 
     def do_request(self, request, url, method, request_data):
-
+        
+        parsed_url = urlparse(url)
+        protocol = parsed_url.scheme.upper()
         url = iri_to_uri(url)
 
         request_data.update({
@@ -165,7 +167,7 @@ class Proxy():
         else:
             protocolVersion = '1.1'
 
-        via_header = "%s %s (Wirecloud-python-Proxy/1.1)" % (protocolVersion, get_current_domain(request))
+        via_header = "%s/%s %s (Wirecloud-python-Proxy/1.1)" % (protocol, protocolVersion, get_current_domain(request))
         if 'via' in request_data['headers']:
             request_data['headers']['via'] += ', ' + via_header
         else:
