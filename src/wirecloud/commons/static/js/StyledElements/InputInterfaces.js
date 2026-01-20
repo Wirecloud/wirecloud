@@ -36,7 +36,8 @@
         COLOR_ERROR: 5,
         BOOLEAN_ERROR: 6,
         VERSION_ERROR: 7,
-        OUT_OF_RANGE_ERROR: 8
+        OUT_OF_RANGE_ERROR: 8,
+        SCREEN_SIZES_ERROR: 9
     };
 
     se.ValidationErrorManager = class ValidationErrorManager {
@@ -88,6 +89,9 @@
                 break;
             case StyledElements.InputValidationError.OUT_OF_RANGE_ERROR:
                 msg = StyledElements.Utils.gettext("The following fields does contain an out of range value: %(fields)s.");
+                break;
+            case StyledElements.InputValidationError.SCREEN_SIZES_ERROR:
+                msg = StyledElements.Utils.gettext("The sceen sizes are not correct. They must cover the whole range of possible screen sizes without gaps or overlaps.");
                 break;
             }
 

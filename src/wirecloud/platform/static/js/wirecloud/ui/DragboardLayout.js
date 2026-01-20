@@ -35,10 +35,10 @@
     };
 
     /**
-     * @private
-     *
      * Checks that the given widget has a minimal size. This check is performed using
      * widget content size.
+     *
+     * @private
      */
     const ensureMinimalSize = function ensureMinimalSize(widget, persist) {
         const minWidth = Math.ceil(this.fromPixelsToHCells(80));
@@ -126,7 +126,7 @@
             }
         }
 
-        adaptColumnOffset(pixels) {
+        adaptColumnOffset(pixels, width) {
             const msg = utils.interpolate(
                 "method \"%(method)s\" must be implemented.",
                 {method: "adaptColumnOffset"},
@@ -162,7 +162,7 @@
             return new Wirecloud.ui.MultiValuedSize(this.getHeightInPixels(sizeInLU), sizeInLU);
         }
 
-        adaptWidth(size) {
+        adaptWidth(size, width) {
             let pixels, sizeInLU;
 
             const parsedSize = this.parseSize(size);
@@ -170,14 +170,14 @@
                 sizeInLU = Math.round(parsedSize[0]);
             } else {
                 if (parsedSize[1] === '%') {
-                    pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+                    pixels = Math.round((parsedSize[0] * (width || this.getWidth())) / 100);
                 } else {
                     pixels = this.padWidth(parsedSize[0]);
                 }
-                sizeInLU = Math.round(this.fromPixelsToHCells(pixels));
+                sizeInLU = Math.round(this.fromPixelsToHCells(pixels, width));
             }
             sizeInLU = Math.max(1, sizeInLU);
-            return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU), sizeInLU);
+            return new Wirecloud.ui.MultiValuedSize(this.getWidthInPixels(sizeInLU, width), sizeInLU);
         }
 
         updatePosition(widget, element) {
@@ -260,10 +260,10 @@
         }
 
         /**
-         * @private
-         *
          * This function should be called at the end of the implementation of addWidget.
-         */
+         *
+         * @private
+        */
         _adaptIWidget(widget) {
             if (widget.element != null) {
                 ensureMinimalSize.call(this, widget, false);
@@ -286,6 +286,15 @@
             widget.removeEventListener('remove', this._on_remove_widget_bound);
 
             return new Set();
+        }
+
+        /**
+         * Removes all event listeners associated with the widget
+         *
+         * @param {WidgetView} widget
+         */
+        removeWidgetEventListeners(widget) {
+            widget.removeEventListener('remove', this._on_remove_widget_bound);
         }
 
         /**

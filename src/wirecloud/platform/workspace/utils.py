@@ -515,7 +515,6 @@ def get_tab_data(tab, workspace=None, cache_manager=None, user=None):
 
 def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
 
-    widget_position = iwidget.positions.get('widget', {})
     permissions = iwidget.permissions
     if workspace.creator != user and 'owner' in permissions:
         del permissions['owner']
@@ -526,24 +525,38 @@ def get_iwidget_data(iwidget, workspace, cache_manager=None, user=None):
         'tab': iwidget.tab.id,
         'layout': iwidget.layout,
         'widget': iwidget.widget_uri,
-        'top': widget_position.get('top', 0),
-        'left': widget_position.get('left', 0),
-        'anchor': widget_position.get('anchor', 'top-left'),
-        'relx': True if iwidget.layout != 1 else widget_position.get('relx', True),
-        'rely': True if iwidget.layout != 1 else widget_position.get('rely', False),
-        'relheight': True if iwidget.layout != 1 else widget_position.get('relheight', False),
-        'relwidth': True if iwidget.layout != 1 else widget_position.get('relwidth', True),
-        'zIndex': widget_position.get('zIndex', 0),
-        'width': widget_position.get('width', 0),
-        'height': widget_position.get('height', 0),
-        'fulldragboard': widget_position.get('fulldragboard', False),
-        'minimized': widget_position.get('minimized', False),
+        'layoutConfigurations': [],
         'readonly': iwidget.readOnly,
         'permissions': permissions,
         'preferences': {},
-        'properties': {},
-        'titlevisible': widget_position.get('titlevisible', True),
+        'properties': {}
     }
+
+    if not 'configurations' in iwidget.positions:
+        raise ValueError(_('Invalid iwidget format stored in the database. Please, update the iwidget positions field.'))
+
+    for layoutConfiguration in iwidget.positions.get('configurations'):
+        widget_position = layoutConfiguration.get('widget', {})
+        dataLayout = {
+            'top': widget_position.get('top', 0),
+            'left': widget_position.get('left', 0),
+            'anchor': widget_position.get('anchor', 'top-left'),
+            'relx': True if iwidget.layout != 1 else widget_position.get('relx', True),
+            'rely': True if iwidget.layout != 1 else widget_position.get('rely', False),
+            'relheight': True if iwidget.layout != 1 else widget_position.get('relheight', False),
+            'relwidth': True if iwidget.layout != 1 else widget_position.get('relwidth', True),
+            'zIndex': widget_position.get('zIndex', 0),
+            'width': widget_position.get('width', 0),
+            'height': widget_position.get('height', 0),
+            'fulldragboard': widget_position.get('fulldragboard', False),
+            'minimized': widget_position.get('minimized', False),
+            'titlevisible': widget_position.get('titlevisible', True),
+            'id': layoutConfiguration.get('id', 0),
+            'moreOrEqual': layoutConfiguration.get('moreOrEqual', 0),
+            'lessOrEqual': layoutConfiguration.get('lessOrEqual', -1)
+        }
+
+        data_ret['layoutConfigurations'].append(dataLayout)
 
     if iwidget.widget is None or not iwidget.widget.resource.is_available_for(workspace.creator):
         # The widget used by this iwidget is missing

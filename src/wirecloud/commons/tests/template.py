@@ -590,6 +590,7 @@ class TemplateUtilsTestCase(TestCase):
                             'version': '1.0',
                             'title': 'Widget title',
                             'readonly': False,
+                            'layout': 0,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
                                 'prop2': {'value': 'value 2', 'readonly': True}
@@ -600,24 +601,28 @@ class TemplateUtilsTestCase(TestCase):
                                 'password': {'value': None, 'readonly': True, 'hidden': True},
                                 'boolean': {'value': None, 'readonly': True, 'hidden': False}
                             },
-                            'position': {
-                                'anchor': 'top-left',
-                                'relx': True,
-                                'rely': True,
-                                'x': '0',
-                                'y': '1',
-                                'z': '2',
-                            },
-                            'rendering': {
-                                'relwidth': True,
-                                'relheight': True,
-                                'width': '10',
-                                'height': '10',
-                                'layout': 0,
-                                'fulldragboard': False,
-                                'minimized': False,
-                                'titlevisible': True
-                            }
+                            'screenSizes': [{
+                                'id': 0,
+                                'moreOrEqual': 0,
+                                'lessOrEqual': -1,
+                                'position': {
+                                    'anchor': 'top-left',
+                                    'relx': True,
+                                    'rely': True,
+                                    'x': '0',
+                                    'y': '1',
+                                    'z': '2',
+                                },
+                                'rendering': {
+                                    'relwidth': True,
+                                    'relheight': True,
+                                    'width': '10',
+                                    'height': '10',
+                                    'fulldragboard': False,
+                                    'minimized': False,
+                                    'titlevisible': True
+                                }
+                            }]
                         },
                         {
                             'id': '2',
@@ -626,6 +631,7 @@ class TemplateUtilsTestCase(TestCase):
                             'version': '2.0',
                             'readonly': True,
                             'title': 'Widget title',
+                            'layout': 0,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
                                 'prop2': {'value': None, 'readonly': True}
@@ -633,24 +639,28 @@ class TemplateUtilsTestCase(TestCase):
                             'preferences': {
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
-                            'position': {
-                                'anchor': 'bottom-left',
-                                'relx': False,
-                                'rely': False,
-                                'x': '10',
-                                'y': '1',
-                                'z': '2',
-                            },
-                            'rendering': {
-                                'relwidth': False,
-                                'relheight': False,
-                                'width': '10',
-                                'height': '10',
-                                'layout': 0,
-                                'fulldragboard': True,
-                                'minimized': True,
-                                'titlevisible': True
-                            }
+                            'screenSizes': [{
+                                'id': 0,
+                                'moreOrEqual': 0,
+                                'lessOrEqual': -1,
+                                'position': {
+                                    'anchor': 'bottom-left',
+                                    'relx': False,
+                                    'rely': False,
+                                    'x': '10',
+                                    'y': '1',
+                                    'z': '2',
+                                },
+                                'rendering': {
+                                    'relwidth': False,
+                                    'relheight': False,
+                                    'width': '10',
+                                    'height': '10',
+                                    'fulldragboard': True,
+                                    'minimized': True,
+                                    'titlevisible': True
+                                }
+                            }]
                         }
                     ]
                 },
@@ -809,6 +819,7 @@ class TemplateUtilsTestCase(TestCase):
                             'version': '1.0',
                             'title': 'Widget title',
                             'readonly': False,
+                            'layout': 0,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
                                 'prop2': {'value': 'value 2', 'readonly': True}
@@ -817,24 +828,28 @@ class TemplateUtilsTestCase(TestCase):
                                 'list': {'value': 'default', 'readonly': True, 'hidden': False},
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
-                            'position': {
-                                'anchor': 'top-left',
-                                'relx': True,
-                                'rely': True,
-                                'x': '0',
-                                'y': '1',
-                                'z': '2',
-                            },
-                            'rendering': {
-                                'relwidth': True,
-                                'relheight': True,
-                                'width': '10',
-                                'height': '10',
-                                'layout': 0,
-                                'fulldragboard': False,
-                                'minimized': False,
-                                'titlevisible': False
-                            }
+                            'screenSizes': [{
+                                'id': 0,
+                                'moreOrEqual': 0,
+                                'lessOrEqual': -1,
+                                'position': {
+                                    'anchor': 'top-left',
+                                    'relx': True,
+                                    'rely': True,
+                                    'x': '0',
+                                    'y': '1',
+                                    'z': '2',
+                                },
+                                'rendering': {
+                                    'relwidth': True,
+                                    'relheight': True,
+                                    'width': '10',
+                                    'height': '10',
+                                    'fulldragboard': False,
+                                    'minimized': False,
+                                    'titlevisible': False
+                                }
+                            }]
                         },
                         {
                             'id': '2',
@@ -843,30 +858,35 @@ class TemplateUtilsTestCase(TestCase):
                             'version': '2.0',
                             'title': 'Widget title',
                             'readonly': True,
+                            'layout': 0,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
                             },
                             'preferences': {
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
-                            'position': {
-                                'anchor': 'top-left',
-                                'relx': True,
-                                'rely': True,
-                                'x': '10',
-                                'y': '1',
-                                'z': '2',
-                            },
-                            'rendering': {
-                                'relwidth': True,
-                                'relheight': True,
-                                'width': '10',
-                                'height': '10',
-                                'layout': 0,
-                                'fulldragboard': True,
-                                'minimized': True,
-                                'titlevisible': False
-                            }
+                            'screenSizes': [{
+                                'id': 0,
+                                'moreOrEqual': 0,
+                                'lessOrEqual': -1,
+                                'position': {
+                                    'anchor': 'top-left',
+                                    'relx': True,
+                                    'rely': True,
+                                    'x': '10',
+                                    'y': '1',
+                                    'z': '2',
+                                },
+                                'rendering': {
+                                    'relwidth': True,
+                                    'relheight': True,
+                                    'width': '10',
+                                    'height': '10',
+                                    'fulldragboard': True,
+                                    'minimized': True,
+                                    'titlevisible': False
+                                }
+                            }]
                         }
                     ]
                 },
@@ -1056,6 +1076,7 @@ class TemplateUtilsTestCase(TestCase):
                             'version': '1.0',
                             'title': 'Widget title',
                             'readonly': False,
+                            'layout': 0,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False},
                                 'prop2': {'value': '%(param.param1)', 'readonly': True}
@@ -1064,24 +1085,28 @@ class TemplateUtilsTestCase(TestCase):
                                 'list': {'value': '%(param.param1)', 'readonly': True, 'hidden': False},
                                 'text': {'value': '%(param.param2)', 'readonly': True, 'hidden': True}
                             },
-                            'position': {
-                                'anchor': 'top-left',
-                                'relx': True,
-                                'rely': True,
-                                'x': '0',
-                                'y': '1',
-                                'z': '2',
-                            },
-                            'rendering': {
-                                'relwidth': True,
-                                'relheight': True,
-                                'width': '10',
-                                'height': '10',
-                                'layout': 0,
-                                'fulldragboard': False,
-                                'minimized': False,
-                                'titlevisible': False
-                            }
+                            'screenSizes': [{
+                                'id': 0,
+                                'moreOrEqual': 0,
+                                'lessOrEqual': -1,
+                                'position': {
+                                    'anchor': 'top-left',
+                                    'relx': True,
+                                    'rely': True,
+                                    'x': '0',
+                                    'y': '1',
+                                    'z': '2',
+                                },
+                                'rendering': {
+                                    'relwidth': True,
+                                    'relheight': True,
+                                    'width': '10',
+                                    'height': '10',
+                                    'fulldragboard': False,
+                                    'minimized': False,
+                                    'titlevisible': False
+                                }
+                            }]
                         },
                         {
                             'id': '2',
@@ -1090,30 +1115,35 @@ class TemplateUtilsTestCase(TestCase):
                             'version': '2.0',
                             'title': 'Widget title',
                             'readonly': True,
+                            'layout': 0,
                             'properties': {
                                 'prop1': {'value': 'value1', 'readonly': False}
                             },
                             'preferences': {
                                 'text': {'value': 'other value', 'readonly': True, 'hidden': True}
                             },
-                            'position': {
-                                'anchor': 'top-left',
-                                'relx': True,
-                                'rely': True,
-                                'x': '10',
-                                'y': '1',
-                                'z': '2',
-                            },
-                            'rendering': {
-                                'relwidth': True,
-                                'relheight': True,
-                                'width': '10',
-                                'height': '10',
-                                'layout': 0,
-                                'fulldragboard': True,
-                                'minimized': True,
-                                'titlevisible': True
-                            }
+                            'screenSizes': [{
+                                'id': 0,
+                                'moreOrEqual': 0,
+                                'lessOrEqual': -1,
+                                'position': {
+                                    'anchor': 'top-left',
+                                    'relx': True,
+                                    'rely': True,
+                                    'x': '10',
+                                    'y': '1',
+                                    'z': '2',
+                                },
+                                'rendering': {
+                                    'relwidth': True,
+                                    'relheight': True,
+                                    'width': '10',
+                                    'height': '10',
+                                    'fulldragboard': True,
+                                    'minimized': True,
+                                    'titlevisible': True
+                                }
+                            }]
                         }
                     ]
                 },
@@ -1813,6 +1843,7 @@ class TemplateUtilsTestCase(TestCase):
         processed_info = template.get_resource_info()
 
         self.check_full_mashup(processed_info, self.mashup_with_translations_info)
+
 
     def test_rdf_parser_writer_mashup_with_params(self):
 

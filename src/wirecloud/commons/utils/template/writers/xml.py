@@ -78,7 +78,6 @@ def addPreferenceValues(resource, preferences):
         addAttribute(pref, element, 'value', type='string', default=None, required=False)
         addAttributes(pref, element, ('readonly', 'hidden'), default='false', type='boolean')
 
-
 def write_mashup_tree(doc, resources, options):
 
     # Params
@@ -122,24 +121,35 @@ def write_mashup_tree(doc, resources, options):
             if iwidget.get('readonly', False):
                 resource.set('readonly', 'true')
 
-            layout = iwidget['rendering']['layout']
+            layout = iwidget['layout']
 
-            position = etree.SubElement(
-                resource,
-                'position',
-                anchor=str(iwidget['position']['anchor']),
-                x=str(iwidget['position']['x']),
-                y=str(iwidget['position']['y']),
-                z=str(iwidget['position']['z'])
-            )
-            addAttributes(iwidget['position'], position, ('relx',), default='true', type='boolean')
-            addAttributes(iwidget['position'], position, ('rely',), default=('true' if layout != 1 else 'false'), type='boolean')
+            addAttributes(iwidget, resource, ('layout',), required=True)
 
-            rendering = etree.SubElement(resource, 'rendering')
-            addAttributes(iwidget['rendering'], rendering, ('height', 'width', 'layout'), required=True)
-            addAttributes(iwidget['rendering'], rendering, ('minimized', 'fulldragboard'), default='false', type='boolean')
-            addAttributes(iwidget['rendering'], rendering, ('relwidth', 'titlevisible'), default='true', type='boolean')
-            addAttributes(iwidget['rendering'], rendering, ('relheight',), default=('true' if layout != 1 else 'false'), type='boolean')
+            screenSizesElem = etree.SubElement(resource, 'screensizes')
+            for screenSize in iwidget.get('screenSizes', []):
+                screenSizeElem = etree.SubElement(screenSizesElem,
+                                                  'screensize',
+                                                   moreOrEqual=str(screenSize['moreOrEqual']),
+                                                   lessOrEqual=str(screenSize['lessOrEqual']),
+                                                   id=str(screenSize['id']))
+
+                position = etree.SubElement(
+                    screenSizeElem,
+                    'position',
+                    anchor=str(screenSize['position']['anchor']),
+                    x=str(int(float(screenSize['position']['x']))),
+                    y=str(int(float(screenSize['position']['y']))),
+                    z=str(int(float(screenSize['position']['z'])))
+                )
+                addAttributes(screenSize['position'], position, ('relx',), default='true', type='boolean')
+                addAttributes(screenSize['position'], position, ('rely',), default=('true' if layout != 1 else 'false'), type='boolean')
+
+                rendering = etree.SubElement(screenSizeElem, 'rendering',
+                                             height=str(int(float(screenSize['rendering']['height']))),
+                                             width=str(int(float(screenSize['rendering']['width']))))
+                addAttributes(screenSize['rendering'], rendering, ('minimized', 'fulldragboard'), default='false', type='boolean')
+                addAttributes(screenSize['rendering'], rendering, ('relwidth', 'titlevisible'), default='true', type='boolean')
+                addAttributes(screenSize['rendering'], rendering, ('relheight',), default=('true' if layout != 1 else 'false'), type='boolean')
 
             addPreferenceValues(resource, iwidget['preferences'])
 

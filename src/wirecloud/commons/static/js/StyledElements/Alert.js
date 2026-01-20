@@ -101,6 +101,31 @@
             return blockquote;
         }
 
+        /**
+         * setMessage
+         *
+         * @param {String} message
+         *    The message to be displayed.
+         */
+        setMessage(message) {
+            this.body.clear();
+            this.body.appendChild(message);
+        }
+
+        /**
+         * show
+         */
+        show() {
+            this.wrapperElement.style.display = '';
+        }
+
+        /**
+         * hide
+         */
+        hide() {
+            this.wrapperElement.style.display = 'none';
+        }
+
     }
 
 })(StyledElements, StyledElements.Utils);

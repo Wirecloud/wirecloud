@@ -360,9 +360,9 @@
     };
 
     /**
-     * @private
-     *
      * Only meant to be used by {Wirecloud.ui.WindowMenu}
+     *
+     * @private
      */
     UserInterfaceManager._unregisterRootWindowMenu = function _unregisterRootWindowMenu(window_menu) {
         if (currentWindowMenu === window_menu) {
@@ -375,9 +375,9 @@
     };
 
     /**
-     * @private
-     *
      * Only meant to be used by {Wirecloud.ui.WindowMenu}
+     *
+     * @private
      */
     UserInterfaceManager._registerRootWindowMenu = function _registerRootWindowMenu(window_menu) {
         if (!(window_menu instanceof Wirecloud.ui.WindowMenu)) {

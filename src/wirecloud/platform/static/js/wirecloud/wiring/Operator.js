@@ -534,6 +534,21 @@
         }
 
         /**
+         * Unload the operator.
+         */
+        unload(onlyv2 = false) {
+            if (!this.loaded) {
+                return;
+            }
+
+            if (onlyv2 && this.meta.macversion <= 1) {
+                return;
+            }
+
+            on_unload.call(this);
+        }
+
+        /**
          * @returns {Wirecloud.wiring.Operator}
          */
         showLogs() {

@@ -85,6 +85,9 @@
             if ("_searchFreeSpace" in klass.prototype) {
                 layout._searchFreeSpace = jasmine.createSpy("_searchFreeSpace");
             }
+            if ("_searchFreeSpace2" in klass.prototype) {
+                layout._searchFreeSpace2 = jasmine.createSpy("_searchFreeSpace2");
+            }
             return layout;
         };
 
@@ -120,19 +123,59 @@
 
         const create_widget_mock = function create_widget_mock(options) {
             options = options != null ? options : {};
+
+            const layoutConfigurations = [{
+                id: 0,
+                moreOrEqual: 0,
+                lessOrEqual: 800,
+                anchor: options.anchor != null ? options.anchor : "topleft",
+                relx: options.relx != null ? options.relx : true,
+                left: 3,
+                rely: options.rely != null ? options.rely : true,
+                top: 0,
+                zIndex: 0,
+                relwidth: options.relwidth != null ? options.relwidth : true,
+                width: 5,
+                relheight: options.relheight != null ? options.relheight : true,
+                height: 1,
+                fulldragboard: !!options.fulldragboard,
+                titlevisible: true,
+                minimized: false
+            },
+            {
+                id: 1,
+                moreOrEqual: 801,
+                lessOrEqual: -1,
+                anchor: "topleft",
+                relx: true,
+                left: 10,
+                rely: true,
+                top: 2,
+                zIndex: 0,
+                relwidth: true,
+                width: 6,
+                relheight: false,
+                height: 2,
+                fulldragboard: true,
+                titlevisible: true,
+                minimized: false
+            }];
+
             return {
                 addEventListener: jasmine.createSpy("addEventListener"),
                 changeTab: jasmine.createSpy("changeTab").and.returnValue(Promise.resolve()),
                 contextManager: {
                     modify: jasmine.createSpy("modify")
                 },
-                fulldragboard: !!options.fulldragboard,
+                fulldragboard: layoutConfigurations[0].fulldragboard,
                 id: "23",
                 isAllowed: jasmine.createSpy("isAllowed").and.returnValue(true),
                 layout: (options.layout != null ? options.layout : 2),
                 logManager: {
                     addEventListener: jasmine.createSpy("addEventListener")
                 },
+                layoutConfigurations: layoutConfigurations,
+                currentLayoutConfig: layoutConfigurations[0],
                 permissions: {
                     editor: {
                         move: true,
@@ -141,30 +184,24 @@
                         move: false
                     }
                 },
-                position: {
-                    anchor: options.anchor != null ? options.anchor : "topleft",
-                    relx: options.relx != null ? options.relx : true,
-                    x: 3,
-                    rely: options.rely != null ? options.rely : true,
-                    y: 0,
-                    z: 0
-                },
+                position: layoutConfigurations[0],
                 reload: jasmine.createSpy("reload"),
-                shape: {
-                    relwidth: options.relwidth != null ? options.relwidth : true,
-                    width: 5,
-                    relheight: options.relheight != null ? options.relheight : true,
-                    height: 1
-                },
+                shape: layoutConfigurations[0],
                 remove: jasmine.createSpy("remove"),
                 setPosition: jasmine.createSpy("setPosition"),
+                setLayoutPosition: jasmine.createSpy("setLayoutPostion"),
                 setPermissions: jasmine.createSpy("setPermissions").and.returnValue(new Wirecloud.Task("", () => {})),
                 setShape: jasmine.createSpy("setShape"),
+                setLayoutShape: jasmine.createSpy("setLayoutShape"),
                 setTitleVisibility: jasmine.createSpy("setTitleVisibility").and.returnValue(new Wirecloud.Task("", () => {})),
+                setLayoutMinimizedStatus: jasmine.createSpy("setLayoutMinimizedStatus"),
+                setLayoutFulldragboard: jasmine.createSpy("setLayoutFulldragboard"),
+                setLayoutIndex: jasmine.createSpy("setLayoutIndex"),
+                updateWindowSize: jasmine.createSpy("updateWindowSize"),
                 showLogs: jasmine.createSpy("showLogs"),
                 showSettings: jasmine.createSpy("showSettings"),
                 title: "My Widget",
-                titlevisible: true,
+                titlevisible: layoutConfigurations[0].titlevisible,
                 volatile: !!options.volatile,
                 wrapperElement: document.createElement('div')
             };
@@ -214,7 +251,7 @@
 
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {
-                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["23"]);
+                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["23"], true);
                     done();
                 });
             });
@@ -236,7 +273,7 @@
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {
                     expect(widget.layout).toBe(newLayout);
-                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23", "1"]);
+                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23", "1"], true);
                     done();
                 });
             });
@@ -262,8 +299,8 @@
                     expect(widget.model.changeTab).toHaveBeenCalledWith(tab2.model);
                     expect(widget.tab).toBe(tab2);
                     expect(widget.layout).toBe(newLayout);
-                    expect(oldLayout.dragboard.update).toHaveBeenCalledWith(["1"]);
-                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23"]);
+                    expect(oldLayout.dragboard.update).toHaveBeenCalledWith(["1"], true);
+                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23"], true);
                     done();
                 });
             });
@@ -288,8 +325,8 @@
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {
                     expect(widget.layout).toBe(newLayout);
-                    expect(oldLayout.dragboard.update).toHaveBeenCalledWith(["1"]);
-                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23"]);
+                    expect(oldLayout.dragboard.update).toHaveBeenCalledWith(["1"], true);
+                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23"], true);
                     done();
                 });
             });
@@ -309,13 +346,15 @@
                     widget.layout = this;
                     return new Set(["3", "4"]);
                 });
+                Wirecloud.Utils.getLayoutMatrix = jasmine.createSpy("getLayoutMatrix");
+                newLayout._searchFreeSpace2.and.returnValue({relx: true, rely: true, relwidth: true, relheight: true, anchor: "top-left", x: 1, y: 2});
                 newLayout._searchFreeSpace.and.returnValue({relx: true, rely: true, relwidth: true, relheight: true, anchor: "top-left", x: 1, y: 2});
 
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {
                     expect(widget.layout).toBe(newLayout);
-                    expect(oldLayout.dragboard.update).toHaveBeenCalledWith(["1"]);
-                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23"]);
+                    expect(oldLayout.dragboard.update).toHaveBeenCalledWith(["1"], true);
+                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "4", "23"], true);
                     done();
                 });
             });
@@ -333,9 +372,109 @@
                 widget.moveToLayout(newLayout);
                 setTimeout(() => {
                     expect(widget.layout).toBe(newLayout);
-                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "5", "23"]);
+                    expect(newLayout.dragboard.update).toHaveBeenCalledWith(["3", "5", "23"], true);
                     done();
                 });
+            });
+
+        });
+
+        describe("updateWindowSize(windowSize)", () => {
+
+            it("should update the window size going to a non-full dragboard layout", () => {
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 0});
+                const widget = new ns.WidgetView(tab, model);
+
+                model.updateWindowSize.and.callFake(() => {
+                    model.position = {
+                        x: 1,
+                        y: 2,
+                        z: 3,
+                        relx: true,
+                        rely: true,
+                        anchor: "top-left"
+                    };
+                    model.shape = {
+                        relwidth: true,
+                        relheight: true,
+                        width: 4,
+                        height: 5
+                    }
+                });
+
+                widget.layout.removeWidgetEventListeners = jasmine.createSpy("removeWidgetEventListeners");
+                widget.setPosition = jasmine.createSpy("setPosition");
+                widget.setShape = jasmine.createSpy("setShape");
+
+                widget.updateWindowSize(900);
+                expect(model.updateWindowSize).toHaveBeenCalledWith(900);
+                expect(widget.layout.removeWidgetEventListeners).toHaveBeenCalledWith(widget);
+                expect(widget.setPosition).toHaveBeenCalledWith({
+                    x: 1,
+                    y: 2,
+                    z: 3,
+                    relx: true,
+                    rely: true,
+                    anchor: "top-left"
+                }, false);
+                expect(widget.setShape).toHaveBeenCalledWith({
+                    relwidth: true,
+                    relheight: true,
+                    width: 4,
+                    height: 5
+                }, false, false, false, false);
+                expect(tab.dragboard.layouts[0].addWidget).toHaveBeenCalledWith(widget, false);
+            });
+
+            it("should update the window size going to a full dragboard layout", () => {
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 2, fulldragboard: false});
+                const widget = new ns.WidgetView(tab, model);
+
+                model.updateWindowSize.and.callFake(() => {
+                    model.position = {
+                        x: 1,
+                        y: 2,
+                        z: 3,
+                        relx: true,
+                        rely: true,
+                        anchor: "top-left"
+                    };
+                    model.shape = {
+                        relwidth: true,
+                        relheight: true,
+                        width: 4,
+                        height: 5
+                    };
+                    model.fulldragboard = true;
+                });
+
+                tab.dragboard.layouts[2].removeWidgetEventListeners = jasmine.createSpy("removeWidgetEventListeners");
+                tab.dragboard.layouts[2].removeHandle = jasmine.createSpy("removeHandle");
+                widget.setPosition = jasmine.createSpy("setPosition");
+                widget.setShape = jasmine.createSpy("setShape");
+
+                widget.updateWindowSize(900);
+                expect(model.updateWindowSize).toHaveBeenCalledWith(900);
+                expect(tab.dragboard.layouts[2].removeWidgetEventListeners).toHaveBeenCalledWith(widget);
+                expect(tab.dragboard.layouts[2].removeHandle).toHaveBeenCalled();
+
+                expect(widget.setPosition).toHaveBeenCalledWith({
+                    x: 1,
+                    y: 2,
+                    z: 3,
+                    relx: true,
+                    rely: true,
+                    anchor: "top-left"
+                }, false);
+                expect(widget.setShape).toHaveBeenCalledWith({
+                    relwidth: true,
+                    relheight: true,
+                    width: 4,
+                    height: 5
+                }, false, false, false, false);
+                expect(tab.dragboard.fulldragboardLayout.addWidget).toHaveBeenCalledWith(widget, false);
             });
 
         });
@@ -533,7 +672,7 @@
 
         });
 
-        describe("toJSON()", () => {
+        describe("toJSON([action, allLayoutConfigurations])", () => {
 
             it("should work on normal widgets", () => {
                 const tab = create_tab_mock();
@@ -544,19 +683,25 @@
                     id: "23",
                     tab: "123",
                     layout: 0,
-                    minimized: false,
-                    anchor: "topleft",
-                    relx: true,
-                    rely: true,
-                    top: 0,
-                    left: 3,
-                    zIndex: 0,
-                    relwidth: true,
-                    width: 5,
-                    relheight: true,
-                    height: 1,
-                    fulldragboard: false,
-                    titlevisible: true
+                    layoutConfigurations: [{
+                        id: 0,
+                        moreOrEqual: 0,
+                        lessOrEqual: 800,
+                        action: 'update',
+                        minimized: false,
+                        anchor: "topleft",
+                        relx: true,
+                        rely: true,
+                        top: 0,
+                        left: 3,
+                        zIndex: 0,
+                        relwidth: true,
+                        width: 5,
+                        relheight: true,
+                        height: 1,
+                        fulldragboard: false,
+                        titlevisible: true
+                    }]
                 });
             });
 
@@ -569,19 +714,75 @@
                     id: "23",
                     tab: "123",
                     layout: 0,
-                    minimized: false,
-                    anchor: "topleft",
-                    relx: true,
-                    rely: true,
-                    top: 0,
-                    left: 3,
-                    zIndex: 0,
-                    relwidth: true,
-                    width: 5,
-                    relheight: true,
-                    height: 1,
-                    fulldragboard: true,
-                    titlevisible: true
+                    layoutConfigurations: [{
+                        id: 0,
+                        moreOrEqual: 0,
+                        lessOrEqual: 800,
+                        action: 'update',
+                        minimized: false,
+                        anchor: "topleft",
+                        relx: true,
+                        rely: true,
+                        top: 0,
+                        left: 3,
+                        zIndex: 0,
+                        relwidth: true,
+                        width: 5,
+                        relheight: true,
+                        height: 1,
+                        fulldragboard: true,
+                        titlevisible: true
+                    }]
+                });
+            });
+
+            it("should list all layout configurations if specified", () => {
+                const tab = create_tab_mock();
+                const model = create_widget_mock({layout: 0});
+                const widget = new ns.WidgetView(tab, model);
+
+                expect(widget.toJSON('update', true)).toEqual({
+                    id: "23",
+                    tab: "123",
+                    layout: 0,
+                    layoutConfigurations: [{
+                        id: 0,
+                        moreOrEqual: 0,
+                        lessOrEqual: 800,
+                        action: 'update',
+                        minimized: false,
+                        anchor: "topleft",
+                        relx: true,
+                        rely: true,
+                        top: 0,
+                        left: 3,
+                        zIndex: 0,
+                        relwidth: true,
+                        width: 5,
+                        relheight: true,
+                        height: 1,
+                        fulldragboard: false,
+                        titlevisible: true
+                    },
+                    {
+                        id: 1,
+                        moreOrEqual: 801,
+                        lessOrEqual: -1,
+                        anchor: "topleft",
+                        action: 'update',
+                        relx: true,
+                        left: 10,
+                        rely: true,
+                        top: 2,
+                        zIndex: 0,
+                        relwidth: true,
+                        width: 6,
+                        relheight: false,
+                        height: 2,
+                        fulldragboard: true,
+                        titlevisible: true,
+                        minimized: false
+                    }]
                 });
             });
 

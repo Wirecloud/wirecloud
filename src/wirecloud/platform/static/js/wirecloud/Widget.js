@@ -185,6 +185,7 @@
 
     const _setTitleVisibility = function _setTitleVisibility(widget, visibility) {
         privates.get(widget).titlevisible = visibility;
+        privates.get(widget).currentLayoutConfiguration.titlevisible = visibility;
         widget.dispatchEvent('change', ['titlevisible']);
         return Promise.resolve(widget);
     };
@@ -244,6 +245,23 @@
             }
         });
         this.loaded_scripts = [];
+    };
+
+    // It is assumed that the layoutConfigurations cover every screen size from 0 to infinity without gaps or overlaps
+    // (this is guaranteed by checks in the server side code)
+    const _getCurrentLayoutConfiguration = function _getCurrentLayoutConfiguration(layoutConfigurations, windowSize) {
+        let currentLayoutConfiguration;
+        for (const i in layoutConfigurations) {
+            const isValid = (layoutConfigurations[i].moreOrEqual !== -1 && layoutConfigurations[i].lessOrEqual === -1 && layoutConfigurations[i].moreOrEqual <= windowSize) ||
+                (layoutConfigurations[i].moreOrEqual === -1 && layoutConfigurations[i].lessOrEqual !== -1 && layoutConfigurations[i].lessOrEqual >= windowSize) ||
+                (layoutConfigurations[i].moreOrEqual !== -1 && layoutConfigurations[i].lessOrEqual !== -1 && layoutConfigurations[i].moreOrEqual <= windowSize && layoutConfigurations[i].lessOrEqual >= windowSize);
+
+            if (isValid) {
+                currentLayoutConfiguration = layoutConfigurations[i];
+                break;
+            }
+        }
+        return currentLayoutConfiguration;
     };
 
     const clean_title = function clean_title(title) {
@@ -428,7 +446,24 @@
                 title: meta.title,
                 preferences: {},
                 properties: {},
-                titlevisible: true
+                layoutConfigurations: [{
+                    id: 0,
+                    moreOrEqual: 0,
+                    lessOrEqual: -1,
+                    anchor: 'top-left',
+                    relx: true,
+                    rely: true,
+                    left: 0,
+                    top: 0,
+                    zIndex: 0,
+                    relheight: true,
+                    relwidth: true,
+                    height: 1,
+                    width: 1,
+                    minimized: false,
+                    fulldragboard: false,
+                    titlevisible: true
+                }]
             }, data);
 
             this.pending_events = [];
@@ -469,26 +504,29 @@
                 permissions.viewer.upgrade = false;
             }
 
+            const currentLayoutConfiguration = _getCurrentLayoutConfiguration(data.layoutConfigurations, window.innerWidth);
             privates.set(this, {
                 permissions: permissions,
                 position: {
-                    anchor: data.anchor,
-                    relx: data.relx,
-                    rely: data.rely,
-                    x: data.left,
-                    y: data.top,
-                    z: data.zIndex
+                    anchor: currentLayoutConfiguration.anchor,
+                    relx: currentLayoutConfiguration.relx,
+                    rely: currentLayoutConfiguration.rely,
+                    x: currentLayoutConfiguration.left,
+                    y: currentLayoutConfiguration.top,
+                    z: currentLayoutConfiguration.zIndex
                 },
                 meta: meta,
                 shape: {
-                    relheight: data.relheight,
-                    relwidth: data.relwidth,
-                    width: data.width,
-                    height: data.height
+                    relheight: currentLayoutConfiguration.relheight,
+                    relwidth: currentLayoutConfiguration.relwidth,
+                    width: currentLayoutConfiguration.width,
+                    height: currentLayoutConfiguration.height
                 },
+                layoutConfigurations: data.layoutConfigurations,
+                currentLayoutConfiguration: currentLayoutConfiguration,
                 status: STATUS.CREATED,
                 tab: tab,
-                titlevisible: !!data.titlevisible,
+                titlevisible: !!currentLayoutConfiguration.titlevisible,
                 on_preremovetab: on_preremovetab.bind(this)
             });
 
@@ -574,9 +612,27 @@
                  */
                 volatile: {
                     value: !!data.volatile
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Object}
+                 */
+                currentLayoutConfig: {
+                    get: function () {
+                        return privates.get(this).currentLayoutConfiguration;
+                    }
+                },
+                /**
+                 * @memberOf Wirecloud.Widget#
+                 * @type {Object}
+                 */
+                layoutConfigurations: {
+                    get: function () {
+                        return privates.get(this).layoutConfigurations;
+                    }
                 }
             });
-            this.fulldragboard = data.fulldragboard;
+            this.fulldragboard = currentLayoutConfiguration.fulldragboard;
 
             _createWrapper.call(this);
 
@@ -598,8 +654,12 @@
                  * @type {Boolean}
                  */
                 minimized: {
-                    writable: true,
-                    value: data.minimized
+                    get: function () {
+                        return privates.get(this).currentLayoutConfiguration.minimized;
+                    },
+                    set: function (value) {
+                        privates.get(this).currentLayoutConfiguration.minimized = value;
+                    }
                 },
                 /**
                  * @memberOf Wirecloud.Widget#
@@ -969,6 +1029,58 @@
             return this;
         }
 
+        setLayoutPosition(layoutPosition) {
+            Wirecloud.Utils.merge(privates.get(this).currentLayoutConfiguration, {
+                anchor: layoutPosition.anchor,
+                relx: layoutPosition.relx,
+                rely: layoutPosition.rely,
+                left: layoutPosition.x,
+                top: layoutPosition.y,
+                zIndex: layoutPosition.z
+            });
+            return this;
+        }
+
+        setLayoutIndex(index) {
+            this.layout = index;
+            return this;
+        }
+
+        updateWindowSize(windowSize) {
+            const currentLayoutConfiguration = _getCurrentLayoutConfiguration(privates.get(this).layoutConfigurations, windowSize);
+            if (currentLayoutConfiguration === privates.get(this).currentLayoutConfiguration) {
+                return false;
+            }
+
+            privates.get(this).currentLayoutConfiguration = currentLayoutConfiguration;
+
+            // Update shape, position, titlevisible and fulldragboard
+            privates.get(this).shape = {
+                relheight: currentLayoutConfiguration.relheight,
+                relwidth: currentLayoutConfiguration.relwidth,
+                height: currentLayoutConfiguration.height,
+                width: currentLayoutConfiguration.width
+            };
+
+            privates.get(this).position = {
+                anchor: currentLayoutConfiguration.anchor,
+                relx: currentLayoutConfiguration.relx,
+                rely: currentLayoutConfiguration.rely,
+                x: currentLayoutConfiguration.left,
+                y: currentLayoutConfiguration.top,
+                z: currentLayoutConfiguration.zIndex
+            };
+
+            privates.get(this).titlevisible = !!currentLayoutConfiguration.titlevisible;
+            this.fulldragboard = currentLayoutConfiguration.fulldragboard;
+
+            return true;
+        }
+
+        getLayoutConfigBySize(size) {
+            return _getCurrentLayoutConfiguration(privates.get(this).layoutConfigurations, size);
+        }
+
         setPreferences(newValues) {
             // We are going to modify the object, let's create a copy
             newValues = Object.assign({}, newValues);
@@ -1031,6 +1143,21 @@
             return this;
         }
 
+        setLayoutShape(layoutShape) {
+            Wirecloud.Utils.merge(privates.get(this).currentLayoutConfiguration, layoutShape);
+            return this;
+        }
+
+        setLayoutFulldragboard(fulldragboard) {
+            privates.get(this).currentLayoutConfiguration.fulldragboard = fulldragboard;
+            return this;
+        }
+
+        setLayoutMinimizedStatus(minimized) {
+            privates.get(this).currentLayoutConfiguration.minimized = minimized;
+            return this;
+        }
+
         /**
          * Set title visibility on persistence
          *
@@ -1039,9 +1166,7 @@
         setTitleVisibility(visibility, persistence) {
             visibility = !!visibility;
 
-            if (this.volatile) {
-                return _setTitleVisibility(this, visibility);
-            } else if (persistence) {
+            if (persistence && !this.volatile) {
                 const url = Wirecloud.URLs.IWIDGET_ENTRY.evaluate({
                     workspace_id: this.tab.workspace.id,
                     tab_id: this.tab.id,
@@ -1049,7 +1174,11 @@
                 });
 
                 const payload = {
-                    titlevisible: visibility
+                    layoutConfigurations: [{
+                        id: privates.get(this).currentLayoutConfiguration.id,
+                        titlevisible: visibility,
+                        action: 'update'
+                    }]
                 };
 
                 return Wirecloud.io.makeRequest(url, {
@@ -1065,9 +1194,7 @@
                     }
                 });
             } else {
-                privates.get(this).titlevisible = visibility;
-                this.dispatchEvent('change', ['titlevisible']);
-                return Promise.resolve(this);
+                return _setTitleVisibility(this, visibility);
             }
         }
 

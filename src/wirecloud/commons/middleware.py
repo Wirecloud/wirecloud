@@ -157,6 +157,8 @@ class LocaleMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if 'lang' in request.GET and translation.check_for_language(request.GET['lang']):
             language = request.GET['lang']
+        elif 'lang' in request.COOKIES and translation.check_for_language(request.COOKIES['lang']):
+            language = request.COOKIES['lang']
         else:
             language = translation.get_language_from_request(request, check_path=False)
         translation.activate(language)

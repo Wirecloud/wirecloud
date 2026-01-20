@@ -112,6 +112,7 @@
                     this.id = "8";
                     this.createWidget = jasmine.createSpy("createWidget");
                     this.findWidget = jasmine.createSpy("findWidget");
+                    this.getEditingIntervalElement = jasmine.createSpy("getEditingIntervalElement").and.returnValue(document.createElement('div'));
                     this.widgets = [];
                     this.dragboard = {
                         _updateIWidgetSizes: jasmine.createSpy("_updateIWidgetSizes"),
@@ -757,7 +758,7 @@
                 const view = new ns.WorkspaceView(1);
                 const workspace = create_workspace();
                 workspace.isAllowed.and.returnValue(true);
-                spyOn(StyledElements.Notebook.prototype, "addButton");
+                spyOn(StyledElements.Notebook.prototype, "addToEastSection");
                 spyOn(StyledElements.Notebook.prototype, "createTab").and.callThrough();
                 view.loadWorkspace(workspace);
 
@@ -765,7 +766,7 @@
                 const tab = {};
                 workspace.createTab.and.returnValue(Promise.resolve(tab));
 
-                const button = view.notebook.addButton.calls.argsFor(0)[0];
+                const button = view.notebook.addToEastSection.calls.argsFor(1)[0];
                 spyOn(button, "disable");
                 spyOn(button, "enable");
                 button.click();
@@ -787,12 +788,12 @@
                 const view = new ns.WorkspaceView(1);
                 const workspace = create_workspace();
                 workspace.isAllowed.and.returnValue(true);
-                spyOn(StyledElements.Notebook.prototype, "addButton");
+                spyOn(StyledElements.Notebook.prototype, "addToEastSection");
                 spyOn(StyledElements.Notebook.prototype, "createTab").and.callThrough();
                 view.loadWorkspace(workspace);
                 workspace.createTab.and.returnValue(Promise.reject());
 
-                const button = view.notebook.addButton.calls.argsFor(0)[0];
+                const button = view.notebook.addToEastSection.calls.argsFor(1)[0];
                 spyOn(button, "disable");
                 spyOn(button, "enable");
                 view.notebook.createTab.calls.reset();

@@ -184,9 +184,9 @@
         }
 
         /**
-         * @private
-         *
          * Click Listener for the close button.
+         *
+         * @private
          */
         _closeListener(e) {
             this.hide();

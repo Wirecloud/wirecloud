@@ -43,7 +43,13 @@
             createWidget: jasmine.createSpy("createWidget"),
             id: "8",
             preferences: {
-                get: jasmine.createSpy("get"),
+                get: jasmine.createSpy("get").and.callFake(function (key) {
+                    if (options && options.customPreferences && key in options.customPreferences) {
+                        return options.customPreferences[key];
+                    } else if (key === "screenSizes") {
+                        return [{id: 0, moreOrEqual: 0, lessOrEqual: -1, name: "Default"}];
+                    }
+                }),
                 addEventListener: jasmine.createSpy("addEventListener")
             },
             title: "Tab Title",
@@ -78,6 +84,7 @@
         return {
             addEventListener: jasmine.createSpy("addEventListener"),
             buildAddWidgetButton: jasmine.createSpy("buildAddWidgetButton").and.returnValue(),
+            updateEditingInterval: jasmine.createSpy("updateEditingInterval"),
             model: workspace
         };
     };
@@ -298,7 +305,7 @@
                     expect(id).toBe(80);
                     return widget;
                 });
-                tab.dragboard.freeLayout.searchBestPosition = jasmine.createSpy("searchBestPosition").and.returnValue({x: 1, y: 2});
+                tab.dragboard.freeLayout.searchBestPosition = jasmine.createSpy("searchBestPosition");
 
                 const created_widget = tab.createWidget(
                     {
@@ -317,16 +324,20 @@
 
             it("should honour initiallayout preference", (done) => {
                 const workspace = create_workspace();
-                const model = create_tab();
-                model.preferences.get.and.returnValue("Free");
+                const tabOptions = {
+                    customPreferences: {
+                        initiallayout: "Free"
+                    }
+                };
+                const model = create_tab(tabOptions);
                 const tab = new ns.WorkspaceTabView("1", notebook, {
                     model: model,
                     workspace: workspace
                 });
                 const widgetmodel = {id: 80};
                 model.createWidget.and.callFake((resource, options) => {
-                    expect(options.left).toEqual(1);
-                    expect(options.top).toEqual(2);
+                    expect(options.layoutConfigurations[0].left).toEqual(1);
+                    expect(options.layoutConfigurations[0].top).toEqual(2);
                     return Promise.resolve(widgetmodel);
                 });
                 const widget = {id: 80};
@@ -334,7 +345,10 @@
                     expect(id).toBe(80);
                     return widget;
                 });
-                tab.dragboard.freeLayout._searchFreeSpace = jasmine.createSpy("_searchFreeSpace").and.returnValue({x: 1, y: 2});
+                tab.dragboard.freeLayout._searchFreeSpace2 = jasmine.createSpy("_searchFreeSpace2").and.returnValue({x: 1, y: 2});
+                tab.dragboard.freeLayout.dragboard = {
+                    widgets: []
+                };
 
                 const p = tab.createWidget({
                     default_height: "120px",
@@ -356,8 +370,8 @@
                 });
                 const widgetmodel = {id: 80};
                 model.createWidget.and.callFake((resource, options) => {
-                    expect(options.left).toEqual(0);
-                    expect(options.top).toEqual(0);
+                    expect(options.layoutConfigurations[0].left).toEqual(0);
+                    expect(options.layoutConfigurations[0].top).toEqual(0);
                     return Promise.resolve(widgetmodel);
                 });
                 const widget = {id: 80};
@@ -567,6 +581,57 @@
 
                 p.then((created_widget) => {
                     expect(created_widget).toBe(widget);
+                    done();
+                });
+            });
+
+            it("should define all screen sizes when creating a widget", (done) => {
+                Object.defineProperty(window, 'innerWidth', {
+                    value: 800,
+                    writable: true
+                });
+
+                const workspace = create_workspace();
+                const model = create_tab({
+                    customPreferences: {
+                        screenSizes: [
+                            {id: 0, moreOrEqual: 0, lessOrEqual: 800},
+                            {id: 1, moreOrEqual: 801, lessOrEqual: 1000},
+                            {id: 2, moreOrEqual: 1001, lessOrEqual: -1}
+                        ]
+                    }
+                });
+                const tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                const widgetmodel = {id: 80};
+                model.createWidget.and.returnValue(Promise.resolve(widgetmodel));
+                const widget = {id: 80};
+                spyOn(tab, "findWidget").and.callFake((id) => {
+                    expect(id).toBe(80);
+                    return widget;
+                });
+
+                tab.dragboard.freeLayout.searchBestPosition = jasmine.createSpy("searchBestPosition");
+
+                const p = tab.createWidget(
+                    {
+                        default_height: "120px",
+                        default_width: "120px"
+                    }, {
+                        layout: 1,
+                        refposition: document.createElement('div')
+                    }
+                );
+
+                p.then((created_widget) => {
+                    expect(created_widget).toBe(widget);
+                    expect(tab.dragboard.freeLayout.searchBestPosition).toHaveBeenCalledTimes(3);
+                    expect(tab.dragboard.freeLayout.searchBestPosition).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object), 800);
+                    expect(tab.dragboard.freeLayout.searchBestPosition).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object), 900.5);
+                    expect(tab.dragboard.freeLayout.searchBestPosition).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object), 1001);
                     done();
                 });
             });
@@ -867,6 +932,132 @@
                 });
 
                 expect(tab.unhighlight()).toBe(tab);
+            });
+
+        });
+
+        describe("getEditingIntervalElement()", () => {
+
+            it("should return the editing interval element without link if customWidth is -1", () => {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                tab.dragboard.customWidth = -1;
+
+                const elem = tab.getEditingIntervalElement();
+
+                // It should NOT contain a link
+                expect(elem.querySelector('a')).toBe(null);
+            });
+
+            it("should return the editing interval element with link if customWidth is not -1", () => {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                tab.dragboard.customWidth = 10;
+
+                const elem = tab.getEditingIntervalElement();
+
+                // It should contain a link
+                expect(elem.querySelector('a')).not.toBe(null);
+
+                tab.quitEditingInterval = jasmine.createSpy("quitEditingInterval");
+                elem.querySelector('a').click();
+
+                expect(tab.quitEditingInterval).toHaveBeenCalled();
+            });
+
+        });
+
+        describe("setEditingInterval(moreOrEqual, lessOrEqual, name)", () => {
+
+            it("should set the editing interval", () => {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                tab.dragboard.setCustomDragboardWidth = jasmine.createSpy("setCustomDragboardWidth");
+
+                tab.setEditingInterval(0, 10, "name");
+                expect(tab.dragboard.setCustomDragboardWidth).toHaveBeenCalledWith(5);
+
+                tab.setEditingInterval(10, -1, "name");
+                expect(tab.dragboard.setCustomDragboardWidth).toHaveBeenCalledWith(10);
+            });
+
+        });
+
+        describe("quitEditingInterval()", () => {
+
+            it("should quit the editing interval", () => {
+                const workspace = create_workspace();
+                const model = create_tab();
+                const tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                tab.dragboard.restoreDragboardWidth = jasmine.createSpy("restoreDragboardWidth");
+
+                tab.quitEditingInterval();
+
+                expect(tab.dragboard.restoreDragboardWidth).toHaveBeenCalled();
+            });
+
+        });
+
+        describe("updateEditingIntervalName()", () => {
+
+            it("should update the editing interval name", () => {
+                const workspace = create_workspace();
+                const model = create_tab({
+                    customPreferences: {
+                        screenSizes: [
+                            {id: 0, moreOrEqual: 0, lessOrEqual: 800, name: "Default"},
+                            {id: 1, moreOrEqual: 801, lessOrEqual: 1000, name: "Default-1"},
+                            {id: 2, moreOrEqual: 1001, lessOrEqual: -1, name: "Default-2"}
+                        ]
+                    }
+                });
+                const tab = new ns.WorkspaceTabView("1", notebook, {
+                    model: model,
+                    workspace: workspace
+                });
+
+                Object.defineProperty(window, 'innerWidth', {
+                    value: 800,
+                    writable: true
+                });
+
+                tab.dragboard.customWidth = -1;
+
+                tab.updateEditingIntervalName();
+                expect(tab.editingIntervalName).toBe("Default");
+
+                window.innerWidth = 900;
+                tab.updateEditingIntervalName();
+                expect(tab.editingIntervalName).toBe("Default-1");
+
+                window.innerWidth = 1001;
+                tab.updateEditingIntervalName();
+                expect(tab.editingIntervalName).toBe("Default-2");
+
+                tab.dragboard.customWidth = 10;
+                tab.updateEditingIntervalName();
+                expect(tab.editingIntervalName).toBe("Default");
+
+                window.innerWidth = 800;
             });
 
         });

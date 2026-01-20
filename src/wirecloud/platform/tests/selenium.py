@@ -94,6 +94,66 @@ class BasicSeleniumTests(WirecloudSeleniumTestCase):
         # wirecloud org first)
         self.open_menu().check(('New workspace',), must_be_disabled=('Rename', 'Settings', 'Remove'))
 
+    def test_basic_screen_sizes(self):
+
+        original_browser_size = self.driver.get_window_size()
+        # Change the browser width to 1000 px
+        self.driver.set_window_size(1000, 600)
+
+        self.login(username="user_with_workspaces", next="/user_with_workspaces/pending-events")
+
+        # Open the workspace settings
+        with self.edit_mode:
+            self.open_menu().click_entry('Settings')
+            workspace_preferences_dialog = FormModalTester(self, self.wait_element_visible('.wc-workspace-preferences-modal'))
+
+            # Find the screen sizes field
+            screen_sizes_field = workspace_preferences_dialog.body.find_element(By.CSS_SELECTOR, '.se-screen-size-field')
+            add_button_field = screen_sizes_field.find_element(By.CSS_SELECTOR, 'div.se-btn > i.fa-plus')
+
+            # Add a new screen size
+            add_button_field.click()
+
+            workspace_preferences_dialog.accept()
+
+            # Make sure an error appears (check display is not none)
+            self.assertTrue(workspace_preferences_dialog.error_message.is_displayed())
+
+            # Change the screen size
+
+            # Get the first input with name 'lessOrEqual'
+            lessOrEqual_input = screen_sizes_field.find_element(By.CSS_SELECTOR, 'input[name="lessOrEqual"]')
+
+            # Input 900
+            lessOrEqual_input.clear()
+            lessOrEqual_input.send_keys('900')
+
+            # Click the edit button
+            edit_button = screen_sizes_field.find_element(By.CSS_SELECTOR, 'div.se-btn > i.fa-edit')
+            edit_button.click()
+
+            # Wait for the changes to be saved and the editing message to appear
+            self.wait_element_visible('.wc-editing-interval')
+
+            # Move the widget to the right
+            iwidget = self.find_tab(id="102").widgets[0]
+            original_position = iwidget.position['x']
+            ActionChains(self.driver).click_and_hold(iwidget.title_element).move_by_offset(400, 0).release().perform()
+
+            self.wait_element_visible('.wc-editing-interval-close').click()
+
+            # Make sure the widget has returned to its original position
+            time.sleep(1)
+            self.assertEqual(iwidget.position['x'], original_position)
+
+            self.driver.set_window_size(600, 600)
+
+            # Make sure the widget has moved
+            time.sleep(1)
+            self.assertNotEqual(iwidget.position['x'], original_position)
+
+        self.driver.set_window_size(original_browser_size['width'], original_browser_size['height'])
+
     def test_move_iwidget_between_tabs(self):
 
         self.login(username='user_with_workspaces', next='/user_with_workspaces/pending-events')

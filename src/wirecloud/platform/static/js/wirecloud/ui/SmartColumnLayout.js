@@ -48,7 +48,7 @@
             for (const key in this.widgets) {
                 keys.push(key);
                 const widget = this.widgets[key];
-                modified = modified || this.moveSpaceUp(this._buffers.base, widget);
+                modified = modified || (this.moveSpaceUp(this._buffers.base, widget).size > 0);
             }
             if (modified) {
                 // save these changes in the server side

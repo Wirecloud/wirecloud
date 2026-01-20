@@ -72,6 +72,17 @@ def update_boolean_value(model, data, field):
 
         model[field] = value
 
+def update_screen_size_value(model, data, field):
+    if field in data:
+        value = data[field]
+
+        if type(value) not in (int,):
+            raise TypeError(_('Field %(field)s must contain a number value') % {"field": field})
+
+        if value < -1:
+            raise ValueError(_('Invalid value for %(field)s') % {"field": field})
+
+        model[field] = value
 
 def update_position_value(model, data, field, data_field=None):
     data_field = data_field if data_field is not None else field
@@ -112,23 +123,83 @@ def update_anchor_value(model, data):
 
         model["anchor"] = anchor
 
+def check_intervals(data):
+    # The screen size intervals should cover the interval [0, +inf) and should not overlap nor have gaps,
+    # each interval is defined by the properties 'moreOrEqual' and 'lessOrEqual'
+
+    data.sort(key=lambda x: x.get('moreOrEqual', float('-inf')))
+
+    if data[0].get('moreOrEqual') != 0:
+        raise ValueError('The first interval must start from 0')
+
+    for i in range(len(data) - 1):
+        if data[i]['lessOrEqual'] + 1 != data[i + 1].get('moreOrEqual'):
+            raise ValueError('Intervals should not overlap nor have gaps')
+
+    if data[-1]['lessOrEqual'] != -1:
+        raise ValueError('The last interval must extend to infinity')
 
 def update_position(iwidget, key, data):
-    position = iwidget.positions.setdefault(key, {})
+    # Check if we have duplicate ids in the layoutConfigurations
+    ids = set()
+    for layoutConfig in data["layoutConfigurations"]:
+        if 'id' not in layoutConfig:
+            raise ValueError('Missing id field')
+        if layoutConfig['id'] in ids:
+            raise ValueError('Duplicate id field')
+        ids.add(layoutConfig['id'])
 
-    update_boolean_value(position, data, 'relwidth')
-    update_boolean_value(position, data, 'relheight')
-    update_size_value(position, data, 'width')
-    update_size_value(position, data, 'height')
-    update_position_value(position, data, 'top')
-    update_position_value(position, data, 'left')
-    update_anchor_value(position, data)
-    update_boolean_value(position, data, 'relx')
-    update_boolean_value(position, data, 'rely')
-    update_position_value(position, data, 'zIndex')
-    update_boolean_value(position, data, 'minimized')
-    update_boolean_value(position, data, 'titlevisible')
-    update_boolean_value(position, data, 'fulldragboard')
+    intervals = {}
+    for conf in iwidget.positions["configurations"]:
+        intervals[conf['id']] = conf
+
+    for layoutConfig in data["layoutConfigurations"]:
+        if not 'action' in layoutConfig:
+            raise ValueError('Missing action field')
+        if layoutConfig['action'] not in ('update', 'delete'):
+            raise ValueError('Invalid value for action field: ' + layoutConfig['action'])
+
+        if layoutConfig['action'] == 'delete':
+            del intervals[layoutConfig['id']]
+        else:
+            if not layoutConfig['id'] in intervals:
+                intervals[layoutConfig['id']] = {
+                    'id': layoutConfig['id'],
+                    'moreOrEqual': 0,
+                    'lessOrEqual': -1,
+                }
+
+                intervals[layoutConfig['id']][key] = {
+                    'top': 0,
+                    'left': 0,
+                    'zIndex': 0,
+                    'height': 0,
+                    'width': 0,
+                    'minimized': False,
+                    'titlevisible': True,
+                    'fulldragboard': False
+                }
+
+            update_screen_size_value(intervals[layoutConfig['id']], layoutConfig, 'moreOrEqual')
+            update_screen_size_value(intervals[layoutConfig['id']], layoutConfig, 'lessOrEqual')
+            update_position_value(intervals[layoutConfig['id']][key], layoutConfig, 'top')
+            update_position_value(intervals[layoutConfig['id']][key], layoutConfig, 'left')
+            update_position_value(intervals[layoutConfig['id']][key], layoutConfig, 'zIndex')
+            update_size_value(intervals[layoutConfig['id']][key], layoutConfig, 'height')
+            update_size_value(intervals[layoutConfig['id']][key], layoutConfig, 'width')
+            update_boolean_value(intervals[layoutConfig['id']][key], layoutConfig, 'minimized')
+            update_boolean_value(intervals[layoutConfig['id']][key], layoutConfig, 'titlevisible')
+            update_boolean_value(intervals[layoutConfig['id']][key], layoutConfig, 'fulldragboard')
+            update_boolean_value(intervals[layoutConfig['id']][key], layoutConfig, 'relwidth')
+            update_boolean_value(intervals[layoutConfig['id']][key], layoutConfig, 'relheight')
+            update_boolean_value(intervals[layoutConfig['id']][key], layoutConfig, 'relx')
+            update_boolean_value(intervals[layoutConfig['id']][key], layoutConfig, 'rely')
+            update_anchor_value(intervals[layoutConfig['id']][key], layoutConfig)
+
+    newPositions = list(intervals.values())
+    check_intervals(newPositions)
+
+    iwidget.positions["configurations"] = newPositions
 
 
 def update_permissions(iwidget, data):
@@ -172,25 +243,34 @@ def SaveIWidget(iwidget, user, tab, initial_variable_values=None, commit=True):
     new_iwidget.name = iwidget_info['title']
     new_iwidget.layout = iwidget.get('layout', 0)
 
-    # set default positions
     new_iwidget.positions = {
-        'widget': {
-            'top': 0,
-            'left': 0,
-            'zIndex': 0,
-            'height': 0,
-            'width': 0,
-            'minimized': False,
-            'titlevisible': True,
-            'fulldragboard': False,
-        },
+        'configurations': []
     }
+
 
     if initial_variable_values is not None:
         set_initial_values(new_iwidget, initial_variable_values, iwidget_info, user)
 
     update_title_value(new_iwidget, iwidget)
-    update_position(new_iwidget, 'widget', iwidget)
+    if "layoutConfigurations" in iwidget:
+        update_position(new_iwidget, 'widget', iwidget)
+    else:
+        # set default positions
+        new_iwidget.positions['configurations'] = [{
+            'moreOrEqual': 0,
+            'lessOrEqual': -1,
+            'id': 0,
+            'widget': {
+                'top': 0,
+                'left': 0,
+                'zIndex': 0,
+                'height': 1,
+                'width': 1,
+                'minimized': False,
+                'titlevisible': True,
+                'fulldragboard': False,
+            },
+        }]
 
     if commit:
         new_iwidget.save()
@@ -211,13 +291,16 @@ def UpdateIWidget(data, user, tab, updatecache=True):
             iwidget.tab = newtab
 
     if 'layout' in data:
+        if data['layout'] < 0:
+            raise ValueError('Invalid value for layout field')
         layout = data['layout']
         iwidget.layout = layout
 
     update_permissions(iwidget, data.get('permissions', {}).get('viewer', {}))
 
     # update positions
-    update_position(iwidget, 'widget', data)
+    if "layoutConfigurations" in data:
+        update_position(iwidget, 'widget', data)
 
     # save the changes
     iwidget.save(updatecache=updatecache)

@@ -1,0 +1,29 @@
+.se-screen-size-field > .se-container {
+    display: flex;
+    margin: 0;
+}
+
+.se-screen-size-from, .se-screen-size-to {
+    flex-grow: 1;
+}
+
+.se-screen-size-name {
+    margin-left: 0;
+}
+
+.se-screen-size-buttons {
+    margin-right: 0;
+}
+
+.se-screen-size-field > .se-btn {
+    margin-left: 0;
+    margin-top: 6px;
+}
+
+.se-screen-size-field > .se-container > .se-container > .se-numeric-field > input {
+    height: 100%;
+}
+
+.se-screen-size-field > .se-container > .se-container > .se-add-on {
+    white-space: nowrap;
+}

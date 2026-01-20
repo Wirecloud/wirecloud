@@ -20,7 +20,7 @@
  *
  */
 
-/* globals CSSPrimitiveValue, Wirecloud */
+/* globals Wirecloud */
 
 
 (function (ns, utils) {
@@ -37,7 +37,7 @@
         this.widgets.forEach((widget, index) => {
             widget.setPosition({
                 z: index
-            });
+            }, false);
         });
     };
 
@@ -57,15 +57,9 @@
             // TODO or initialized with the scroll bar's real with?
             this.dragboardWidth = 800;
             this.dragboardHeight = 600;
+            this.customWidth = -1;
             this.widgetToMove = null;
-            this.painted = false;
-            this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
-            this.baseLayout = this._buildLayoutFromPreferences();
-            this.freeLayout = new Wirecloud.ui.FreeLayout(this);
-            this.leftLayout = new Wirecloud.ui.SidebarLayout(this);
-            this.rightLayout = new Wirecloud.ui.SidebarLayout(this, {position: "right"});
-            this.bottomLayout = new Wirecloud.ui.SidebarLayout(this, {position: "bottom"});
-            this.topLayout = new Wirecloud.ui.SidebarLayout(this, {position: "top"});
+            this.resetLayouts();
             Object.defineProperties(this, {
                 layouts: {
                     get: () => {
@@ -189,6 +183,14 @@
             return this;
         }
 
+        refreshPositionBasedOnZIndex() {
+            // Reorder widgets based on their z-index. This is used when the screen size changes
+            // and the widgets are not in the correct order.
+            this.widgets.sort((a, b) => {
+                return a.position.z - b.position.z;
+            });
+        }
+
         paint() {
 
             if (this.painted) {
@@ -210,10 +212,41 @@
             this.painted = true;
         }
 
+        resetLayouts() {
+            this.painted = false;
+            this.fulldragboardLayout = new Wirecloud.ui.FullDragboardLayout(this);
+            this.baseLayout = this._buildLayoutFromPreferences();
+            this.freeLayout = new Wirecloud.ui.FreeLayout(this);
+            this.leftLayout = new Wirecloud.ui.SidebarLayout(this, {active: (this.leftLayout) ? this.leftLayout.isActive() : false});
+            this.rightLayout = new Wirecloud.ui.SidebarLayout(this, {position: "right", active: (this.rightLayout) ? this.rightLayout.isActive() : false});
+            this.bottomLayout = new Wirecloud.ui.SidebarLayout(this, {position: "bottom", active: (this.bottomLayout) ? this.bottomLayout.isActive() : false});
+            this.topLayout = new Wirecloud.ui.SidebarLayout(this, {position: "top", active: (this.topLayout) ? this.topLayout.isActive() : false});
+        }
+
+        updateWidgetScreenSize(screenSize) {
+            this.resetLayouts();
+            this.widgets.forEach((widget) => {
+                widget.updateWindowSize(screenSize);
+            });
+            this.refreshPositionBasedOnZIndex();
+            this.paint();
+        }
+
+        updateWidgetScreenSizeWithId(id) {
+            const screenSize = this.tab.model.preferences.get('screenSizes').find((screenSize) => screenSize.id === id);
+            if (screenSize != null) {
+                let size = screenSize.moreOrEqual + (screenSize.lessOrEqual - screenSize.moreOrEqual) / 2;
+                if (screenSize.lessOrEqual === -1) {
+                    size = screenSize.moreOrEqual;
+                }
+                this.updateWidgetScreenSize(size);
+            }
+        }
+
         /**
          *
          */
-        update(ids) {
+        update(ids, allLayoutConfigurations) {
             if (this.tab.workspace.editing === false) {
                 return Promise.resolve(this);
             }
@@ -233,11 +266,16 @@
                 return Promise.resolve(this);
             }
 
+            // We convert the content to JSON
+            const JSONcontent = content.map((widget) => {
+                return widget.toJSON('update', allLayoutConfigurations);
+            });
+
             return Wirecloud.io.makeRequest(url, {
                 method: 'PUT',
                 requestHeaders: {'Accept': 'application/json'},
                 contentType: 'application/json',
-                postBody: JSON.stringify(content)
+                postBody: JSON.stringify(JSONcontent)
             }).then((response) => {
                 if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
                     return Promise.reject(utils.gettext("Unexpected response from server"));
@@ -268,7 +306,7 @@
         }
 
         /**
-         * TODO, used by WorkspaceTabView to when the user changes the preferences
+         * Used by WorkspaceTabView to when the user changes the preferences
          * for the base layout.
          */
         _updateBaseLayout() {
@@ -277,8 +315,147 @@
             newBaseLayout.initialize();
 
             // Change our base layout
-            this.baseLayout.moveTo(newBaseLayout);
+            const oldBaseLayout = this.baseLayout;
             this.baseLayout = newBaseLayout;
+            oldBaseLayout.moveTo(newBaseLayout);
+        }
+
+        /**
+         * Used by WorkspaceTabView to when the user changes the preferences
+         * for the screen sizes.
+         */
+        _updateScreenSizes() {
+            if (this.customWidth !== -1) {
+                this.tab.quitEditingInterval();
+            }
+
+            const updatedScreenSizes = this.tab.model.preferences.get('screenSizes');
+            const reqData = [];
+
+            this.resetLayouts();
+            this.widgets.forEach((widget) => {
+                const currentConfigs = widget.model.layoutConfigurations;
+
+                const widgetReqData = {
+                    id: widget.model.id,
+                    layoutConfigurations: []
+                };
+
+                let indexesToDelete = [];
+                currentConfigs.forEach((config, i) => {
+                    if (updatedScreenSizes.findIndex((screenSize) => screenSize.id === config.id) === -1) {
+                        widgetReqData.layoutConfigurations.push({
+                            id: config.id,
+                            action: 'delete'
+                        });
+                        indexesToDelete.push(i);
+                    }
+                });
+
+                indexesToDelete.sort((a, b) => b - a);
+
+                if (indexesToDelete.length !== currentConfigs.length) {
+                    indexesToDelete.forEach((index) => {
+                        currentConfigs.splice(index, 1);
+                    });
+                    indexesToDelete = [];
+                }
+
+                const lastExistingScreenSize = currentConfigs[currentConfigs.length - 1];
+                updatedScreenSizes.forEach((screenSize) => {
+                    const currentConfig = currentConfigs.find((config) => config.id === screenSize.id);
+                    if (!currentConfig) {
+                        const newConfig = {
+                            id: screenSize.id,
+                            anchor: lastExistingScreenSize.anchor,
+                            width: lastExistingScreenSize.width,
+                            height: lastExistingScreenSize.height,
+                            relwidth: lastExistingScreenSize.relwidth,
+                            relheight: lastExistingScreenSize.relheight,
+                            left: lastExistingScreenSize.left,
+                            top: lastExistingScreenSize.top,
+                            zIndex: lastExistingScreenSize.zIndex,
+                            relx: lastExistingScreenSize.relx,
+                            rely: lastExistingScreenSize.rely,
+                            titlevisible: lastExistingScreenSize.titlevisible,
+                            fulldragboard: lastExistingScreenSize.fulldragboard,
+                            minimized: lastExistingScreenSize.minimized,
+                            moreOrEqual: screenSize.moreOrEqual,
+                            lessOrEqual: screenSize.lessOrEqual
+                        };
+
+                        currentConfigs.push(newConfig);
+
+                        const reqNewConfig = utils.clone(newConfig);
+                        reqNewConfig.action = 'update';
+
+                        widgetReqData.layoutConfigurations.push(reqNewConfig);
+                    } else {
+                        let requiresUpdate = false;
+                        const updatedConfig = {
+                            id: screenSize.id,
+                        };
+
+                        if (currentConfig.moreOrEqual !== screenSize.moreOrEqual) {
+                            updatedConfig.moreOrEqual = currentConfig.moreOrEqual = screenSize.moreOrEqual;
+                            requiresUpdate = true;
+                        }
+
+                        if (currentConfig.lessOrEqual !== screenSize.lessOrEqual) {
+                            updatedConfig.lessOrEqual = currentConfig.lessOrEqual = screenSize.lessOrEqual;
+                            requiresUpdate = true;
+                        }
+
+                        if (requiresUpdate) {
+                            updatedConfig.action = 'update';
+                            widgetReqData.layoutConfigurations.push(updatedConfig);
+                        }
+                    }
+                });
+
+                indexesToDelete.forEach((index) => {
+                    currentConfigs.splice(index, 1);
+                });
+
+                // After modifying all the layoutConfigurations, we need to sort them by moreOrEqual and call the updateWindowSize method
+                // to refresh the current layout
+                currentConfigs.sort((a, b) => a.moreOrEqual - b.moreOrEqual);
+                widget.updateWindowSize(window.innerWidth);
+
+                reqData.push(widgetReqData);
+            });
+            this.refreshPositionBasedOnZIndex();
+            this.paint();
+
+            const url = Wirecloud.URLs.IWIDGET_COLLECTION.evaluate({
+                workspace_id: this.tab.workspace.model.id,
+                tab_id: this.tab.model.id
+            });
+
+            return Wirecloud.io.makeRequest(url, {
+                method: 'PUT',
+                requestHeaders: {'Accept': 'application/json'},
+                contentType: 'application/json',
+                postBody: JSON.stringify(reqData)
+            }).then((response) => {
+                if ([204, 401, 403, 404, 500].indexOf(response.status) === -1) {
+                    return Promise.reject(utils.gettext("Unexpected response from server"));
+                } else if ([401, 403, 404, 500].indexOf(response.status) !== -1) {
+                    return Promise.reject(Wirecloud.GlobalLogManager.parseErrorResponse(response));
+                }
+
+                return Promise.resolve(this);
+            });
+        }
+
+        setCustomDragboardWidth(width) {
+            this.customWidth = width;
+            this.updateWidgetScreenSize(width);
+        }
+
+        restoreDragboardWidth() {
+            this.customWidth = -1;
+            this.updateWidgetScreenSize(window.innerWidth);
         }
 
         _addWidget(widget) {
@@ -334,11 +511,11 @@
         }
 
         /**
-         * @private
-         *
          * This function is slow. Please, only call it when really necessary.
          *
          * Updates the width and height info for this dragboard.
+         *
+         * @private
          */
         _recomputeSize() {
             const cssStyle = document.defaultView.getComputedStyle(this.tab.wrapperElement, null);
@@ -347,23 +524,23 @@
             }
 
             // Read padding values
-            this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
-            this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
-            this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
-            this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
+            this.topMargin = parseFloat(cssStyle.getPropertyValue("padding-top"));
+            this.bottomMargin = parseFloat(cssStyle.getPropertyValue("padding-bottom"));
+            this.leftMargin = parseFloat(cssStyle.getPropertyValue("padding-left"));
+            this.rightMargin = parseFloat(cssStyle.getPropertyValue("padding-right"));
 
             this.dragboardWidth = parseInt(this.tab.wrapperElement.offsetWidth, 10) - this.leftMargin - this.rightMargin;
             this.dragboardHeight = parseInt(this.tab.wrapperElement.parentNode.clientHeight, 10) - this.topMargin - this.bottomMargin;
         }
 
         /**
-         * @private
-         *
          * This method forces recomputing of the iWidgets' sizes.
          *
          * @param {boolean} widthChanged
          * @param {boolean} heightChanged
-         */
+         *
+         * @private
+        */
         _updateIWidgetSizes(widthChanged, heightChanged) {
             this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
             this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);

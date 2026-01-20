@@ -100,32 +100,32 @@
             return (cells * this.cellHeight);
         }
 
-        getWidthInPixels(cells) {
-            return this.fromHCellsToPixels(cells) - this.leftMargin - this.rightMargin;
+        getWidthInPixels(cells, width) {
+            return this.fromHCellsToPixels(cells, width) - this.leftMargin - this.rightMargin;
         }
 
         getHeightInPixels(cells) {
             return this.fromVCellsToPixels(cells) - this.topMargin - this.bottomMargin;
         }
 
-        fromPixelsToHCells(pixels) {
+        fromPixelsToHCells(pixels, width) {
             if (pixels <= 0) {
                 return 0;
             }
 
-            const cells = pixels / this.fromHCellsToPixels(1);
+            const cells = pixels / this.fromHCellsToPixels(1, width);
             return Math.round(cells);
         }
 
-        fromHCellsToPixels(cells) {
-            return (this.getWidth() * this.fromHCellsToPercentage(cells)) / 100;
+        fromHCellsToPixels(cells, width) {
+            return ((width || this.getWidth()) * this.fromHCellsToPercentage(cells)) / 100;
         }
 
         fromHCellsToPercentage(cells) {
             return cells * (100 / this.columns);
         }
 
-        adaptColumnOffset(size) {
+        adaptColumnOffset(size, width) {
             let offsetInLU, pixels;
 
             const parsedSize = this.parseSize(size);
@@ -133,13 +133,13 @@
                 offsetInLU = Math.round(parsedSize[0]);
             } else {
                 if (parsedSize[1] === '%') {
-                    pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+                    pixels = Math.round((parsedSize[0] * (width || this.getWidth())) / 100);
                 } else {
                     pixels = parsedSize[0] < this.dragboard.leftMargin ? 0 : parsedSize[0] - this.dragboard.leftMargin;
                 }
-                offsetInLU = this.fromPixelsToHCells(pixels);
+                offsetInLU = this.fromPixelsToHCells(pixels, width);
             }
-            return new Wirecloud.ui.MultiValuedSize(this.getColumnOffset({x: offsetInLU}), offsetInLU);
+            return new Wirecloud.ui.MultiValuedSize(this.getColumnOffset({x: offsetInLU}, width), offsetInLU);
         }
 
         adaptRowOffset(size) {
@@ -167,8 +167,8 @@
             return height + this.topMargin + this.bottomMargin;
         }
 
-        getColumnOffset(position, css) {
-            let tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(position.x)) / 100);
+        getColumnOffset(position, width, css) {
+            let tmp = Math.floor(((width || this.getWidth()) * this.fromHCellsToPercentage(position.x)) / 100);
             tmp += this.leftMargin + this.dragboard.leftMargin;
             return css ? tmp + 'px' : tmp;
         }
@@ -340,6 +340,10 @@
         _reserveSpace2(matrix, widget, positionX, positionY, width, height) {
             for (let x = 0; x < width; x++) {
                 for (let y = 0; y < height; y++) {
+                    if (!((positionX + x) in matrix)) {
+                        matrix[positionX + x] = [];
+                    }
+
                     matrix[positionX + x][positionY + y] = widget;
                 }
             }
@@ -498,12 +502,16 @@
         }
 
         _searchFreeSpace(width, height) {
+            return this._searchFreeSpace2(width, height, this.matrix);
+        }
+
+        _searchFreeSpace2(width, height, matrix) {
             let positionX = 0, positionY = 0;
             const maxX = this.columns - width;
 
             for (positionY = 0; true ; positionY++) {
                 for (positionX = 0; positionX <= maxX; positionX++) {
-                    if (this._hasSpaceFor(this.matrix, positionX, positionY, width, height)) {
+                    if (this._hasSpaceFor(matrix, positionX, positionY, width, height)) {
                         return {relx: true, x: positionX, rely: true, y: positionY};
                     }
                 }
@@ -532,7 +540,7 @@
                 } else {
                     iWidgetsToReinsert.push(widget);
                 }
-            })
+            });
 
             const modified = iWidgetsToReinsert.length > 0;
             // Reinsert the iwidgets that didn't fit in their positions

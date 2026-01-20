@@ -468,7 +468,7 @@
 
         });
 
-        describe("addButton(button, position)", function () {
+        describe("addToEastSection(elem, position)", function () {
             let element;
 
             beforeEach(function () {
@@ -476,24 +476,24 @@
             });
 
             it("throws an exception if button is not a button", function () {
-                expect(function () {element.addButton(null);}).toThrow(jasmine.any(TypeError));
+                expect(function () {element.addToEastSection(null);}).toThrow(jasmine.any(TypeError));
             });
 
             it("place buttons on the right by default", function () {
                 const button = new StyledElements.Button();
-                element.addButton(button);
+                element.addToEastSection(button);
                 expect(element.tabWrapper.east.children).toEqual([element.moveRightButton, button]);
             });
 
             it("place buttons on the right by default", function () {
                 const button = new StyledElements.Button();
-                element.addButton(button, 'right');
+                element.addToEastSection(button, 'right');
                 expect(element.tabWrapper.east.children).toEqual([element.moveRightButton, button]);
             });
 
             it("should allow to add buttons on the left side", function () {
                 const button = new StyledElements.Button();
-                element.addButton(button, 'left');
+                element.addToEastSection(button, 'left');
                 expect(element.tabWrapper.west.children).toEqual([button, element.moveLeftButton]);
             });
         });

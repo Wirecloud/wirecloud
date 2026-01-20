@@ -225,26 +225,37 @@ def fillWorkspaceUsingTemplate(workspace, template):
 
         for resource in tab_entry['resources']:
 
-            position = resource['position']
-            rendering = resource['rendering']
-
             widget = get_or_add_widget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user)
 
             iwidget_data = {
                 "widget": widget.uri,
                 "title": resource.get('title'),
-                "left": float(position.get('x')),
-                "top": float(position.get('y')),
                 "icon_left": 0,
                 "icon_top": 0,
-                "zIndex": int(position.get('z')),
-                "width": float(rendering.get('width')),
-                "height": float(rendering.get('height')),
-                "layout": int(rendering.get('layout')),
-                "minimized": rendering['minimized'],
-                "fulldragboard": rendering['fulldragboard'],
-                "titlevisible": rendering['titlevisible'],
+                "layout": int(resource.get('layout')),
+                "layoutConfigurations": []
             }
+
+            for configuration in resource["screenSizes"]:
+                position = configuration['position']
+                rendering = configuration['rendering']
+
+                iwidget_layoutConfig = {
+                    'moreOrEqual': configuration['moreOrEqual'],
+                    'lessOrEqual': configuration['lessOrEqual'],
+                    'id': configuration['id'],
+                    "left": float(position.get('x')),
+                    "top": float(position.get('y')),
+                    "zIndex": int(position.get('z')),
+                    "width": float(rendering.get('width')),
+                    "height": float(rendering.get('height')),
+                    "minimized": rendering['minimized'],
+                    "fulldragboard": rendering['fulldragboard'],
+                    "titlevisible": rendering['titlevisible'],
+                    'action': 'update'
+                }
+
+                iwidget_data['layoutConfigurations'].append(iwidget_layoutConfig)
 
             iwidget = SaveIWidget(iwidget_data, user, tab, commit=False)
             if resource.get('readonly'):

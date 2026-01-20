@@ -141,6 +141,7 @@ STYLED_ELEMENTS_FILES = (
     'js/wirecloud/ui/ParametrizableValueInputInterface.js',
     'js/wirecloud/ui/ParametrizedTextInputInterface.js',
     'js/wirecloud/ui/LayoutInputInterface.js',
+    'js/wirecloud/ui/ScreenSizesInputInterface.js',
     'js/StyledElements/VersionInputInterface.js',
     'js/StyledElements/InputInterfaceFactory.js',
     'js/StyledElements/DefaultInputInterfaceFactory.js',
@@ -170,6 +171,7 @@ BASE_CSS = (
 CLASSIC_CORE_CSS = (
     'css/mac_search.scss',
     'css/layout_field.css',
+    'css/screen_size_field.css',
     'css/mac_field.scss',
     'css/mac_selection_dialog.css',
 )
@@ -438,6 +440,20 @@ class WirecloudCorePlugin(WirecloudPlugin):
                     {"value": "Free", "label": _("Free")}
                 ],
                 "description": _("Default layout for the new widgets.")
+            },
+            {
+                "name": "screenSizes",
+                "defaultValue": [
+                    {
+                        "moreOrEqual": 0,
+                        "lessOrEqual": -1,
+                        "name": "Default",
+                        "id": 0
+                    }
+                ],
+                "label": _("Screen sizes"),
+                "type": "screenSizes",
+                "description": _("List of screen sizes supported by the workspace. Each screen size is defined by a range of screen widths and different widget configurations are associated with it.")
             },
             {
                 "name": "baselayout",

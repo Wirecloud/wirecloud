@@ -238,6 +238,61 @@
     };
     Object.freeze(WIDGET_META_PREFS);
 
+    const WIDGET_LAYOUT_CONFIGS = [{
+        id: 0,
+        moreOrEqual: 0,
+        lessOrEqual: 800,
+        anchor: 'top-left',
+        relx: true,
+        rely: true,
+        left: 0,
+        top: 0,
+        zIndex: 0,
+        relheight: true,
+        relwidth: true,
+        height: 1,
+        width: 1,
+        minimized: false,
+        fulldragboard: false,
+        titlevisible: true
+    }, {
+        id: 1,
+        moreOrEqual: 801,
+        lessOrEqual: 999,
+        anchor: 'top-right',
+        relx: true,
+        rely: true,
+        left: 1,
+        top: 0,
+        zIndex: 1,
+        relheight: true,
+        relwidth: true,
+        height: 2,
+        width: 1,
+        minimized: false,
+        fulldragboard: true,
+        titlevisible: true
+    },
+    {
+        id: 2,
+        moreOrEqual: 1000,
+        lessOrEqual: -1,
+        anchor: 'top-left',
+        relx: true,
+        rely: true,
+        left: 0,
+        top: 0,
+        zIndex: 0,
+        relheight: true,
+        relwidth: true,
+        height: 1,
+        width: 1,
+        minimized: false,
+        fulldragboard: false,
+        titlevisible: true
+    }];
+    Object.freeze(WIDGET_LAYOUT_CONFIGS);
+
     describe("Wirecloud.Widget", function () {
 
         beforeAll(() => {
@@ -1764,13 +1819,19 @@
             it("updates titlevisible property", (done) => {
                 const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
-                    titlevisible: false
+                    layoutConfigurations: [{
+                        titlevisible: false,
+                        id: 0,
+                        moreOrEqual: 0,
+                        lessOrEqual: -1
+                    }]
                 });
                 spyOn(Wirecloud.io, "makeRequest");
                 expect(widget.titlevisible).toBe(false);
 
                 const p = widget.setTitleVisibility(true, false);
                 expect(widget.titlevisible).toBe(true);
+                expect(widget.currentLayoutConfig.titlevisible).toBe(true);
                 expect(Wirecloud.io.makeRequest).not.toHaveBeenCalled();
                 p.then(
                     (value) => {
@@ -1785,7 +1846,12 @@
             it("updates titlevisible property on the server", (done) => {
                 const widget = new Wirecloud.Widget(LOCKED_WORKSPACE_TAB, EMPTY_WIDGET_META, {
                     id: "1",
-                    titlevisible: false
+                    layoutConfigurations: [{
+                        titlevisible: false,
+                        id: 0,
+                        moreOrEqual: 0,
+                        lessOrEqual: -1
+                    }]
                 });
                 spyOn(Wirecloud.io, "makeRequest").and.callFake(function (url, options) {
                     expect(options.method).toEqual("POST");
@@ -1796,6 +1862,7 @@
                     });
                 });
                 expect(widget.titlevisible).toBe(false);
+                expect(widget.currentLayoutConfig.titlevisible).toBe(false);
 
                 const p = widget.setTitleVisibility(true, true);
                 p.then(
@@ -2234,6 +2301,166 @@
                         done();
                     }
                 );
+
+            });
+
+        });
+
+        describe("updateWindowSize(windowSize)", () => {
+
+            it("should update the widget information accordingly", () => {
+
+                // Force window size to 800
+                Object.defineProperty(window, 'innerWidth', {
+                    writable: true,
+                    configurable: true,
+                    value: 750
+                });
+
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    layoutConfigurations: WIDGET_LAYOUT_CONFIGS
+                });
+
+                expect(widget.layoutConfigurations).toBe(WIDGET_LAYOUT_CONFIGS);
+
+                expect(widget.updateWindowSize(800)).toBe(false);
+                expect(widget.updateWindowSize(900)).toBe(true);
+
+                expect(widget.currentLayoutConfig).toBe(widget.layoutConfigurations[1]);
+
+                expect(widget.fulldragboard).toBe(true);
+                expect(widget.position.z).toBe(1);
+                expect(widget.shape.height).toBe(2);
+
+                expect(widget.updateWindowSize(800)).toBe(true);
+
+                expect(widget.currentLayoutConfig).toBe(widget.layoutConfigurations[0]);
+
+                expect(widget.fulldragboard).toBe(false);
+                expect(widget.position.z).toBe(0);
+                expect(widget.shape.height).toBe(1);
+
+            });
+
+        });
+
+        describe("setLayoutPosition(layoutPosition)", () => {
+
+            it("should update the current layout position accordingly", () => {
+
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    layoutConfigurations: WIDGET_LAYOUT_CONFIGS
+                });
+
+                expect(widget.setLayoutPosition({
+                    anchor: 'top-left',
+                    relx: false,
+                    rely: true,
+                    x: 1,
+                    y: 0,
+                    z: 0
+                })).toBe(widget);
+
+                expect(widget.currentLayoutConfig.left).toBe(1);
+                expect(widget.currentLayoutConfig.relx).toBe(false);
+
+                expect(widget.position.x).toBe(0);
+                expect(widget.position.relx).toBe(true);
+
+            });
+
+        });
+
+        describe("setLayoutShape(layoutShape)", () => {
+
+            it("should update the current layout shape accordingly", () => {
+
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    layoutConfigurations: WIDGET_LAYOUT_CONFIGS
+                });
+
+                expect(widget.setLayoutShape({
+                    relwidth: false,
+                    relheight: true,
+                    width: 1,
+                    height: 2
+                })).toBe(widget);
+
+                expect(widget.currentLayoutConfig.height).toBe(2);
+                expect(widget.currentLayoutConfig.relwidth).toBe(false);
+
+                expect(widget.shape.height).toBe(1);
+                expect(widget.shape.relwidth).toBe(true);
+
+            });
+
+        });
+
+        describe("setLayoutIndex(index)", () => {
+
+            it("should update the layout accordingly", () => {
+
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    layoutConfigurations: WIDGET_LAYOUT_CONFIGS
+                });
+
+                expect(widget.setLayoutIndex(3)).toBe(widget);
+                expect(widget.layout).toBe(3);
+
+                widget.setLayoutIndex(1);
+                expect(widget.layout).toBe(1);
+            });
+
+        });
+
+        describe("setLayoutFulldragboard(fulldragboard)", () => {
+
+            it("should update the fulldragboard property of the layout accordingly", () => {
+
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    layoutConfigurations: WIDGET_LAYOUT_CONFIGS
+                });
+
+                expect(widget.setLayoutFulldragboard(true)).toBe(widget);
+                expect(widget.currentLayoutConfig.fulldragboard).toBe(true);
+                expect(widget.fulldragboard).toBe(false);
+            });
+
+        });
+
+        describe("setLayoutMinimizedStatus(minimized)", () => {
+
+            it("should update the minimized property of the layout accordingly", () => {
+
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    layoutConfigurations: WIDGET_LAYOUT_CONFIGS
+                });
+
+                expect(widget.setLayoutMinimizedStatus(true)).toBe(widget);
+                expect(widget.minimized).toBe(widget.currentLayoutConfig.minimized);
+                expect(widget.currentLayoutConfig.minimized).toBe(true);
+            });
+
+        });
+
+        describe("getLayoutConfigBySize(size)", () => {
+
+            it("should return the layout configuration that fits the given size", () => {
+
+                const widget = new Wirecloud.Widget(WORKSPACE_TAB, EMPTY_WIDGET_META, {
+                    id: "1",
+                    layoutConfigurations: WIDGET_LAYOUT_CONFIGS
+                });
+
+                expect(widget.getLayoutConfigBySize(800)).toBe(widget.layoutConfigurations[0]);
+                expect(widget.getLayoutConfigBySize(900)).toBe(widget.layoutConfigurations[1]);
+                expect(widget.getLayoutConfigBySize(1000)).toBe(widget.layoutConfigurations[2]);
 
             });
 

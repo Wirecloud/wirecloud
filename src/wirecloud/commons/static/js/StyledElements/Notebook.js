@@ -170,7 +170,7 @@
                     this.tabArea.appendChild(this.new_tab_button_tabs);
                     this.new_tab_button_left = new this.Button({iconClass: 'fas fa-plus', 'class': 'se-notebook-new-tab', title: utils.gettext('Add Tab')});
                     this.new_tab_button_left.addEventListener('click', new_tab_main_listener);
-                    this.addButton(this.new_tab_button_left);
+                    this.addToEastSection(this.new_tab_button_left);
                 }
                 StyledElements.Event.prototype.addEventListener.call(this.events.newTab, listener);
             }.bind(this);
@@ -640,29 +640,44 @@
 
         /**
          *
+         * @name StyledElements.Notebook#addToEastSection
+         *
+         * @returns {StyledElements.Notebook}
+         *      The instance on which the member is called.
+         */
+        addToEastSection(elem, position) {
+            position = position || 'right';
+
+            switch (position) {
+            case 'left':
+                this.tabWrapper.west.prependChild(elem, this.moveLeftButton);
+                break;
+            case 'right':
+                this.tabWrapper.east.appendChild(elem);
+                break;
+            }
+
+            // Enable/Disable tab moving buttons
+            enableDisableButtons.call(this);
+
+            return this;
+        }
+
+        /**
+         *
          * @name StyledElements.Notebook#addButton
          *
          * @returns {StyledElements.Notebook}
          *      The instance on which the member is called.
+         *
+         * @deprecated Old method, use addToEastSection instead
          */
         addButton(button, position) {
             if (!(button instanceof StyledElements.Button) && !(button instanceof StyledElements.Select)) {
                 throw new TypeError();
             }
 
-            position = position || 'right';
-
-            switch (position) {
-            case 'left':
-                this.tabWrapper.west.prependChild(button, this.moveLeftButton);
-                break;
-            case 'right':
-                this.tabWrapper.east.appendChild(button);
-                break;
-            }
-
-            // Enable/Disable tab moving buttons
-            enableDisableButtons.call(this);
+            this.addToEastSection(button, position);
 
             return this;
         }

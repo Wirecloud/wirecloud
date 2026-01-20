@@ -43,6 +43,23 @@
                 expect(element.body).toEqual(jasmine.any(se.Container));
             });
 
+            it("should allow changing the message", () => {
+                const element = new se.Alert();
+                element.setMessage("New message");
+
+                expect(element.body.wrapperElement.textContent).toEqual("New message");
+            });
+
+            it("should allow to show and hide the alert", () => {
+                const element = new se.Alert();
+                element.hide();
+
+                expect(element.wrapperElement.style.display).toEqual("none");
+
+                element.show();
+                expect(element.wrapperElement.style.display).toEqual("");
+            });
+
         });
 
     });

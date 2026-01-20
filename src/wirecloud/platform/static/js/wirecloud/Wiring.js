@@ -605,7 +605,7 @@
 
             // Init operatorId counter
             if (priv.operators.length > 0) {
-                priv.operatorId = priv.operators[priv.operators.length - 1].id + 1;
+                priv.operatorId = parseInt(priv.operators[priv.operators.length - 1].id) + 1;
             } else {
                 priv.operatorId = 1;
             }

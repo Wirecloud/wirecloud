@@ -28,7 +28,7 @@
             "name": "Test 111",
             "tab": 106,
             "readOnly": false,
-            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}",
+            "positions": "{\"configurations\":[{\"id\":0,\"moreOrEqual\":0,\"lessOrEqual\":-1,\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":6,\"top\":0,\"fulldragboard\":false},\"icon\":{\"top\":0,\"left\":0}}]}",
             "variables": "{\"prop\": {\"users\": {\"4\": \"default\"}}, \"prop2\": {\"users\": {\"4\": \"default2\"}}}"
         }
     },

@@ -40,7 +40,6 @@ def get_workspace_description(workspace):
 
     return get_iwidgets_description(included_iwidgets)
 
-
 def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets, cache_manager):
 
     widget = iwidget.widget
@@ -136,34 +135,45 @@ def process_iwidget(workspace, iwidget, wiring, parametrization, readOnlyWidgets
             'value': value,
         }
 
-    return {
+    screenSizes = []
+    for configuration in iwidget.positions['configurations']:
+        screenSizes.append({
+            'moreOrEqual': configuration['moreOrEqual'],
+            'lessOrEqual': configuration['lessOrEqual'],
+            'id': configuration['id'],
+            'position': {
+                'anchor': configuration['widget'].get('anchor', 'top-left'),
+                'relx': configuration['widget'].get('relx', True),
+                'rely': configuration['widget'].get('rely', True if iwidget.layout != 1 else False),
+                'x': str(configuration['widget']['left']),
+                'y': str(configuration['widget']['top']),
+                'z': str(configuration['widget']['zIndex'])
+            },
+            'rendering': {
+                'relwidth': configuration['widget'].get('relwidth', True),
+                'relheight': configuration['widget'].get('relheight', True if iwidget.layout != 1 else False),
+                'width': str(configuration['widget']['width']),
+                'height': str(configuration['widget']['height']),
+                'fulldragboard': bool(configuration['widget']['fulldragboard']),
+                'minimized': bool(configuration['widget']['minimized']),
+                'titlevisible': bool(configuration['widget'].get('titlevisible', True)),
+            },
+        })
+
+    iwidget_data = {
         'id': iwidget_id,
         'vendor': iwidget.widget.resource.vendor,
         'name': iwidget.widget.resource.short_name,
         'version': iwidget.widget.resource.version,
         'title': iwidget.name,
+        'layout': iwidget.layout,
         'readonly': readOnlyWidgets,
         'properties': properties,
         'preferences': preferences,
-        'position': {
-            'anchor': iwidget.positions['widget'].get('anchor', 'top-left'),
-            'relx': iwidget.positions['widget'].get('relx', True),
-            'rely': iwidget.positions['widget'].get('rely', True if iwidget.layout != 1 else False),
-            'x': str(iwidget.positions['widget']['left']),
-            'y': str(iwidget.positions['widget']['top']),
-            'z': str(iwidget.positions['widget']['zIndex']),
-        },
-        'rendering': {
-            'relwidth': iwidget.positions['widget'].get('relwidth', True),
-            'relheight': iwidget.positions['widget'].get('relheight', True if iwidget.layout != 1 else False),
-            'width': str(iwidget.positions['widget']['width']),
-            'height': str(iwidget.positions['widget']['height']),
-            'layout': iwidget.layout,
-            'fulldragboard': bool(iwidget.positions['widget']['fulldragboard']),
-            'minimized': bool(iwidget.positions['widget']['minimized']),
-            'titlevisible': bool(iwidget.positions['widget'].get('titlevisible', True)),
-        },
+        'screenSizes': screenSizes
     }
+
+    return iwidget_data
 
 
 def build_json_template_from_workspace(options, workspace, user):

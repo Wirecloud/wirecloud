@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-04 10:28+0200\n"
+"POT-Creation-Date: 2024-06-28 17:13+0200\n"
 "PO-Revision-Date: 2018-10-24 12:55+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@ficodes.com>\n"
 "Language-Team: Español/España\n"
@@ -19,146 +19,146 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2\n"
 
-#: static/js/StyledElements/FileField.js:107
-#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:35
+#: static/js/StyledElements/FileField.js:101
+#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:38
 msgid "Select"
 msgstr "Seleccionar"
 
-#: static/js/StyledElements/Form.js:71
+#: static/js/StyledElements/Form.js:223
 msgid "Set Defaults"
 msgstr "Valores por defecto"
 
-#: static/js/StyledElements/Form.js:82
+#: static/js/StyledElements/Form.js:234
 msgid "Reset"
 msgstr "Reiniciar"
 
-#: static/js/StyledElements/Form.js:94
-#: static/js/wirecloud/ui/MessageWindowMenu.js:43
+#: static/js/StyledElements/Form.js:246
+#: static/js/wirecloud/ui/MessageWindowMenu.js:45
 msgid "Accept"
 msgstr "Aceptar"
 
-#: static/js/StyledElements/Form.js:105
-#: static/js/wirecloud/ui/ExternalProcessWindowMenu.js:106
-#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:102
+#: static/js/StyledElements/Form.js:257
+#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:140
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: static/js/StyledElements/InputInterfaces.js:70
+#: static/js/StyledElements/InputInterfaces.js:73
 msgid "The following required fields are empty: %(fields)s."
 msgstr "Los siguientes campos obligatorios están vacíos: %(fields)s."
 
-#: static/js/StyledElements/InputInterfaces.js:73
+#: static/js/StyledElements/InputInterfaces.js:76
 msgid "The following fields do not contain a valid URL: %(fields)s."
 msgstr "Los siguientes campos no contienen una URL válida: %(fields)s."
 
-#: static/js/StyledElements/InputInterfaces.js:76
+#: static/js/StyledElements/InputInterfaces.js:79
 msgid "The following fields do not contain a valid E-Mail address: %(fields)s."
 msgstr "Los siguientes campos no continene un e-mail válido: %(fields)s."
 
-#: static/js/StyledElements/InputInterfaces.js:79
+#: static/js/StyledElements/InputInterfaces.js:82
 msgid "The following field do not contain a valid version number: %(fields)s."
 msgstr ""
 "Los siguientes campos no continen un número de versión válido: %(fields)s."
 
-#: static/js/StyledElements/InputInterfaces.js:82
+#: static/js/StyledElements/InputInterfaces.js:85
 msgid "The following fields contain invalid characters: %(fields)s."
 msgstr "Los siguientes campos contienen carácteres inválidos: %(fields)s."
 
-#: static/js/StyledElements/InputInterfaces.js:85
+#: static/js/StyledElements/InputInterfaces.js:88
 msgid "The following fields do not contain a valid color value: %(fields)s."
 msgstr ""
 "Los siguientes campos no contienen un valor de color válido: %(fields)s."
 
-#: static/js/StyledElements/InputInterfaces.js:88
+#: static/js/StyledElements/InputInterfaces.js:91
 msgid "The following fields does contain an out of range value: %(fields)s."
 msgstr "Los siguientes campos contienen un valor fuera de rango: %(fields)s."
 
-#: static/js/StyledElements/ModelTable.js:54
+#: static/js/StyledElements/InputInterfaces.js:94
+msgid ""
+"The sceen sizes are not correct. They must cover the whole range of possible "
+"screen sizes without gaps or overlaps."
+msgstr ""
+"Los tamaños de pantalla no son correctos. Deben cubrir todo el rango de "
+"posibles tamaños de pantalla sin huecos ni solapamientos."
+
+#: static/js/StyledElements/ModelTable.js:58
 msgid "Sort by %(column_name)s"
 msgstr "Ordenar por %(column_name)s"
 
-#: static/js/StyledElements/ModelTable.js:204
+#: static/js/StyledElements/ModelTable.js:453
 msgid "No data available"
 msgstr "No hay datos disponibles"
 
-#: static/js/StyledElements/Notebook.js:108
-#: static/js/StyledElements/Notebook.js:111
+#: static/js/StyledElements/Notebook.js:168
+#: static/js/StyledElements/Notebook.js:171
 msgid "Add Tab"
 msgstr "Añadir pestaña"
 
-#: static/js/StyledElements/PaginationInterface.js:82
+#: static/js/StyledElements/PaginationInterface.js:68
 msgid ""
-"<div class=\"se-input-group\"><t:firstBtn/><t:prevBtn/><div class=\"se-box"
-"\">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></div>"
+"<div class=\"se-input-group\"><t:firstBtn/><t:prevBtn/><div class=\"se-"
+"box\">Page: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></"
+"div>"
 msgstr ""
-"<div class=\"se-input-group\"><t:firstBtn/><t:prevBtn/><div class=\"se-box"
-"\">Página: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/></s:"
-"styledgui>"
+"<div class=\"se-input-group\"><t:firstBtn/><t:prevBtn/><div class=\"se-"
+"box\">Página: <t:currentPage/>/<t:totalPages/></div><t:nextBtn/><t:lastBtn/"
+"></s:styledgui>"
 
-#: static/js/StyledElements/Typeahead.js:174
+#: static/js/StyledElements/Typeahead.js:89
 msgid "No results found for <em><t:query/></em>"
 msgstr "No se han encontrado resultados para <em><t:query/></em>"
 
-#: static/js/StyledElements/Utils.js:511
+#: static/js/StyledElements/Utils.js:510
 msgid "N/A"
 msgstr "N/A"
 
-#: static/js/wirecloud/ui/AlertWindowMenu.js:50
+#: static/js/wirecloud/ui/AlertWindowMenu.js:77
 msgid "Yes"
 msgstr "Sí"
 
-#: static/js/wirecloud/ui/AlertWindowMenu.js:51
+#: static/js/wirecloud/ui/AlertWindowMenu.js:78
 msgid "No"
 msgstr "No"
 
-#: static/js/wirecloud/ui/AlertWindowMenu.js:59
+#: static/js/wirecloud/ui/AlertWindowMenu.js:85
 #: static/js/wirecloud/ui/MessageWindowMenu.js:29
 msgid "Warning"
 msgstr "Atención"
 
-#: static/js/wirecloud/ui/ExternalProcessWindowMenu.js:93
-msgid "Start"
-msgstr "Iniciar"
-
-#: static/js/wirecloud/ui/HTMLWindowMenu.js:48
-#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:45
-#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:145
-#: static/js/wirecloud/ui/WindowMenu.js:61
+#: static/js/wirecloud/ui/HTMLWindowMenu.js:45
+#: static/js/wirecloud/ui/MACSelectionWindowMenu.js:48
+#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:180
+#: static/js/wirecloud/ui/WindowMenu.js:127
 msgid "Close"
 msgstr "Cerrar"
 
-#: static/js/wirecloud/ui/MACField.js:88
+#: static/js/wirecloud/ui/MACField.js:89
 msgid "Clear current selection"
 msgstr "Borrar la seleccion actual"
 
-#: static/js/wirecloud/ui/MACField.js:99
+#: static/js/wirecloud/ui/MACField.js:100
 msgid "Search"
 msgstr "Buscar"
 
-#: static/js/wirecloud/ui/MACSearch.js:64
-msgid "Keywords..."
-msgstr "Texto de búsqueda…"
-
-#: static/js/wirecloud/ui/MACSearch.js:157
+#: static/js/wirecloud/ui/MACSearch.js:50
 msgid "Connection error: No resource retrieved"
 msgstr "Problema de conexión: No se ha recibido ningún recurso"
 
-#: static/js/wirecloud/ui/MACSearch.js:227
+#: static/js/wirecloud/ui/MACSearch.js:120
 msgid "<p>Showing results for <b><t:corrected_query/></b></p>"
 msgstr "<p>Mostrando los resultados para <b><t:corrected_query/></b></p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:244
+#: static/js/wirecloud/ui/MACSearch.js:137
 msgid ""
 "<p>We couldn't find anything for your search - <b>%(keywords)s.</b></"
 "p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</"
 "li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>"
 msgstr ""
-"<p>No hemos podido encontrar resultados que coincidan con tu búsqueda (<b>"
-"%(keywords)s</b>).</p><p>Sugerencias:</p><ul><li>Asegúrate de que todas las "
-"palabras estén escritas correctamente.</li><li>Prueba con otras palabras "
+"<p>No hemos podido encontrar resultados que coincidan con tu búsqueda "
+"(<b>%(keywords)s</b>).</p><p>Sugerencias:</p><ul><li>Asegúrate de que todas "
+"las palabras estén escritas correctamente.</li><li>Prueba con otras palabras "
 "clave.</li><li>Inténtalo con palabras clave más generales.</li></ul>"
 
-#: static/js/wirecloud/ui/MACSearch.js:247
+#: static/js/wirecloud/ui/MACSearch.js:140
 msgid ""
 "<p>Currently, you do not have access to any %(scope)s component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -169,7 +169,7 @@ msgstr ""
 "recursos de forma manual usando el botón Subir en la vista de Mis Recursos.</"
 "p>"
 
-#: static/js/wirecloud/ui/MACSearch.js:250
+#: static/js/wirecloud/ui/MACSearch.js:143
 msgid ""
 "<p>Currently, you do not have access to any component. You can get "
 "components using the Marketplace view or by uploading components manually "
@@ -179,6 +179,10 @@ msgstr ""
 "componentes usando la vista de Marketplace o subiendo recursos de forma "
 "manual usando el botón Subir en la vista de Mis Recursos.</p>"
 
+#: static/js/wirecloud/ui/MACSearch.js:183
+msgid "Keywords..."
+msgstr "Texto de búsqueda…"
+
 #: static/js/wirecloud/ui/MessageWindowMenu.js:29
 msgid "Error"
 msgstr "Error"
@@ -187,7 +191,7 @@ msgstr "Error"
 msgid "Info"
 msgstr "Detalles"
 
-#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:83
+#: static/js/wirecloud/ui/Tutorial/SimpleDescription.js:123
 msgid "Next"
 msgstr "Siguiente"
 
@@ -195,6 +199,9 @@ msgstr "Siguiente"
 msgid "If you prefer, you can follow some of these tutorials:"
 msgstr "Si lo prefieres, puedes seguir alguno de los siguientes tutoriales:"
 
-#: static/js/wirecloud/ui/TutorialSubMenu.js:32
+#: static/js/wirecloud/ui/TutorialSubMenu.js:33
 msgid "Tutorials"
 msgstr "Tutoriales"
+
+#~ msgid "Start"
+#~ msgstr "Iniciar"

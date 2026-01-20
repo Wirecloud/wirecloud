@@ -31,4 +31,4 @@ class Constant(models.Model):
         db_table = 'wirecloud_constant'
 
     def __str__(self):
-        return self.concept.concept
+        return self.concept

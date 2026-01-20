@@ -60,7 +60,8 @@
             const defaultOptions = {
                 'text': null,
                 'title': '',
-                'class': ''
+                'class': '',
+                'listeners': true
             };
             options = utils.merge({}, defaultOptions, options);
 
@@ -81,8 +82,10 @@
             /* Event handlers */
             this._clickCallback = clickCallback.bind(this);
 
-            this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
-            this.wrapperElement.addEventListener('click', this._clickCallback, true);
+            if (options.listeners) {
+                this.wrapperElement.addEventListener('mousedown', utils.stopPropagationListener, true);
+                this.wrapperElement.addEventListener('click', this._clickCallback, true);
+            }
         }
 
         /**

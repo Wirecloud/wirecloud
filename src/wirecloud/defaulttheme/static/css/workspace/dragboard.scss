@@ -113,3 +113,18 @@
     padding-top: 2px;
     padding-bottom: 3px;
 }
+
+.wc-editing-interval {
+    margin: 3px 5px;
+}
+
+.wc-editing-interval-close {
+    color: #333;
+    margin-left: 10px;
+}
+
+.wc-editing-interval-close:hover {
+    cursor: pointer;
+    color: #333;
+    text-decoration: none;
+}

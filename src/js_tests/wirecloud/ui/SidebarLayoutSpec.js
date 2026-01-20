@@ -41,7 +41,7 @@
                 const layout = new ns.SidebarLayout(dragboard);
 
                 // Check initial values
-                expect(layout.active).toBe(false);
+                expect(layout.isActive()).toBe(false);
                 expect(layout.position).toBe("left");
             });
 
@@ -56,8 +56,17 @@
                 const layout = new ns.SidebarLayout(dragboard, {position: "right"});
 
                 // Should init in inactive mode
-                expect(layout.active).toBe(false);
+                expect(layout.isActive()).toBe(false);
                 expect(layout.position).toBe("right");
+            });
+
+            it("should accept the active option", () => {
+                const dragboard = {};
+                const layout = new ns.SidebarLayout(dragboard, {active: true});
+
+                // Should init in active mode
+                expect(layout.isActive()).toBe(true);
+                expect(layout.position).toBe("left");
             });
 
         });
@@ -113,7 +122,7 @@
 
         });
 
-        describe("adaptColumnOffset(value)", () => {
+        describe("adaptColumnOffset(value[, width])", () => {
 
             it("should call parent method for top sidebars", () => {
                 const result = {};
@@ -122,7 +131,7 @@
 
                 const value = layout.adaptColumnOffset(50);
 
-                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptColumnOffset).toHaveBeenCalledWith(50);
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptColumnOffset).toHaveBeenCalledWith(50, undefined);
                 expect(value).toBe(result);
             });
 
@@ -133,7 +142,7 @@
 
                 const value = layout.adaptColumnOffset(50);
 
-                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptColumnOffset).toHaveBeenCalledWith(50);
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptColumnOffset).toHaveBeenCalledWith(50, undefined);
                 expect(value).toBe(result);
             });
 
@@ -245,7 +254,7 @@
 
         });
 
-        describe("adaptWidth(size)", () => {
+        describe("adaptWidth(size[, width])", () => {
 
             it("should call parent method for top sidebars", () => {
                 const result = {};
@@ -254,7 +263,7 @@
 
                 const value = layout.adaptWidth(50);
 
-                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptWidth).toHaveBeenCalledWith(50);
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptWidth).toHaveBeenCalledWith(50, undefined);
                 expect(value).toBe(result);
             });
 
@@ -265,7 +274,7 @@
 
                 const value = layout.adaptWidth(50);
 
-                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptWidth).toHaveBeenCalledWith(50);
+                expect(Wirecloud.ui.SmartColumnLayout.prototype.adaptWidth).toHaveBeenCalledWith(50, undefined);
                 expect(value).toBe(result);
             });
 
@@ -636,6 +645,21 @@
                 layout.handle.click();
 
                 expect(layout.active).toBe(false);
+            });
+
+        });
+
+        describe("removeHandle()", () => {
+
+            it("should work", () => {
+                const layout = new ns.SidebarLayout({});
+                layout.handle = {
+                    remove: jasmine.createSpy("remove")
+                }
+
+                layout.removeHandle();
+
+                expect(layout.handle.remove).toHaveBeenCalled();
             });
 
         });

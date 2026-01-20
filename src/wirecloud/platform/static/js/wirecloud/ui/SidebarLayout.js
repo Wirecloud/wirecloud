@@ -79,7 +79,8 @@
 
         constructor(dragboard, options) {
             options = utils.merge({
-                position: "left"
+                position: "left",
+                active: false
             }, options);
 
             if (POSITIONS.indexOf(options.position) === -1) {
@@ -97,7 +98,7 @@
             );
 
             privates.set(this, {
-                active: false
+                active: options.active
             });
 
             Object.defineProperties(this, {
@@ -115,7 +116,7 @@
 
             this.handle = document.createElement("div");
             this.handleicon = document.createElement("i");
-            this.handleicon.className = "fas fa-caret-" + OPPOSITE[this.position];
+            this.handleicon.className = "fas fa-caret-" + (this.active ? ICON[this.position] : OPPOSITE[this.position]);
             this.handle.appendChild(this.handleicon);
             this.handle.addEventListener("click", () => {
                 this.active = !this.active;
@@ -136,6 +137,10 @@
             return result;
         }
 
+        removeHandle() {
+            this.handle.remove();
+        }
+
         removeWidget(widget, affectsDragboard) {
             const result = super.removeWidget(widget, affectsDragboard);
 
@@ -148,11 +153,11 @@
             return result;
         }
 
-        adaptColumnOffset(size) {
+        adaptColumnOffset(size, width) {
             if (this.vertical) {
                 return new Wirecloud.ui.MultiValuedSize(0, 0);
             } else {
-                return super.adaptColumnOffset(size);
+                return super.adaptColumnOffset(size, width);
             }
         }
 
@@ -172,11 +177,11 @@
             }
         }
 
-        adaptWidth(size) {
+        adaptWidth(size, width) {
             if (this.vertical) {
-                return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
+                return new Wirecloud.ui.MultiValuedSize(width || this.getWidth(), 1);
             } else {
-                return super.adaptWidth(size);
+                return super.adaptWidth(size, width);
             }
         }
 
@@ -205,7 +210,7 @@
                 } else {
                     offset = 0;
                 }
-                element.style.left = this.getColumnOffset(widget.position, true);
+                element.style.left = this.getColumnOffset(widget.position, null, true);
                 element.style.right = "";
                 if (this.position === "top") {
                     element.style.top = offset + "px";
@@ -239,6 +244,10 @@
             } else {
                 return this.getHeight();
             }
+        }
+
+        isActive() {
+            return this.active;
         }
 
     }

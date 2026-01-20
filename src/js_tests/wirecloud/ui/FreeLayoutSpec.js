@@ -36,7 +36,7 @@
 
         });
 
-        describe("adaptColumnOffset(value)", () => {
+        describe("adaptColumnOffset(value[, width])", () => {
 
             it("should floor cells", () => {
                 const layout = new ns.FreeLayout({});
@@ -435,7 +435,7 @@
                     leftMargin: 4,
                     rightMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: true, anchor: "top-left", x: 500000}, true)).toBe("calc(50% + -1.5px)");
+                expect(layout.getColumnOffset({relx: true, anchor: "top-left", x: 500000}, undefined, true)).toBe("calc(50% + -1.5px)");
             });
 
             it("should work with relative positions (from right)", () => {
@@ -453,7 +453,7 @@
                     rightMargin: 3,
                     leftMargin: 7
                 });
-                expect(layout.getColumnOffset({relx: true, anchor: "top-right", x: 500000}, true)).toBe("calc(50% + -2px)");
+                expect(layout.getColumnOffset({relx: true, anchor: "top-right", x: 500000}, undefined, true)).toBe("calc(50% + -2px)");
             });
 
             it("should work with absolute positions (from left)", () => {
@@ -482,7 +482,7 @@
                     rightMargin: 3,
                     topMargin: 7,
                 });
-                expect(layout.getColumnOffset({relx: false, anchor: "top-right", x: 400}, true)).toBe("403px");
+                expect(layout.getColumnOffset({relx: false, anchor: "top-right", x: 400}, undefined, true)).toBe("403px");
             });
 
         });
@@ -827,109 +827,130 @@
 
             it("should use first placement (bottom-right) when possible", () => {
                 const options = {
-                    width: 10,
-                    height: 10,
                     refposition: {left: 10, bottom: 10}
                 };
 
-                layout.searchBestPosition(options);
+                const layoutConfig = {
+                    width: 10,
+                    height: 10
+                };
 
-                expect(options.width).toBe(10);
-                expect(options.height).toBe(10);
-                expect(options.left).toBe(100000);
-                expect(options.top).toBe(10);
+                layout.searchBestPosition(options, layoutConfig, null);
+
+                expect(layoutConfig.width).toBe(10);
+                expect(layoutConfig.height).toBe(10);
+                expect(layoutConfig.left).toBe(100000);
+                expect(layoutConfig.top).toBe(10);
             });
 
             it("should use second placement when possible", () => {
                 const options = {
-                    width: 750000,
-                    height: 20,
                     refposition: {left: 70, right: 90, bottom: 10}
                 };
 
-                layout.searchBestPosition(options);
+                const layoutConfig = {
+                    width: 750000,
+                    height: 20
+                };
 
-                expect(options.width).toBe(750000);
-                expect(options.height).toBe(20);
-                expect(options.left).toBe(150000);
-                expect(options.top).toBe(10);
+                layout.searchBestPosition(options, layoutConfig, null);
+
+                expect(layoutConfig.width).toBe(750000);
+                expect(layoutConfig.height).toBe(20);
+                expect(layoutConfig.left).toBe(150000);
+                expect(layoutConfig.top).toBe(10);
             });
 
             it("should use last placement when possible", () => {
                 const options = {
-                    width: 800000,
-                    height: 20,
                     refposition: {left: 80, right: 90, top: 90, bottom: 99}
                 };
 
-                layout.searchBestPosition(options);
+                const layoutConfig = {
+                    width: 800000,
+                    height: 20
+                };
 
-                expect(options.width).toBe(800000);
-                expect(options.height).toBe(20);
-                expect(options.left).toBe(100000);
-                expect(options.top).toBe(70);
+                layout.searchBestPosition(options, layoutConfig, null);
+
+                expect(layoutConfig.width).toBe(800000);
+                expect(layoutConfig.height).toBe(20);
+                expect(layoutConfig.left).toBe(100000);
+                expect(layoutConfig.top).toBe(70);
             });
 
             it("should reduce widget height if there is not enough space", () => {
                 const options = {
-                    width: 800000,
-                    height: 100,
                     refposition: {left: 80, right: 90, top: 90, bottom: 99}
                 };
 
-                layout.searchBestPosition(options);
+                const layoutConfig = {
+                    width: 800000,
+                    height: 100
+                };
 
-                expect(options.width).toBe(800000);
-                expect(options.height).toBe(100);
-                expect(options.left).toBe(100000);
-                expect(options.top).toBe(0);
+                layout.searchBestPosition(options, layoutConfig, null);
+
+                expect(layoutConfig.width).toBe(800000);
+                expect(layoutConfig.height).toBe(100);
+                expect(layoutConfig.left).toBe(100000);
+                expect(layoutConfig.top).toBe(0);
             });
 
             it("should reduce widget width (rigth side) if there is not enough space", () => {
                 const options = {
-                    width: 950000,
-                    height: 100,
                     refposition: {left: 10, right: 90, top: 0, bottom: 10}
                 };
 
-                layout.searchBestPosition(options);
+                const layoutConfig = {
+                    width: 950000,
+                    height: 100
+                };
 
-                expect(options.width).toBe(900000);
-                expect(options.height).toBe(100);
-                expect(options.left).toBe(100000);
-                expect(options.top).toBe(10);
+                layout.searchBestPosition(options, layoutConfig, null);
+
+                expect(layoutConfig.width).toBe(900000);
+                expect(layoutConfig.height).toBe(100);
+                expect(layoutConfig.left).toBe(100000);
+                expect(layoutConfig.top).toBe(10);
             });
 
             it("should reduce widget width (left side) if there is not enough space", () => {
                 const options = {
-                    width: 950000,
-                    height: 100,
                     refposition: {left: 70, right: 90, top: 0, bottom: 10}
                 };
 
-                layout.searchBestPosition(options);
+                const layoutConfig = {
+                    width: 950000,
+                    height: 100
+                };
 
-                expect(options.width).toBe(950000);
-                expect(options.height).toBe(100);
-                expect(options.left).toBe(0);
-                expect(options.top).toBe(10);
+                layout.searchBestPosition(options, layoutConfig, null);
+
+                expect(layoutConfig.width).toBe(950000);
+                expect(layoutConfig.height).toBe(100);
+                expect(layoutConfig.left).toBe(0);
+                expect(layoutConfig.top).toBe(10);
             });
 
             it("should allow to use elements inside widget iframes as reference", () => {
                 const options = {
-                    width: 8000,
-                    height: 20,
                     refiframe: document.createElement('iframe'),
                     refposition: {left: 0, right: 9, top: 60, bottom: 69}
                 };
 
-                spyOn(Wirecloud.Utils, "getRelativePosition").and.returnValue({x: 20, y: 30});
-                layout.searchBestPosition(options);
+                const layoutConfig = {
+                    width: 8000,
+                    height: 20
+                };
 
-                expect(options.width).toBe(8000);
-                expect(options.height).toBe(20);
-                expect(options.left).toBe(200000);
-                expect(options.top).toBe(70);
+                spyOn(Wirecloud.Utils, "getRelativePosition").and.returnValue({x: 20, y: 30});
+                layout.searchBestPosition(options, layoutConfig, null);
+
+                expect(layoutConfig.width).toBe(8000);
+                expect(layoutConfig.height).toBe(20);
+                expect(layoutConfig.left).toBe(200000);
+                expect(layoutConfig.top).toBe(70);
             });
 
         });

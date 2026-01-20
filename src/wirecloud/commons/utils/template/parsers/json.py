@@ -242,16 +242,38 @@ class JSONTemplateParser(object):
                 self._check_string_fields(('title',), place=tab, required=False)
                 self._check_array_fields(('resources',), place=tab)
                 for widget in tab['resources']:
-                    rendering = widget.get('rendering', {})
-                    self._check_integer_fields(('layout',), place=rendering, default=0, allow_cast=True)
-                    layout = rendering['layout']
-                    self._check_boolean_fields(('relwidth',), place=rendering, default=True)
-                    self._check_boolean_fields(('relheight',), place=rendering, default=(layout != 1))
+                    screenSizes = widget.get('screenSizes', None)
+                    if screenSizes is None:
+                        screenSizes = [
+                            {
+                                'moreOrEqual': 0,
+                                'lessOrEqual': -1,
+                                'id': 0,
+                                'rendering': widget.get('rendering', {}),
+                                'position': widget.get('position', {})
+                            }
+                        ]
 
-                    position = widget.get('position', {})
-                    self._check_string_fields(('anchor',), place=position, default="top-left")
-                    self._check_boolean_fields(('relx',), place=position, default=True)
-                    self._check_boolean_fields(('rely',), place=position, default=(layout != 1))
+                        layout = screenSizes[0]['rendering'].get('layout', 0)
+                        widget['layout'] = int(layout)
+                        if 'layout' in screenSizes[0]['rendering']:
+                            del screenSizes[0]['rendering']['layout']
+                    else:
+                        layout = int(widget.get('layout', 0))
+
+                    self._check_integer_fields(('layout',), place=widget, default=0, allow_cast=True)
+
+                    for screenSize in screenSizes:
+                        self._check_integer_fields(('moreOrEqual', 'lessOrEqual', 'id'), place=screenSize, required=True)
+
+                        rendering = screenSize.get('rendering', {})
+                        self._check_boolean_fields(('relwidth',), place=rendering, default=True)
+                        self._check_boolean_fields(('relheight',), place=rendering, default=(layout != 1))
+
+                        position = screenSize.get('position', {})
+                        self._check_string_fields(('anchor',), place=position, default="top-left")
+                        self._check_boolean_fields(('relx',), place=position, default=True)
+                        self._check_boolean_fields(('rely',), place=position, default=(layout != 1))
 
             for preference in self._info['params']:
                 self._check_string_fields(('name', 'type'), place=preference, required=True)

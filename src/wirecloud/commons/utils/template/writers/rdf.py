@@ -233,29 +233,36 @@ def write_mashup_resources_graph(graph, resource_uri, template_info):
             if iwidget.get('readonly', False):
                 graph.add((resource, WIRE_M['readonly'], rdflib.Literal('true')))
 
-            # iWidget position
-            pos = rdflib.BNode()
-            graph.add((pos, rdflib.RDF.type, WIRE_M['Position']))
-            graph.add((resource, WIRE_M['hasPosition'], pos))
-            graph.add((pos, WIRE_M['anchor'], rdflib.Literal(iwidget['position']['anchor'])))
-            graph.add((pos, WIRE_M['relx'], rdflib.Literal(str(iwidget['position']['relx']))))
-            graph.add((pos, WIRE_M['rely'], rdflib.Literal(str(iwidget['position']['rely']))))
-            graph.add((pos, WIRE_M['x'], rdflib.Literal(iwidget['position']['x'])))
-            graph.add((pos, WIRE_M['y'], rdflib.Literal(iwidget['position']['y'])))
-            graph.add((pos, WIRE_M['z'], rdflib.Literal(iwidget['position']['z'])))
+            graph.add((resource, WIRE_M['layout'], rdflib.Literal(str(iwidget['layout']))))
 
-            # iWidget rendering
-            rend = rdflib.BNode()
-            graph.add((rend, rdflib.RDF.type, WIRE_M['iWidgetRendering']))
-            graph.add((resource, WIRE_M['hasiWidgetRendering'], rend))
-            graph.add((rend, WIRE_M['relwidth'], rdflib.Literal(str(iwidget['rendering']['relwidth']))))
-            graph.add((rend, WIRE_M['relheight'], rdflib.Literal(str(iwidget['rendering']['relheight']))))
-            graph.add((rend, WIRE['renderingWidth'], rdflib.Literal(str(iwidget['rendering']['width']))))
-            graph.add((rend, WIRE['renderingHeight'], rdflib.Literal(str(iwidget['rendering']['height']))))
-            graph.add((rend, WIRE_M['layout'], rdflib.Literal(str(iwidget['rendering']['layout']))))
-            graph.add((rend, WIRE_M['fullDragboard'], rdflib.Literal(str(iwidget['rendering']['fulldragboard']))))
-            graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(iwidget['rendering']['minimized']))))
-            graph.add((rend, WIRE_M['titlevisible'], rdflib.Literal(str(iwidget['rendering']['titlevisible']))))
+            for screenSize in iwidget.get('screenSizes', []):
+                screenSizeNode = rdflib.BNode()
+                graph.add((screenSizeNode, rdflib.RDF.type, WIRE_M['ScreenSize']))
+                graph.add((resource, WIRE_M['hasScreenSize'], screenSizeNode))
+                graph.add((screenSizeNode, WIRE_M['moreOrEqual'], rdflib.Literal(str(screenSize['moreOrEqual']))))
+                graph.add((screenSizeNode, WIRE_M['lessOrEqual'], rdflib.Literal(str(screenSize['lessOrEqual']))))
+                graph.add((screenSizeNode, WIRE_M['screenSizeId'], rdflib.Literal(str(screenSize['id']))))
+
+                pos = rdflib.BNode()
+                graph.add((pos, rdflib.RDF.type, WIRE_M['Position']))
+                graph.add((screenSizeNode, WIRE_M['hasPosition'], pos))
+                graph.add((pos, WIRE_M['anchor'], rdflib.Literal(screenSize['position']['anchor'])))
+                graph.add((pos, WIRE_M['relx'], rdflib.Literal(str(screenSize['position']['relx']))))
+                graph.add((pos, WIRE_M['rely'], rdflib.Literal(str(screenSize['position']['rely']))))
+                graph.add((pos, WIRE_M['x'], rdflib.Literal(str(screenSize['position']['x']))))
+                graph.add((pos, WIRE_M['y'], rdflib.Literal(str(screenSize['position']['y']))))
+                graph.add((pos, WIRE_M['z'], rdflib.Literal(str(screenSize['position']['z']))))
+
+                rend = rdflib.BNode()
+                graph.add((rend, rdflib.RDF.type, WIRE_M['iWidgetRendering']))
+                graph.add((screenSizeNode, WIRE_M['hasiWidgetRendering'], rend))
+                graph.add((rend, WIRE_M['relwidth'], rdflib.Literal(str(screenSize['rendering']['relwidth']))))
+                graph.add((rend, WIRE_M['relheight'], rdflib.Literal(str(screenSize['rendering']['relheight']))))
+                graph.add((rend, WIRE['renderingWidth'], rdflib.Literal(str(screenSize['rendering']['width']))))
+                graph.add((rend, WIRE['renderingHeight'], rdflib.Literal(str(screenSize['rendering']['height']))))
+                graph.add((rend, WIRE_M['fullDragboard'], rdflib.Literal(str(screenSize['rendering']['fulldragboard']))))
+                graph.add((rend, WIRE_M['minimized'], rdflib.Literal(str(screenSize['rendering']['minimized']))))
+                graph.add((rend, WIRE_M['titlevisible'], rdflib.Literal(str(screenSize['rendering']['titlevisible']))))
 
             # iWidget preferences
             for pref_name, pref in iwidget.get('preferences', {}).items():

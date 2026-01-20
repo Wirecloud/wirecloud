@@ -10,21 +10,25 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-15 00:00+0900\n"
+"POT-Creation-Date: 2024-05-27 12:00+0200\n"
 "PO-Revision-Date: 2019-03-15 00:00+0900\n"
+"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
+"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
-"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
 "X-Generator: Poedit 2.2.1\n"
 
 #: management/commands/addtocatalogue.py:82
+#, fuzzy
+#| msgid ""
+#| "You must use at least one of the following flags: --redeploy, --users, --"
+#| "groups or --public "
 msgid ""
 "You must use at least one of the following flags: --redeploy, --users, --"
-"groups or --public "
+"groups or --public"
 msgstr ""
 "次のフラグの少なくとも1つを使用する必要があります: --redeploy, --users, --"
 "groups または --public "
@@ -43,8 +47,8 @@ msgstr "\"%(file_name)s\" から \"%(name)s\" を正常にインポートしま�
 #, python-format
 msgid "Failed to import the mashable application component from %(file_name)s"
 msgstr ""
-"マッシュアップ・アプリケーションのコンポーネントを %(file_name)s からイン"
-"ポートできませんでした"
+"マッシュアップ・アプリケーションのコンポーネントを %(file_name)s からインポー"
+"トできませんでした"
 
 #: models.py:44
 msgid "Vendor"
@@ -126,28 +130,23 @@ msgid ""
 "Error writing the resource into the filesystem. Please, contact the server "
 "administrator."
 msgstr ""
-"ファイル・システムへのリソースの書き込み中にエラーが発生しました。"
-"サーバ管理者に連絡してください。"
+"ファイル・システムへのリソースの書き込み中にエラーが発生しました。サーバ管理"
+"者に連絡してください。"
 
-#: views.py:112
+#: views.py:130
 #, python-format
 msgid "Invalid pagenum value: %s"
 msgstr "無効な pagenum 値: %s"
 
-#: views.py:130
+#: views.py:136
 #, python-format
 msgid "Invalid maxresults value: %s"
 msgstr "無効な maxresults 値: %s"
 
-#: views.py:136
+#: views.py:140
 #, python-format
 msgid "Orderby value not supported: %s"
 msgstr "Orderby 値はサポートされていません: %s"
-
-#: views.py:140
-#, python-format
-msgid "Scope value not supported: %s"
-msgstr "スコープ値はサポートされていません: %s"
 
 #: views.py:149
 #, python-format
@@ -174,11 +173,11 @@ msgstr "変更履歴ファイルを開く際にエラーが発生しました"
 #: views.py:286
 #, python-format
 msgid ""
-"You can find the userguide of this component in this external <a target="
-"\"_blank\" href=\"%s\">link</a>"
+"You can find the userguide of this component in this external <a "
+"target=\"_blank\" href=\"%s\">link</a>"
 msgstr ""
-"このコンポーネントのユーザ・ガイドは、この<a target=\"_blank\" href=\"%s\">"
-"リンク</a>で見つけることができます"
+"このコンポーネントのユーザ・ガイドは、この<a target=\"_blank\" href=\"%s\">リ"
+"ンク</a>で見つけることができます"
 
 #: views.py:302
 msgid "Error opening the userguide file"

@@ -46,6 +46,7 @@
                     "version": "1.0",
                     "title": "Widget title",
                     "readonly": false,
+                    "layout": 1,
                     "properties": {
                         "prop1": {"value": "value1", "readonly": false},
                         "prop2": {"value": "value 2", "readonly": true}
@@ -54,24 +55,28 @@
                         "list": {"value": "default", "readonly": true, "hidden": false},
                         "text": {"value": "other value", "readonly": true, "hidden": true}
                     },
-                    "position": {
-                        "anchor": "top-left",
-                        "relx": true,
-                        "rely": false,
-                        "x": "0",
-                        "y": "1",
-                        "z": "2"
-                    },
-                    "rendering": {
-                        "relwidth": true,
-                        "relheight": false,
-                        "width": "10",
-                        "height": "10",
-                        "layout": 1,
-                        "fulldragboard": false,
-                        "minimized": false,
-                        "titlevisible": true
-                    }
+                    "screenSizes": [{
+                        "id": 0,
+                        "moreOrEqual": 0,
+                        "lessOrEqual": -1,
+                        "position": {
+                            "anchor": "top-left",
+                            "relx": true,
+                            "rely": false,
+                            "x": "0",
+                            "y": "1",
+                            "z": "2"
+                        },
+                        "rendering": {
+                            "relwidth": true,
+                            "relheight": false,
+                            "width": "10",
+                            "height": "10",
+                            "fulldragboard": false,
+                            "minimized": false,
+                            "titlevisible": true
+                        }
+                    }]
                 },
                 {
                     "id": "2",
@@ -79,6 +84,7 @@
                     "name": "TestWidget",
                     "version": "2.0",
                     "readonly": true,
+                    "layout": 0,
                     "title": "Widget title",
                     "properties": {
                         "prop1": {"value": "value1", "readonly": false}
@@ -86,24 +92,28 @@
                     "preferences": {
                         "text": {"value": "other value", "readonly": true, "hidden": true}
                     },
-                    "position": {
-                        "anchor": "top-left",
-                        "relx": true,
-                        "rely": true,
-                        "x": "10",
-                        "y": "1",
-                        "z": "2"
-                    },
-                    "rendering": {
-                        "relwidth": true,
-                        "relheight": true,
-                        "width": "10",
-                        "height": "10",
-                        "layout": 0,
-                        "fulldragboard": true,
-                        "minimized": true,
-                        "titlevisible": true
-                    }
+                    "screenSizes": [{
+                        "id": 0,
+                        "moreOrEqual": 0,
+                        "lessOrEqual": -1,
+                        "position": {
+                            "anchor": "top-left",
+                            "relx": true,
+                            "rely": true,
+                            "x": "10",
+                            "y": "1",
+                            "z": "2"
+                        },
+                        "rendering": {
+                            "relwidth": true,
+                            "relheight": true,
+                            "width": "10",
+                            "height": "10",
+                            "fulldragboard": true,
+                            "minimized": true,
+                            "titlevisible": true
+                        }
+                    }]
                 }
             ]
         },

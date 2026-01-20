@@ -290,7 +290,7 @@
 
         });
 
-        describe("adaptColumnOffset(size)", () => {
+        describe("adaptColumnOffset(size[, width])", () => {
 
             it("should return 0 LU as minimum", () => {
                 const layout = new ns.ColumnLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
@@ -310,7 +310,7 @@
 
                 const value = layout.adaptColumnOffset("2px");
 
-                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(0);
+                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(0, undefined);
                 expect(value.inPixels).toBe(0);
                 expect(value.inLU).toBe(0);
             });
@@ -323,7 +323,7 @@
 
                 const value = layout.adaptColumnOffset("204px");
 
-                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(200);
+                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(200, undefined);
                 expect(value.inPixels).toBe(200);
                 expect(value.inLU).toBe(1);
             });
@@ -563,7 +563,7 @@
 
         });
 
-        describe("getColumnOffset(cells[, css])", () => {
+        describe("getColumnOffset(cells[, width, css])", () => {
 
             it("should work", () => {
                 const dragboard = {
@@ -579,7 +579,7 @@
                     10
                 );
                 expect(layout.getColumnOffset({x: 2})).toBe(400 + 4 + 2);
-                expect(layout.getColumnOffset({x: 2}, true)).toBe("406px");
+                expect(layout.getColumnOffset({x: 2}, undefined, true)).toBe("406px");
             });
 
         });

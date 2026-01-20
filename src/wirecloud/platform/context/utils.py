@@ -97,7 +97,7 @@ def get_constant_context_values():
 
     constants = Constant.objects.all()
     for constant in constants:
-        res[constant.concept.concept] = constant.value
+        res[constant.concept] = constant.value
 
     return res
 

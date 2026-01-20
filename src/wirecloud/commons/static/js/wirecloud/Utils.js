@@ -26,3 +26,18 @@ Wirecloud.Utils = StyledElements.Utils;
 
 Wirecloud.Utils.gettext = gettext;
 Wirecloud.Utils.ngettext = ngettext;
+Wirecloud.Utils.getLayoutMatrix = function getLayoutMatrix(layout, widgets, screenSize) {
+    const matrix = [];
+    for (let x = 0; x < layout.columns; x++) {
+        matrix[x] = [];
+    }
+
+    widgets.forEach((widget) => {
+        if (!(widget.layout instanceof Wirecloud.ui.FullDragboardLayout) && !(widget.layout instanceof Wirecloud.ui.FreeLayout)) {
+            const layoutConfig = widget.model.getLayoutConfigBySize(screenSize);
+            layout._reserveSpace2(matrix, "NOTAWIDGET", layoutConfig.left, layoutConfig.top, layoutConfig.width, layoutConfig.height);
+        }
+    });
+
+    return matrix;
+};

@@ -207,7 +207,7 @@
             this.buttonElement.setDisabled(disabled);
         }
 
-        epaint() {
+        repaint() {
             this.wrapperElement.repaint();
         }
 

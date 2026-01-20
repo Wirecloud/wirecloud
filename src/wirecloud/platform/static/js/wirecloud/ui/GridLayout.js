@@ -95,32 +95,32 @@
             return rows * (100 / this.rows);
         }
 
-        getWidthInPixels(cells) {
-            return this.fromHCellsToPixels(cells) - this.leftMargin - this.rightMargin;
+        getWidthInPixels(cells, width) {
+            return this.fromHCellsToPixels(cells, width) - this.leftMargin - this.rightMargin;
         }
 
         getHeightInPixels(cells) {
             return this.fromVCellsToPixels(cells) - this.topMargin - this.bottomMargin;
         }
 
-        fromPixelsToHCells(pixels) {
+        fromPixelsToHCells(pixels, width) {
             if (pixels <= 0) {
                 return 0;
             }
 
-            const cells = pixels / this.fromHCellsToPixels(1);
+            const cells = pixels / this.fromHCellsToPixels(1, width);
             return Math.round(cells);
         }
 
-        fromHCellsToPixels(columns) {
-            return (this.getWidth() * this.fromHCellsToPercentage(columns)) / 100;
+        fromHCellsToPixels(columns, width) {
+            return ((width || this.getWidth()) * this.fromHCellsToPercentage(columns)) / 100;
         }
 
         fromHCellsToPercentage(columns) {
             return columns * (100 / this.columns);
         }
 
-        adaptColumnOffset(size) {
+        adaptColumnOffset(size, width) {
             let offsetInLU;
 
             const parsedSize = this.parseSize(size);
@@ -129,13 +129,13 @@
             } else {
                 let pixels;
                 if (parsedSize[1] === '%') {
-                    pixels = Math.round((parsedSize[0] * this.getWidth()) / 100);
+                    pixels = Math.round((parsedSize[0] * (width || this.getWidth())) / 100);
                 } else {
                     pixels = parsedSize[0];
                 }
-                offsetInLU = Math.round(this.fromPixelsToHCells(pixels - this.leftMargin));
+                offsetInLU = Math.round(this.fromPixelsToHCells(pixels - this.leftMargin, width));
             }
-            return new Wirecloud.ui.MultiValuedSize(this.getColumnOffset(offsetInLU), offsetInLU);
+            return new Wirecloud.ui.MultiValuedSize(this.getColumnOffset(offsetInLU, width), offsetInLU);
         }
 
         adaptRowOffset(size) {
@@ -164,8 +164,8 @@
             return height + this.topMargin + this.bottomMargin;
         }
 
-        getColumnOffset(position) {
-            let tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(position.x)) / 100);
+        getColumnOffset(position, width) {
+            let tmp = Math.floor(((width || this.getWidth()) * this.fromHCellsToPercentage(position.x)) / 100);
             tmp += this.leftMargin + this.dragboard.leftMargin;
             return tmp;
         }
@@ -334,12 +334,16 @@
         }
 
         _searchFreeSpace(width, height) {
+            return this._searchFreeSpace2(width, height, this.matrix);
+        }
+
+        _searchFreeSpace2(width, height, matrix) {
             let positionX = 0, positionY = 0;
             const maxX = this.columns - width;
 
             for (positionY = 0; true ; positionY++) {
                 for (positionX = 0; positionX <= maxX; positionX++) {
-                    if (this._hasSpaceFor(this.matrix, positionX, positionY, width, height)) {
+                    if (this._hasSpaceFor(matrix, positionX, positionY, width, height)) {
                         return {relx: true, x: positionX, rely: true, y: positionY};
                     }
                 }

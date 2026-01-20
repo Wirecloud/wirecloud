@@ -159,6 +159,11 @@
                     }));
                 }
 
+                // Add action to all layout configurations
+                for (let i = 0; i < options.layoutConfigurations.length; i++) {
+                    options.layoutConfigurations[i].action = 'update';
+                }
+
                 var content = utils.merge(options, {
                     widget: resource.uri,
                     settings: options.preferences

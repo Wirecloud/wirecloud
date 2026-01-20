@@ -294,7 +294,7 @@
 
         });
 
-        describe("adaptColumnOffset(size)", () => {
+        describe("adaptColumnOffset(size[, width])", () => {
 
             it("should return 0 LU as minimum", () => {
                 const layout = new ns.GridLayout({leftMargin: 4}, 4, 13, 4, 4, 10);
@@ -314,7 +314,7 @@
 
                 const value = layout.adaptColumnOffset("2px");
 
-                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(0);
+                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(0, undefined);
                 expect(value.inPixels).toBe(0);
                 expect(value.inLU).toBe(0);
             });
@@ -327,7 +327,7 @@
 
                 const value = layout.adaptColumnOffset("204px");
 
-                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(202);
+                expect(layout.fromPixelsToHCells).toHaveBeenCalledWith(202, undefined);
                 expect(value.inPixels).toBe(200);
                 expect(value.inLU).toBe(1);
             });

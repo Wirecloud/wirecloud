@@ -29,6 +29,7 @@
     const InputInterfaceFactory = new StyledElements.InputInterfaceFactory();
 
     InputInterfaceFactory.addFieldType('layout', Wirecloud.ui.LayoutInputInterface);
+    InputInterfaceFactory.addFieldType('screenSizes', Wirecloud.ui.ScreenSizesInputInterface);
     InputInterfaceFactory.addFieldType('parametrizableValue', Wirecloud.ui.ParametrizableValueInputInterface);
     InputInterfaceFactory.addFieldType('parametrizedText', Wirecloud.ui.ParametrizedTextInputInterface);
     InputInterfaceFactory.addFieldType('mac', Wirecloud.ui.MACInputInterface);

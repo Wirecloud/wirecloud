@@ -712,11 +712,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
         self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'minimized', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'fulldragboard', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/screensizes/screensize[1]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/screensizes/screensize[1]/rendering', 'fulldragboard', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'minimized', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'fulldragboard', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/screensizes/screensize[1]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/screensizes/screensize[1]/rendering', 'fulldragboard', 'false', optional=True)
 
         self.check_workspace_xml_wiring(template)
 
@@ -735,12 +735,12 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
 
         # Minimize the first iwidget
         iwidget = IWidget.objects.get(pk=1)
-        iwidget.positions['widget']['minimized'] = True
+        iwidget.positions['configurations'][0]['widget']['minimized'] = True
         iwidget.save()
 
         # Set the fulldragboard flag on the second iwidget
         iwidget = IWidget.objects.get(pk=2)
-        iwidget.positions['widget']['fulldragboard'] = True
+        iwidget.positions['configurations'][0]['widget']['fulldragboard'] = True
         iwidget.save()
 
         template = build_xml_template_from_workspace(options, self.workspace_with_iwidgets, self.user, raw=True)
@@ -756,11 +756,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
         # order depends on the database backend)
         widgets = {widget.get('id'): widget for widget in template.xpath('/mashup/structure/tab[1]/resource')}
         self.assertXPathAttr(widgets["1"], '.', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(widgets["1"], 'rendering', 'minimized', 'true')
-        self.assertXPathAttr(widgets["1"], 'rendering', 'fulldragboard', 'false', optional=True)
+        self.assertXPathAttr(widgets["1"], 'screensizes/screensize[1]/rendering', 'minimized', 'true')
+        self.assertXPathAttr(widgets["1"], 'screensizes/screensize[1]/rendering', 'fulldragboard', 'false', optional=True)
         self.assertXPathAttr(widgets["2"], '.', 'readonly', 'false', optional=True)
-        self.assertXPathAttr(widgets["2"], 'rendering', 'minimized', 'false', optional=True)
-        self.assertXPathAttr(widgets["2"], 'rendering', 'fulldragboard', 'true')
+        self.assertXPathAttr(widgets["2"], 'screensizes/screensize[1]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(widgets["2"], 'screensizes/screensize[1]/rendering', 'fulldragboard', 'true')
 
         self.check_workspace_xml_wiring(template)
 
@@ -785,11 +785,11 @@ class ParameterizedWorkspaceGenerationTestCase(WirecloudTestCase, TransactionTes
         self.assertXPathAttr(template, '/mashup/structure/tab[1]', 'name', 'tab')
         self.assertXPathCount(template, '/mashup/structure/tab[1]/resource', 2)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'minimized', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/rendering', 'fulldragboard', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/screensizes/screensize[1]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[1]/screensizes/screensize[1]/rendering', 'fulldragboard', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]', 'readonly', 'true')
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'minimized', 'false', optional=True)
-        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/rendering', 'fulldragboard', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/screensizes/screensize[1]/rendering', 'minimized', 'false', optional=True)
+        self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[2]/screensizes/screensize[1]/rendering', 'fulldragboard', 'false', optional=True)
 
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'readonly', 'false', optional=True)
         self.assertXPathAttr(template, '/mashup/structure/tab[1]/resource[@id="2"]/preferencevalue[@name="username"]', 'hidden', 'false', optional=True)

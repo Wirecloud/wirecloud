@@ -63,7 +63,7 @@
             return this.getWidth();
         }
 
-        getColumnOffset(position) {
+        getColumnOffset(position, width) {
             return 0;
         }
 
@@ -83,8 +83,8 @@
             return new Wirecloud.ui.MultiValuedSize(this.getHeight(), 1);
         }
 
-        adaptWidth(size) {
-            return new Wirecloud.ui.MultiValuedSize(this.getWidth(), 1);
+        adaptWidth(size, width) {
+            return new Wirecloud.ui.MultiValuedSize(width || this.getWidth(), 1);
         }
 
         initialize() {
@@ -115,7 +115,7 @@
                 return new Set();
             }
 
-            iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0));
+            iWidget.setPosition(new Wirecloud.DragboardPosition(0, 0), false);
             return new Set();
         }
 

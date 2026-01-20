@@ -51,6 +51,24 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="Identifier">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ScreenSizeLessOrEqual">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="-1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ScreenSizeMoreOrEqual">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="ResourceInfo">
         <xs:all>
             <xs:element name="title" minOccurs="0" maxOccurs="1"
@@ -754,6 +772,17 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="LayoutRendering">
+        <xs:attribute name="relwidth" type="xs:boolean" use="optional" />
+        <xs:attribute name="relheight" type="xs:boolean" use="optional" />
+        <xs:attribute name="width" type="xs:string" use="required" />
+        <xs:attribute name="minimized" type="xs:boolean" use="optional" />
+        <xs:attribute name="layout" type="xs:string" use="optional" />
+        <xs:attribute name="height" type="xs:string" use="required" />
+        <xs:attribute name="fulldragboard" type="xs:boolean" use="optional" />
+        <xs:attribute name="titlevisible" type="xs:boolean" use="optional" />
+    </xs:complexType>
+
     <xs:complexType name="Tab">
         <xs:sequence>
             <xs:element name="preferencevalue" type="macd:PreferenceValue" minOccurs="0" maxOccurs="unbounded" />
@@ -762,19 +791,25 @@
                     <xs:choice minOccurs="1" maxOccurs="unbounded">
                         <xs:element name="preferencevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
                         <xs:element name="variablevalue" type="macd:ResourcePreferenceValue" minOccurs="0" maxOccurs="unbounded" />
-                        <xs:element name="position" type="macd:LayoutPosition" minOccurs="1" maxOccurs="1" />
-                        <xs:element name="rendering" minOccurs="1" maxOccurs="1">
+                        <xs:element name="screensizes" minOccurs="0" maxOccurs="1">
                             <xs:complexType>
-                                <xs:attribute name="relwidth" type="xs:boolean" use="optional" />
-                                <xs:attribute name="relheight" type="xs:boolean" use="optional" />
-                                <xs:attribute name="width" type="xs:string" use="required" />
-                                <xs:attribute name="minimized" type="xs:boolean" use="optional" />
-                                <xs:attribute name="layout" type="xs:string" use="required" />
-                                <xs:attribute name="height" type="xs:string" use="required" />
-                                <xs:attribute name="fulldragboard" type="xs:boolean" use="optional" />
-                                <xs:attribute name="titlevisible" type="xs:boolean" use="optional" />
+                                <xs:sequence>
+                                    <xs:element name="screensize" minOccurs="1" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:all>
+                                                <xs:element name="position" type="macd:LayoutPosition" />
+                                                <xs:element name="rendering" type="macd:LayoutRendering" />
+                                            </xs:all>
+                                            <xs:attribute name="moreOrEqual" type="macd:ScreenSizeMoreOrEqual" use="required"  />
+                                            <xs:attribute name="lessOrEqual" type="macd:ScreenSizeLessOrEqual" use="required" />
+                                            <xs:attribute name="id" type="macd:Identifier" use="required" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
                             </xs:complexType>
                         </xs:element>
+                        <xs:element name="position" type="macd:LayoutPosition" minOccurs="0" maxOccurs="1" />
+                        <xs:element name="rendering" type="macd:LayoutRendering" minOccurs="0" maxOccurs="1" />
                     </xs:choice>
                     <xs:attribute name="vendor" type="macd:VendorType" use="required" />
                     <xs:attribute name="name" use="required" type="macd:NameType" />
@@ -792,6 +827,7 @@
                         </xs:annotation>
                     </xs:attribute>
                     <xs:attribute name="id" use="required" type="xs:string" />
+                    <xs:attribute name="layout" type="xs:string" use="optional" />
                 </xs:complexType>
             </xs:element>
         </xs:sequence>

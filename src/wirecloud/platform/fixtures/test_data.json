@@ -216,7 +216,7 @@
             "widget": "1",
             "widget_uri": "Test/Test Widget/1.0.0",
             "name": "Test Widget",
-            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}",
+            "positions": "{\"configurations\":[{\"id\":0,\"moreOrEqual\":0,\"lessOrEqual\":-1,\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}]}",
             "tab": "1",
             "variables": "{\"password\": {\"users\": {\"2\": \"test_password\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
         }
@@ -228,7 +228,7 @@
             "widget": "1",
             "widget_uri": "Test/Test Widget/1.0.0",
             "name": "Test Widget 2",
-            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":5,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}",
+            "positions": "{\"configurations\":[{\"id\":0,\"moreOrEqual\":0,\"lessOrEqual\":-1,\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":1,\"left\":5,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}]}",
             "tab": "1",
             "variables": "{\"password\": {\"users\": {\"2\": \"test_password\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
         }
@@ -240,7 +240,7 @@
             "widget": "1",
             "widget_uri": "Test/Test Widget/1.0.0",
             "name": "Secure Widget 1",
-            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}",
+            "positions": "{\"configurations\":[{\"id\":0,\"moreOrEqual\":0,\"lessOrEqual\":-1,\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}]}",
             "tab": "2",
             "variables": "{\"password\": {\"users\": {\"2\": \"\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
         }
@@ -252,7 +252,7 @@
             "widget": "1",
             "widget_uri": "Test/Test Widget/1.0.0",
             "name": "Secure Widget 2",
-            "positions": "{\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}",
+            "positions": "{\"configurations\":[{\"id\":0,\"moreOrEqual\":0,\"lessOrEqual\":-1,\"widget\":{\"minimized\":false,\"height\":24,\"width\":6,\"zIndex\":0,\"left\":0,\"top\":0,\"fulldragboard\":false,\"anchor\":\"top-left\",\"relx\":true,\"rely\":true}}]}",
             "tab": "2",
             "variables": "{\"password\": {\"users\": {\"2\": \"test_password\"}}, \"username\": {\"users\": {\"2\": \"test_username\"}}, \"prop\": {\"users\": {\"2\": \"test_data\"}}}"
         }

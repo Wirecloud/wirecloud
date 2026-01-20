@@ -75,6 +75,7 @@ INCLUDED_RESOURCES_XPATH = 't:structure'
 TAB_XPATH = 't:tab'
 RESOURCE_XPATH = 't:resource'
 POSITION_XPATH = 't:position'
+SCREEN_SIZES_XPATH = 't:screensizes'
 RENDERING_XPATH = 't:rendering'
 PARAM_XPATH = 't:preferences/t:preference'
 EMBEDDEDRESOURCE_XPATH = 't:embedded/t:resource'
@@ -568,10 +569,21 @@ class ApplicationMashupTemplateParser(object):
             }
 
             for widget in self._xpath(RESOURCE_XPATH, tab):
-                position = self.get_xpath(POSITION_XPATH, widget)
-                rendering = self.get_xpath(RENDERING_XPATH, widget)
+                position = self.get_xpath(POSITION_XPATH, widget, required=False)
+                screenSizes = self.get_xpath(SCREEN_SIZES_XPATH, widget, required=False)
+                rendering = self.get_xpath(RENDERING_XPATH, widget, required=False)
 
-                layout = int(str(rendering.get('layout')))
+                if (position is None or rendering is None) and screenSizes is None:
+                    raise TemplateParseException(_("Missing position/rendering or screensizes element"))
+
+                if (rendering is None and not widget.get('layout')):
+                    raise TemplateParseException(_("Missing layout in resource or rendering element"))
+
+                if rendering is None:
+                    layout = int(str(widget.get('layout')))
+                else:
+                    layout = int(str(rendering.get('layout')))
+
                 widget_info = {
                     'id': str(widget.get('id')),
                     'name': str(widget.get('name')),
@@ -579,27 +591,65 @@ class ApplicationMashupTemplateParser(object):
                     'version': str(widget.get('version')),
                     'title': str(widget.get('title')),
                     'readonly': widget.get('readonly', '').lower() == 'true',
+                    'layout': layout,
                     'properties': {},
-                    'preferences': {},
-                    'position': {
-                        'anchor': str(position.get('anchor', 'top-left')),
-                        'relx': position.get('relx', 'true').lower() == 'true',
-                        'rely': position.get('rely', 'true' if layout != 1 else 'false').lower() == 'true',
-                        'x': str(position.get('x')),
-                        'y': str(position.get('y')),
-                        'z': str(position.get('z')),
-                    },
-                    'rendering': {
-                        'fulldragboard': rendering.get('fulldragboard', 'false').lower() == 'true',
-                        'minimized': rendering.get('minimized', 'false').lower() == 'true',
-                        'relwidth': rendering.get('relwidth', 'true').lower() == 'true',
-                        'relheight': rendering.get('relheight', 'true' if layout != 1 else 'false').lower() == 'true',
-                        'width': str(rendering.get('width')),
-                        'height': str(rendering.get('height')),
-                        'layout': layout,
-                        'titlevisible': rendering.get('titlevisible', 'true').lower() == 'true',
-                    },
+                    'preferences': {}
                 }
+
+                if screenSizes is not None:
+                    widget_info['screenSizes'] = []
+                    for screenSize in screenSizes:
+                        position = self.get_xpath(POSITION_XPATH, screenSize)
+                        rendering = self.get_xpath(RENDERING_XPATH, screenSize)
+                        screen_size_info = {
+                            'moreOrEqual': int(screenSize.get('moreOrEqual')),
+                            'lessOrEqual': int(screenSize.get('lessOrEqual')),
+                            'id': int(screenSize.get('id')),
+                            'position': {
+                                'anchor': str(position.get('anchor', 'top-left')),
+                                'relx': position.get('relx', 'true').lower() == 'true',
+                                'rely': position.get('rely', 'true' if layout != 1 else 'false').lower() == 'true',
+                                'x': position.get('x'),
+                                'y': position.get('y'),
+                                'z': position.get('z'),
+                            },
+                            'rendering': {
+                                'fulldragboard': rendering.get('fulldragboard', 'false').lower() == 'true',
+                                'minimized': rendering.get('minimized', 'false').lower() == 'true',
+                                'relwidth': rendering.get('relwidth', 'true').lower() == 'true',
+                                'relheight': rendering.get('relheight', 'true' if layout != 1 else 'false').lower() == 'true',
+                                'width': rendering.get('width'),
+                                'height': rendering.get('height'),
+                                'titlevisible': rendering.get('titlevisible', 'true').lower() == 'true',
+                            }
+                        }
+
+                        widget_info['screenSizes'].append(screen_size_info)
+                else:
+                    widget_info['screenSizes'] = [
+                        {
+                            'moreOrEqual': 0,
+                            'lessOrEqual': -1,
+                            'id': 0,
+                            'position': {
+                                'anchor': str(position.get('anchor', 'top-left')),
+                                'relx': position.get('relx', 'true').lower() == 'true',
+                                'rely': position.get('rely', 'true' if layout != 1 else 'false').lower() == 'true',
+                                'x': str(position.get('x')),
+                                'y': str(position.get('y')),
+                                'z': str(position.get('z')),
+                            },
+                            'rendering': {
+                                'fulldragboard': rendering.get('fulldragboard', 'false').lower() == 'true',
+                                'minimized': rendering.get('minimized', 'false').lower() == 'true',
+                                'relwidth': rendering.get('relwidth', 'true').lower() == 'true',
+                                'relheight': rendering.get('relheight', 'true' if layout != 1 else 'false').lower() == 'true',
+                                'width': str(rendering.get('width')),
+                                'height': str(rendering.get('height')),
+                                'titlevisible': rendering.get('titlevisible', 'true').lower() == 'true',
+                            }
+                        }
+                    ]
 
                 for prop in self._xpath(PROPERTIES_XPATH, widget):
                     prop_value = prop.get('value')

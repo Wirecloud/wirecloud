@@ -104,6 +104,89 @@
         });
     };
 
+    const getUpdatedLayoutConfigurations = function getUpdatedLayoutConfigurations(newLayout) {
+        const layoutConfigurations = this.model.layoutConfigurations;
+
+        const priv = privates.get(this);
+        const tabChange = priv.tab !== newLayout.dragboard.tab;
+        const dragboardChange = this.layout.dragboard !== newLayout.dragboard || tabChange;
+
+        layoutConfigurations.forEach((layoutConfiguration) => {
+            if (this.layout instanceof Wirecloud.ui.FullDragboardLayout || newLayout instanceof Wirecloud.ui.FullDragboardLayout) {
+                // Skip if coming from or going to a FullDragboardLayout
+                return;
+            }
+
+            const newLayoutConfiguration = layoutConfiguration;
+
+            let avgScreenSize = layoutConfiguration.lessOrEqual + (layoutConfiguration.moreOrEqual - layoutConfiguration.lessOrEqual) / 2;
+            if (layoutConfiguration.lessOrEqual === -1) {
+                avgScreenSize = layoutConfiguration.moreOrEqual;
+            }
+
+            const layout = (this.layout instanceof Wirecloud.ui.FullDragboardLayout) ? this.previousLayout : this.layout;
+            const previousWidth = (layoutConfiguration.relwidth) ? layout.fromHCellsToPixels(layoutConfiguration.width, avgScreenSize) : layoutConfiguration.width;
+            const previousHeight = (layoutConfiguration.relheight) ? layout.fromVCellsToPixels(layoutConfiguration.height) : layoutConfiguration.height;
+
+            if (newLayout instanceof Wirecloud.ui.FreeLayout) {
+                Wirecloud.Utils.merge(newLayoutConfiguration, {
+                    relwidth: true,
+                    width: newLayout.adaptWidth(previousWidth + 'px', avgScreenSize).inLU,
+                    relheight: false,
+                    height: newLayout.adaptHeight(previousHeight + 'px').inPixels
+                });
+            } else {
+                Wirecloud.Utils.merge(newLayoutConfiguration, {
+                    relwidth: true,
+                    width: newLayout.adaptWidth(previousWidth + 'px', avgScreenSize).inLU,
+                    relheight: true,
+                    height: newLayout.adaptHeight(previousHeight + 'px').inLU
+                });
+            }
+
+            if (dragboardChange && !(newLayout instanceof Wirecloud.ui.FreeLayout)) {
+                const matrix = Wirecloud.Utils.getLayoutMatrix(newLayout, newLayout.dragboard.widgets, avgScreenSize);
+                const newposition = newLayout._searchFreeSpace2(newLayoutConfiguration.width, newLayoutConfiguration.height, matrix);
+                newposition.relx = true;
+                newposition.rely = true;
+                newposition.anchor = "top-left";
+                Wirecloud.Utils.merge(newLayoutConfiguration, newposition);
+            } else {
+                const position = {
+                    x: layoutConfiguration.left,
+                    y: layoutConfiguration.top,
+                    z: layoutConfiguration.zIndex,
+                    relx: layoutConfiguration.relx,
+                    rely: layoutConfiguration.rely,
+                    anchor: layoutConfiguration.anchor
+                };
+
+                const oldPositionPixels = {
+                    x: layout.getColumnOffset(position, avgScreenSize),
+                    y: layout.getRowOffset(position)
+                };
+
+                if (newLayout instanceof Wirecloud.ui.FreeLayout) {
+                    Wirecloud.Utils.merge(newLayoutConfiguration, {
+                        left: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px', avgScreenSize).inLU,
+                        top: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inPixels,
+                        relx: true,
+                        rely: false,
+                        anchor: "top-left"
+                    });
+                } else {
+                    Wirecloud.Utils.merge(newLayoutConfiguration, {
+                        left: newLayout.adaptColumnOffset(oldPositionPixels.x + 'px', avgScreenSize).inLU,
+                        top: newLayout.adaptRowOffset(oldPositionPixels.y + 'px').inLU,
+                        relx: true,
+                        rely: true,
+                        anchor: "top-left"
+                    });
+                }
+            }
+        });
+    };
+
     // =========================================================================
     // EVENT HANDLERS
     // =========================================================================
@@ -166,6 +249,11 @@
                     },
                     set: function (new_layout) {
                         privates.get(this).layout = new_layout;
+                        const fulldragboard = new_layout instanceof Wirecloud.ui.FullDragboardLayout;
+                        this.model.setLayoutFulldragboard(fulldragboard);
+                        if (!fulldragboard && new_layout != null) {
+                            this.model.setLayoutIndex(new_layout.dragboard.layouts.indexOf(new_layout));
+                        }
                         update.call(this);
                     }
                 },
@@ -362,10 +450,14 @@
             } else {
                 layout = tab.dragboard.layouts[model.layout];
             }
-            layout.addWidget(this, true);
 
             // Init minimized and title visibility options
-            this.setMinimizeStatus(model.minimized, false, true);
+            let wrapperHeight = this.wrapperElement.offsetHeight;
+            // On first load, the height is 0. This is a workaround to avoid this issue and set the correct height to the widget
+            wrapperHeight = (wrapperHeight === 0) ? 42 : wrapperHeight;
+            this._setMinimizeStatusStyle(model.minimized, layout, wrapperHeight);
+
+            layout.addWidget(this, true);
 
             this.model.logManager.addEventListener('newentry', on_add_log.bind(this));
 
@@ -413,43 +505,10 @@
          * @param newStatus new minimize status of the iwidget
          */
         setMinimizeStatus(newStatus, persistence, reserveSpace) {
-            const priv = privates.get(this);
-
-            // Sanitize newStatus value
-            newStatus = !!newStatus;
-
-            if (newStatus === this.minimized) {
-                return this;
-            }
-
             const oldHeight = this.shape.height;
-            priv.minimized = newStatus;
 
-            if (this.minimized) {
-                this.minimizebutton.setTitle(utils.gettext("Maximize"));
-                this.minimizebutton.replaceIconClassName("fa-minus", "fa-plus");
-                this.wrapperElement.classList.add('wc-minimized-widget');
-                this.wrapperElement.style.height = "";
-                priv.minimized_shape = {
-                    relheight: true,
-                    height: this.layout.adaptHeight(this.wrapperElement.offsetHeight + 'px').inLU,
-                    relwidth: priv.shape.relwidth,
-                    width: priv.shape.width
-                };
-                this.model.setTitleVisibility(true, false);
-            } else {
-                this.minimizebutton.setTitle(utils.gettext("Minimize"));
-                this.minimizebutton.replaceIconClassName("fa-plus", "fa-minus");
-                this.wrapperElement.classList.remove('wc-minimized-widget');
-                this.wrapperElement.style.height = this.layout.getHeightInPixels(priv.shape.height) + 'px';
-                priv.minimized_shape = null;
-            }
-
-            this.model.contextManager.modify({
-                height: this.shape.height,
-                heightInPixels: this.model.wrapperElement.offsetHeight,
-                visible: !priv.minimized && !this.tab.hidden && !this.tab.workspace.hidden
-            });
+            this._setMinimizeStatusStyle(newStatus, this.layout);
+            this.model.setLayoutMinimizedStatus(this.minimized);
 
             // Notify resize event
             reserveSpace = reserveSpace != null ? reserveSpace : true;
@@ -460,6 +519,48 @@
 
             update.call(this);
             return this;
+        }
+
+        _setMinimizeStatusStyle(newStatus, layout, height = undefined) {
+            const priv = privates.get(this);
+
+            // Sanitize newStatus value
+            newStatus = !!newStatus;
+
+            if (newStatus === this.minimized) {
+                return this;
+            }
+
+            priv.minimized = newStatus;
+
+            if (this.minimized) {
+                this.minimizebutton.setTitle(utils.gettext("Maximize"));
+                this.minimizebutton.replaceIconClassName("fa-minus", "fa-plus");
+                this.wrapperElement.classList.add('wc-minimized-widget');
+                this.wrapperElement.style.height = "";
+
+                const wrapperHeight = (height) ? height : this.wrapperElement.offsetHeight;
+
+                priv.minimized_shape = {
+                    relheight: true,
+                    height: layout.adaptHeight(wrapperHeight + 'px').inLU,
+                    relwidth: priv.shape.relwidth,
+                    width: priv.shape.width
+                };
+                this.model.setTitleVisibility(true, false);
+            } else {
+                this.minimizebutton.setTitle(utils.gettext("Minimize"));
+                this.minimizebutton.replaceIconClassName("fa-plus", "fa-minus");
+                this.wrapperElement.classList.remove('wc-minimized-widget');
+                this.wrapperElement.style.height = layout.getHeightInPixels(priv.shape.height) + 'px';
+                priv.minimized_shape = null;
+            }
+
+            this.model.contextManager.modify({
+                height: this.shape.height,
+                heightInPixels: this.model.wrapperElement.offsetHeight,
+                visible: !priv.minimized && !this.tab.hidden && !this.tab.workspace.hidden
+            });
         }
 
         /**
@@ -489,8 +590,14 @@
             return this.model.setPermissions(changes, persistence);
         }
 
-        setPosition(position) {
+        setPosition(position, updateModel = true) {
             utils.update(privates.get(this).position, position);
+
+            if (updateModel) {
+                this.model.setPosition(this.position);
+                this.model.setLayoutPosition(this.position);
+            }
+
             if (this.layout != null) {
                 update_position.call(this);
                 notify_position.call(this);
@@ -498,11 +605,16 @@
             return this;
         }
 
-        setShape(shape, resizeLeftSide, resizeTopSide, persist) {
+        setShape(shape, resizeLeftSide, resizeTopSide, persist, updateModel = true) {
             const oldWidth = this.shape.width;
             const oldHeight = this.shape.height;
 
             utils.update(privates.get(this).shape, shape);
+
+            if (updateModel) {
+                this.model.setShape(privates.get(this).shape);
+                this.model.setLayoutShape(privates.get(this).shape);
+            }
 
             if (this.layout == null) {
                 return;
@@ -600,8 +712,11 @@
             const tabChange = priv.tab !== newLayout.dragboard.tab;
             const dragboardChange = this.layout.dragboard !== newLayout.dragboard || tabChange;
             const oldLayout = this.layout;
+            getUpdatedLayoutConfigurations.call(this, newLayout);
 
             const affectedWidgetsRemoving = oldLayout.removeWidget(this, dragboardChange);
+
+            const updateModel = !(newLayout instanceof Wirecloud.ui.FullDragboardLayout);
 
             if (oldLayout instanceof Wirecloud.ui.FullDragboardLayout) {
                 this.setShape(this.previousShape);
@@ -618,7 +733,7 @@
                     width: newLayout.adaptWidth(previousWidth + 'px').inLU,
                     relheight: true,
                     height: newLayout.adaptHeight(previousHeight + 'px').inLU
-                });
+                }, false, false, false, updateModel);
             }
 
             if (dragboardChange && !(newLayout instanceof Wirecloud.ui.FreeLayout)) {
@@ -649,7 +764,7 @@
                         relx: true,
                         rely: true,
                         anchor: "top-left"
-                    });
+                    }, updateModel);
                 }
             }
 
@@ -664,10 +779,10 @@
             this.model.changeTab(newLayout.dragboard.tab.model).then(() => {
                 affectedWidgetsAdding.add(this.id);
                 if (dragboardChange) {
-                    oldLayout.dragboard.update([...affectedWidgetsRemoving]);
-                    newLayout.dragboard.update([...affectedWidgetsAdding]);
+                    oldLayout.dragboard.update([...affectedWidgetsRemoving], true);
+                    newLayout.dragboard.update([...affectedWidgetsAdding], true);
                 } else {
-                    newLayout.dragboard.update([...utils.setupdate(affectedWidgetsAdding, affectedWidgetsRemoving)]);
+                    newLayout.dragboard.update([...utils.setupdate(affectedWidgetsAdding, affectedWidgetsRemoving)], true);
                 }
             });
         }
@@ -699,29 +814,68 @@
             return this;
         }
 
-        toJSON() {
+        updateWindowSize(windowSize) {
+            this.model.updateWindowSize(windowSize);
+
+            const newPos = {
+                x: this.model.position.x,
+                y: this.model.position.y,
+                z: this.model.position.z,
+                relx: this.model.position.relx,
+                rely: this.model.position.rely,
+                anchor: this.model.position.anchor
+            };
+
+            const newShape = {
+                relwidth: this.model.shape.relwidth,
+                width: this.model.shape.width,
+                relheight: this.model.shape.relheight,
+                height: this.model.shape.height
+            };
+
+            this.layout.removeWidgetEventListeners(this);
+            if ('removeHandle' in this.layout) {
+                this.layout.removeHandle();
+            }
+            this.layout = null;
+
+            this.setPosition(newPos, false);
+            this.setShape(newShape, false, false, false, false);
+
+            if (this.model.fulldragboard) {
+                this.previousPosition = this.position;
+                this.previousShape = this.shape;
+                this.previousLayout = this.tab.dragboard.layouts[this.model.layout];
+
+                this._setMinimizeStatusStyle(this.model.minimized, this.tab.dragboard.fulldragboardLayout);
+                this.tab.dragboard.fulldragboardLayout.addWidget(this, false);
+            } else {
+                // Remove wc-widget-fulldragboard class
+                this.wrapperElement.classList.remove('wc-widget-fulldragboard');
+                this._setMinimizeStatusStyle(this.model.minimized, this.tab.dragboard.layouts[this.model.layout]);
+                this.tab.dragboard.layouts[this.model.layout].addWidget(this, false);
+            }
+        }
+
+        toJSON(action = 'update', allLayoutConfigurations = false) {
             const fulldragboard = this.layout === this.tab.dragboard.fulldragboardLayout;
-            const shape = fulldragboard ? this.previousShape : this.shape;
-            const position = fulldragboard ? this.previousPosition : this.position;
+
+            // We keep all or only the current layout configuration and then we clone it to add the action
+            const configs = this.model.layoutConfigurations.reduce((result, layoutConfig) => {
+                if (allLayoutConfigurations || layoutConfig.id === this.model.currentLayoutConfig.id) {
+                    const config = StyledElements.Utils.clone(layoutConfig, true);
+                    config.action = action;
+                    result.push(config);
+                }
+
+                return result;
+            }, []);
+
             return {
                 id: this.id,
                 tab: this.tab.id,
                 layout: this.tab.dragboard.layouts.indexOf(fulldragboard ? this.previousLayout : this.layout),
-                // position
-                anchor: position.anchor,
-                relx: position.relx,
-                rely: position.rely,
-                top: position.y,
-                left: position.x,
-                zIndex: position.z,
-                // shape
-                minimized: this.minimized,
-                relwidth: shape.relwidth,
-                width: shape.width,
-                relheight: shape.relheight,
-                height: privates.get(this).shape.height,
-                fulldragboard: fulldragboard,
-                titlevisible: this.titlevisible
+                layoutConfigurations: configs
             };
         }
 

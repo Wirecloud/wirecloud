@@ -99,7 +99,9 @@
                     10
                 );
                 spyOn(ns.ColumnLayout.prototype, "initialize").and.returnValue(false);
-                spyOn(layout, "moveSpaceUp").and.returnValue(true);
+                const affectedWidgets = new Set();
+                affectedWidgets.add("1");
+                spyOn(layout, "moveSpaceUp").and.returnValue(affectedWidgets);
                 const widget = {
                     id: "1",
                     addEventListener: jasmine.createSpy("addEventListener"),

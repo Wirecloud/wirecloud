@@ -2788,6 +2788,8 @@ class WiringEditorSeleniumTestCase(WirecloudSeleniumTestCase):
         # In the case (2), the platform should remove the component selected
         # In the case (3), the platform should ignore the component selected
 
+        # This test is prone to failures. Rerun it if it fails
+
         self.login(username='user_with_workspaces', next='/user_with_workspaces/mashup-with-behaviours')
 
         with self.edit_mode as edit_session:

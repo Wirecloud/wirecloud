@@ -118,7 +118,7 @@
         this.windowContent.insertBefore(table, this.msgElement);
     };
 
-    const save_preferences = function save_preferences() {
+    const save_preferences = function save_preferences(callback) {
         const modifiedValues = {};
         let newInheritanceSetting;
 
@@ -156,10 +156,14 @@
             modifiedValues[pref_name] = changes;
         }
 
-        this.manager.set(modifiedValues);
+        this.manager.set(modifiedValues).then(() => {
+            if (typeof callback === 'function') {
+                callback();
+            }
+        });
     };
 
-    const _executeOperation = function _executeOperation() {
+    const _executeOperation = function _executeOperation(callback) {
         // Validate input fields
         const validationManager = new StyledElements.ValidationErrorManager();
         for (let pref_name in this.interfaces) {
@@ -171,11 +175,12 @@
 
         // Show error message if needed
         if (errorMsg.length !== 0) {
-            // FIXME
-            this.setMsg(errorMsg[0]);
+            this.alertMsg.setMessage(errorMsg[0]);
+            this.alertMsg.show();
         } else {
-            save_preferences.call(this);
+            save_preferences.call(this, callback);
             this.hide();
+            this.alertMsg.hide();
         }
     };
 
@@ -211,6 +216,10 @@
                 }
             }.bind(this));
             this.resetButton.insertInto(this.windowBottom);
+
+            this.alertMsg = new se.Alert({state: 'error', title: utils.gettext('Error')});
+            this.alertMsg.insertInto(this.windowContent);
+            this.alertMsg.hide();
 
             // Accept button
             this.acceptButton = new se.Button({
@@ -252,6 +261,7 @@
                     this.interfaces[pref_name].inherit.setValue(this.manager.preferences[pref_name].inherit);
                     this.interfaces[pref_name].base.setDisabled(this.manager.preferences[pref_name].inherit);
                 }
+                this.interfaces[pref_name].base.addEventListener('requestSave', _executeOperation.bind(this));
             }
             Wirecloud.ui.WindowMenu.prototype.show.call(this, parentWindow);
 

@@ -10,175 +10,89 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-15 00:00+0900\n"
+"POT-Creation-Date: 2024-05-27 11:24+0200\n"
 "PO-Revision-Date: 2019-03-15 00:00+0900\n"
+"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
+"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
-"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: static/js/WirecloudAPI/DashboardManagementAPI.js:154
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:103
+#: static/js/WirecloudAPI/DashboardManagementAPI.js:148
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:104
 msgid "Do you really want to remove the \"%(name)s\" workspace?"
 msgstr "本当にワークスペース \"%(name)s\" を削除しますか？"
 
-#: static/js/WirecloudAPI/WirecloudAPICommon.js:226
+#: static/js/WirecloudAPI/WirecloudAPICommon.js:234
 msgid ""
 "<ul><li><b>File:</b> <t:file/></li><li><b>Line: </b><t:line/></li></"
 "ul><p>See the <a href=\"http://webmasters.stackexchange.com/questions/8525/"
-"how-to-open-the-javascript-console-in-different-browsers\" target=\"_blank"
-"\">browser console</a> for more details</p>"
+"how-to-open-the-javascript-console-in-different-browsers\" "
+"target=\"_blank\">browser console</a> for more details</p>"
 msgstr ""
 "<ul><li><b>ファイル:</b> <t:file/></li><li><b>ライン: </b><t:line/></li></"
 "ul><p>詳細については、<a href=\"http://webmasters.stackexchange.com/"
 "questions/8525/how-to-open-the-javascript-console-in-different-browsers\" "
 "target=\"_blank\">ブラウザのコンソール</a> を参照してください。</p>"
 
-#: static/js/catalogue/CatalogueSearchView.js:44
-msgid "Empty Marketplace!"
-msgstr "空のマーケットプレイス!"
-
-#: static/js/catalogue/CatalogueSearchView.js:45
-msgid ""
-"This marketplace is empty, that is, it does not provide any resource at this "
-"time."
-msgstr "このマーケットプレイスは空です。現時点ではリソースを提供していません。"
-
-#: static/js/catalogue/CatalogueSearchView.js:67
-msgid "<p>Showing results for <b><t:corrected_query/></b></p>"
-msgstr "<p><b><t:corrected_query/></b> の結果を表示します。</p>"
-
-#: static/js/catalogue/CatalogueSearchView.js:95
-msgid "Connection error: No resource retrieved."
-msgstr "接続エラー: リソースが取得されませんでした."
-
-#: static/js/catalogue/CatalogueSearchView.js:101
-msgid ""
-"<p>We couldn't find anything for your search - <b>%(keywords)s.</b></"
-"p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</"
-"li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>"
-msgstr ""
-"<p>検索で何も見つかりませんでした - <b>%(keywords)s.</b></p><p>対処:</"
-"p><ul><li>すべての単語のスペルが正しいことを確認してください</li><li>異なる"
-"キーワードを試してみてください</li><li>より一般的なキーワードを試してください"
-"</li></ul>"
-
-#: static/js/catalogue/CatalogueSearchView.js:109
-msgid "Keywords..."
-msgstr "キーワード..."
-
-#: static/js/catalogue/CatalogueSearchView.js:124
-#: static/js/catalogue/CatalogueSearchView.js:243
-msgid "Refresh"
-msgstr "リフレッシュ"
-
-#: static/js/catalogue/CatalogueSearchView.js:135
-msgid "Creation date"
-msgstr "作成日"
-
-#: static/js/catalogue/CatalogueSearchView.js:136
-#: static/js/wirecloud/Widget.js:253
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:291
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:718
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:148
-#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:100
-#: static/js/wirecloud/wiring/Operator.js:164
-msgid "Title"
-msgstr "タイトル"
-
-#: static/js/catalogue/CatalogueSearchView.js:137
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:43
-msgid "Vendor"
-msgstr "ベンダー"
-
-#: static/js/catalogue/CatalogueSearchView.js:149
-msgid "All"
-msgstr "全て"
-
-#: static/js/catalogue/CatalogueSearchView.js:150
-#: static/js/wirecloud/ui/ComponentSidebar.js:56
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:56
-msgid "Widgets"
-msgstr "ウィジェット"
-
-#: static/js/catalogue/CatalogueSearchView.js:151
-#: static/js/wirecloud/ui/ComponentSidebar.js:43
-msgid "Mashups"
-msgstr "マッシュアップ"
-
-#: static/js/catalogue/CatalogueSearchView.js:152
-#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:43
-msgid "Operators"
-msgstr "オペレータ"
-
-#: static/js/catalogue/CatalogueSearchView.js:241
-msgid "Clear filters"
-msgstr "フィルターをクリア"
-
-#: static/js/catalogue/CatalogueView.js:51
-msgid "Uninstall"
-msgstr "アンインストール"
-
-#: static/js/catalogue/CatalogueView.js:57
-msgid "Install"
-msgstr "インストール"
-
-#: static/js/wirecloud/LocalCatalogue.js:37
+#: static/js/wirecloud/LocalCatalogue.js:38
 msgid "Unloading affected widgets"
 msgstr "影響を受けるウィジェットをアンロード"
 
-#: static/js/wirecloud/LocalCatalogue.js:40
+#: static/js/wirecloud/LocalCatalogue.js:41
 msgid "Unloading affected operators"
 msgstr "影響を受けるオペレータをアンロード"
 
-#: static/js/wirecloud/LocalCatalogue.js:75
+#: static/js/wirecloud/LocalCatalogue.js:76
 msgid "Purging %(componenttype)s info"
 msgstr "%(componenttype)s の情報をパージ"
 
-#: static/js/wirecloud/LocalCatalogue.js:137
+#: static/js/wirecloud/LocalCatalogue.js:128
 #: static/js/wirecloud/WorkspaceCatalogue.js:81
 msgid "Error loading %(resource)s metadata"
 msgstr "%(resource)s のメタデータの読み込み中にエラーが発生しました"
 
-#: static/js/wirecloud/LocalCatalogue.js:174
+#: static/js/wirecloud/LocalCatalogue.js:171
 msgid "Deleting all versions of %(title)s (%(group_id)s)"
 msgstr "%(title)s (%(group_id)s) のすべてのバージョンを削除"
 
-#: static/js/wirecloud/LocalCatalogue.js:176
+#: static/js/wirecloud/LocalCatalogue.js:173
 msgid "Uninstalling all versions of %(title)s (%(group_id)s)"
 msgstr "%(title)s (%(group_id)s) のすべてのバージョンをアンインストール"
 
-#: static/js/wirecloud/LocalCatalogue.js:185
+#: static/js/wirecloud/LocalCatalogue.js:182
 msgid "Deleting %(title)s (%(uri)s)"
 msgstr "%(title)s (%(uri)s) を削除"
 
-#: static/js/wirecloud/LocalCatalogue.js:187
+#: static/js/wirecloud/LocalCatalogue.js:184
 msgid "Uninstalling %(title)s (%(uri)s)"
 msgstr "%(title)s (%(uri)s) をアンインストール"
 
-#: static/js/wirecloud/LocalCatalogue.js:281
+#: static/js/wirecloud/LocalCatalogue.js:278
 msgid "Invalid component type: %(type)s"
 msgstr "無効なコンポーネントタイプ: %(type)s"
 
-#: static/js/wirecloud/LogManager.js:215
+#: static/js/wirecloud/LogManager.js:252
 msgid "HTTP Error %(errorCode)s - %(errorDesc)s"
 msgstr "HTTPエラー %(errorCode)s - %(errorDesc)s"
 
 #: static/js/wirecloud/MarketManager.js:50
 #: static/js/wirecloud/MarketManager.js:81
-#: static/js/wirecloud/MarketManager.js:111 static/js/wirecloud/Wiring.js:197
-#: static/js/wirecloud/Wiring.js:262 static/js/wirecloud/Workspace.js:305
-#: static/js/wirecloud/Workspace.js:441 static/js/wirecloud/Workspace.js:496
-#: static/js/wirecloud/WorkspaceTab.js:223
-#: static/js/wirecloud/WorkspaceTab.js:268 static/js/wirecloud/core.js:57
-#: static/js/wirecloud/core.js:468 static/js/wirecloud/core.js:537
-#: static/js/wirecloud/core.js:542
-#: static/js/wirecloud/ui/PublishResourceWindowMenu.js:99
-#: static/js/wirecloud/ui/WorkspaceTabViewDragboard.js:215
+#: static/js/wirecloud/MarketManager.js:111
+#: static/js/wirecloud/Preferences.js:130 static/js/wirecloud/Wiring.js:465
+#: static/js/wirecloud/Wiring.js:530 static/js/wirecloud/Workspace.js:468
+#: static/js/wirecloud/Workspace.js:604 static/js/wirecloud/Workspace.js:659
+#: static/js/wirecloud/WorkspaceTab.js:220
+#: static/js/wirecloud/WorkspaceTab.js:265 static/js/wirecloud/core.js:158
+#: static/js/wirecloud/core.js:420 static/js/wirecloud/core.js:585
+#: static/js/wirecloud/core.js:654 static/js/wirecloud/core.js:660
+#: static/js/wirecloud/core.js:708
+#: static/js/wirecloud/ui/PublishResourceWindowMenu.js:104
+#: static/js/wirecloud/ui/WorkspaceTabViewDragboard.js:270
+#: static/js/wirecloud/ui/WorkspaceTabViewDragboard.js:423
 msgid "Unexpected response from server"
 msgstr "サーバからの予期しない応答"
 
@@ -186,72 +100,56 @@ msgstr "サーバからの予期しない応答"
 msgid "Adding marketplace"
 msgstr "マーケットプレイスの追加"
 
-#: static/js/wirecloud/MashableApplicationComponent.js:34
-msgid "missing vendor"
-msgstr "ベンダーがありません"
-
-#: static/js/wirecloud/MashableApplicationComponent.js:40
-msgid "missing name"
-msgstr "名前がありません"
-
-#: static/js/wirecloud/MashableApplicationComponent.js:46
-msgid "missing version"
-msgstr "バージョンがありません"
-
-#: static/js/wirecloud/MashableApplicationComponent.js:52
-msgid "missing type"
-msgstr "タイプがありません"
-
-#: static/js/wirecloud/PlatformPreferences.js:38
+#: static/js/wirecloud/PlatformPreferences.js:39
 msgid "Platform Preferences"
 msgstr "プラットフォームの設定"
 
-#: static/js/wirecloud/PreferenceManager.js:41
+#: static/js/wirecloud/PreferenceManager.js:39
 msgid "Language"
 msgstr "言語"
 
-#: static/js/wirecloud/PreferenceManager.js:44
+#: static/js/wirecloud/PreferenceManager.js:42
 msgid "Default setting"
 msgstr "デフォルト設定"
 
-#: static/js/wirecloud/PreferenceManager.js:45
+#: static/js/wirecloud/PreferenceManager.js:43
 msgid "Detect browser language"
 msgstr "ブラウザ言語を検出"
 
-#: static/js/wirecloud/TabPreferences.js:43
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:100
+#: static/js/wirecloud/TabPreferences.js:45
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:98
 #: static/js/wirecloud/Tutorials/BehaviourOrientedWiring.js:236
-#: static/js/wirecloud/Widget/PreferencesWindowMenu.js:30
-#: static/js/wirecloud/WorkspacePreferences.js:38
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:85
-#: static/js/wirecloud/ui/WirecloudHeader.js:101
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:86
-#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:73
-#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:70
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:94
+#: static/js/wirecloud/Widget/PreferencesWindowMenu.js:33
+#: static/js/wirecloud/WorkspacePreferences.js:40
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:78
+#: static/js/wirecloud/ui/WirecloudHeader.js:94
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:141
+#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:99
+#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:61
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:86
 msgid "Settings"
 msgstr "設定"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:66
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:64
 msgid "Basic concepts"
 msgstr "基本概念"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:68
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:71
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:76
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:85
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:92
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:98
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:116
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:120
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:121
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:162
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:66
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:69
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:74
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:83
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:90
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:96
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:114
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:118
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:119
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:160
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:165
 #: static/js/wirecloud/Tutorials/BasicConcepts.js:167
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:169
 msgid "WireCloud Basic Tutorial"
 msgstr "WireCloud 基本チュートリアル"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:68
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:66
 msgid ""
 "<p>Welcome to WireCloud!!</p><p>This tutorial will show you the basic "
 "concepts behind WireCloud.</p>"
@@ -259,7 +157,7 @@ msgstr ""
 "<p> WireCloudへようこそ!! </p> <p>このチュートリアルでは、WireCloudの基本概念"
 "を紹介します。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:71
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:69
 msgid ""
 "<p>This is the <em>Editor</em> view. In this view, you can use and modify "
 "your workspaces. Currently you are in a newly created workspace: <em>Basic "
@@ -268,14 +166,14 @@ msgid ""
 "some widgets, so we are going to install them for you. You can safely "
 "uninstall these widgets after finishing the tutorial.</p></div>"
 msgstr ""
-"<p>これは<em>エディタ</em> ビューです。このビューではワークスペースを使用お"
-"よび変更できます。 現在、あなたは新しく作成されたワークスペースにいます: <em>"
-"基本概念のチュートリアル</em>. このワークショップは空なので、最初にウィジェッ"
-"トを追加します。</p><div class=\"alert alert-info\"><p>次のステップではいくつ"
-"かのウィジェットが必要なので、それらをインストールします。 チュートリアルの終"
-"了後、これらのウィジェットを安全にアンインストールできます。</p></div>"
+"<p>これは<em>エディタ</em> ビューです。このビューではワークスペースを使用およ"
+"び変更できます。 現在、あなたは新しく作成されたワークスペースにいます: <em>基"
+"本概念のチュートリアル</em>. このワークショップは空なので、最初にウィジェット"
+"を追加します。</p><div class=\"alert alert-info\"><p>次のステップではいくつか"
+"のウィジェットが必要なので、それらをインストールします。 チュートリアルの終了"
+"後、これらのウィジェットを安全にアンインストールできます。</p></div>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:76
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:74
 msgid ""
 "<p>Ok, widgets have been installed successfuly.</p><p>Next step is to add "
 "the <em>YouTube Browser</em> widget to the workspace.</p>"
@@ -283,15 +181,15 @@ msgstr ""
 "<p>ウィジェットは正常にインストールされました。</p><p>次のステップは、"
 "<em>YouTube Browser</em>ウィジェットをワークスペースに追加することです。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:77
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:75
 msgid "Click the <em>Edit</em> button"
 msgstr "<em>編集</em> ボタンをクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:79
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:77
 msgid "Click the <em>Add components</em> button"
 msgstr "<em>コンポーネントを追加</em> ボタンをクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:81
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:79
 msgid ""
 "By typing \"browser\" we can filter widgets that contains in their name or "
 "description these words"
@@ -299,7 +197,7 @@ msgstr ""
 "\"browser\" と入力すると、名前や説明にこれらの単語を含むウィジェットをフィル"
 "タリングできます"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:84
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:82
 msgid ""
 "Once you have the results, you can add the widget. So click <em>Add to "
 "workspace</em>"
@@ -307,27 +205,27 @@ msgstr ""
 "結果が得られたら、ウィジェットを追加することができます。 <em>ワークスペースに"
 "追加</em>をクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:85
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:83
 msgid ""
 "<p><span class=\"label label-success\">Great!</span> That was easy, wasn't "
 "it?.</p><p>Let's continue adding the <em>Input Box</em> widget.</p>"
 msgstr ""
-"<p><span class=\"label label-success\">すばらしい！</span> 簡単でした"
-"ね。</p><p><em>入力ボックス</em> ウィジェットを追加しましょう</p>"
+"<p><span class=\"label label-success\">すばらしい！</span> 簡単でしたね。</"
+"p><p><em>入力ボックス</em> ウィジェットを追加しましょう</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:86
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:84
 msgid "Typing <em>input box</em>..."
 msgstr "<em>input box</em>と入力します..."
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:89
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:87
 msgid "Click <em>Add to workspace</em>"
 msgstr "<em>ワークスペースを追加</em>をクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:90
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:88
 msgid "Close the component sidebar"
 msgstr "コンポーネントのサイドバーを閉じる"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:92
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:90
 msgid ""
 "<p>One of the main features of WireCloud is that you can edit your "
 "workspaces' layout not only by adding and removing widgets, but also moving, "
@@ -337,33 +235,33 @@ msgstr ""
 "イズ変更、名前の変更など、ワークスペースのレイアウトを編集できることです。</"
 "p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:93
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:91
 msgid "Drag &amp; drop to resize the widget"
 msgstr "ウィジェットのサイズを変更するためにドラック＆ドロップ"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:94
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:92
 msgid "Drag &amp; drop to move the widget"
 msgstr "ウィジェットを移動するためにドラック＆ドロップ"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:95
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:99
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:93
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:97
 msgid "Open <em>Input Box</em> menu"
 msgstr "<em>入力ボックス</em> のメニューを開きます"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:96
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:94
 msgid "Click <em>Rename</em>"
 msgstr "<em>リネーム</em>をクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:96
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:57
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:66
-#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:63
-#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:57
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:64
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:94
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:50
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:121
+#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:89
+#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:48
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:56
 msgid "Rename"
 msgstr "リネーム"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:97
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:95
 msgid ""
 "Enter a new name for the widget (e.g <em>Search</em>) and press <kbd>Enter</"
 "kbd> or click outside the title"
@@ -371,7 +269,7 @@ msgstr ""
 "ウィジェットの新しい名前を入力し (例 <em>Search</em>) <kbd>Enter</kbd> を押す"
 "か、タイトルの外側をクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:98
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:96
 msgid ""
 "<p>Also, some widgets can be parameterized through settings giving you the "
 "chance to use them for very general purporses.</p>"
@@ -379,32 +277,32 @@ msgstr ""
 "<p>また、いくつかのウィジェットは、非常に一般的な目的のためにそれらを使用する"
 "機会を与える設定を介してパラメータ化することができます。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:100
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:98
 #: static/js/wirecloud/Tutorials/BehaviourOrientedWiring.js:236
 msgid "Click <em>Settings</em>"
 msgstr "<em>設定</em> をクリック"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:106
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:104
 msgid "Write a label for the input, e.g. <em>Multimedia</em>."
 msgstr "入力のラベルを書き込みます。例: <em>Multimedia</em>。"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:106
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:104
 msgid "Write a better placeholder text for the input, e.g. <em>Keywords</em>"
 msgstr "入力用のプレースホルダテキストを書き込みます。例: <em>Keywords</em>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:106
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:104
 msgid "Write a better label for the button, e.g <em>Search</em>."
 msgstr "ボタンのより良いラベルを書き込みます。 例: <em>Search</em>。"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:108
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:106
 msgid "Click here to submit"
 msgstr "ここをクリックして設定してください"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:113
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:111
 msgid "Click <em>Wiring</em> to continue"
 msgstr "続行するには <em>ワイヤーリング</em> をクリックしてください"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:116
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:114
 msgid ""
 "<p>This is the <em>Wiring Editor</em> view.</p><p>Here you can wire widgets "
 "and operators together turning your workspace into and <em>application "
@@ -414,15 +312,15 @@ msgstr ""
 "レータを一緒にワイヤーリングして、ワークスペースと<em>アプリケーション・マッ"
 "シュアップ</em>を組み立てることができます。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:117
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:115
 msgid "Click <em>Find components</em> to open the sidebar"
 msgstr "サイドバーを開くには、<em>コンポーネントを検索</em>をクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:119
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:117
 msgid "Click <em>Widgets</em>"
 msgstr "<em>ウィジェット</em> をクリックしてください"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:120
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:118
 msgid ""
 "<p>In this sidebar you can find all the available widgets. In our example, "
 "we are interested in the widgets added to the workspace: the <em>YouTube "
@@ -438,7 +336,7 @@ msgstr ""
 "ポーネントは、これらのビヘイビアの組み合わせと同様に、ソース、トランスフォー"
 "マ、またはデータ・ターゲットとして機能します。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:121
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:119
 msgid ""
 "<p>In the next steps, we are going to connect the <em>Input Box</em> and "
 "<em>YouTube Browser</em> widgets together. This will allow you to perform "
@@ -449,19 +347,19 @@ msgstr ""
 "ジェットを一緒に接続します。 これにより、<em>入力ボックス</em> ウィジェットか"
 "ら <em>YouTube Browser</em> で検索を実行できます。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:127
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:125
 msgid "Drag &amp; drop the <em>Input Box</em> widget"
 msgstr "<em>入力ボックス</em> ウィジェットをドラック＆ドロップします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:140
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:138
 msgid "Drag &amp; drop the <em>YouTube Browser</em> widget"
 msgstr "<em>YouTube Browser</em> ウィジェットをドラック＆ドロップします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:148
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:146
 msgid "Click <em>Find components</em> to close the sidebar"
 msgstr "サイドバーを閉じるには <em>コンポーネントを検索</em> をクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:152
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:150
 msgid ""
 "Drag &amp; drop a new connection from <em>Search Box</em>'s <em>keyword</em> "
 "endpoint ..."
@@ -469,24 +367,24 @@ msgstr ""
 "<em>検索ボックス</em>の<em>キーワード</em> エンドポイントから新しい接続をド"
 "ロップ&ドロップする..."
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:158
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:156
 msgid "... to <em>YouTube Browser</em>'s <em>keyword</em> endpoint"
 msgstr "<em>YouTube Browser</em> の <em>キーワード</em> エンドポイントに"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:162
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:160
 msgid "Now it's time to test our creation."
 msgstr "作成したアプリケーション・マッシュアップをテストしましょう"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:163
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:161
 #: static/js/wirecloud/Tutorials/BehaviourOrientedWiring.js:246
 msgid "Click <em>Back</em>"
 msgstr "<em>戻る</em>をクリックします"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:165
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:163
 msgid "Enter a search keyword and press <kbd>Enter</kbd>"
 msgstr "検索キーワードを入力し、<kbd> Enter </kbd> を押します"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:167
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:165
 msgid ""
 "<p><span class=\"label label-success\">Congratulations!</span> you have "
 "finished your first <em>application mashup</em>.</p><p>As you can see, the "
@@ -496,7 +394,7 @@ msgstr ""
 "ケーション・マッシュアップ</em>が完了しました。</p><p>ご覧のとおり、"
 "<em>YouTube Browser</em> ウィジェットが正常に更新されました。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:169
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:167
 msgid ""
 "<p>This is the end of this tutorial. Remember that you can always go to the "
 "Tutorial menu for others.</p>"
@@ -504,7 +402,7 @@ msgstr ""
 "<p>これはこのチュートリアルの最後です。 いつでも他のチュートリアル・メニュー"
 "に行くことができます。</p>"
 
-#: static/js/wirecloud/Tutorials/BasicConcepts.js:169
+#: static/js/wirecloud/Tutorials/BasicConcepts.js:167
 msgid "Tutorials"
 msgstr "チュートリアル"
 
@@ -738,9 +636,9 @@ msgid ""
 "the affected components were added? That saved us some steps :).</"
 "p><p>Anyway, you can also directly add components in a similar way clicking "
 "on theirs <em>Add</em> button (take into account that associated connections "
-"are no added automatically in that case)</p><div class=\"alert alert-info"
-"\">The third and the fourth behaviour can be created the same way, so we are "
-"going to create them for you.</div>"
+"are no added automatically in that case)</p><div class=\"alert alert-"
+"info\">The third and the fourth behaviour can be created the same way, so we "
+"are going to create them for you.</div>"
 msgstr ""
 "<p><span class=\"label label-success\">すばらしい！</span> 私たちは最初のビヘ"
 "イビアを終えました。 接続を追加したときにも、影響を受けるコンポーネントが追加"
@@ -832,8 +730,8 @@ msgstr ""
 "<p><span class=\"label label-success\">すばらしい!</span> 私たちはこのビヘイ"
 "ビアを正常にクリーンアップしました。 影響を受けた接続も削除されていることに気"
 "付きましたか？ それは私たちをもう一度、いくつかのステップを救いました:)。</"
-"p><p>とにかく、<em>削除</em> ボタンをクリックして同様の方法で直接接続を削除"
-"することもできます (その場合、関連コンポーネントは自動的に削除されません)</p>"
+"p><p>とにかく、<em>削除</em> ボタンをクリックして同様の方法で直接接続を削除す"
+"ることもできます (その場合、関連コンポーネントは自動的に削除されません)</p>"
 
 #: static/js/wirecloud/Tutorials/BehaviourOrientedWiring.js:247
 msgid "Try It Yourself"
@@ -851,99 +749,23 @@ msgstr ""
 "の最後ですが、例のダッシュボードを試して、説明されているビヘイビアに従ってい"
 "るかどうかを確認できます。</p>"
 
-#: static/js/wirecloud/UserInterfaceManager.js:203
-msgid "Workspace loaded"
-msgstr "ワークスペースが読み込まれました"
-
-#: static/js/wirecloud/UserInterfaceManager.js:331
+#: static/js/wirecloud/UserInterfaceManager.js:95
 msgid "%(task)s %(percentage)s%"
 msgstr "%(task)s %(percentage)s%"
 
-#: static/js/wirecloud/UserInterfaceManager.js:345
+#: static/js/wirecloud/UserInterfaceManager.js:109
 msgid "%(subTask)s: %(percentage)s%"
 msgstr "%(subTask)s: %(percentage)s%"
 
-#: static/js/wirecloud/Widget.js:241 static/js/wirecloud/wiring/Operator.js:165
-msgid "Widget's title"
-msgstr "ウィジェットのタイトル"
+#: static/js/wirecloud/UserInterfaceManager.js:274
+msgid "Workspace loaded"
+msgstr "ワークスペースが読み込まれました"
 
-#: static/js/wirecloud/Widget.js:248
-msgid "X-Position"
-msgstr "X ポジション"
-
-#: static/js/wirecloud/Widget.js:259
-msgid "Specifies the x-coordinate at which the widget is placed"
-msgstr "ウィジェットが配置される x 座標を指定します"
-
-#: static/js/wirecloud/Widget.js:263
-msgid "Y-Position"
-msgstr "Y ポジション"
-
-#: static/js/wirecloud/Widget.js:264
-msgid "Specifies the y-coordinate at which the widget is placed"
-msgstr "ウィジェットが配置される y 座標を指定します"
-
-#: static/js/wirecloud/Widget.js:268
-msgid "Z-Position"
-msgstr "Z ポジション"
-
-#: static/js/wirecloud/Widget.js:269
-msgid "Specifies the z-coordinate at which the widget is placed"
-msgstr "ウィジェットが配置される z 座標を指定します"
-
-#: static/js/wirecloud/Widget.js:273
-msgid "Height"
-msgstr "高さ"
-
-#: static/js/wirecloud/Widget.js:274
-msgid "Widget's height in layout cells"
-msgstr "レイアウト・セル内のウィジェットの高さ"
-
-#: static/js/wirecloud/Widget.js:278
-msgid "Width"
-msgstr "幅"
-
-#: static/js/wirecloud/Widget.js:279
-msgid "Widget's width in layout cells"
-msgstr "レイアウト・セル内のウィジェットの幅"
-
-#: static/js/wirecloud/Widget.js:283
-msgid "Height in pixels (deprecated)"
-msgstr "高さ (ピクセル単位) (非推奨)"
-
-#: static/js/wirecloud/Widget.js:284
-msgid "Widget's height in pixels"
-msgstr "ピクセル単位でのウィジェットの高さ"
-
-#: static/js/wirecloud/Widget.js:288
-msgid "Width in pixels"
-msgstr "ピクセル単位の幅"
-
-#: static/js/wirecloud/Widget.js:289
-msgid "Widget's width in pixels"
-msgstr "ピクセル単位のウィジェットの幅"
-
-#: static/js/wirecloud/Widget.js:296
-msgid "Widget created successfully."
-msgstr "ウィジェットが正常に作成されました。"
-
-#: static/js/wirecloud/Widget.js:615 static/js/wirecloud/wiring/Operator.js:353
-msgid "The %(type)s was upgraded to v%(version)s successfully."
-msgstr "%(type)s は v%(version)s に正常にアップグレードされました。"
-
-#: static/js/wirecloud/Widget.js:617 static/js/wirecloud/wiring/Operator.js:355
-msgid "The %(type)s was downgraded to v%(version)s successfully."
-msgstr "%(type)s は v%(version)s に正常にダウングレードされました。"
-
-#: static/js/wirecloud/Widget.js:620 static/js/wirecloud/wiring/Operator.js:358
-msgid "The %(type)s was replaced using v%(version)s successfully."
-msgstr "%(type)sは v%(version)s を使用して正常に置き換えられました。"
-
-#: static/js/wirecloud/Widget.js:829 static/js/wirecloud/Wiring.js:336
+#: static/js/wirecloud/Widget.js:366 static/js/wirecloud/Wiring.js:602
 msgid "Failed to load widget."
 msgstr "ウィジェットをロードできませんでした。"
 
-#: static/js/wirecloud/Widget.js:831
+#: static/js/wirecloud/Widget.js:368
 msgid ""
 "<p>This widget is currently not available. You or an administrator probably "
 "uninstalled it.</p><h5>Suggestions:</h5><ul><li>Remove this widget from the "
@@ -957,37 +779,148 @@ msgstr ""
 "ださい</li><li>または、別のバージョンのウィジェットをインストールしてから、"
 "<em>アップグレード/ダウングレード</em>オプションを使用してください</li></ul>"
 
-#: static/js/wirecloud/Widget.js:834
+#: static/js/wirecloud/Widget.js:371
 msgid "Widget loaded successfully."
 msgstr "ウィジェットが正常に読み込まれました。"
 
-#: static/js/wirecloud/Widget.js:865
+#: static/js/wirecloud/Widget.js:408
 msgid "Widget unloaded successfully."
 msgstr "ウィジェットが正常にアンロードされました。"
 
-#: static/js/wirecloud/Widget/PreferencesWindowMenu.js:82
-#: static/js/wirecloud/ui/OperatorPreferencesWindowMenu.js:87
+#: static/js/wirecloud/Widget.js:688
+#: static/js/wirecloud/ui/CatalogueSearchView.js:150
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:272
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:87
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:73
+#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:45
+#: static/js/wirecloud/wiring/Operator.js:408
+msgid "Title"
+msgstr "タイトル"
+
+#: static/js/wirecloud/Widget.js:689 static/js/wirecloud/wiring/Operator.js:409
+msgid "Widget's title"
+msgstr "ウィジェットのタイトル"
+
+#: static/js/wirecloud/Widget.js:693
+msgid "X-Position"
+msgstr "X ポジション"
+
+#: static/js/wirecloud/Widget.js:694
+msgid "Specifies the x-coordinate at which the widget is placed"
+msgstr "ウィジェットが配置される x 座標を指定します"
+
+#: static/js/wirecloud/Widget.js:698
+msgid "Y-Position"
+msgstr "Y ポジション"
+
+#: static/js/wirecloud/Widget.js:699
+msgid "Specifies the y-coordinate at which the widget is placed"
+msgstr "ウィジェットが配置される y 座標を指定します"
+
+#: static/js/wirecloud/Widget.js:703
+msgid "Z-Position"
+msgstr "Z ポジション"
+
+#: static/js/wirecloud/Widget.js:704
+msgid "Specifies the z-coordinate at which the widget is placed"
+msgstr "ウィジェットが配置される z 座標を指定します"
+
+#: static/js/wirecloud/Widget.js:708
+msgid "Height"
+msgstr "高さ"
+
+#: static/js/wirecloud/Widget.js:709
+msgid "Widget's height in layout cells"
+msgstr "レイアウト・セル内のウィジェットの高さ"
+
+#: static/js/wirecloud/Widget.js:713
+msgid "Visible"
+msgstr ""
+
+#: static/js/wirecloud/Widget.js:714
+msgid ""
+"Specifies if the widget is being displayed, altough the user may have to do "
+"scroll to be able to see it"
+msgstr ""
+
+#: static/js/wirecloud/Widget.js:718
+msgid "Width"
+msgstr "幅"
+
+#: static/js/wirecloud/Widget.js:719
+msgid "Widget's width in layout cells"
+msgstr "レイアウト・セル内のウィジェットの幅"
+
+#: static/js/wirecloud/Widget.js:723
+msgid "Height in pixels (deprecated)"
+msgstr "高さ (ピクセル単位) (非推奨)"
+
+#: static/js/wirecloud/Widget.js:724
+msgid "Widget's height in pixels"
+msgstr "ピクセル単位でのウィジェットの高さ"
+
+#: static/js/wirecloud/Widget.js:728
+msgid "Width in pixels"
+msgstr "ピクセル単位の幅"
+
+#: static/js/wirecloud/Widget.js:729
+msgid "Widget's width in pixels"
+msgstr "ピクセル単位のウィジェットの幅"
+
+#: static/js/wirecloud/Widget.js:733
+#, fuzzy
+#| msgid "volatile"
+msgid "Volatile"
+msgstr "揮発性"
+
+#: static/js/wirecloud/Widget.js:734
+msgid "Volatile status of the widget"
+msgstr ""
+
+#: static/js/wirecloud/Widget.js:741
+msgid "Widget created successfully."
+msgstr "ウィジェットが正常に作成されました。"
+
+#: static/js/wirecloud/Widget.js:1107
+#: static/js/wirecloud/ui/OperatorPreferencesWindowMenu.js:42
 msgid "Exception catched while processing preference changes"
 msgstr "環境設定の変更を処理中に例外がキャッチされました"
 
-#: static/js/wirecloud/WidgetMeta.js:77
+#: static/js/wirecloud/Widget.js:1233
+#: static/js/wirecloud/wiring/Operator.js:603
+msgid "The %(type)s was upgraded to v%(version)s successfully."
+msgstr "%(type)s は v%(version)s に正常にアップグレードされました。"
+
+#: static/js/wirecloud/Widget.js:1235
+#: static/js/wirecloud/wiring/Operator.js:605
+msgid "The %(type)s was downgraded to v%(version)s successfully."
+msgstr "%(type)s は v%(version)s に正常にダウングレードされました。"
+
+#: static/js/wirecloud/Widget.js:1238
+#: static/js/wirecloud/wiring/Operator.js:608
+msgid "The %(type)s was replaced using v%(version)s successfully."
+msgstr "%(type)sは v%(version)s を使用して正常に置き換えられました。"
+
+#: static/js/wirecloud/WidgetMeta.js:88
 msgid "[Widget; Vendor: %(vendor)s, Name: %(name)s, Version: %(version)s]"
 msgstr ""
 "[ウィジェット; ベンダー: %(vendor)s, 名前: %(name)s, パージョン: %(version)s]"
 
-#: static/js/wirecloud/Wiring.js:331 static/js/wirecloud/wiring/Operator.js:496
+#: static/js/wirecloud/Wiring.js:597 static/js/wirecloud/wiring/Operator.js:220
 msgid "Failed to load operator."
 msgstr "オペレータを読み込めませんでした。"
 
-#: static/js/wirecloud/Workspace.js:579
+#: static/js/wirecloud/Workspace.js:75
 msgid "Tab %(index)s"
 msgstr "タブ %(index)s"
 
-#: static/js/wirecloud/Workspace.js:585
-msgid "%(base) (%(copy)s)"
+#: static/js/wirecloud/Workspace.js:82
+#, fuzzy
+#| msgid "%(base) (%(copy)s)"
+msgid "%(base)s (%(copy)s)"
 msgstr "%(base) (%(copy)s)"
 
-#: static/js/wirecloud/WorkspaceTab.js:161
+#: static/js/wirecloud/WorkspaceTab.js:157
 msgid "The destination tab (%(title)s) is readonly"
 msgstr "宛先のタブ (%(title)s) は読み取り専用です"
 
@@ -1127,51 +1060,130 @@ msgstr "拡張されていない"
 msgid "Unknown status code"
 msgstr "不明なステータスコード"
 
-#: static/js/wirecloud/core.js:104
-msgid "Unloading WireCloud"
-msgstr "WireCloud のアンロード"
-
-#: static/js/wirecloud/core.js:183
-msgid "Retrieving WireCloud code"
-msgstr "WireCloud コードの取得"
-
-#: static/js/wirecloud/core.js:186
-msgid "Retrieving initial data"
-msgstr "初期データの取得"
-
-#: static/js/wirecloud/core.js:211
-msgid "Error loading WireCloud"
-msgstr "WireCloud の読み込みエラー"
-
-#: static/js/wirecloud/core.js:222
-msgid "Loading WireCloud Platform"
-msgstr "WireCloud プラットフォームの読み込み"
-
-#: static/js/wirecloud/core.js:291
-msgid "Requesting workspace data"
-msgstr "ワークスペース・データの要求"
-
-#: static/js/wirecloud/core.js:351 static/js/wirecloud/core.js:576
+#: static/js/wirecloud/core.js:53 static/js/wirecloud/core.js:466
 msgid "Switching active workspace"
 msgstr "アクティブなワークスペースの切り替え"
 
-#: static/js/wirecloud/core.js:395
+#: static/js/wirecloud/core.js:206
+msgid "Unloading WireCloud"
+msgstr "WireCloud のアンロード"
+
+#: static/js/wirecloud/core.js:293
+msgid "Retrieving WireCloud code"
+msgstr "WireCloud コードの取得"
+
+#: static/js/wirecloud/core.js:296
+msgid "Retrieving initial data"
+msgstr "初期データの取得"
+
+#: static/js/wirecloud/core.js:321
+msgid "Error loading WireCloud"
+msgstr "WireCloud の読み込みエラー"
+
+#: static/js/wirecloud/core.js:332
+msgid "Loading WireCloud Platform"
+msgstr "WireCloud プラットフォームの読み込み"
+
+#: static/js/wirecloud/core.js:418
+msgid "Requesting workspace data"
+msgstr "ワークスペース・データの要求"
+
+#: static/js/wirecloud/core.js:512
 msgid "Missing name or title parameter"
 msgstr "名前またはタイトル・パラメータがありません"
 
-#: static/js/wirecloud/core.js:397
+#: static/js/wirecloud/core.js:514
 msgid "Workspace and mashup options cannot be used at the same time"
 msgstr "ワークスペースとマッシュアップ・オプションは同時に使用できません"
 
-#: static/js/wirecloud/ui/ComponentSidebar.js:70
+#: static/js/wirecloud/ui/CatalogueSearchView.js:43
+msgid "Clear filters"
+msgstr "フィルターをクリア"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:45
+#: static/js/wirecloud/ui/CatalogueSearchView.js:138
+msgid "Refresh"
+msgstr "リフレッシュ"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:64
+msgid "Empty Marketplace!"
+msgstr "空のマーケットプレイス!"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:65
+msgid ""
+"This marketplace is empty, that is, it does not provide any resource at this "
+"time."
+msgstr "このマーケットプレイスは空です。現時点ではリソースを提供していません。"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:86
+msgid "<p>Showing results for <b><t:corrected_query/></b></p>"
+msgstr "<p><b><t:corrected_query/></b> の結果を表示します。</p>"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:112
+msgid "Connection error: No resource retrieved."
+msgstr "接続エラー: リソースが取得されませんでした."
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:118
+msgid ""
+"<p>We couldn't find anything for your search - <b>%(keywords)s.</b></"
+"p><p>Suggestions:</p><ul><li>Make sure all words are spelled correctly.</"
+"li><li>Try different keywords.</li><li>Try more general keywords.</li></ul>"
+msgstr ""
+"<p>検索で何も見つかりませんでした - <b>%(keywords)s.</b></p><p>対処:</"
+"p><ul><li>すべての単語のスペルが正しいことを確認してください</li><li>異なる"
+"キーワードを試してみてください</li><li>より一般的なキーワードを試してください"
+"</li></ul>"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:126
+msgid "Keywords..."
+msgstr "キーワード..."
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:149
+msgid "Creation date"
+msgstr "作成日"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:151
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:46
+msgid "Vendor"
+msgstr "ベンダー"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:163
+msgid "All"
+msgstr "全て"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:164
+#: static/js/wirecloud/ui/ComponentSidebar.js:54
+#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:58
+msgid "Widgets"
+msgstr "ウィジェット"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:165
+#: static/js/wirecloud/ui/ComponentSidebar.js:41
+msgid "Mashups"
+msgstr "マッシュアップ"
+
+#: static/js/wirecloud/ui/CatalogueSearchView.js:166
+#: static/js/wirecloud/ui/WiringEditor/ComponentShowcase.js:45
+msgid "Operators"
+msgstr "オペレータ"
+
+#: static/js/wirecloud/ui/CatalogueView.js:61
+msgid "Uninstall"
+msgstr "アンインストール"
+
+#: static/js/wirecloud/ui/CatalogueView.js:67
+msgid "Install"
+msgstr "インストール"
+
+#: static/js/wirecloud/ui/ComponentSidebar.js:68
 msgid "Add to workspace"
 msgstr "ワークスペースに追加"
 
-#: static/js/wirecloud/ui/ComponentSidebar.js:70
+#: static/js/wirecloud/ui/ComponentSidebar.js:68
 msgid "Merge"
 msgstr "マージ"
 
-#: static/js/wirecloud/ui/DragboardLayout.js:236
+#: static/js/wirecloud/ui/DragboardLayout.js:246
 msgid ""
 "the widget could not be associated with this layout as it already has an "
 "associated layout."
@@ -1179,15 +1191,19 @@ msgstr ""
 "ウィジェットは既に関連付けられたレイアウトを持っているため、このレイアウトに"
 "関連付けることはできませんでした。"
 
-#: static/js/wirecloud/ui/EmbedCodeWindowMenu.js:51
+#: static/js/wirecloud/ui/EmbedCodeWindowMenu.js:53
+msgid "Auto"
+msgstr ""
+
+#: static/js/wirecloud/ui/EmbedCodeWindowMenu.js:69
 msgid "Accept"
 msgstr "設定"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:34
+#: static/js/wirecloud/ui/LayoutInputInterface.js:35
 msgid "Smart"
 msgstr "スマート"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:36
+#: static/js/wirecloud/ui/LayoutInputInterface.js:37
 msgid ""
 "Widgets will tend to be placed on the topmost position available if this "
 "option is enabled. (default: enabled)"
@@ -1195,33 +1211,33 @@ msgstr ""
 "このオプションが有効になっている場合、ウィジェットは利用可能な一番上の位置に"
 "配置される傾向があります。(デフォルト: 有効)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:43
-#: static/js/wirecloud/ui/LayoutInputInterface.js:79
-#: static/js/wirecloud/ui/LayoutInputInterface.js:143
+#: static/js/wirecloud/ui/LayoutInputInterface.js:44
+#: static/js/wirecloud/ui/LayoutInputInterface.js:80
+#: static/js/wirecloud/ui/LayoutInputInterface.js:147
 msgid "Columns"
 msgstr "列"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:45
-#: static/js/wirecloud/ui/LayoutInputInterface.js:81
+#: static/js/wirecloud/ui/LayoutInputInterface.js:46
+#: static/js/wirecloud/ui/LayoutInputInterface.js:82
 msgid "Grid columns. (default: 20 columns)"
 msgstr "グリッド列 (デフォルト: 20桁)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:52
+#: static/js/wirecloud/ui/LayoutInputInterface.js:53
 msgid "Row Height (in pixels)"
 msgstr "行の高さ (ピクセル単位)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:54
+#: static/js/wirecloud/ui/LayoutInputInterface.js:55
 msgid "Row/cell height. Must be specified in pixel units. (default: 13px)"
 msgstr ""
 "行/セルの高さ。 ピクセル単位で指定する必要があります (デフォルト: 13px)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:60
-#: static/js/wirecloud/ui/LayoutInputInterface.js:96
+#: static/js/wirecloud/ui/LayoutInputInterface.js:61
+#: static/js/wirecloud/ui/LayoutInputInterface.js:97
 msgid "Horizontal Margin between widgets (in pixels)"
 msgstr "ウィジェット間の水平マージン (ピクセル単位)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:62
-#: static/js/wirecloud/ui/LayoutInputInterface.js:98
+#: static/js/wirecloud/ui/LayoutInputInterface.js:63
+#: static/js/wirecloud/ui/LayoutInputInterface.js:99
 msgid ""
 "Horizontal Margin between widgets. Must be specified in pixel units. "
 "(default: 4px)"
@@ -1229,13 +1245,13 @@ msgstr ""
 "ウィジェット間の水平マージン。ピクセル単位で指定する必要があります (デフォル"
 "ト: 4px)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:68
-#: static/js/wirecloud/ui/LayoutInputInterface.js:104
+#: static/js/wirecloud/ui/LayoutInputInterface.js:69
+#: static/js/wirecloud/ui/LayoutInputInterface.js:105
 msgid "Vertical Margin between widgets (in pixels)"
 msgstr "ウィジェット間の垂直マージン (ピクセル単位)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:70
-#: static/js/wirecloud/ui/LayoutInputInterface.js:106
+#: static/js/wirecloud/ui/LayoutInputInterface.js:71
+#: static/js/wirecloud/ui/LayoutInputInterface.js:107
 msgid ""
 "Vertical Margin between widgets. Must be specified in pixel units. (default: "
 "3px)"
@@ -1243,51 +1259,51 @@ msgstr ""
 "ウィジェット間の垂直マージン。ピクセル単位で指定する必要があります (デフォル"
 "ト: 3px)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:88
+#: static/js/wirecloud/ui/LayoutInputInterface.js:89
 msgid "Rows"
 msgstr "行"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:90
+#: static/js/wirecloud/ui/LayoutInputInterface.js:91
 msgid "Grid rows. (default: 12 rows)"
 msgstr "グリッドの行。(デフォルト: 12行)"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:117
+#: static/js/wirecloud/ui/LayoutInputInterface.js:119
 msgid " smart"
 msgstr " スマート"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:121
+#: static/js/wirecloud/ui/LayoutInputInterface.js:123
 msgid "%(columns)s%(smart)s columns"
 msgstr "%(columns)s%(smart)s 列"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:124
+#: static/js/wirecloud/ui/LayoutInputInterface.js:126
 msgid "%(columns)s columns x %(rows)s rows"
 msgstr "%(columns)s columns x %(rows)s 行"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:144
+#: static/js/wirecloud/ui/LayoutInputInterface.js:148
 msgid "Grid"
 msgstr "グリッド"
 
-#: static/js/wirecloud/ui/LayoutInputInterface.js:169
+#: static/js/wirecloud/ui/LayoutInputInterface.js:173
 msgid "Layout configuration"
 msgstr "レイアウト設定"
 
-#: static/js/wirecloud/ui/LogWindowMenu.js:41
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:79
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:83
-#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:70
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:58
+#: static/js/wirecloud/ui/LogWindowMenu.js:34
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:72
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:138
+#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:96
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:310
 msgid "Logs"
 msgstr "ログ"
 
-#: static/js/wirecloud/ui/LogWindowMenu.js:56
+#: static/js/wirecloud/ui/LogWindowMenu.js:54
 msgid "Close"
 msgstr "クローズ"
 
-#: static/js/wirecloud/ui/LogWindowMenu.js:129
+#: static/js/wirecloud/ui/LogWindowMenu.js:121
 msgid "Details"
 msgstr "詳細"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:55
+#: static/js/wirecloud/ui/MarketplaceView.js:52
 msgid ""
 "<p>WireCloud is not connected with any marketplace.</p><p>Suggestions:</"
 "p><ul><li>Connect WireCloud with a new marketplace.</li><li>Go to the my "
@@ -1297,31 +1313,31 @@ msgstr ""
 "p><ul><li>WireCloudを新しいマーケットプレイスに接続します。</li><li>代わりに"
 "自分のリソースビューに移動する</li></ul>"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:158
-#: static/js/wirecloud/ui/MyResourcesView.js:138
-#: static/js/wirecloud/ui/MyResourcesView.js:156
-#: static/js/wirecloud/ui/WorkspaceView.js:73
+#: static/js/wirecloud/ui/MarketplaceView.js:179
+#: static/js/wirecloud/ui/MyResourcesView.js:147
+#: static/js/wirecloud/ui/MyResourcesView.js:165
+#: static/js/wirecloud/ui/WorkspaceView.js:175
 msgid "My Resources"
 msgstr "マイ・リソース"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:226
+#: static/js/wirecloud/ui/MarketplaceView.js:240
 msgid "loading marketplace view..."
 msgstr "マーケットプレイス・ビューを読み込む..."
 
-#: static/js/wirecloud/ui/MarketplaceView.js:228
+#: static/js/wirecloud/ui/MarketplaceView.js:242
 msgid "marketplace list not available"
 msgstr "マーケットプレイス・リストは利用できません"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:252
+#: static/js/wirecloud/ui/MarketplaceView.js:264
 msgid "Marketplace"
 msgstr "マーケットプレイス"
 
-#: static/js/wirecloud/ui/MarketplaceView.js:255
+#: static/js/wirecloud/ui/MarketplaceView.js:267
 msgid "Marketplace - %(marketname)s"
 msgstr "マーケットプレイス - %(marketname)s"
 
 #: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:62
-#: static/js/wirecloud/ui/MyResourcesView.js:56
+#: static/js/wirecloud/ui/MyResourcesView.js:70
 msgid "Upload"
 msgstr "アップロード"
 
@@ -1330,7 +1346,7 @@ msgid "Add new marketplace"
 msgstr "新しいマーケットプレイスを追加"
 
 #: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:75
-#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:49
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:52
 msgid "Name"
 msgstr "名前"
 
@@ -1343,7 +1359,7 @@ msgid "Type"
 msgstr "タイプ"
 
 #: static/js/wirecloud/ui/MarketplaceViewMenuItems.js:94
-#: static/js/wirecloud/ui/SharingWindowMenu.js:46
+#: static/js/wirecloud/ui/SharingWindowMenu.js:159
 msgid "Public"
 msgstr "パブリック"
 
@@ -1359,38 +1375,38 @@ msgstr "マーケットプレイスを削除"
 msgid "Do you really want to remove the marketplace \"%(marketName)s\"?"
 msgstr "本当にマーケットプレイス \"%(marketName)s\" を削除したいですか？"
 
-#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:38
+#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:36
 msgid "Missing dependencies"
 msgstr "不足している依存関係"
 
-#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:42
+#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:40
 msgid "The following dependencies are missing:"
 msgstr "以下の依存関係はありません:"
 
-#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:54
+#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:52
 msgid ""
 "You will be able to continue after installing all the required dependencies."
 msgstr "必要なすべての依存関係をインストールした後に続行することができます。"
 
-#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:59
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:376
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:736
+#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:57
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:364
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:103
 msgid "Continue"
 msgstr "続ける"
 
-#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:68
-#: static/js/wirecloud/ui/PreferencesWindowMenu.js:222
-#: static/js/wirecloud/ui/SharingWindowMenu.js:85
-#: static/js/wirecloud/ui/UpgradeWindowMenu.js:137
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:737
+#: static/js/wirecloud/ui/MissingDependenciesWindowMenu.js:66
+#: static/js/wirecloud/ui/PreferencesWindowMenu.js:235
+#: static/js/wirecloud/ui/SharingWindowMenu.js:214
+#: static/js/wirecloud/ui/UpgradeWindowMenu.js:140
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:104
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: static/js/wirecloud/ui/MyResourcesView.js:44
+#: static/js/wirecloud/ui/MyResourcesView.js:58
 msgid "Empty resource list"
 msgstr "空のリソース・リスト"
 
-#: static/js/wirecloud/ui/MyResourcesView.js:45
+#: static/js/wirecloud/ui/MyResourcesView.js:59
 msgid ""
 "Currently, you do not have access to any component. You can get components "
 "using the Marketplace view or by uploading components manually using the "
@@ -1400,16 +1416,16 @@ msgstr ""
 "ス・ビューを使用するか、\"アップロード\" ボタンを使用してコンポーネントを手動"
 "でアップロードしてコンポーネントを取得できます。"
 
-#: static/js/wirecloud/ui/MyResourcesView.js:66
-#: static/js/wirecloud/ui/WorkspaceView.js:82
+#: static/js/wirecloud/ui/MyResourcesView.js:80
+#: static/js/wirecloud/ui/WorkspaceView.js:184
 msgid "Get more components"
 msgstr "より多くのコンポーネントを入手"
 
-#: static/js/wirecloud/ui/MyResourcesView.js:153
+#: static/js/wirecloud/ui/MyResourcesView.js:162
 msgid "My Resources - %(resource)s"
 msgstr "マイ・リソース - %(resource)s"
 
-#: static/js/wirecloud/ui/MyResourcesView.js:266
+#: static/js/wirecloud/ui/MyResourcesView.js:287
 msgid ""
 "You have not configured any marketplace to upload this resource. Please, "
 "configure one on the Marketplace view."
@@ -1417,7 +1433,7 @@ msgstr ""
 "このリソースをアップロードするマーケットプレイスを設定していません。マーケッ"
 "トプレイス・ビューで設定してください。"
 
-#: static/js/wirecloud/ui/MyResourcesView.js:352
+#: static/js/wirecloud/ui/MyResourcesView.js:371
 msgid ""
 "Do you really want to remove the \"%(name)s\" (vendor: \"%(vendor)s\", "
 "version: \"%(version)s\") resource?"
@@ -1425,7 +1441,7 @@ msgstr ""
 "本当に \"%(name)s\" (ベンダー: \"%(vendor)s\", バージョン \"%(version)s\") リ"
 "ソースを削除しますか？"
 
-#: static/js/wirecloud/ui/MyResourcesView.js:378
+#: static/js/wirecloud/ui/MyResourcesView.js:395
 msgid ""
 "Do you really want to remove all versions of the (vendor: \"%(vendor)s\", "
 "name: \"%(name)s\") resource?"
@@ -1433,98 +1449,108 @@ msgstr ""
 "本当に (ベンダー: \"%(vendor)s\", 名前: \"%(name)s\") リソースのすべてのバー"
 "ジョンを削除しますか？"
 
-#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:53
-msgid "Template"
-msgstr "テンプレート"
-
-#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:56
-msgid "Select a mashup template"
-msgstr "マッシュアップ・テンプレートを選択"
-
-#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:61
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:57
 msgid "Create Workspace"
 msgstr "ワークスペースの作成"
 
-#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:70
-msgid "Creating a %(owner)s/%(name)s workspace using %(mashup)s as template"
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:57
+#, fuzzy
+#| msgid "Create Workspace"
+msgid "Copy Workspace"
+msgstr "ワークスペースの作成"
+
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:60
+msgid "Template"
+msgstr "テンプレート"
+
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:63
+msgid "Select a mashup template"
+msgstr "マッシュアップ・テンプレートを選択"
+
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:81
+#, fuzzy
+#| msgid "Creating a %(owner)s/%(name)s workspace using %(mashup)s as template"
+msgid "Creating a %(owner)s/%(title)s workspace using %(mashup)s as template"
 msgstr ""
 "%(mashup)s をテンプレートとして使用して %(owner)s/%(name)s のワークスペースを"
 "作成します"
 
-#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:72
-msgid "Creating a %(owner)s/%(name)s workspace"
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:83
+#, fuzzy
+#| msgid "Creating a %(owner)s/%(name)s workspace"
+msgid "Creating a %(owner)s/%(title)s workspace"
 msgstr "%(owner)s/%(name)s のワークスペースの作成します"
 
-#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:75
+#: static/js/wirecloud/ui/NewWorkspaceWindowMenu.js:86
 msgid "Creating a new workspace using %(mashup)s as template"
 msgstr ""
 "%(mashup)s をテンプレートとして使用して新しいワークスペースを作成します"
 
-#: static/js/wirecloud/ui/OperatorPreferencesWindowMenu.js:30
+#: static/js/wirecloud/ui/OperatorPreferencesWindowMenu.js:50
 msgid "Operator Settings"
 msgstr "オペレーターの設定"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:47
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:48
 msgid "Parametrize"
 msgstr "パラメータ設定"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:49
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:50
 msgid "Modify"
 msgstr "変更"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:54
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:55
 msgid "This value won't be editable by the user"
 msgstr "この値はユーザが編集できません"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:57
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:58
 msgid "This value will be editable by the user"
 msgstr "この値はユーザが編集可能です"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:62
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:63
 msgid "This value will be visible to the user"
 msgstr "この値はユーザに表示されます"
 
-#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:65
+#: static/js/wirecloud/ui/ParametrizableValueInputInterface.js:66
 msgid "This value won't be visible to the user"
 msgstr "この値はユーザに表示されません"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:33
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:36
 msgid "Normal"
 msgstr "ノーマル"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:34
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:37
 msgid "Read Only"
 msgstr "読み取り専用"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:38
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:41
 msgid "Hidden"
 msgstr "隠された"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:42
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:45
 msgid "Current value"
 msgstr "現在の値"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:43
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:46
 msgid "Default value"
 msgstr "デフォルト値"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:44
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:47
 msgid "Parametrized value"
 msgstr "パラメータ化された値"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:48
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:51
 msgid "Status"
 msgstr "ステータス"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:49
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:52
 msgid "Value source"
 msgstr "値のソース"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:51
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:54
 msgid "Value"
 msgstr "値"
 
-#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:53
+#: static/js/wirecloud/ui/ParametrizeWindowMenu.js:56
 msgid "Parametrization"
 msgstr "パラメータ化"
 
@@ -1533,124 +1559,128 @@ msgid "Use current value"
 msgstr "現在の値を使用"
 
 #: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:75
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:276
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:254
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:482
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:495
 msgid "Add"
 msgstr "追加"
 
-#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:146
-#: static/js/wirecloud/ui/WirecloudHeader.js:118
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:131
+#: static/js/wirecloud/ui/WirecloudHeader.js:116
 msgid "User"
 msgstr "ユーザ"
 
-#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:150
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:135
 msgid "User Name"
 msgstr "ユーザ名"
 
-#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:155
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:140
 msgid "First Name"
 msgstr "名"
 
-#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:160
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:145
 msgid "Last Name"
 msgstr "姓"
 
-#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:167
+#: static/js/wirecloud/ui/ParametrizedTextInputInterface.js:152
 msgid "Context"
 msgstr "コンテキスト"
 
-#: static/js/wirecloud/ui/PreferencesWindowMenu.js:105
+#: static/js/wirecloud/ui/PreferencesWindowMenu.js:106
 msgid "Inherit"
 msgstr "継承"
 
-#: static/js/wirecloud/ui/PreferencesWindowMenu.js:195
+#: static/js/wirecloud/ui/PreferencesWindowMenu.js:203
 msgid "Set Defaults"
 msgstr "デフォルトを設定"
 
-#: static/js/wirecloud/ui/PreferencesWindowMenu.js:215
-#: static/js/wirecloud/ui/SharingWindowMenu.js:81
+#: static/js/wirecloud/ui/PreferencesWindowMenu.js:220
+msgid "Error"
+msgstr ""
+
+#: static/js/wirecloud/ui/PreferencesWindowMenu.js:227
+#: static/js/wirecloud/ui/SharingWindowMenu.js:210
 msgid "Save"
 msgstr "保存"
 
-#: static/js/wirecloud/ui/PublishResourceWindowMenu.js:37
-msgid "Upload resource"
-msgstr "リソースをアップロード"
-
-#: static/js/wirecloud/ui/PublishResourceWindowMenu.js:62
+#: static/js/wirecloud/ui/PublishResourceWindowMenu.js:51
 msgid "Upload to"
 msgstr "アップロード先"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:40
+#: static/js/wirecloud/ui/PublishResourceWindowMenu.js:69
+msgid "Upload resource"
+msgstr "リソースをアップロード"
+
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:43
 msgid "General info"
 msgstr "一般的な情報"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:42
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:45
 msgid "Mashup Title"
 msgstr "マッシュアップのタイトル"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:42
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:45
 msgid "Title to display on the catalogue"
 msgstr "カタログに表示するタイトル"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:43
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:46
 msgid "Id of the vendor/distributor of the mashable application component"
 msgstr ""
 "マッシュアップ・アプリケーション・コンポーネントのベンダー/ディストリビュータ"
 "の Id"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:44
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:47
 msgid "Version"
 msgstr "バージョン"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:45
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:48
 msgid "Email"
 msgstr "Eメール"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:46
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:49
 msgid "Short Description (plain text)"
 msgstr "簡単な説明 (テキスト)"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:47
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:50
 msgid "Detailed description (Markdown)"
 msgstr "詳細な説明 (Markdown)"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:48
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:51
 msgid "Home page"
 msgstr "ホームページ"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:49
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:52
 msgid "Authors"
 msgstr "著者"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:54
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:57
 msgid "Media"
 msgstr "メディア"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:58
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:61
 msgid "Image shown in catalogue (170x80 px)"
 msgstr "カタログに表示される画像 (170x80 px)"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:65
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:68
 msgid "Advanced"
 msgstr "アドバンスド"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:67
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:70
 msgid "Block widgets"
 msgstr "ウィジェットをブロック"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:68
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:71
 msgid "Block connections"
 msgstr "接続をブロック"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:69
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:72
 msgid "Embed used widgets/operators"
 msgstr "使用されたウィジェット/オペレータを埋め込む"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:76
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:79
 msgid "Upload workspace to my resources"
 msgstr "マイ・リソースにワークスペースをアップロード"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:82
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:85
 msgid ""
 "<strong>Warning!</strong> Configured and stored data in your workspace "
 "(properties and preferences except passwords) will be shared by default!"
@@ -1658,86 +1688,117 @@ msgstr ""
 "<strong>警告!</strong> あなたのワークスペースに設定され、保存されたデータ (パ"
 "スワード以外のプロパティと設定) は、デフォルトで共有されます！"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:132
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:58
-#: static/js/wirecloud/ui/WiringEditor/Component.js:48
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:50
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:78
-#: static/js/wirecloud/ui/WorkspaceTabView.js:127
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:134
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:48
+#: static/js/wirecloud/ui/WiringEditor/Component.js:90
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:269
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:330
+#: static/js/wirecloud/ui/WorkspaceTabView.js:220
 msgid "Preferences"
 msgstr "設定"
 
-#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:139
+#: static/js/wirecloud/ui/PublishWorkspaceWindowMenu.js:141
 msgid "Persistent variables"
 msgstr "永続変数"
 
-#: static/js/wirecloud/ui/RenameWindowMenu.js:32
+#: static/js/wirecloud/ui/RenameWindowMenu.js:34
 msgid "New Name"
 msgstr "新しい名前"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:37
-msgid "Sharing settings"
-msgstr "共有設定"
+#: static/js/wirecloud/ui/ScreenSizesInputInterface.js:170
+msgid "From (px):"
+msgstr ""
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:42
-msgid "Visibility options"
-msgstr "可視性オプション"
+#: static/js/wirecloud/ui/ScreenSizesInputInterface.js:171
+msgid "The left limit of the screen size range (in pixels)."
+msgstr ""
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:46
-msgid "Anyone on the Internet can find and access this dashboard."
-msgstr "インターネット上の誰でもこのダッシュボードを見つけてアクセスできます。"
+#: static/js/wirecloud/ui/ScreenSizesInputInterface.js:197
+msgid "To (px):"
+msgstr ""
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:47
-msgid "Private"
-msgstr "プライベート"
+#: static/js/wirecloud/ui/ScreenSizesInputInterface.js:198
+msgid ""
+"The right limit of the screen size range (in pixels). Use -1 for no limit."
+msgstr ""
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:47
-msgid "Shared with specific people and organizations."
-msgstr "特定の人や組織と共有します。"
-
-#: static/js/wirecloud/ui/SharingWindowMenu.js:57
-msgid "Users and groups with access"
-msgstr "アクセス権のあるユーザーとグループ"
-
-#: static/js/wirecloud/ui/SharingWindowMenu.js:60
-msgid "Add a person or an organization"
-msgstr "人や組織を追加"
-
-#: static/js/wirecloud/ui/SharingWindowMenu.js:167
+#: static/js/wirecloud/ui/SharingWindowMenu.js:105
 msgid "%(fullname)s (You)"
 msgstr "%(fullname)s (あなた)"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:183
+#: static/js/wirecloud/ui/SharingWindowMenu.js:122
 msgid "Owner"
 msgstr "オーナー"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:185
+#: static/js/wirecloud/ui/SharingWindowMenu.js:122
 msgid "Can view"
 msgstr "見ることができる"
 
-#: static/js/wirecloud/ui/SharingWindowMenu.js:191
-#: static/js/wirecloud/ui/WidgetView.js:111
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:65
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:57
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:287
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:298
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:68
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:266
-#: static/js/wirecloud/ui/WiringEditor/Connection.js:278
-#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:76
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:101
+#: static/js/wirecloud/ui/SharingWindowMenu.js:126
+#: static/js/wirecloud/ui/WidgetView.js:309
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:53
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:275
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:493
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:504
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:320
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:507
+#: static/js/wirecloud/ui/WiringEditor/Connection.js:519
+#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:67
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:102
 msgid "Remove"
 msgstr "削除"
 
-#: static/js/wirecloud/ui/UpgradeWindowMenu.js:44
+#: static/js/wirecloud/ui/SharingWindowMenu.js:150
+msgid "Sharing settings"
+msgstr "共有設定"
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:155
+msgid "Visibility options"
+msgstr "可視性オプション"
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:159
+msgid "Anyone on the Internet can find and access this dashboard."
+msgstr "インターネット上の誰でもこのダッシュボードを見つけてアクセスできます。"
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:160
+msgid "Registered User"
+msgstr ""
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:160
+#, fuzzy
+#| msgid "Anyone on the Internet can find and access this dashboard."
+msgid ""
+"Anyone on the Internet can find this dashboard. Only registered users can "
+"access it."
+msgstr "インターネット上の誰でもこのダッシュボードを見つけてアクセスできます。"
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:161
+msgid "Private"
+msgstr "プライベート"
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:161
+msgid "Shared with specific people and organizations."
+msgstr "特定の人や組織と共有します。"
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:171
+msgid "Users and groups with access"
+msgstr "アクセス権のあるユーザーとグループ"
+
+#: static/js/wirecloud/ui/SharingWindowMenu.js:174
+#, fuzzy
+#| msgid "Add a person or an organization"
+msgid "Add a person, a group or an organization"
+msgstr "人や組織を追加"
+
+#: static/js/wirecloud/ui/UpgradeWindowMenu.js:45
 msgid "Upgrade"
 msgstr "アップグレード"
 
-#: static/js/wirecloud/ui/UpgradeWindowMenu.js:50
+#: static/js/wirecloud/ui/UpgradeWindowMenu.js:51
 msgid "Downgrade"
 msgstr "ダウングレード"
 
-#: static/js/wirecloud/ui/UpgradeWindowMenu.js:70
+#: static/js/wirecloud/ui/UpgradeWindowMenu.js:71
 msgid ""
 "There is not change information between versions %(from_version)s and "
 "%(to_version)s"
@@ -1745,103 +1806,193 @@ msgstr ""
 "バージョン %(from_version)s と %(to_version)s の間で情報を変更することはあり"
 "ません"
 
-#: static/js/wirecloud/ui/UpgradeWindowMenu.js:75
+#: static/js/wirecloud/ui/UpgradeWindowMenu.js:76
 msgid "Unable to retrieve change log information"
 msgstr "変更ログ情報を取得できません"
 
-#: static/js/wirecloud/ui/UpgradeWindowMenu.js:91
+#: static/js/wirecloud/ui/UpgradeWindowMenu.js:92
 msgid "Available versions"
 msgstr "使用可能なバージョン"
 
-#: static/js/wirecloud/ui/WidgetView.js:151
-msgid "Menu"
-msgstr "メニュー"
+#: static/js/wirecloud/ui/WidgetView.js:42
+#, fuzzy
+#| msgid "Drag &amp; drop to move the widget"
+msgid "Disallow to move this widget"
+msgstr "ウィジェットを移動するためにドラック＆ドロップ"
 
-#: static/js/wirecloud/ui/WidgetView.js:162
-#: static/js/wirecloud/ui/WidgetView.js:329
-msgid "Minimize"
-msgstr "最小化"
+#: static/js/wirecloud/ui/WidgetView.js:42
+#, fuzzy
+#| msgid "Drag &amp; drop to move the widget"
+msgid "Allow to move this widget"
+msgstr "ウィジェットを移動するためにドラック＆ドロップ"
 
-#: static/js/wirecloud/ui/WidgetView.js:319
-msgid "Maximize"
-msgstr "最大化"
-
-#: static/js/wirecloud/ui/WidgetView.js:368
+#: static/js/wirecloud/ui/WidgetView.js:48
 msgid "Hide title"
 msgstr "タイトルを隠す"
 
-#: static/js/wirecloud/ui/WidgetView.js:368
+#: static/js/wirecloud/ui/WidgetView.js:48
 msgid "Show title"
 msgstr "タイトルを表示"
 
-#: static/js/wirecloud/ui/WidgetView.js:725
+#: static/js/wirecloud/ui/WidgetView.js:207
 msgid "%(errorCount)s error"
 msgid_plural "%(errorCount)s errors"
 msgstr[0] "%(errorCount)s エラー"
 
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:64
+#: static/js/wirecloud/ui/WidgetView.js:351
+msgid "Menu"
+msgstr "メニュー"
+
+#: static/js/wirecloud/ui/WidgetView.js:362
+#: static/js/wirecloud/ui/WidgetView.js:560
+msgid "Minimize"
+msgstr "最小化"
+
+#: static/js/wirecloud/ui/WidgetView.js:545
+msgid "Maximize"
+msgstr "最大化"
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:57
 msgid "Reload"
 msgstr "リロード"
 
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:71
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:79
-#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:66
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:64
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:134
+#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:92
 msgid "Upgrade/Downgrade"
 msgstr "アップグレード/ダウングレード"
 
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:92
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:85
 msgid "User's Manual"
 msgstr "ユーザーズ・マニュアル"
 
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:96
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:89
 msgid "Documentation"
 msgstr "ドキュメンテーション"
 
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:105
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:104
+msgid "Left"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:116
+msgid "Center"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:128
+#, fuzzy
+#| msgid "Height"
+msgid "Right"
+msgstr "高さ"
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:143
+msgid "Top"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:155
+msgid "Bottom"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:168
+msgid "Fixed x"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:168
+msgid "Relative x"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:183
+msgid "Fixed y"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:183
+msgid "Relative y"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:198
+msgid "Fixed width"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:198
+msgid "Relative width"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:212
+msgid "Fixed height"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:212
+msgid "Relative height"
+msgstr ""
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:229
 msgid "Exit Full Dragboard"
 msgstr "フル・ドラッグボードを終了"
 
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:108
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:232
 msgid "Full Dragboard"
 msgstr "フル・ドラッグボード"
 
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:122
-msgid "Snap to grid"
-msgstr "グリッドにスナップ"
-
-#: static/js/wirecloud/ui/WidgetViewMenuItems.js:125
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:249
 msgid "Extract from grid"
 msgstr "グリッドからの抽出"
 
-#: static/js/wirecloud/ui/WirecloudHeader.js:109
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:258
+msgid "Snap to grid"
+msgstr "グリッドにスナップ"
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:267
+#, fuzzy
+#| msgid "Close the component sidebar"
+msgid "Move to the top sidebar"
+msgstr "コンポーネントのサイドバーを閉じる"
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:276
+#, fuzzy
+#| msgid "Close the component sidebar"
+msgid "Move to the right sidebar"
+msgstr "コンポーネントのサイドバーを閉じる"
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:285
+#, fuzzy
+#| msgid "Close the component sidebar"
+msgid "Move to the bottom sidebar"
+msgstr "コンポーネントのサイドバーを閉じる"
+
+#: static/js/wirecloud/ui/WidgetViewMenuItems.js:294
+#, fuzzy
+#| msgid "Close the component sidebar"
+msgid "Move to the left sidebar"
+msgstr "コンポーネントのサイドバーを閉じる"
+
+#: static/js/wirecloud/ui/WirecloudHeader.js:102
 msgid "Django Admin panel"
 msgstr "Django 管理パネル"
 
-#: static/js/wirecloud/ui/WirecloudHeader.js:117
-#: static/js/wirecloud/ui/WirecloudHeader.js:118
+#: static/js/wirecloud/ui/WirecloudHeader.js:115
+#: static/js/wirecloud/ui/WirecloudHeader.js:116
 msgid "Switch User"
 msgstr "ユーザの切り替え"
 
-#: static/js/wirecloud/ui/WirecloudHeader.js:142
+#: static/js/wirecloud/ui/WirecloudHeader.js:133
+msgid "Back to %(user)s"
+msgstr ""
+
+#: static/js/wirecloud/ui/WirecloudHeader.js:139
 msgid "Sign out"
 msgstr "サインアウト"
 
-#: static/js/wirecloud/ui/WiringEditor.js:169
-msgid "%(workspace_title)s - Wiring"
-msgstr "%(workspace_title)s - ワイヤーリング"
-
-#: static/js/wirecloud/ui/WiringEditor.js:390
+#: static/js/wirecloud/ui/WiringEditor.js:171
 msgid "Hello, welcome to the Wiring Editor view!"
 msgstr "ワイヤーリング・エディタ・ビューへようこそ!"
 
-#: static/js/wirecloud/ui/WiringEditor.js:391
+#: static/js/wirecloud/ui/WiringEditor.js:172
 msgid ""
 "In this view you can connect all the components of your dashboard in a "
 "visual way."
 msgstr ""
 "このビューではダッシュボードのすべてのコンポーネントを視覚的に接続できます"
 
-#: static/js/wirecloud/ui/WiringEditor.js:397
+#: static/js/wirecloud/ui/WiringEditor.js:178
 msgid ""
 "Open the sidebar using the <em>Find components</em> button and drag &amp; "
 "drop components (operators/widgets) from the sidebar for being able to "
@@ -1851,95 +2002,58 @@ msgstr ""
 "らコンポーネント (オペレータ/ウィジェット) をドラッグ＆ドロップして、希望どお"
 "りに接続することができます。"
 
-#: static/js/wirecloud/ui/WiringEditor.js:404
+#: static/js/wirecloud/ui/WiringEditor.js:185
 msgid "Find components"
 msgstr "コンポーネントの検索"
 
-#: static/js/wirecloud/ui/WiringEditor.js:417
+#: static/js/wirecloud/ui/WiringEditor.js:198
 msgid "List behaviours"
 msgstr "ビヘイビアの一覧"
 
-#: static/js/wirecloud/ui/WiringEditor.js:653
+#: static/js/wirecloud/ui/WiringEditor.js:429
 msgid ""
 "The connection will also be modified for the rest of behaviours, would you "
 "like to continue?"
 msgstr "残りのビヘイビアのために接続も変更されますが、続行しますか？"
 
-#: static/js/wirecloud/ui/WiringEditor.js:729
+#: static/js/wirecloud/ui/WiringEditor.js:505
 msgid "Behaviour"
 msgstr "ビヘイビア"
 
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:120
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:721
-msgid "New behaviour"
-msgstr "新しいビヘイビア"
+#: static/js/wirecloud/ui/WiringEditor.js:786
+msgid "%(workspace_title)s - Wiring"
+msgstr "%(workspace_title)s - ワイヤーリング"
 
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:121
-#: static/js/wirecloud/ui/WiringEditor/Endpoint.js:125
-msgid "No description provided."
-msgstr "説明はありません。"
-
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:272
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:254
 msgid "%(behaviour_title)s's logs"
 msgstr "%(behaviour_title)s のログ"
 
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:292
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:719
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:273
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:88
 msgid "Description"
 msgstr "説明"
 
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:294
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:275
 msgid "Behaviour settings"
 msgstr ""
 
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:372
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:360
 msgid ""
 "The following operation is irreversible and removes the behaviour "
 "completely. Would you like to continue?"
 msgstr ""
 "次の操作は取り消しができず、ビヘイビアを完全に削除します。 続行しますか？"
 
-#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:377
+#: static/js/wirecloud/ui/WiringEditor/Behaviour.js:365
 msgid "No, thank you"
 msgstr "いいえ、結構です"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:46
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:128
-msgid "Enable"
-msgstr "有効化"
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:87
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:90
+msgid "New behaviour"
+msgstr "新しいビヘイビア"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:53
-msgid "Create behaviour"
-msgstr "ビヘイビアを作成"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:60
-msgid "Order behaviours"
-msgstr "ビヘイビアを順序付ける"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:84
-msgid "New feature"
-msgstr "新機能"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:85
-msgid "Enable the behaviours to enjoy with a new way to handle connections."
-msgstr "ビヘイビアが新しい方法で接続を処理できるようにします。"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:88
-msgid ""
-"<a>Click here</a> for a quick guide/tutorial on how to use this new feature."
-msgstr ""
-"<a>ここをクリック</a>して、この新機能の使用方法に関するクイックガイド/チュー"
-"トリアルをご覧ください。"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:114
-msgid "Disable"
-msgstr "無効化"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:402
-msgid "The behaviour (%(title)s) was loaded."
-msgstr "ビヘイビア (%(title)s) が読み込まれました。"
-
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:733
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:100
 msgid ""
 "The behaviours will be removed but the components and connections will still "
 "exist, would you like to continue?"
@@ -1947,17 +2061,23 @@ msgstr ""
 "ビヘイビアは削除されますが、コンポーネントと接続はまだ存在します。続行します"
 "か？"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:801
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:111
+#, fuzzy
+#| msgid "List behaviours"
+msgid "Initial behaviour"
+msgstr "ビヘイビアの一覧"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:166
 msgid ""
 "The <strong><t:title/></strong> <t:type/> will be removed, would you like to "
 "continue?"
 msgstr "<strong><t:title/></strong> <t:type/> は削除されます。続行しますか？"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:821
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:184
 msgid "<li>The <strong><t:title/></strong> <t:type/>.</li>"
 msgstr "<li><strong><t:title/></strong> <t:type/>.</li>"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:827
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:190
 msgid ""
 "<p>These components only exist within the current behaviour <strong><t:title/"
 "></strong>:</p><ul><t:components/></ul><p>Would you like to continue?</p>"
@@ -1965,7 +2085,7 @@ msgstr ""
 "<p>これらのコンポーネントは、現在のビヘイビア <strong><t:title/></strong>:</"
 "p><ul><t:components/></ul>内にのみ存在します <p>続行しますか？</p>"
 
-#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:848
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:207
 msgid ""
 "The <strong><t:title/></strong> <t:type/> will be <strong>definitely</"
 "strong> removed, would you like to continue?"
@@ -1973,188 +2093,231 @@ msgstr ""
 "<strong><t:title/></strong> <t:type/> は、<strong>間違いなく</strong>削除され"
 "ますが、続行しますか？"
 
-#: static/js/wirecloud/ui/WiringEditor/Component.js:135
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:339
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:415
+msgid "Enable"
+msgstr "有効化"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:346
+msgid "Create behaviour"
+msgstr "ビヘイビアを作成"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:353
+msgid "Order behaviours"
+msgstr "ビヘイビアを順序付ける"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:377
+msgid "New feature"
+msgstr "新機能"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:378
+msgid "Enable the behaviours to enjoy with a new way to handle connections."
+msgstr "ビヘイビアが新しい方法で接続を処理できるようにします。"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:381
+msgid ""
+"<a>Click here</a> for a quick guide/tutorial on how to use this new feature."
+msgstr ""
+"<a>ここをクリック</a>して、この新機能の使用方法に関するクイックガイド/チュー"
+"トリアルをご覧ください。"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:401
+msgid "Disable"
+msgstr "無効化"
+
+#: static/js/wirecloud/ui/WiringEditor/BehaviourEngine.js:691
+msgid "The behaviour (%(title)s) was loaded."
+msgstr "ビヘイビア (%(title)s) が読み込まれました。"
+
+#: static/js/wirecloud/ui/WiringEditor/Component.js:32
 msgid "volatile"
 msgstr "揮発性"
 
-#: static/js/wirecloud/ui/WiringEditor/Component.js:138
+#: static/js/wirecloud/ui/WiringEditor/Component.js:35
 msgid "missing"
 msgstr "ミッシング"
 
-#: static/js/wirecloud/ui/WiringEditor/Component.js:141
+#: static/js/wirecloud/ui/WiringEditor/Component.js:38
 msgid "in use"
 msgstr "使用中"
 
-#: static/js/wirecloud/ui/WiringEditor/Component.js:144
+#: static/js/wirecloud/ui/WiringEditor/Component.js:41
 msgid "no endpoints"
 msgstr "エンドポイントなし"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:703
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:179
 msgid "Missing"
 msgstr "ミッシング"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:705
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggable.js:181
 msgid "%(count)s error"
 msgid_plural "%(count)s errors"
 msgstr[0] "%(count)s エラー"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:92
-msgid "Delete cascade"
-msgstr "カスケードを削除"
-
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:132
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:56
 msgid "Expand"
 msgstr "展開"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:134
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:58
 msgid "Collapse"
 msgstr "折り畳む"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:140
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:64
 msgid "Stop ordering"
 msgstr "並び替えを中止"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:142
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:66
 msgid "Order endpoints"
 msgstr "エンドポイントを並び替え"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:150
-#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:102
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:75
+#: static/js/wirecloud/ui/WiringEditor/ComponentPrefs.js:47
 msgid "Rename %(type)s"
 msgstr "%(type)s の名前を変更"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:36
-msgid "Create"
-msgstr "作成"
+#: static/js/wirecloud/ui/WiringEditor/ComponentDraggablePrefs.js:147
+msgid "Delete cascade"
+msgstr "カスケードを削除"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:106
+#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:39
 msgid "No description provided"
 msgstr "説明はありません"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:128
+#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:61
 msgid "No image available"
-msgstr ""
-"使用可能なイメージはありません"
+msgstr "使用可能なイメージはありません"
 
-#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:137
+#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:70
 msgid "%(version)s (latest)"
 msgstr "%(version)s (最新)"
 
-#: static/js/wirecloud/ui/WiringEditor/ConnectionHandle.js:72
+#: static/js/wirecloud/ui/WiringEditor/ComponentGroup.js:84
+msgid "Create"
+msgstr "作成"
+
+#: static/js/wirecloud/ui/WiringEditor/ConnectionHandle.js:70
 msgid "Drag & Drop"
 msgstr "ドラッグ＆ドロップ"
 
-#: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:83
-msgid "Restore defaults"
-msgstr "デフォルトに戻す"
-
-#: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:104
+#: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:39
 msgid "Stop customizing"
 msgstr "カスタマイズの停止"
 
-#: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:104
+#: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:39
 msgid "Customize"
 msgstr "カスタマイズ"
+
+#: static/js/wirecloud/ui/WiringEditor/ConnectionPrefs.js:91
+msgid "Restore defaults"
+msgstr "デフォルトに戻す"
+
+#: static/js/wirecloud/ui/WiringEditor/Endpoint.js:171
+msgid "No description provided."
+msgstr "説明はありません。"
 
 #: static/js/wirecloud/ui/WorkspaceListItems.js:46
 msgid "Empty workspace list"
 msgstr "空のワークスペース・リスト"
 
-#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:58
+#: static/js/wirecloud/ui/WorkspaceTabView.js:354
+msgid "Currently editing for screen sizes %(interval)s"
+msgstr ""
+
+#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:49
 msgid "Rename Workspace Tab"
 msgstr "ワークスペース・タブの名前を変更"
 
-#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:63
+#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:54
 msgid "Set as initial"
 msgstr "初期としてセット"
 
-#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:78
+#: static/js/wirecloud/ui/WorkspaceTabViewMenuItems.js:69
 msgid "The tab's widgets will also be removed. Would you like to continue?"
 msgstr "タブのウィジェットも削除されます。 続行しますか？"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:64
+#: static/js/wirecloud/ui/WorkspaceView.js:166
 msgid "Wiring"
 msgstr "ワイヤーリング"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:271
+#: static/js/wirecloud/ui/WorkspaceView.js:370
 msgid "New tab"
 msgstr "新しいタブ"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:286
-#: static/js/wirecloud/ui/WorkspaceView.js:297
+#: static/js/wirecloud/ui/WorkspaceView.js:385
+#: static/js/wirecloud/ui/WorkspaceView.js:396
 msgid "Full screen"
 msgstr "全画面"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:293
+#: static/js/wirecloud/ui/WorkspaceView.js:392
 msgid "Exit full screen"
 msgstr "全画面を終了"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:333
+#: static/js/wirecloud/ui/WorkspaceView.js:432
 msgid "Add components"
 msgstr "コンポーネントを追加"
 
-#: static/js/wirecloud/ui/WorkspaceView.js:392
-#: static/js/wirecloud/ui/WorkspaceView.js:406
+#: static/js/wirecloud/ui/WorkspaceView.js:490
+#: static/js/wirecloud/ui/WorkspaceView.js:504
 msgid "loading..."
 msgstr "読み込んでいます..."
 
-#: static/js/wirecloud/ui/WorkspaceView.js:445
+#: static/js/wirecloud/ui/WorkspaceView.js:542
 msgid "The requested workspace is no longer available (it was deleted)."
 msgstr "要求されたワークスペースは使用できなくなりました (削除されました)。"
 
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:58
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:50
 msgid "New workspace"
 msgstr "新しいワークスペース"
 
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:65
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:57
 msgid "Rename Workspace"
 msgstr "ワークスペースの名前を変更"
 
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:71
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:63
 msgid "Share"
 msgstr "共有"
 
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:77
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:69
 msgid "Upload to my resources"
 msgstr "自分のリソースにアップロード"
 
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:88
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:80
 msgid "Embed"
 msgstr "埋め込み"
 
-#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:89
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:81
 msgid "Embed Code"
 msgstr "埋め込みコード"
 
-#: static/js/wirecloud/wiring/Connection.js:101
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:93
+msgid "Duplicate"
+msgstr ""
+
+#: static/js/wirecloud/ui/WorkspaceViewMenuItems.js:95
+msgid "Copy of %(title)s"
+msgstr ""
+
+#: static/js/wirecloud/wiring/Connection.js:80
 msgid "The connection ('%(source)s'-'%(target)s') was established."
 msgstr "接続 ('%(source)s'-'%(target)s') が確立されました。"
 
-#: static/js/wirecloud/wiring/Connection.js:110
+#: static/js/wirecloud/wiring/Connection.js:89
 msgid "The connection ('%(source)s'-'%(target)s') was detached."
 msgstr "接続 ('%(source)s'-'%(target)s') が切り離されました。"
 
-#: static/js/wirecloud/wiring/Connection.js:137
+#: static/js/wirecloud/wiring/Connection.js:116
 msgid "The connection ('%(source)s'-'%(target)s') has a missing endpoint."
 msgstr "接続 ('%(source)s'-'%(target)s') には、エンドポイントがありません。"
 
-#: static/js/wirecloud/wiring/Connection.js:177
+#: static/js/wirecloud/wiring/Connection.js:156
 msgid "Connection's logs"
 msgstr "接続のログ"
 
-#: static/js/wirecloud/wiring/Endpoint.js:66
+#: static/js/wirecloud/wiring/Endpoint.js:61
 msgid "Unimplemented function: %(funcName)s"
 msgstr "実装されていない関数: %(funcName)s"
 
-#: static/js/wirecloud/wiring/Operator.js:179
-msgid "Operator created successfully."
-msgstr "オペレータが正常に作成されました。"
-
-#: static/js/wirecloud/wiring/Operator.js:286
-msgid "%(operator_title)s's logs"
-msgstr "%(operator_title)s のログ"
-
-#: static/js/wirecloud/wiring/Operator.js:498
+#: static/js/wirecloud/wiring/Operator.js:222
 msgid ""
 "<p>This operator is currently not available. You or an administrator "
 "probably uninstalled it.</p><h5>Suggestions:</h5><ul><li>Remove the operator."
@@ -2168,23 +2331,31 @@ msgstr ""
 "ペレーターの別のバージョンをインストールし、<em>アップグレード/ダウングレード"
 "</em>オプションを使用してください。</li></ul>"
 
-#: static/js/wirecloud/wiring/Operator.js:501
+#: static/js/wirecloud/wiring/Operator.js:225
 msgid "Operator loaded successfully."
 msgstr "オペレータが正常にロードされました。"
 
-#: static/js/wirecloud/wiring/Operator.js:525
+#: static/js/wirecloud/wiring/Operator.js:261
 msgid "Operator unloaded successfully."
 msgstr "オペレータが正常にアンロードされました。"
 
-#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:67
-#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:69
+#: static/js/wirecloud/wiring/Operator.js:426
+msgid "Operator created successfully."
+msgstr "オペレータが正常に作成されました。"
+
+#: static/js/wirecloud/wiring/Operator.js:536
+msgid "%(operator_title)s's logs"
+msgstr "%(operator_title)s のログ"
+
+#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:75
+#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:77
 msgid "Use in %(endpointName)s"
 msgstr "%(endpointName)s で使用"
 
-#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:83
-#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:95
-#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:86
-#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:98
+#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:90
+#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:105
+#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:94
+#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:106
 msgid ""
 "Exception catched while processing an event that reached the "
 "\"%(inputendpoint)s\" input endpoint"
@@ -2192,11 +2363,23 @@ msgstr ""
 "\"%(inputendpoint)s\" 入力エンドポイントに達したイベントを処理中に例外が"
 "キャッチされました"
 
-#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:85
+#: static/js/wirecloud/wiring/OperatorTargetEndpoint.js:94
 msgid "Operator has not registered a callback for this input endpoint"
 msgstr ""
 "オペレータはこの入力エンドポイントに対してコールバックを登録していません"
 
-#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:88
+#: static/js/wirecloud/wiring/WidgetTargetEndpoint.js:96
 msgid "Widget has not registered a callback for this input endpoint"
 msgstr "ウィジェットがこの入力エンドポイントのコールバックを登録していません"
+
+#~ msgid "missing vendor"
+#~ msgstr "ベンダーがありません"
+
+#~ msgid "missing name"
+#~ msgstr "名前がありません"
+
+#~ msgid "missing version"
+#~ msgstr "バージョンがありません"
+
+#~ msgid "missing type"
+#~ msgstr "タイプがありません"

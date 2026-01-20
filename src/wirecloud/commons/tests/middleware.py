@@ -41,7 +41,7 @@ class LocaleMiddlewareTestCase(TestCase):
 
     @patch('wirecloud.commons.middleware.translation')
     def test_process_request(self, translation):
-        request = Mock(GET={})
+        request = Mock(GET={}, COOKIES={})
         self.middleware.process_request(request)
 
         translation.activate.assert_called_once_with(translation.get_language_from_request())

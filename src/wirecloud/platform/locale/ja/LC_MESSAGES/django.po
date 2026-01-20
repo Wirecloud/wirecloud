@@ -10,18 +10,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WireCloud 1.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-15 00:00+0900\n"
+"POT-Creation-Date: 2024-05-27 11:24+0200\n"
 "PO-Revision-Date: 2019-03-15 00:00+0900\n"
+"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
+"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Last-Translator: Kazuhito Suda <k@fisuda.jp>\n"
-"Language-Team: Kazuhito Suda <k@fisuda.jp>\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: admin.py:64
+#: admin.py:71
 msgid "Edit"
 msgstr "編集"
 
@@ -34,74 +34,84 @@ msgstr "コンセプト"
 msgid "Value"
 msgstr "値"
 
-#: core/catalogue_manager.py:58
+#: core/catalogue_manager.py:49
 #, python-format
 msgid "Resource already exists %(resource_id)s"
 msgstr "リソースは既に存在します %(resource_id)s"
 
-#: core/plugins.py:266
+#: core/plugins.py:283
 msgid "Language"
 msgstr "言語"
 
-#: core/plugins.py:267
+#: core/plugins.py:284
 msgid "Current language used in the platform"
 msgstr "プラットフォームで使用されている現在の言語"
 
-#: core/plugins.py:270
+#: core/plugins.py:287
 msgid "Username"
 msgstr "ユーザ名"
 
-#: core/plugins.py:271
+#: core/plugins.py:288
 msgid "User name of the current logged user"
 msgstr "現在ログインしているユーザのユーザ名"
 
-#: core/plugins.py:274
+#: core/plugins.py:291
 msgid "Full name"
 msgstr "氏名"
 
-#: core/plugins.py:275
+#: core/plugins.py:292
 msgid "Full name of the logged user"
 msgstr "ログインしているユーザの氏名"
 
-#: core/plugins.py:278
+#: core/plugins.py:295
 msgid "Avatar"
 msgstr "アバター"
 
-#: core/plugins.py:279
+#: core/plugins.py:296
 msgid "URL of the avatar"
 msgstr "アバターの URL"
 
-#: core/plugins.py:282
+#: core/plugins.py:299
 msgid "Is Anonymous"
 msgstr "匿名か"
 
-#: core/plugins.py:283
+#: core/plugins.py:300
 msgid "Boolean. Designates whether current user is logged in the system."
 msgstr ""
 "ブール値。 現在のユーザがシステムにログインしているかどうかを指定します。"
 
-#: core/plugins.py:286
+#: core/plugins.py:303
 msgid "Is Staff"
 msgstr "スタッフか"
 
-#: core/plugins.py:287
+#: core/plugins.py:304
 msgid "Boolean. Designates whether current user can access the admin site."
 msgstr ""
 "ブール値。 現在のユーザが管理サイトにアクセスできるかどうかを指定します。"
 
-#: core/plugins.py:290
+#: core/plugins.py:307
 msgid "Is Superuser"
 msgstr "スーパーユーザか"
 
-#: core/plugins.py:291
+#: core/plugins.py:308
 msgid "Boolean. Designates whether current user is a super user."
 msgstr "ブール値。 現在のユーザがスーパーユーザーかどうかを指定します。"
 
-#: core/plugins.py:294
+#: core/plugins.py:311
+#, fuzzy
+#| msgid "Groups"
+msgid "User Groups"
+msgstr "グループ"
+
+#: core/plugins.py:312
+msgid "List of the groups the user belongs to."
+msgstr ""
+
+#: core/plugins.py:315
 msgid "Mode"
 msgstr "モード"
 
-#: core/plugins.py:295
+#: core/plugins.py:316
 msgid ""
 "Rendering mode used by the platform (available modes: classic, smartphone "
 "and embedded)"
@@ -109,35 +119,55 @@ msgstr ""
 "プラットフォームで使用されるレンダリングモード (使用可能なモード: classic, "
 "smartphone および embedded)"
 
-#: core/plugins.py:298
+#: core/plugins.py:319
+msgid "User Organizations"
+msgstr ""
+
+#: core/plugins.py:320
+msgid "List of the organizations the user belongs to."
+msgstr ""
+
+#: core/plugins.py:323
 msgid "Orientation"
 msgstr "向き"
 
-#: core/plugins.py:299
+#: core/plugins.py:324
 msgid "Current screen orientation"
 msgstr "現在の画面の向き"
 
-#: core/plugins.py:302
+#: core/plugins.py:327
+#, fuzzy
+#| msgid "Username"
+msgid "Real User Username"
+msgstr "ユーザ名"
+
+#: core/plugins.py:328
+#, fuzzy
+#| msgid "User name of the current logged user"
+msgid "User name of the real logged user"
+msgstr "現在ログインしているユーザのユーザ名"
+
+#: core/plugins.py:331
 msgid "Theme"
 msgstr "テーマ"
 
-#: core/plugins.py:303
+#: core/plugins.py:332
 msgid "Name of the theme used by the platform"
 msgstr "プラットフォームによって使用されるテーマの名前"
 
-#: core/plugins.py:306
+#: core/plugins.py:335
 msgid "Version"
 msgstr "バージョン"
 
-#: core/plugins.py:307
+#: core/plugins.py:336
 msgid "Version of the platform"
 msgstr "プラットフォームのバージョン"
 
-#: core/plugins.py:310
+#: core/plugins.py:339
 msgid "Version Hash"
 msgstr "バージョン・ハッシュ"
 
-#: core/plugins.py:311
+#: core/plugins.py:340
 msgid ""
 "Hash for the current version of the platform. This hash changes when the "
 "platform is updated or when an addon is added or removed"
@@ -145,59 +175,69 @@ msgstr ""
 "現在のバージョンのプラットフォームのハッシュ。 このハッシュは、プラットフォー"
 "ムが更新されたとき、またはアドオンが追加または削除されたときに変更されます"
 
-#: core/plugins.py:322
+#: core/plugins.py:351
 msgid "Anonymous"
 msgstr "匿名"
 
-#: core/plugins.py:343 workspace/models.py:38 workspace/models.py:104
-msgid "Title"
-msgstr "タイトル"
-
-#: core/plugins.py:344
-msgid "Current title of the workspace"
-msgstr "現在のワークスペースのタイトル"
-
-#: core/plugins.py:347 iwidget/models.py:31 markets/models.py:29
-#: markets/models.py:46 preferences/models.py:29 preferences/models.py:43
-#: preferences/models.py:58 workspace/models.py:36 workspace/models.py:103
-msgid "Name"
-msgstr "名前"
-
-#: core/plugins.py:348
-msgid "Current name of the workspace"
-msgstr "現在のワークスペースの名前"
-
-#: core/plugins.py:351
-msgid "Owner"
-msgstr "オーナー"
-
-#: core/plugins.py:352
-msgid "Workspace's owner username"
-msgstr "ワークスペースの所有者のユーザ名"
-
-#: core/plugins.py:355 workspace/models.py:47
+#: core/plugins.py:378 workspace/models.py:49
 msgid "Description"
 msgstr "説明"
 
-#: core/plugins.py:356
+#: core/plugins.py:379
 msgid "Short description of the workspace without formating"
 msgstr "書式設定なしのワークスペースの簡単な説明"
 
-#: core/plugins.py:359 workspace/models.py:48
+#: core/plugins.py:382
+msgid "Editing mode"
+msgstr ""
+
+#: core/plugins.py:383
+#, fuzzy
+#| msgid "Boolean. Designates whether current user is a super user."
+msgid "Boolean. Designates whether the workspace is in editing mode."
+msgstr "ブール値。 現在のユーザがスーパーユーザーかどうかを指定します。"
+
+#: core/plugins.py:386 workspace/models.py:39 workspace/models.py:125
+msgid "Title"
+msgstr "タイトル"
+
+#: core/plugins.py:387
+msgid "Current title of the workspace"
+msgstr "現在のワークスペースのタイトル"
+
+#: core/plugins.py:390 iwidget/models.py:31 markets/models.py:29
+#: markets/models.py:46 preferences/models.py:29 preferences/models.py:43
+#: preferences/models.py:58 workspace/models.py:37 workspace/models.py:124
+msgid "Name"
+msgstr "名前"
+
+#: core/plugins.py:391
+msgid "Current name of the workspace"
+msgstr "現在のワークスペースの名前"
+
+#: core/plugins.py:394
+msgid "Owner"
+msgstr "オーナー"
+
+#: core/plugins.py:395
+msgid "Workspace's owner username"
+msgstr "ワークスペースの所有者のユーザ名"
+
+#: core/plugins.py:398 workspace/models.py:50
 msgid "Long description"
 msgstr "長い説明"
 
-#: core/plugins.py:360
+#: core/plugins.py:399
 msgid ""
 "Detailed workspace's description. This description can contain formatting."
 msgstr ""
 "詳細なワークスペースの説明。 この説明には書式設定を含めることができます。"
 
-#: core/plugins.py:375 markets/models.py:30
+#: core/plugins.py:408 markets/models.py:30
 msgid "Public"
 msgstr "パブリック"
 
-#: core/plugins.py:378
+#: core/plugins.py:411
 msgid ""
 "Allow any user to open this workspace (in read-only mode). (default: "
 "disabled)"
@@ -205,31 +245,52 @@ msgstr ""
 "任意のユーザーが読み取り専用モードでこのワークスペースを開くことを許可します "
 "(デフォルト:無効)"
 
-#: core/plugins.py:383
+#: core/plugins.py:416
+msgid "Required registered user"
+msgstr ""
+
+#: core/plugins.py:419
+msgid ""
+"Require users to be logged in to access the workspace (This option has only "
+"effect if the workspace is public). (default: disabled)"
+msgstr ""
+
+#: core/plugins.py:424
 msgid "Share list"
 msgstr "共有リスト"
 
-#: core/plugins.py:386
+#: core/plugins.py:427
 msgid "List of users with access to this workspace. (default: [])"
 msgstr "このワークスペースにアクセスできるユーザーのリスト。(デフォルト: [])"
 
-#: core/plugins.py:391
+#: core/plugins.py:432
 msgid "Default layout"
 msgstr "デフォルト・レイアウト"
 
-#: core/plugins.py:394
+#: core/plugins.py:435
 msgid "Base"
 msgstr "ベース"
 
-#: core/plugins.py:395
+#: core/plugins.py:436
 msgid "Free"
 msgstr "フリー"
 
-#: core/plugins.py:397
+#: core/plugins.py:438
 msgid "Default layout for the new widgets."
 msgstr "新しいウィジェットのデフォルト・レイアウト。"
 
-#: core/plugins.py:409
+#: core/plugins.py:449
+msgid "Screen sizes"
+msgstr ""
+
+#: core/plugins.py:451
+msgid ""
+"List of screen sizes supported by the workspace. Each screen size is defined "
+"by a range of screen widths and different widget configurations are "
+"associated with it."
+msgstr ""
+
+#: core/plugins.py:463
 msgid "Base layout"
 msgstr "ベース・レイアウト"
 
@@ -237,11 +298,11 @@ msgstr "ベース・レイアウト"
 msgid "Widget"
 msgstr "ウィジェット"
 
-#: iwidget/models.py:39
+#: iwidget/models.py:30
 msgid "Widget URI"
 msgstr "ウィジェット URI"
 
-#: iwidget/models.py:32 workspace/utils.py:472 workspace/views.py:61
+#: iwidget/models.py:32 workspace/utils.py:422 workspace/views.py:62
 msgid "Tab"
 msgstr "タブ"
 
@@ -249,32 +310,44 @@ msgstr "タブ"
 msgid "Layout"
 msgstr "レイアウト"
 
-#: iwidget/models.py:35
+#: iwidget/models.py:36
 msgid "Read Only"
 msgstr "読み取り専用"
 
-#: iwidget/utils.py:70
+#: iwidget/utils.py:71
 #, python-format
 msgid "Field %(field)s must contain a boolean value"
 msgstr "フィールド %(field)s にはブール値を含める必要があります"
 
-#: iwidget/utils.py:81 iwidget/utils.py:94
+#: iwidget/utils.py:80 iwidget/utils.py:93 iwidget/utils.py:106
 #, python-format
 msgid "Field %(field)s must contain a number value"
 msgstr "フィールド %(field)s には数値を含める必要があります"
 
-#: iwidget/utils.py:84 iwidget/utils.py:97
+#: iwidget/utils.py:83 iwidget/utils.py:96 iwidget/utils.py:109
 #, python-format
 msgid "Invalid value for %(field)s"
 msgstr "%(field)s の値が無効です"
 
-#: iwidget/utils.py:137
+#: iwidget/utils.py:119
+#, fuzzy
+#| msgid "Field %(field)s must contain a number value"
+msgid "anchor field must contain a string value"
+msgstr "フィールド %(field)s には数値を含める必要があります"
+
+#: iwidget/utils.py:122
+#, fuzzy
+#| msgid "Invalid value for %(field)s"
+msgid "Invalid value for anchor field"
+msgstr "%(field)s の値が無効です"
+
+#: iwidget/utils.py:225
 #, python-format
 msgid "%(uri)s is not a widget"
 msgstr "%(uri)s はウィジェットではありません"
 
-#: iwidget/views.py:42 iwidget/views.py:214 iwidget/views.py:282
-#: wiring/views.py:404 workspace/views.py:187 workspace/views.py:304
+#: iwidget/views.py:42 iwidget/views.py:217 iwidget/views.py:283
+#: wiring/views.py:407 workspace/views.py:160 workspace/views.py:277
 msgid "You don't have permission to access this workspace"
 msgstr "このワークスペースにアクセスする権限がありません"
 
@@ -314,7 +387,7 @@ msgstr "ワークスペースからウィジェットを削除する権限があ
 msgid "IWidget cannot be deleted"
 msgstr "ウィジェットは削除できません"
 
-#: iwidget/views.py:182 iwidget/views.py:227
+#: iwidget/views.py:182 iwidget/views.py:230
 msgid "Missing widget variables cannot be updated"
 msgstr "欠落しているウィジェット変数は更新できません"
 
@@ -328,17 +401,17 @@ msgstr "無効な設定: \"%s\""
 msgid "\"%s\" preference is read only."
 msgstr "\"%s\" 設定は読み取り専用です。"
 
-#: iwidget/views.py:201
+#: iwidget/views.py:200 iwidget/views.py:204
 msgid ""
 "You have not enough permission for updating the preferences of the iwidget"
 msgstr "ウィジェットの設定を更新する権限がありません"
 
-#: iwidget/views.py:257
+#: iwidget/views.py:260
 #, python-format
 msgid "Invalid persistent variable: \"%s\""
 msgstr "無効な永続変数: \"%s\""
 
-#: iwidget/views.py:264 iwidget/views.py:269
+#: iwidget/views.py:266 iwidget/views.py:270
 msgid ""
 "You have not enough permission for updating the persistent variables of this "
 "widget"
@@ -379,8 +452,10 @@ msgid "You are not allowed allow to install components to other users"
 msgstr "他のユーザにコンポーネントをインストールすることを許可されていません"
 
 #: localcatalogue/views.py:183
-msgid ""
-"You are not allowed allow to install components to non-owned organizations"
+#, fuzzy
+#| msgid ""
+#| "You are not allowed allow to install components to non-owned organizations"
+msgid "You are not allowed to install components to non-owned organizations"
 msgstr ""
 "コンポーネントを所有していない組織にインストールすることは許可されていません"
 
@@ -412,7 +487,7 @@ msgstr "リソースを削除することを許可されていません"
 msgid "You don't have access to this workspace"
 msgstr "このワークスペースにアクセスできません"
 
-#: markets/models.py:30 markets/models.py:45
+#: markets/models.py:28 markets/models.py:45
 msgid "User"
 msgstr "ユーザ"
 
@@ -424,20 +499,20 @@ msgstr "オプション"
 msgid "Market"
 msgstr "マーケット"
 
-#: markets/views.py:76
+#: markets/views.py:77
 msgid "invalid user option"
 msgstr "無効なユーザ・オプション"
 
-#: markets/views.py:79
+#: markets/views.py:80
 msgid ""
 "You don't have permissions for adding marketplaces in name of other user"
 msgstr "他のユーザの名前でマーケットプレイスを追加する権限がありません"
 
-#: markets/views.py:101 markets/views.py:104 markets/views.py:131
+#: markets/views.py:102 markets/views.py:105 markets/views.py:132
 msgid "You are not allowed to delete this market"
 msgstr "このマーケットを削除することは許可されていません"
 
-#: markets/views.py:148 markets/views.py:150
+#: markets/views.py:149 markets/views.py:151
 msgid "Something went wrong (see details for more info)"
 msgstr "何かが間違っていました (詳細を参照)"
 
@@ -445,14 +520,32 @@ msgstr "何かが間違っていました (詳細を参照)"
 msgid "Inherit"
 msgstr "継承"
 
-#: preferences/views.py:220 preferences/views.py:273
+#: preferences/views.py:221 preferences/views.py:265 preferences/views.py:357
+msgid "Invalid payload: root type must be object"
+msgstr ""
+
+#: preferences/views.py:225 preferences/views.py:269 preferences/views.py:361
+msgid "Invalid type for pref value: {}"
+msgstr ""
+
+#: preferences/views.py:227 preferences/views.py:271 preferences/views.py:363
+msgid "Invalid structure for pref: {}"
+msgstr ""
+
+#: preferences/views.py:230 preferences/views.py:274 preferences/views.py:366
+#, fuzzy
+#| msgid "Invalid value for %(field)s"
+msgid "Invalid value for pref: {}"
+msgstr "%(field)s の値が無効です"
+
+#: preferences/views.py:247 preferences/views.py:339
 msgid "You are not allowed to read this workspace"
 msgstr "このワークスペースを読むことはできません"
 
-#: preferences/views.py:234 preferences/views.py:287 wiring/views.py:72
-#: wiring/views.py:102 wiring/views.py:129 wiring/views.py:293
-#: wiring/views.py:348 workspace/views.py:203 workspace/views.py:316
-#: workspace/views.py:320 workspace/views.py:398
+#: preferences/views.py:261 preferences/views.py:353 wiring/views.py:76
+#: wiring/views.py:106 wiring/views.py:133 wiring/views.py:297
+#: wiring/views.py:351 workspace/views.py:176 workspace/views.py:289
+#: workspace/views.py:367
 msgid "You are not allowed to update this workspace"
 msgstr "このワークスペースを更新することはできません"
 
@@ -505,53 +598,53 @@ msgstr ""
 msgid "Error processing widget code"
 msgstr "ウィジェット・コードの処理エラー"
 
-#: wiring/views.py:125 wiring/views.py:267
+#: wiring/views.py:129 wiring/views.py:271
 msgid "Read only properties cannot be updated"
 msgstr "読み取り専用のプロパティは更新できません"
 
-#: wiring/views.py:156 wiring/views.py:160
+#: wiring/views.py:160 wiring/views.py:164
 msgid "You are not allowed to remove or update read only connections"
 msgstr "読み取り専用接続を削除または更新することはできません"
 
-#: wiring/views.py:197
+#: wiring/views.py:201
 msgid "Read only and hidden preferences cannot be created using this API"
 msgstr ""
 "この API を使用して、読み取り専用と非表示のプリファレンスを作成することはでき"
 "ません"
 
-#: wiring/views.py:211
+#: wiring/views.py:215
 msgid "Read only and hidden preferences cannot be removed"
 msgstr "読み取り専用と非表示の設定は削除できません"
 
-#: wiring/views.py:224 wiring/views.py:264
+#: wiring/views.py:228 wiring/views.py:268
 msgid "Read only and hidden status cannot be changed using this API"
 msgstr ""
 "この API を使用して、読み取り専用と非表示のステータスを変更することはできませ"
 "ん"
 
-#: wiring/views.py:227
+#: wiring/views.py:231
 msgid "Read only preferences cannot be updated"
 msgstr "読み取り専用の設定は更新できません"
 
-#: wiring/views.py:239
+#: wiring/views.py:243
 msgid "Read only and hidden properties cannot be created using this API"
 msgstr ""
 "この API を使用して、読み取り専用プロパティと非表示プロパティを作成することは"
 "できません"
 
-#: wiring/views.py:248
+#: wiring/views.py:252
 msgid "Read only and hidden properties cannot be removed"
 msgstr "読み取り専用プロパティと隠しプロパティは削除できません"
 
-#: wiring/views.py:320 wiring/views.py:341
+#: wiring/views.py:320 wiring/views.py:344
 msgid "Invalid JSON patch"
 msgstr "無効な JSON パッチ"
 
-#: wiring/views.py:334
+#: wiring/views.py:337
 msgid "Missing operators variables cannot be updated"
 msgstr "不足している演算子変数は更新できません"
 
-#: wiring/views.py:339
+#: wiring/views.py:342
 msgid "Failed to apply patch"
 msgstr "パッチの適用に失敗しました"
 
@@ -559,164 +652,171 @@ msgstr "パッチの適用に失敗しました"
 msgid "Missing dependencies"
 msgstr "不足している依存関係"
 
-#: workspace/mashupTemplateParser.py:361
+#: workspace/mashupTemplateParser.py:363
 msgid "Original wiring"
 msgstr "オリジナルのワイヤーリング"
 
-#: workspace/mashupTemplateParser.py:361
+#: workspace/mashupTemplateParser.py:363
 msgid "This is the wiring description of the original workspace"
 msgstr "これは元のワークスペースのワイヤーリング記述です"
 
-#: workspace/mashupTemplateParser.py:364
+#: workspace/mashupTemplateParser.py:366
 msgid "Merged wiring"
 msgstr "統合されたワイヤーリング"
 
-#: workspace/mashupTemplateParser.py:364
+#: workspace/mashupTemplateParser.py:366
 msgid "This is the wiring description of the merged mashup."
 msgstr "これは、マージされたマッシュアップのワイヤーリング記述です。"
 
-#: workspace/models.py:35
+#: workspace/models.py:36
 msgid "Creator"
 msgstr "作成者"
 
-#: workspace/models.py:40
+#: workspace/models.py:41
 msgid "Creation Date"
 msgstr "作成日付"
 
-#: workspace/models.py:41
+#: workspace/models.py:42
 msgid "Last Modification Date"
 msgstr "最終更新日"
 
-#: workspace/models.py:43
+#: workspace/models.py:44
 msgid "Searchable"
 msgstr "検索可能"
 
-#: workspace/models.py:44
+#: workspace/models.py:45
 msgid "Available to all users"
 msgstr "すべてのユーザが利用可能"
 
-#: workspace/models.py:45
+#: workspace/models.py:46
+msgid ""
+"Require users to be logged in to access the workspace (This option has only "
+"effect if the workspace is public)"
+msgstr ""
+
+#: workspace/models.py:47
 msgid "Users"
 msgstr "ユーザ"
 
-#: workspace/models.py:46
+#: workspace/models.py:48
 msgid "Groups"
 msgstr "グループ"
 
-#: workspace/models.py:90
-msgid "Manager"
-msgstr "マネージャ"
-
-#: workspace/models.py:91
-msgid "Reason Ref"
-msgstr "理由の参照"
-
-#: workspace/models.py:91
-msgid ""
-"Reference to the reason why it was added. Used by Workspace Managers to sync "
-"workspaces"
+#: workspace/models.py:111
+msgid "Access Level"
 msgstr ""
-"それが追加された理由を参照してください。 ワークスペースマネージャがワークス"
-"ペースを同期するために使用されます"
 
-#: workspace/models.py:106
+#: workspace/models.py:127
 msgid "Visible"
 msgstr "ビジブル"
 
-#: workspace/models.py:108
+#: workspace/models.py:129
 msgid "Workspace"
 msgstr "ワークスペース"
 
-#: workspace/utils.py:630 workspace/views.py:119 workspace/views.py:413
+#: workspace/utils.py:594 workspace/views.py:382
 msgid "invalid mashup id"
 msgstr "無効なマッシュアップ id"
 
-#: workspace/utils.py:638
+#: workspace/utils.py:602
 #, python-format
 msgid "Mashup not found: %(mashup)s"
 msgstr "マッシュアップが見つかりませんでした: %(mashup)s"
 
-#: workspace/views.py:94
+#: workspace/views.py:95
 msgid "Missing name or title parameter"
 msgstr "名前またはタイトル・パラメータがありません"
 
-#: workspace/views.py:96 workspace/views.py:408
+#: workspace/views.py:97 workspace/views.py:377
 msgid "Workspace and mashup parameters cannot be used at the same time"
 msgstr "作業領域とマッシュアップ・パラメータを同時に使用することはできません"
 
-#: workspace/views.py:104
+#: workspace/views.py:105
 msgid "invalid workspace name"
 msgstr "無効なワークスペース名"
 
-#: workspace/views.py:112 workspace/views.py:164 workspace/views.py:224
+#: workspace/views.py:113 workspace/views.py:134 workspace/views.py:197
 msgid "A workspace with the given name already exists"
 msgstr "指定された名前のワークスペースがすでに存在します"
 
-#: workspace/views.py:127 workspace/views.py:421
-#, python-format
-msgid "Mashup not found: %(mashup_id)s"
-msgstr "マッシュアップが見つかりませんでした: %(mashup_id)s"
-
-#: workspace/views.py:137 workspace/views.py:431
+#: workspace/views.py:122 workspace/views.py:400
 #, python-format
 msgid "You are not allowed to read from workspace %s"
 msgstr "ワークスペース %s から読み込むことができません"
 
-#: workspace/views.py:235
+#: workspace/views.py:208
 msgid "You are not allowed to delete this workspace"
 msgstr "このワークスペースを削除することはできません"
 
-#: workspace/views.py:257
+#: workspace/views.py:230
 msgid "Malformed tab JSON: expecting tab name or title."
 msgstr "不正なタブ JSON: タブの名前またはタイトルが必要です。"
 
-#: workspace/views.py:260 workspace/views.py:283
+#: workspace/views.py:233 workspace/views.py:256
 msgid "You are not allowed to create new tabs for this workspace"
 msgstr "このワークスペースの新しいタブを作成することはできません"
 
-#: workspace/views.py:268 workspace/views.py:349
+#: workspace/views.py:241 workspace/views.py:318
 msgid "A tab with the given name already exists for the workspace"
 msgstr "指定された名前のタブがすでにワークスペースに存在しています"
 
-#: workspace/views.py:329 workspace/views.py:332
+#: workspace/views.py:298 workspace/views.py:301
 msgid "Invalid visible value"
 msgstr "無効なビジブル値"
 
-#: workspace/views.py:361
+#: workspace/views.py:330
 msgid "You are not allowed to remove this tab"
 msgstr "このタブを削除することはできません"
 
-#: workspace/views.py:365
+#: workspace/views.py:334
 msgid "Tab cannot be deleted as workspaces need at least one tab"
 msgstr "タブには少なくとも1つのタブが必要なため、削除することはできません"
 
-#: workspace/views.py:369
+#: workspace/views.py:338
 msgid "Tab cannot be deleted as it contains widgets that cannot be deleted"
 msgstr ""
 "タブには削除できないウィジェットが含まれているため、削除することはできません"
 
-#: workspace/views.py:406
+#: workspace/views.py:375
 msgid "Missing workspace or mashup parameter"
 msgstr "ワークスペースまたはマッシュアップ・パラメータがありません"
 
-#: workspace/views.py:490
+#: workspace/views.py:390
+#, python-format
+msgid "Mashup not found: %(mashup_id)s"
+msgstr "マッシュアップが見つかりませんでした: %(mashup_id)s"
+
+#: workspace/views.py:459
 #, python-format
 msgid "malformed json data: %s"
 msgstr "不正な形式の json データ: %s"
 
-#: workspace/views.py:495
+#: workspace/views.py:464
 #, python-format
 msgid "Malformed JSON. The following field(s) are missing: %(fields)s."
 msgstr "不正な形式のJSON。 次のフィールドはありません: %(fields)s。"
 
-#: workspace/views.py:498
+#: workspace/views.py:467
 msgid "Invalid vendor"
 msgstr "無効なベンダー"
 
-#: workspace/views.py:501
+#: workspace/views.py:470
 msgid "Invalid name"
 msgstr "無効な名前"
 
-#: workspace/views.py:504
+#: workspace/views.py:473
 msgid "Invalid version number"
 msgstr "無効なバージョン番号"
+
+#~ msgid "Manager"
+#~ msgstr "マネージャ"
+
+#~ msgid "Reason Ref"
+#~ msgstr "理由の参照"
+
+#~ msgid ""
+#~ "Reference to the reason why it was added. Used by Workspace Managers to "
+#~ "sync workspaces"
+#~ msgstr ""
+#~ "それが追加された理由を参照してください。 ワークスペースマネージャがワーク"
+#~ "スペースを同期するために使用されます"
