@@ -11,14 +11,14 @@ features.
 
 **Contents**
 
--   [Ground rules & expectations](#ground-rules--expectations)
+-   [Ground rules & expectations](#ground-rules-expectations)
 -   [Using the issue tracker](#using-the-issue-tracker)
 -   [Bug reports](#bug-reports)
 -   [Feature requests](#feature-requests)
 -   [Contributing code](#contributing-code)
     -   [Code Guidelines](#code-guidelines)
     -   [Code style git hooks](#code-style-git-hooks)
--   [Community](#Community)
+-   [Community](#community)
 
 ## Ground rules & expectations
 

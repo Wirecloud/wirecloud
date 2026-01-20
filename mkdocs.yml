@@ -1,11 +1,11 @@
 site_name: WireCloud
 site_description: WireCloud Documentation
+site_url: https://wirecloud.readthedocs.io/
 repo_url: https://github.com/Wirecloud/wirecloud
 theme: readthedocs
 extra_css: ['https://www.fiware.org/style/fiware_readthedocs.css', 'https://www.fiware.org/style/fiware_readthedocs_processing.css']
-google_analytics: ['UA-84269043-1', 'wirecloud.readthedocs.io']
 
-pages:
+nav:
 - 'Introduction': 'index.md'
 - 'Installation Guide': 'installation_guide.md'
 - 'Administration Guide': 'administration_guide.md'
@@ -25,6 +25,7 @@ pages:
     - 'Platform Development':
         - 'Creating themes': 'development/platform/themes.md'
         - 'Contributing': 'CONTRIBUTING.md'
+        - 'Code of Conduct': 'CODE_OF_CONDUCT.md'
         - 'Testing': 'development/platform/testing.md'
         - 'Translations': 'development/platform/translation.md'
 - 'Appendix: Widgets': 'widgets.md'

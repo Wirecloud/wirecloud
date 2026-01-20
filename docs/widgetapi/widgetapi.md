@@ -824,7 +824,7 @@ MashupPlatform.widget.log(msg, level);
 
 -   `msg` (_required, string_): is the text of the message to log.
 -   `level` (_optional, default: `MashupPlatform.log.ERROR`_): This optional parameter specifies the level to use for
-    logging the message. See [MashupPlatform.log](#mashupplatform-log) for available log levels.
+    logging the message. See [MashupPlatform.log](#mashupplatformlog) for available log levels.
 
 **Example usage:**
 
