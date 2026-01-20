@@ -1,4 +1,5 @@
 Django>=2.0,<2.3
+django-nose
 lxml>=2.3
 django_compressor>=2.0,<2.3
 rdflib>=3.2.0
@@ -15,3 +16,4 @@ pyScss>=1.3.4,<2.0
 Pygments
 pillow
 jsonpatch
+python-jose>=3.3.0

@@ -1,66 +1,94 @@
 {% load compress i18n wirecloudtags %}{% load static from staticfiles %}
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xml:lang="{{ LANGUAGE_CODE }}"
-      lang="{{ LANGUAGE_CODE }}">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 
 <head>
     <title>{% trans "WireCloud Platform - Sign in" %}</title>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <link rel="shortcut icon" type="image/x-icon" href="{% theme_static "images/favicon.ico" %}" />
+    <link rel="shortcut icon" type="image/x-icon" href="{% theme_static " images/favicon.ico" %}" />
     {% compress css %}
     {% platform_css "index" %}
     {% endcompress %}
     <script type="text/javascript">
         var Wirecloud = {};
     </script>
-    <script type="text/javascript" src="{% static "js/wirecloud/BaseRequirements.js" %}"></script>
+    <script type="text/javascript" src="{% static " js/wirecloud/BaseRequirements.js" %}"></script>
 </head>
 
 <body>
     <div style="text-align:center;">
-
         {% with wc_logo_id="123456"|make_list|random %}{% with wc_logo="images/logos/wc"|add:wc_logo_id|add:".png" %}
         <img style="vertical-align: middle; heigth: 250px; width: 416px;" src="{% theme_static wc_logo %}" />
         {% endwith %}{% endwith %}
 
         <div style="display: inline-block; vertical-align:middle; margin: 4ex 10ex; width: 400px;">
 
-        <div id="unsupported-browser-msg" class="alert alert-error" style="display: none; text-align: left;">
-            <h4>{% trans "Your browser seems to lack some required features" %}</h4>
-            <p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a href="https://www.mozilla.org/firefox">Firefox</a> or <a href="https://www.google.com/chrome">Google Chrome</a> as these are the browsers currently supported by WireCloud.{% endblocktrans %}</p>
-        </div>
-
-        <form style="text-align: left; width: 400px" id="wc-login-form" method="post">
-        <div class="panel panel-default">
-
-            <div class="panel-heading">
-
-                {% if form.errors %}
-                <div class="alert alert-danger">{% blocktrans %}<h4>Your username and password didn't match.</h4><p>Please try again.</p>{% endblocktrans %}</div>
-                {% endif %}
-
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ next }}" />
-                <input type="text" class="se-text-field" style="margin: 3px 0; width: 100%;" name="username" autocapitalize="off" autofocus="autofocus" placeholder="{% trans "Username" %}"/>
-                <div style="display: table-row;">
-                    <div style="display: table-cell; width: 100%; padding: 3px 3px 3px 0px;"><input type="password" class="se-password-field" style="width: 100%; margin: 0;" name="password" placeholder="{% trans "Password" %}"/></div>
-                    <div style="display: table-cell; padding: 3px 0px 3px 3px;"><input class="se-btn btn-primary" style="margin: 0;" type="submit" value="{% trans 'Sign in' %}" /></div>
-                </div>
+            <div id="unsupported-browser-msg" class="alert alert-error" style="display: none; text-align: left;">
+                <h4>{% trans "Your browser seems to lack some required features" %}</h4>
+                <p>{% blocktrans %}We recommend you to upgrade your browser to the newest version of either <a
+                        href="https://www.mozilla.org/firefox">Firefox</a> or <a
+                        href="https://www.google.com/chrome">Google Chrome</a> as these are the browsers currently
+                    supported by WireCloud.{% endblocktrans %}</p>
             </div>
-        </div>
-        </form>
 
-        </div>
+            <form style="text-align: left; width: 400px" id="wc-login-form" method="post">
+                <div class="panel panel-default">
 
-    </div>
+                    <div class="panel-heading">
 
-    <script type="text/javascript">
-        try {
-            Wirecloud.check_basic_requirements();
-        } catch (e) {
-            document.getElementById('unsupported-browser-msg').style.display = "";
-        }
-    </script>
+                        {% if form.errors %}
+                        <div class="alert alert-danger">{% blocktrans %}<h4>Your username and password didn't match.
+                            </h4>
+                            <p>Please try again.</p>{% endblocktrans %}
+                        </div>
+                        {% endif %}
+
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}" />
+                        <input type="text" class="se-text-field" style="margin: 3px 0; width: 100%;" name="username"
+                            autocapitalize="off" autofocus="autofocus" placeholder="{% trans 'Username' %}" />
+                        <div style="display: table-row;">
+                            <div style="display: table-cell; width: 100%; padding: 3px 3px 3px 0px;"><input
+                                    type="password" class="se-password-field" style="width: 100%; margin: 0;"
+                                    name="password" placeholder="{% trans 'Password' %}" /></div>
+                            <div style="display: table-cell; padding: 3px 0px 3px 3px;"><input
+                                    class="se-btn btn-primary" style="margin: 0;" type="submit"
+                                    value="{% trans 'Sign in' %}" /></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="vc-sso-login">
+                {% if VC_LOGIN_ENABLED %}
+                <hr />
+                <div class="flex items-center justify-center">
+                    <a href="{{ VC_LOGIN_PATH }}" class="se-btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{% trans 'Use your digital wallet to authenticate with SSO' %}">
+                        <i class="fas fa-wallet"></i>
+                        {% trans 'Sign In with Verificable Credentials' %}
+                    </a>
+                </div>
+                {% if request.GET.error %}
+                <div class="alert alert-danger my-3">
+                    {% if request.GET.error == "403001" %}
+                    {% trans 'Invalid Verifiable Credential' %}
+                    {% elif request.GET.error == "403002" %}
+                    {% trans 'Unable to login using Verifiable Credentials' %}
+                    {% else %}
+                    {% trans 'An unexpected error has occurred. Please try again later' %}
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% endif %}
+                </form>
+            </div>
+
+            <script type="text/javascript">
+                try {
+                    Wirecloud.check_basic_requirements();
+                } catch (e) {
+                    document.getElementById('unsupported-browser-msg').style.display = "";
+                }
+            </script>
 </body>
+
 </html>

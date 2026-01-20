@@ -106,6 +106,7 @@ def load_default_wirecloud_conf(settings, instance_type='platform'):
                     'django.contrib.messages.context_processors.messages',
                     'wirecloud.platform.context_processors.plugins',
                     'wirecloud.platform.context_processors.active_theme',
+                    'wirecloud.platform.context_processors.vc_login_context',
                 ),
                 'debug': settings['DEBUG'],
                 'loaders': (

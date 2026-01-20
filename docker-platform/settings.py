@@ -334,3 +334,15 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
 from wirecloud.glogger import config as LOGGING
 
 # MIDDLEWARE = ('django.middleware.gzip.GZipMiddleware',) + MIDDLEWARE
+
+VC_LOGIN_CONFIG = {
+    'enabled': os.environ.get('VC_LOGIN_ENABLED', 'False').lower() in ('true', 'yes', 't'),
+    'verifier_host': os.environ.get('VC_VERIFIER_HOST'),
+    'verifier_qr_path': os.environ.get('VC_VERIFIER_QR_PATH', '/api/v2/loginQR'),
+    'verifier_token_path': os.environ.get('VC_VERIFIER_TOKEN_PATH', '/token'),
+    'verifier_jwks_path': os.environ.get('VC_VERIFIER_JWKS_PATH', '/.well-known/jwks'),
+    'client_id': os.environ.get('VC_CLIENT_ID'),
+    'scope': os.environ.get('VC_SCOPE', 'openid learcredential'),
+    'role_target': os.environ.get('VC_ROLE_TARGET'),
+    'credential_type': os.environ.get('VC_CREDENTIAL_TYPE', 'LegalPersonCredential'),
+}

@@ -5,9 +5,15 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as django_auth
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf import settings
 
 from wirecloud.commons import authentication as wc_auth
 import wirecloud.platform.urls
+
+
+vc_login_enabled = settings.VC_LOGIN_CONFIG['enabled']
+if vc_login_enabled:
+    from wirecloud.vc_login import views as vc_login_views
 
 admin.autodiscover()
 
@@ -23,6 +29,11 @@ urlpatterns = (
     url(r'^login/?$', django_auth.LoginView.as_view(), name="login"),
     url(r'^logout/?$', wc_auth.logout, name="logout"),
     url(r'^admin/logout/?$', wc_auth.logout),
+    # VC login when enabled
+    *([
+        url(r'^vc/login/?$', vc_login_views.vc_sso_login, name='vc_sso_login'),
+        url(r'^vc/callback/?$', vc_login_views.vc_sso_callback, name='vc_sso_callback'),
+    ] if vc_login_enabled else []),
 
     # Admin interface
     url(r'^admin/', admin.site.urls),

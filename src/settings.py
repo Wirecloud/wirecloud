@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Django settings used as base for developing wirecloud.
 
-from os import path
+from os import path, environ
 from wirecloud.commons.utils.conf import load_default_wirecloud_conf
 from django.urls import reverse_lazy
 
@@ -116,7 +116,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('wirecloud.root')
 
 # Authentication
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend'
 )
 
 # WGT deployment dirs
@@ -169,3 +169,19 @@ FORCE_SCRIPT_NAME = ""
 #         'CLASS': 'selenium.webdriver.Safari',
 #     },
 # }
+
+
+VC_LOGIN_CONFIG = {
+    'enabled': environ.get('VC_LOGIN_ENABLED', 'False').lower() in ('true', 'yes', 't'),
+    'verifier_host': environ.get('VC_VERIFIER_HOST'),
+    'verifier_qr_path': environ.get('VC_VERIFIER_QR_PATH', '/api/v2/loginQR'),
+    'verifier_token_path': environ.get('VC_VERIFIER_TOKEN_PATH', '/token'),
+    'verifier_jwks_path': environ.get('VC_VERIFIER_JWKS_PATH', '/.well-known/jwks'),
+    'client_id': environ.get('VC_CLIENT_ID'),
+    'scope': environ.get('VC_SCOPE', 'openid learcredential'),
+    'role_target': environ.get('VC_ROLE_TARGET'),
+    'credential_type': environ.get('VC_CREDENTIAL_TYPE', 'LegalPersonCredential'),
+}
+
+if VC_LOGIN_CONFIG['enabled']:
+        AUTHENTICATION_BACKENDS += ('wirecloud.backends.vc_backend.VCBackend')

@@ -19,7 +19,8 @@
 
 from wirecloud.platform.plugins import get_plugins
 from wirecloud.platform.themes import get_active_theme_name
-
+from django.conf import settings
+from django.urls import reverse
 
 def active_theme(request):
     return {'THEME_ACTIVE': get_active_theme_name()}
@@ -33,3 +34,16 @@ def plugins(request):
         context.update(plugin.get_django_template_context_processors())
 
     return context
+
+def vc_login_context(request):
+
+    vc_enabled = settings.VC_LOGIN_CONFIG['enabled']
+    vc_login_path = ''
+    if vc_enabled:
+        vc_login_path = request.build_absolute_uri(reverse('vc_sso_login'))
+
+    return {
+        'VC_LOGIN_ENABLED': vc_enabled,
+        'VC_LOGIN_PATH': vc_login_path
+
+    }
