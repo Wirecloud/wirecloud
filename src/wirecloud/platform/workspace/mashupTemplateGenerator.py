@@ -180,12 +180,12 @@ def build_json_template_from_workspace(options, workspace, user):
         options['description'] = get_workspace_description(workspace)
 
     if 'authors' not in options:
-        options['authors'] = ({'name': str(user)},)
+        options['authors'] = [{'name': str(user)}]
     elif isinstance(options['authors'], str):
         options['authors'] = parse_contacts_info(options['authors'])
 
     if 'contributors' not in options:
-        options['contributors'] = ()
+        options['contributors'] = []
     elif isinstance(options['contributors'], str):
         options['contributors'] = parse_contacts_info(options['contributors'])
 
@@ -252,6 +252,7 @@ def build_json_template_from_workspace(options, workspace, user):
     options['wiring']['operators'] = {}
     for operator_id, operator in wiring_status['operators'].items():
         operator_data = {
+            'id': operator_id,
             'name': operator['name'],
             'preferences': {},
         }

@@ -19,6 +19,8 @@
 # along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
+from jsonschema.validators import Draft7Validator
+import os
 
 from django.utils.translation import ugettext as _
 
@@ -26,6 +28,9 @@ from wirecloud.commons.utils.template.base import is_valid_name, is_valid_vendor
 from wirecloud.commons.utils.translation import get_trans_index
 from wirecloud.platform.wiring.utils import get_wiring_skeleton, parse_wiring_old_version
 
+with open(os.path.join(os.path.dirname(__file__), '../schemas/json_schema.schema.json'), 'r') as JSONSCHEMA_FILE:
+    JSONSCHEMA = json.load(JSONSCHEMA_FILE)
+    validator = Draft7Validator(JSONSCHEMA)
 
 class JSONTemplateParser(object):
 
@@ -189,7 +194,7 @@ class JSONTemplateParser(object):
         self._info['translation_index_usage'][index].append(kwargs)
 
     def _init(self):
-
+        validator.validate(self._info, JSONSCHEMA)
         self._check_string_fields(('title', 'description', 'longdescription', 'email', 'homepage', 'doc', 'changelog', 'image', 'smartphoneimage', 'license', 'licenseurl', 'issuetracker'))
         self._check_contacts_fields(('authors', 'contributors'))
         self._check_integer_fields(('macversion', ), default = 1)
