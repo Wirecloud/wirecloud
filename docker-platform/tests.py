@@ -234,5 +234,27 @@ class CustomUserTests(unittest.TestCase, WireCloudTests):
         print(flush=True)
 
 
+class AioTests(unittest.TestCase, WireCloudTests):
+
+    @classmethod
+    def setUpClass(cls):
+        print("\n################################################################################\n")
+        print("#")
+        print("# Initializing aio test case")
+        print("#\n", flush=True)
+        sh.docker.compose("-f", "docker-compose-aio.yml", "up", d=True, remove_orphans=True, _fg=True)
+        wait_until_running()
+        print(flush=True)
+
+    @classmethod
+    def tearDownClass(cls):
+        print()
+        print("#")
+        print("# Removing containers and volumes")
+        print("#\n", flush=True)
+        sh.docker.compose.down(remove_orphans=True, v=True, _fg=True)
+        print(flush=True)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

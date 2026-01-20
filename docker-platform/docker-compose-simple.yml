@@ -1,29 +1,25 @@
-version: "3"
-
 services:
+  nginx:
+    image: nginx:latest
+    depends_on:
+      - wirecloud
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - wirecloud-static:/var/www/static:ro
+    ports:
+      - '80:80'
+    restart: always
 
-    nginx:
-        restart: always
-        image: nginx:latest
-        ports:
-            - 80:80
-        volumes:
-            - ./nginx.conf:/etc/nginx/nginx.conf:ro
-            - wirecloud-static:/var/www/static:ro
-        depends_on:
-            - wirecloud
-
-
-    wirecloud:
-        restart: always
-        image: fiware/wirecloud:latest
-        environment:
-            - DEBUG=False
-            - FORWARDED_ALLOW_IPS=*
-        volumes:
-            - wirecloud-data:/opt/wirecloud_instance/data
-            - wirecloud-static:/var/www/static
+  wirecloud:
+    image: fiware/wirecloud:latest
+    volumes:
+      - wirecloud-data:/opt/wirecloud_instance/data
+      - wirecloud-static:/var/www/static
+    environment:
+      - DEBUG=False
+      - FORWARDED_ALLOW_IPS=*
+    restart: always
 
 volumes:
-    wirecloud-data:
-    wirecloud-static:
+  wirecloud-data:
+  wirecloud-static:

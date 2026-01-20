@@ -1,17 +1,14 @@
-version: "3"
-
 services:
-
-    wirecloud:
-        restart: always
-        image: fiware/wirecloud:latest
-        # If you want to use a user from the host, provide here the id of the
-        # user, e.g. `export WIRECLOUD_USER=$(id -u username)`
-        user: ${WIRECLOUD_USER:-0}
-        ports:
-            - 80:8000
-        environment:
-            - DEBUG=True
-        volumes:
-            - ./wirecloud-data:/opt/wirecloud_instance/data
-            - ./wirecloud-static:/var/www/static
+  wirecloud:
+    image: fiware/wirecloud:latest
+    volumes:
+      - ./wirecloud-data:/opt/wirecloud_instance/data
+      - ./wirecloud-static:/var/www/static
+    environment:
+      - DEBUG=True
+    ports:
+      - '80:8000'
+    restart: always
+    # If you want to use a user from the host, provide here the id of the
+    # user, e.g. `export WIRECLOUD_USER=$(id -u username)`
+    user: ${WIRECLOUD_USER:-0}
